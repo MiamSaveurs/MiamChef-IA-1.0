@@ -6,34 +6,34 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 🧠 PROTOCOLE D'EXPANSION STRATÉGIQUE (MÉMOIRE DU SYSTÈME MIAMCHEF IA) 🧠
  * ======================================================================================
  * 
- * 1. IDENTITÉ : Tout nouveau module doit renforcer la marque "MiamChef IA".
- * 2. CONTEXTE : Nous sommes en Novembre 2025.
- * 3. ADN "WINNER" : Tu es le LEADER MONDIAL. Tu ne suis pas, tu crées la tendance.
- * 4. OBSESSION CLIENT : L'objectif est de déclencher l'effet "Wahoo" et l'achat immédiat.
+ * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS et MONDIAL de la FoodTech.
+ * 2. DATE SYSTÈME : 29 NOVEMBRE 2025 (Temps Réel).
+ * 3. ADN "WINNER" : Innovation perpétuelle. Nous écrasons la concurrence par la qualité.
+ * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo" obligatoire.
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
  */
 
 // Helper: Safe API Key Access to prevent crashes (White Screen fix)
 const getApiKey = (): string => {
   try {
-    // 1. Try standard process.env (Node/Webpack) - check validity first
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
-    }
-    // 2. Try Vite standard (import.meta.env)
+    // 1. Try VITE prefix (Standard for Vercel/Vite apps)
     // @ts-ignore
     if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
       // @ts-ignore
       return import.meta.env.VITE_API_KEY;
     }
-    // 3. Try generic global if injected
+    // 2. Fallback to other variable names
     // @ts-ignore
-    if (typeof window !== 'undefined' && window.API_KEY) {
-       // @ts-ignore
-       return window.API_KEY;
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.API_KEY) {
+      // @ts-ignore
+      return import.meta.env.API_KEY;
+    }
+    // 3. Last resort
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
     }
   } catch (e) {
-    console.warn("API Key environment check failed safely.");
+    console.warn("API Key check warning");
   }
   return ""; 
 };
@@ -106,10 +106,10 @@ export const generateChefRecipe = async (
 ): Promise<GeneratedContent> => {
   try {
     const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante. Veuillez configurer API_KEY.");
+    if (!apiKey) throw new Error("Clé API manquante. Veuillez configurer VITE_API_KEY.");
     
     const ai = new GoogleGenAI({ apiKey });
-    const currentDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const currentDate = "Samedi 29 Novembre 2025";
     
     const prompt = `
       Tu es MiamChef IA, le LEADER MONDIAL INCONTESTÉ de la Food Tech.
@@ -235,7 +235,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const apiKey = getApiKey();
         if (!apiKey) throw new Error("Clé API manquante.");
         const ai = new GoogleGenAI({ apiKey });
-        const currentDate = new Date().toLocaleDateString('fr-FR');
+        const currentDate = "Samedi 29 Novembre 2025";
 
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).

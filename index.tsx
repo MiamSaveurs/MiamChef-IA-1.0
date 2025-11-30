@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -29,13 +29,13 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (this.state.hasError) {
       return (
         <div style={{ padding: 20, textAlign: 'center', fontFamily: 'sans-serif' }}>
-          <h1 style={{ color: '#ef4444' }}>Oups ! Une erreur est survenue.</h1>
-          <p>L'application a rencontré un problème technique au démarrage.</p>
+          <h1 style={{ color: '#ef4444' }}>Oups ! Une erreur technique.</h1>
+          <p>L'application a rencontré un problème au démarrage.</p>
           <pre style={{ background: '#f3f4f6', padding: 10, borderRadius: 5, overflow: 'auto', textAlign: 'left', fontSize: 12 }}>
             {this.state.error?.toString()}
           </pre>
           <button onClick={() => window.location.reload()} style={{ marginTop: 20, padding: '10px 20px', background: '#509f2a', color: 'white', border: 'none', borderRadius: 5, cursor: 'pointer' }}>
-            Recharger l'application
+            Recharger
           </button>
         </div>
       );
@@ -46,15 +46,13 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>
+  );
 }
-
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </React.StrictMode>
-);
