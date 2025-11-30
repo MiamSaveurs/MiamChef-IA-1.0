@@ -1,0 +1,22 @@
+{
+  "name": "MiamChef IA",
+  "short_name": "MiamChef",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#509f2a",
+  "version": "1.0.0",
+  "description": "Le premier livre de cuisine infini. Votre assistant culinaire intelligent à double cerveau crée des recettes uniques, sur-mesure et illimitées.",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3565/3565418.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3565/3565418.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
