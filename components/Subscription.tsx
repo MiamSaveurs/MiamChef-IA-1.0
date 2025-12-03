@@ -366,7 +366,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
             <button onClick={() => initiatePayment('annual')} className="w-full py-4 rounded-xl bg-gradient-to-r from-chef-green to-green-600 text-white font-bold shadow-lg shadow-green-200 hover:shadow-green-300 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
                 <Star size={18} fill="white" /> {isTrialExpired ? 'Débloquer l\'application' : 'Commencer l\'essai gratuit'}
             </button>
-            <p className="text-[10px] text-center text-gray-400 mt-3">
+            <p className="text-xs text-center text-gray-500 mt-3 font-bold">
                 {isTrialExpired ? 'Accès immédiat.' : '7 jours gratuits, puis 39,99€/an'}
             </p>
         </div>
