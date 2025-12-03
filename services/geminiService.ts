@@ -13,9 +13,10 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo".
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
  * 6. PERSONNALITÉ : 
- *    - TON : Familier, Ludique, Tutoiement (Tu), Fun, Complice.
- *    - CIBLE : Les vrais gens qui font leurs courses au supermarché du coin.
+ *    - TON : VOUVOIEMENT ("Vous"), Ludique, Pédagogique, Bienveillant.
+ *    - CIBLE : Familles, Étudiants, Cuisine du quotidien.
  *    - CONTRAINTE : Ingrédients 100% Supermarché France (Leclerc, Carrefour, Inter...).
+ *    - STYLE : "Fait Maison", Simple, Economique. PAS de Gastro/Bistrot complexe.
  */
 
 // Helper: Safe API Key Access to prevent crashes (White Screen fix)
@@ -160,25 +161,25 @@ export const generateChefRecipe = async (
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = `
-      Tu es MiamChef IA, le pote chef cuistot cool et expert.
+      Tu es MiamChef IA, le coach culinaire expert en PETIT BUDGET et ANTI-INFLATION.
       DATE : ${currentDate}.
       JURIDICTION : FRANCE.
       
-      MISSION : Créer une recette "Petit Budget" mais délicieuse.
+      MISSION : Créer une recette économique, familiale et délicieuse.
       
       PARAMÈTRES :
       - INGRÉDIENTS DISPOS : ${ingredients}
-      - STYLE : ${cuisineStyle}
-      - BATCH COOKING : ${isBatchCooking ? "OUI (Donne des astuces pour gagner du temps)" : "NON"}
+      - STYLE : ${cuisineStyle} (Reste simple et accessible)
+      - BATCH COOKING : ${isBatchCooking ? "OUI (Donnez des astuces pour gagner du temps)" : "NON"}
       - PERSONNES : ${people}
       - RÉGIME : ${dietary}
       - MOMENT : ${mealTime}
 
-      INSTRUCTIONS STRICTES "PETIT BUDGET & FUN" :
-      1. TON : Familier, tutoie l'utilisateur ("Tu"), sois ludique, utilise de l'humour. Pas de langage guindé !
-      2. INGRÉDIENTS : Utilise UNIQUEMENT des produits qu'on trouve dans un supermarché français standard (Leclerc, Carrefour, Lidl...). Pas d'épices rares ou de produits de luxe.
-      3. BUDGET : Fais attention au porte-monnaie. Propose des alternatives économiques.
-      4. Format : Markdown détaillé. Mets un titre accrocheur et vendeur (Style Foodporn).
+      INSTRUCTIONS STRICTES :
+      1. TON : Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique, bienveillant, encourageant. Parlez comme un coach sympa, pas un professeur strict.
+      2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits courants de supermarché français (Leclerc, Intermarché, Lidl...). Pas de truffe, pas d'épices introuvables.
+      3. BUDGET : Priorité absolue aux économies. Proposez une cuisine de tous les jours, pas de la haute gastronomie complexe.
+      4. Format : Markdown détaillé. Mettez un titre accrocheur qui donne faim.
     `;
 
     const response = await ai.models.generateContent({
@@ -213,15 +214,15 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
-      Tu es MiamChef IA (Ton pote en cuisine). DATE : ${currentDate}.
-      Recherche la recette : "${query}" pour ${people} personnes.
+      Tu es MiamChef IA. DATE : ${currentDate}.
+      Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
       INSTRUCTIONS :
-      - Adapte-la pour qu'elle soit "Petit Budget" et réalisable avec des produits de supermarché français.
-      - Parle-moi directement ("Tu vas adorer...").
-      - Rends la recette simple et fun.
+      - Adaptez la recette pour qu'elle soit "Petit Budget" et réalisable avec des produits de supermarché.
+      - Utilisez le VOUVOIEMENT ("Vous").
+      - Soyez ludique et clair.
       
-      IMPORTANT : Tu DOIS répondre UNIQUEMENT avec un objet JSON respectant EXACTEMENT cette structure (sans balises markdown) :
+      IMPORTANT : Répondez UNIQUEMENT avec un objet JSON respectant EXACTEMENT cette structure (sans balises markdown) :
       {
         "markdownContent": "Texte de la recette...",
         "seoTitle": "Titre...",
@@ -236,7 +237,6 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
-        // PAS de responseMimeType ni responseSchema ici pour éviter le conflit avec Search
       },
     });
 
@@ -266,11 +266,11 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
-      MODIFICATION DE RECETTE (MiamChef IA - Ton Pote). DATE : ${currentDate}.
+      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
       Recette originale : ${originalRecipe}
-      Ta mission (Le Twist) : "${modification}"
+      Votre mission (Le Twist) : "${modification}"
       
-      Consigne : Garde le ton fun et familier ("T'inquiète, on adapte ça !"). Recalcule les métriques.
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT ("Vous"). Restez simple et économique.
     `;
 
     const response = await ai.models.generateContent({
@@ -303,15 +303,15 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const currentDate = "Mercredi 3 Décembre 2025";
 
         const prompt = `
-            PLANNING HEBDOMADAIRE (MiamChef IA - Mode Budget & Fun).
+            PLANNING HEBDOMADAIRE (MiamChef IA - Mode Budget & Famille).
             Date : ${currentDate}.
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION :
-            1. Générer 14 repas (Midi/Soir) simples, pas chers et bons.
-            2. Utilise des produits courants (Pâtes, Riz, Légumes de saison, Conserves...).
-            3. Donne des astuces "Batch Cooking" pour que je ne passe pas ma vie en cuisine.
-            4. Calcul des macros précis (on fait gaffe à la santé quand même !).
+            1. Générer 14 repas (Midi/Soir) simples, économiques et rapides.
+            2. Utilisez des produits courants et pas chers (Pâtes, Riz, Légumes saison, Oeufs...).
+            3. Donnez des astuces "Batch Cooking" pour gagner du temps.
+            4. TON : Vouvoiement ("Vous"), motivant.
             
             Respecte scrupuleusement le schéma JSON fourni.
         `;
@@ -339,8 +339,8 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
     const apiKey = getApiKey();
     if (!apiKey) return null;
     const ai = new GoogleGenAI({ apiKey });
-    // Prompt optimisé pour une photo réaliste et appétissante qui correspond aux ingrédients
-    const prompt = `Food photography of "${title}". Main ingredients visible: ${ingredientsContext}. High resolution, appetizing, professional lighting, photorealistic, 4k. Style: Modern Bistro.`;
+    // Prompt optimisé pour une photo réaliste style "Cuisine Maison"
+    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking.`;
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: { parts: [{ text: prompt }] },
@@ -359,7 +359,7 @@ export const generateStepVideo = async (stepDescription: string): Promise<string
         const ai = new GoogleGenAI({ apiKey });
         let operation = await ai.models.generateVideos({
             model: 'veo-3.1-fast-generate-preview',
-            prompt: `Cooking close-up: ${stepDescription}`,
+            prompt: `Cooking step close-up: ${stepDescription}. Home kitchen setting.`,
             config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
         });
         let attempts = 0;
@@ -388,7 +388,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: `Nous sommes le ${currentDate}. Analyse cette photo. Trouve une recette "Anti-Gaspi" sympa et pas chère avec ces restes. Tutoie-moi, sois fun ! Format Markdown.` },
+          { text: `Nous sommes le ${currentDate}. Analysez cette photo. Trouvez une recette "Anti-Gaspi" économique et simple avec ces restes. Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
         ],
       },
     });
@@ -404,8 +404,8 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = audience === 'b2b' 
-        ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, prix, service. (Ton Pro & Sérieux ici)` 
-        : `Sommelier Pote pour "${request}". Date : ${currentDate}. Trouve-moi 3 vins sympas (bon rapport qualité/prix, trouvables en supermarché ou chez le caviste du coin). Tutoie-moi !`;
+        ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 
+        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Utilisez le VOUVOIEMENT.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
