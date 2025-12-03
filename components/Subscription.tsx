@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Check, Star, Crown, X, ShieldCheck, Zap, Lock, Trash2, Clock, AlertTriangle, CreditCard, Loader2, Smartphone, FileText, Settings, Eye } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
@@ -108,19 +109,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       }
   };
 
-  // Simulation Tool (Dev only)
-  const simulateExpiry = () => {
-      const pastDate = Date.now() - (8 * 24 * 60 * 60 * 1000); // 8 days ago
-      localStorage.setItem('miamchef_trial_start', pastDate.toString());
-      localStorage.removeItem('miamchef_subscription');
-      window.location.reload();
-  };
-  const resetTrial = () => {
-      localStorage.removeItem('miamchef_trial_start');
-      localStorage.removeItem('miamchef_subscription');
-      window.location.reload();
-  };
-
   // Payment Modal Component
   const PaymentModal = () => (
       <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 animate-fade-in">
@@ -180,10 +168,8 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                     className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-chef-green focus:bg-white outline-none font-mono text-lg transition-all" 
                                   />
                                   <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-100">
-                                      {/* Card logos */}
-                                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" className="h-4 w-auto" alt="Visa"/>
-                                      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" className="h-4 w-auto" alt="Mastercard"/>
+                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-100">
+                                      <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="h-5 w-auto" alt="Stripe"/>
                                   </div>
                               </div>
                           </div>
@@ -454,19 +440,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
 
           <div className="mt-2 text-[10px] text-gray-300">
               Version 1.0.0
-          </div>
-          
-          {/* SIMULATION TOOLS FOR DEV/CLIENT TESTING */}
-          <div className="mt-4 pt-4 border-t border-gray-200/50 max-w-xs mx-auto">
-             <p className="text-[10px] text-gray-400 uppercase font-bold mb-2">Outils de Simulation (Test)</p>
-             <div className="flex justify-center gap-2">
-                 <button onClick={simulateExpiry} className="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200">
-                     Simuler Fin Essai
-                 </button>
-                 <button onClick={resetTrial} className="text-[10px] bg-green-100 text-green-600 px-2 py-1 rounded hover:bg-green-200">
-                     Reset Essai
-                 </button>
-             </div>
           </div>
       </div>
 
