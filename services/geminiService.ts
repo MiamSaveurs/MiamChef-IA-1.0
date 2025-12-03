@@ -216,7 +216,15 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       Recherche et adapte la recette : "${query}" pour ${people} personnes.
       Leader Mondial, Veille Permanente.
       Rends-la accessible mais gastronomique (Petit Budget, Supermarché France).
-      Format JSON MiamChef standard.
+      
+      IMPORTANT : Tu DOIS répondre UNIQUEMENT avec un objet JSON respectant EXACTEMENT cette structure (sans balises markdown) :
+      {
+        "markdownContent": "Texte de la recette...",
+        "seoTitle": "Titre...",
+        "seoDescription": "Description...",
+        "utensils": ["..."],
+        "metrics": { "nutriScore": "A", "difficulty": "Facile", "caloriesPerPerson": 0, "caloriesPer100g": 0, "pricePerPerson": 0, "carbohydrates": 0, "proteins": 0, "fats": 0 }
+      }
     `;
 
     const response = await ai.models.generateContent({
@@ -224,8 +232,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: recipeSchema,
+        // PAS de responseMimeType ni responseSchema ici pour éviter le conflit avec Search
       },
     });
 
