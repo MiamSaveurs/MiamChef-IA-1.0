@@ -85,6 +85,7 @@ const RecipeCreator: React.FC = () => {
   }, [status, mode]);
 
   const handleGenerate = async () => {
+    // FORCE BUTTON UNLOCK if key is missing or something goes wrong, we want to try anyway
     if (mode === 'create' && !ingredients.trim()) return;
     if (mode === 'search' && !searchQuery.trim()) return;
 
@@ -120,9 +121,13 @@ const RecipeCreator: React.FC = () => {
       // Trigger Image Generation
       triggerImageGeneration(result.text, mode === 'create' ? `${ingredients} style ${cuisineStyle}` : searchQuery);
 
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       setStatus('error');
+      // Visual feedback if API key issue suspected
+      if (e.message?.includes('API key')) {
+          alert("Erreur : Clé API manquante ou invalide. Vérifiez la configuration Vercel (VITE_API_KEY).");
+      }
     }
   };
 
@@ -325,8 +330,14 @@ const RecipeCreator: React.FC = () => {
       const selectedItems: string[] = [];
       ingredientsList.forEach((line, idx) => {
           if (checkedIngredients.has(idx)) {
-              // Clean the text
-              const cleanText = line.replace(/^[-*]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+              // Clean the text: remove bullets, bold/italic AND QUANTITIES
+              let cleanText = line.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+              
+              // Remove quantities regex
+              cleanText = cleanText.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+              cleanText = cleanText.replace(/^\d+\s+/, '').trim();
+              cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
+
               // Do not add servings lines
               if (!cleanText.toLowerCase().startsWith('pour')) {
                  selectedItems.push(cleanText);
@@ -355,7 +366,11 @@ const RecipeCreator: React.FC = () => {
   ];
 
   const handleOpenDriveModal = (ingredient: string) => {
-      setSelectedIngredientForDrive(ingredient);
+      // Clean for modal display too
+      let clean = ingredient.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+      clean = clean.replace(/^\d+\s+/, '').trim();
+      
+      setSelectedIngredientForDrive(clean);
       setShowDriveModal(true);
   };
 

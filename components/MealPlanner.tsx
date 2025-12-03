@@ -59,7 +59,17 @@ const MealPlanner: React.FC = () => {
             if (day.lunch.ingredients) allIngredients.push(...day.lunch.ingredients);
             if (day.dinner.ingredients) allIngredients.push(...day.dinner.ingredients);
         });
-        await addToShoppingList(Array.from(new Set(allIngredients)));
+        
+        // Clean ingredients before adding
+        const cleanedIngredients = allIngredients.map(text => {
+             // Nettoyage robuste des quantités, unités et prépositions
+             let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim(); 
+             clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+             clean = clean.replace(/^\d+\s+/, '').trim();
+             return clean.charAt(0).toUpperCase() + clean.slice(1);
+        });
+
+        await addToShoppingList(Array.from(new Set(cleanedIngredients)));
         setAddedToList(true);
     };
 
@@ -139,7 +149,7 @@ const MealPlanner: React.FC = () => {
                     
                     {/* SECTION 1: BATCH COOKING PREVIEW (ALWAYS VISIBLE) */}
                     <div className="bg-orange-50 border-2 border-orange-100 p-6 rounded-[2rem] mb-8 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-orange-200 text-orange-800 text-[10px] px-3 py-1 rounded-bl-xl font-bold uppercase tracking-wider">
+                        <div className="absolute top-0 right-0 bg-orange-200 text-orange-900 text-[10px] px-3 py-1 rounded-bl-xl font-bold uppercase tracking-wider">
                             Étape 1
                         </div>
                         <h3 className="font-display text-2xl text-orange-900 mb-2 flex items-center gap-2">

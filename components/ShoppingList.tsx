@@ -62,7 +62,7 @@ const ShoppingList: React.FC = () => {
   };
 
   const handleShare = async () => {
-    const text = `📝 Ma liste de courses MiamChef IA :\n\n${items.filter(i => !i.checked).map(i => `- ${i.text}`).join('\n')}`;
+    const text = `📝 Ma liste de courses MiamChef IA :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
     if (navigator.share) {
         try { await navigator.share({ title: 'Ma liste', text: text }); } catch (err) {}
     } else {
@@ -91,7 +91,14 @@ const ShoppingList: React.FC = () => {
   };
 
   const cleanSearchTerm = (text: string) => {
-      return text.replace(/^[\d.,]+\s*(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?)?(\s+(d'|de\s+))?/i, '').replace(/^\d+\s+/, '').trim();
+      // Nettoyage robuste des quantités, unités et prépositions pour ne garder que le produit
+      let clean = text.replace(/^[-*•]\s*/, '').trim(); // Puces
+      // Enlève: 500g, 1.5kg, 20cl, 2 c.à.s, 3 tranches, etc.
+      clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+      // Enlève les nombres isolés au début (ex: "2 avocats" -> "avocats")
+      clean = clean.replace(/^\d+\s+/, '');
+      // Capitalize
+      return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
   };
 
   const handleDirectSearch = (itemText: string) => {
@@ -138,6 +145,37 @@ const ShoppingList: React.FC = () => {
                 </button>
             )}
         </div>
+        
+        {/* BARRE D'AJOUT RAPIDE AVEC MICRO */}
+        <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 mb-6 flex gap-2">
+             <div className="relative flex-1">
+                 <input 
+                    type="text" 
+                    placeholder="Ajouter (ex: Lait, Oeufs)..." 
+                    className="w-full pl-4 pr-10 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-chef-green outline-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            const val = (e.target as HTMLInputElement).value;
+                            if (val.trim()) {
+                                // Add logic via storageService usually, but here we can just reload or add locally?
+                                // For simplicity in this component, we rely on props or context usually, but here we use storage directly.
+                                // We need a local function to add single item.
+                                import('../services/storageService').then(mod => {
+                                    mod.addToShoppingList([cleanSearchTerm(val)]).then(() => {
+                                        (e.target as HTMLInputElement).value = '';
+                                        loadItems();
+                                    });
+                                });
+                            }
+                        }
+                    }}
+                 />
+                 <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+             </div>
+             {/* Note: Mic logic is complex to duplicate here without duplicating the full speech recognition code. 
+                 For now, manual entry is enhanced. */}
+        </div>
+
         <div className="flex gap-3">
              <button onClick={handleShare} disabled={items.length === 0} className="flex-1 bg-white border border-gray-200 text-chef-dark font-bold py-3 rounded-xl shadow-sm hover:bg-gray-50 flex items-center justify-center gap-2 disabled:opacity-50">
                  <Share2 size={18} /> Partager
@@ -160,7 +198,10 @@ const ShoppingList: React.FC = () => {
                     <div onClick={() => handleToggle(item)} className={`cursor-pointer w-6 h-6 rounded-lg border-2 flex items-center justify-center ${item.checked ? 'bg-chef-green border-chef-green' : 'border-gray-300'}`}>
                         {item.checked && <Check size={14} className="text-white" />}
                     </div>
-                    <span onClick={() => handleToggle(item)} className={`flex-1 font-body text-lg cursor-pointer ${item.checked ? 'text-gray-400 line-through' : 'text-chef-dark'}`}>{item.text}</span>
+                    {/* DISPLAY CLEANED TEXT (NO QUANTITIES) */}
+                    <span onClick={() => handleToggle(item)} className={`flex-1 font-body text-lg cursor-pointer ${item.checked ? 'text-gray-400 line-through' : 'text-chef-dark'}`}>
+                        {cleanSearchTerm(item.text)}
+                    </span>
                     <button onClick={() => handleDelete(item.id)} className="text-gray-300 hover:text-red-400 p-2"><Trash2 size={18} /></button>
                  </div>
              ))}
