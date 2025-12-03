@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
-import { Calendar, Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Lightbulb, Clock, ChefHat, Soup, ChevronDown, Utensils } from 'lucide-react';
+import { Calendar, Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Lightbulb, Clock, ChefHat, Soup, ChevronDown, Utensils, AlertCircle } from 'lucide-react';
 
 const MealPlanner: React.FC = () => {
     const [plan, setPlan] = useState<WeeklyPlan | null>(null);
     const [status, setStatus] = useState<LoadingState>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
     const [dietary, setDietary] = useState('Équilibré (Classique)');
     const [people, setPeople] = useState(2);
     const [addedToList, setAddedToList] = useState(false);
@@ -21,15 +22,21 @@ const MealPlanner: React.FC = () => {
 
     const handleGenerate = async () => {
         setStatus('loading');
+        setErrorMessage('');
         setAddedToList(false);
         try {
             const newPlan = await generateWeeklyMenu(dietary, people);
+            if (!newPlan) throw new Error("L'IA n'a pas renvoyé de planning valide.");
+            
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');
-        } catch (e) {
-            console.error(e);
+        } catch (e: any) {
+            console.error("Erreur planning:", e);
             setStatus('error');
+            setErrorMessage(e.message || "Erreur de connexion à l'IA. Vérifiez votre clé API.");
+            // Force alert for immediate feedback
+            alert(`Erreur : ${e.message || "Vérifiez votre clé API ou votre connexion."}`);
         }
     };
 
@@ -120,7 +127,14 @@ const MealPlanner: React.FC = () => {
                 )}
             </header>
 
-            {!plan || status === 'loading' ? (
+            {status === 'error' && errorMessage && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-700 font-bold animate-pulse">
+                    <AlertCircle size={24} />
+                    <span>{errorMessage}</span>
+                </div>
+            )}
+
+            {!plan ? (
                 <div className="animate-fade-in max-w-3xl mx-auto">
                     
                     {/* SECTION 1: BATCH COOKING PREVIEW (ALWAYS VISIBLE) */}
