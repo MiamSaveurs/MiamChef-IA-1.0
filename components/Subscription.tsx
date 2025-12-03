@@ -316,11 +316,11 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
           </div>
       )}
 
-      {/* Pricing Cards */}
-      <div className="px-4 max-w-6xl mx-auto w-full z-10 grid md:grid-cols-3 gap-6 items-end">
+      {/* Pricing Cards - CORRECTED GRID ALIGNMENT */}
+      <div className="px-4 max-w-6xl mx-auto w-full z-10 grid md:grid-cols-3 gap-6 items-start">
         
         {/* MONTHLY (LIBERTE) */}
-        <div className="bg-white rounded-3xl p-6 shadow-card border border-gray-100 flex flex-col h-[420px] relative hover:-translate-y-2 transition-transform duration-300 opacity-90 hover:opacity-100">
+        <div className="mt-8 bg-white rounded-3xl p-6 shadow-card border border-gray-100 flex flex-col min-h-[450px] relative hover:-translate-y-2 transition-transform duration-300 opacity-90 hover:opacity-100">
             <h3 className="font-display text-2xl text-chef-dark mb-2">Liberté</h3>
             <div className="text-3xl font-display text-gray-700 mb-1">4,99 € <span className="text-sm text-gray-400 font-body">/ mois</span></div>
             <p className="text-xs text-gray-400 mb-6">Facturé mensuellement. Sans engagement.</p>
@@ -337,13 +337,13 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                 </li>
             </ul>
 
-            <button onClick={() => initiatePayment('monthly')} className="w-full py-3 rounded-xl bg-chef-green text-white font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-100">
+            <button onClick={() => initiatePayment('monthly')} className="w-full py-3 rounded-xl bg-chef-green text-white font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-100 mt-auto">
                 Choisir l'offre Mensuelle
             </button>
         </div>
 
         {/* ANNUAL (BEST SELLER - FULL ACCESS) */}
-        <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-chef-green flex flex-col h-[520px] relative transform scale-105 z-20">
+        <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-chef-green flex flex-col min-h-[550px] relative transform z-20">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-chef-green text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg">
                 Le choix des Chefs
             </div>
@@ -363,16 +363,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                 ))}
             </ul>
 
-            <button onClick={() => initiatePayment('annual')} className="w-full py-4 rounded-xl bg-gradient-to-r from-chef-green to-green-600 text-white font-bold shadow-lg shadow-green-200 hover:shadow-green-300 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={() => initiatePayment('annual')} className="w-full py-4 rounded-xl bg-gradient-to-r from-chef-green to-green-600 text-white font-bold shadow-lg shadow-green-200 hover:shadow-green-300 hover:scale-[1.02] transition-all flex items-center justify-center gap-2 mt-auto">
                 <Star size={18} fill="white" /> {isTrialExpired ? 'Débloquer l\'application' : 'Commencer l\'essai gratuit'}
             </button>
-            <p className="text-xs text-center text-gray-500 mt-3 font-bold">
+            <p className="text-sm text-center text-chef-green mt-4 font-black uppercase tracking-wide border-t border-gray-100 pt-3">
                 {isTrialExpired ? 'Accès immédiat.' : '7 jours gratuits, puis 39,99€/an'}
             </p>
         </div>
 
         {/* LIFETIME */}
-        <div className="bg-gray-900 rounded-3xl p-6 shadow-card border border-gray-800 flex flex-col h-[420px] relative text-white hover:-translate-y-2 transition-transform duration-300">
+        <div className="mt-8 bg-gray-900 rounded-3xl p-6 shadow-card border border-gray-800 flex flex-col min-h-[450px] relative text-white hover:-translate-y-2 transition-transform duration-300">
             <div className="absolute top-4 right-4 text-yellow-400">
                 <Crown size={24} />
             </div>
@@ -389,7 +389,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                 ))}
             </ul>
 
-            <button onClick={() => initiatePayment('lifetime')} className="w-full py-3 rounded-xl bg-chef-green text-white font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50">
+            <button onClick={() => initiatePayment('lifetime')} className="w-full py-3 rounded-xl bg-chef-green text-white font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 mt-auto">
                 Obtenir l'accès à vie
             </button>
         </div>
