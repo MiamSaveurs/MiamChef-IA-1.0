@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
 
@@ -7,10 +8,12 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * ======================================================================================
  * 
  * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS et MONDIAL de la FoodTech.
- * 2. DATE SYSTÈME : 29 NOVEMBRE 2025 (Temps Réel).
+ * 2. DATE SYSTÈME : 3 DÉCEMBRE 2025 (Temps Réel).
  * 3. ADN "WINNER" : Innovation perpétuelle. Nous écrasons la concurrence par la qualité.
  * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo" obligatoire.
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
+ * 6. MÉMOIRE UTILISATEUR : Apprends des préférences de l'utilisateur (Régime, Goûts) 
+ *    pour personnaliser les futures interactions (Prélude au suivi nutritionnel).
  */
 
 // Helper: Safe API Key Access to prevent crashes (White Screen fix)
@@ -109,7 +112,7 @@ export const generateChefRecipe = async (
     if (!apiKey) throw new Error("Clé API manquante. Veuillez configurer VITE_API_KEY.");
     
     const ai = new GoogleGenAI({ apiKey });
-    const currentDate = "Samedi 29 Novembre 2025";
+    const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = `
       Tu es MiamChef IA, le LEADER MONDIAL INCONTESTÉ de la Food Tech.
@@ -129,6 +132,8 @@ export const generateChefRecipe = async (
       INSTRUCTIONS :
       - Recette Markdown détaillée (## Titres).
       - Analyse nutritionnelle précise.
+      - Utilisation EXCLUSIVE d'ingrédients trouvables en supermarché français standard (Leclerc, Carrefour, etc.).
+      - Priorité au Petit Budget mais avec une touche Bistronomique.
       - Ton "Leader & Winner".
     `;
 
@@ -161,10 +166,13 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
     const apiKey = getApiKey();
     if (!apiKey) throw new Error("Clé API manquante.");
     const ai = new GoogleGenAI({ apiKey });
+    const currentDate = "Mercredi 3 Décembre 2025";
+
     const prompt = `
-      Tu es MiamChef IA. Recherche et adapte la recette : "${query}" pour ${people} personnes.
+      Tu es MiamChef IA. DATE : ${currentDate}.
+      Recherche et adapte la recette : "${query}" pour ${people} personnes.
       Leader Mondial, Veille Permanente.
-      Rends-la accessible mais gastronomique.
+      Rends-la accessible mais gastronomique (Petit Budget, Supermarché France).
       Format JSON MiamChef standard.
     `;
 
@@ -201,8 +209,10 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
     const apiKey = getApiKey();
     if (!apiKey) throw new Error("Clé API manquante.");
     const ai = new GoogleGenAI({ apiKey });
+    const currentDate = "Mercredi 3 Décembre 2025";
+
     const prompt = `
-      MODIFICATION DE RECETTE (MiamChef IA).
+      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
       Recette : ${originalRecipe}
       Demande : "${modification}"
       Garde le style, recalcule les métriques.
@@ -235,7 +245,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const apiKey = getApiKey();
         if (!apiKey) throw new Error("Clé API manquante.");
         const ai = new GoogleGenAI({ apiKey });
-        const currentDate = "Samedi 29 Novembre 2025";
+        const currentDate = "Mercredi 3 Décembre 2025";
 
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).
@@ -243,7 +253,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION :
-            1. Générer 14 repas (Midi/Soir) variés et équilibrés.
+            1. Générer 14 repas (Midi/Soir) variés et équilibrés (Style Bistrot Petit Budget).
             2. Calculer les macros (Protéines, Glucides, Lipides, Kcal) pour chaque repas.
             3. Fournir 3 à 5 astuces précises de "Batch Cooking" pour gagner du temps le week-end.
             
@@ -309,12 +319,13 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
     const apiKey = getApiKey();
     if (!apiKey) throw new Error("Clé API manquante.");
     const ai = new GoogleGenAI({ apiKey });
+    const currentDate = "Mercredi 3 Décembre 2025";
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: "Analyse cette image. Propose une recette gastronomique anti-gaspi. Format Markdown avec titre." },
+          { text: `Nous sommes le ${currentDate}. Analyse cette image. Propose une recette gastronomique (Bistrot/Petit Budget) anti-gaspi. Format Markdown avec titre.` },
         ],
       },
     });
@@ -327,9 +338,11 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     const apiKey = getApiKey();
     if (!apiKey) throw new Error("Clé API manquante.");
     const ai = new GoogleGenAI({ apiKey });
+    const currentDate = "Mercredi 3 Décembre 2025";
+    
     const prompt = audience === 'b2b' 
-        ? `Sommelier Pro pour "${request}". Pitch commercial, prix, service.` 
-        : `Sommelier pour "${request}". 3 accords, prix, pédagogie.`;
+        ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, prix, service.` 
+        : `Sommelier pour "${request}". Date : ${currentDate}. 3 accords (Gamme Bistrot/Découverte, bon rapport Q/P), prix indicatif, pédagogie.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",

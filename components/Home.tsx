@@ -53,8 +53,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
             </div>
 
             <h1 className="text-5xl font-display leading-tight mb-4">
-                Ne cuisinez plus <br/>
-                <span className="text-chef-green">comme avant.</span>
+                Créez des recettes uniques <br/>
+                <span className="text-chef-green">avec ce que vous avez.</span>
             </h1>
             <p className="text-gray-300 text-lg font-light mb-8 leading-relaxed">
                 Le premier livre de cuisine <strong className="text-white font-bold">infini</strong>. Le Couteau Suisse culinaire français indispensable.
@@ -69,7 +69,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                         <Book size={20} />
                     </div>
                     <div className="text-right">
-                        <div className="font-bold text-white text-sm leading-tight">Mon Cahier</div>
+                        <div className="font-bold text-white text-sm leading-tight">Mon Carnet</div>
                         <div className="text-[10px] text-gray-400 group-hover:text-gray-300">Mes Recettes</div>
                     </div>
                 </button>
@@ -215,10 +215,15 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
 
         {/* Footer */}
         <div className="text-center pt-8 pb-4 flex flex-col items-center gap-2">
-             <p className="text-xs text-gray-400 font-medium">MiamChef IA © {new Date().getFullYear()}</p>
+             <p className="text-xs text-gray-400 font-medium">MiamChef IA by MiamSaveurs © {new Date().getFullYear()}</p>
              <button onClick={() => setView(AppView.LEGAL)} className="text-[10px] text-gray-300 hover:text-chef-green flex items-center gap-1">
                  <FileText size={10} /> Mentions Légales
              </button>
+             {/* Tech Status for Debugging */}
+             <div className="flex gap-2 opacity-30 hover:opacity-100 transition-opacity mt-2">
+                 <span className="text-[9px] bg-gray-200 px-1 rounded">v1.0.0</span>
+                 <span className={`text-[9px] px-1 rounded ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+             </div>
         </div>
       </div>
     </div>
