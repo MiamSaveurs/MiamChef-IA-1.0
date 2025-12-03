@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Check, Star, Crown, X, ShieldCheck, Zap, Lock, Trash2, Clock, AlertTriangle, CreditCard, Loader2, Smartphone, FileText, Settings, Eye } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
@@ -411,10 +410,9 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
 
       </div>
 
-      {/* Payment Methods Visual Strip - Original Colors */}
-      <div className="mt-12 flex justify-center gap-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa" className="h-6 object-contain" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" className="h-6 object-contain" />
+      {/* Payment Methods Visual Strip - Stripe Logo */}
+      <div className="mt-12 flex justify-center gap-4 items-center">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-8 object-contain" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6 object-contain" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/2560px-Apple_Pay_logo.svg.png" alt="Apple Pay" className="h-6 object-contain" />
       </div>
