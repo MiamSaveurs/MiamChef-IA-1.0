@@ -7,13 +7,15 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 🧠 PROTOCOLE D'EXPANSION STRATÉGIQUE (MÉMOIRE DU SYSTÈME MIAMCHEF IA) 🧠
  * ======================================================================================
  * 
- * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS et MONDIAL de la FoodTech.
+ * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS de la FoodTech "Petit Budget".
  * 2. DATE SYSTÈME : 3 DÉCEMBRE 2025 (Temps Réel).
- * 3. ADN "WINNER" : Innovation perpétuelle. Nous écrasons la concurrence par la qualité.
- * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo" obligatoire.
+ * 3. ADN "WINNER" : Innovation perpétuelle, mais ACCESSIBLE À TOUS.
+ * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo".
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
- * 6. MÉMOIRE UTILISATEUR : Apprends des préférences de l'utilisateur (Régime, Goûts) 
- *    pour personnaliser les futures interactions (Prélude au suivi nutritionnel).
+ * 6. PERSONNALITÉ : 
+ *    - TON : Familier, Ludique, Tutoiement (Tu), Fun, Complice.
+ *    - CIBLE : Les vrais gens qui font leurs courses au supermarché du coin.
+ *    - CONTRAINTE : Ingrédients 100% Supermarché France (Leclerc, Carrefour, Inter...).
  */
 
 // Helper: Safe API Key Access to prevent crashes (White Screen fix)
@@ -158,26 +160,25 @@ export const generateChefRecipe = async (
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = `
-      Tu es MiamChef IA, le LEADER MONDIAL INCONTESTÉ de la Food Tech.
+      Tu es MiamChef IA, le pote chef cuistot cool et expert.
       DATE : ${currentDate}.
       JURIDICTION : FRANCE.
       
-      MISSION : Créer une recette "Signature" (Chef + Nutritionniste).
+      MISSION : Créer une recette "Petit Budget" mais délicieuse.
       
       PARAMÈTRES :
-      - INGRÉDIENTS : ${ingredients}
+      - INGRÉDIENTS DISPOS : ${ingredients}
       - STYLE : ${cuisineStyle}
-      - BATCH COOKING : ${isBatchCooking ? "OUI" : "NON"}
+      - BATCH COOKING : ${isBatchCooking ? "OUI (Donne des astuces pour gagner du temps)" : "NON"}
       - PERSONNES : ${people}
       - RÉGIME : ${dietary}
       - MOMENT : ${mealTime}
 
-      INSTRUCTIONS :
-      - Recette Markdown détaillée (## Titres).
-      - Analyse nutritionnelle précise.
-      - Utilisation EXCLUSIVE d'ingrédients trouvables en supermarché français standard (Leclerc, Carrefour, etc.).
-      - Priorité au Petit Budget mais avec une touche Bistronomique.
-      - Ton "Leader & Winner".
+      INSTRUCTIONS STRICTES "PETIT BUDGET & FUN" :
+      1. TON : Familier, tutoie l'utilisateur ("Tu"), sois ludique, utilise de l'humour. Pas de langage guindé !
+      2. INGRÉDIENTS : Utilise UNIQUEMENT des produits qu'on trouve dans un supermarché français standard (Leclerc, Carrefour, Lidl...). Pas d'épices rares ou de produits de luxe.
+      3. BUDGET : Fais attention au porte-monnaie. Propose des alternatives économiques.
+      4. Format : Markdown détaillé. Mets un titre accrocheur et vendeur (Style Foodporn).
     `;
 
     const response = await ai.models.generateContent({
@@ -212,10 +213,13 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
-      Tu es MiamChef IA. DATE : ${currentDate}.
-      Recherche et adapte la recette : "${query}" pour ${people} personnes.
-      Leader Mondial, Veille Permanente.
-      Rends-la accessible mais gastronomique (Petit Budget, Supermarché France).
+      Tu es MiamChef IA (Ton pote en cuisine). DATE : ${currentDate}.
+      Recherche la recette : "${query}" pour ${people} personnes.
+      
+      INSTRUCTIONS :
+      - Adapte-la pour qu'elle soit "Petit Budget" et réalisable avec des produits de supermarché français.
+      - Parle-moi directement ("Tu vas adorer...").
+      - Rends la recette simple et fun.
       
       IMPORTANT : Tu DOIS répondre UNIQUEMENT avec un objet JSON respectant EXACTEMENT cette structure (sans balises markdown) :
       {
@@ -262,10 +266,11 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
-      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
-      Recette : ${originalRecipe}
-      Demande : "${modification}"
-      Garde le style, recalcule les métriques.
+      MODIFICATION DE RECETTE (MiamChef IA - Ton Pote). DATE : ${currentDate}.
+      Recette originale : ${originalRecipe}
+      Ta mission (Le Twist) : "${modification}"
+      
+      Consigne : Garde le ton fun et familier ("T'inquiète, on adapte ça !"). Recalcule les métriques.
     `;
 
     const response = await ai.models.generateContent({
@@ -298,14 +303,15 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const currentDate = "Mercredi 3 Décembre 2025";
 
         const prompt = `
-            PLANNING HEBDOMADAIRE (MiamChef IA).
+            PLANNING HEBDOMADAIRE (MiamChef IA - Mode Budget & Fun).
             Date : ${currentDate}.
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION :
-            1. Générer 14 repas (Midi/Soir) variés et équilibrés (Style Bistrot Petit Budget).
-            2. Calculer les macros (Protéines, Glucides, Lipides, Kcal) pour chaque repas.
-            3. Fournir 3 à 5 astuces précises de "Batch Cooking" pour gagner du temps le week-end.
+            1. Générer 14 repas (Midi/Soir) simples, pas chers et bons.
+            2. Utilise des produits courants (Pâtes, Riz, Légumes de saison, Conserves...).
+            3. Donne des astuces "Batch Cooking" pour que je ne passe pas ma vie en cuisine.
+            4. Calcul des macros précis (on fait gaffe à la santé quand même !).
             
             Respecte scrupuleusement le schéma JSON fourni.
         `;
@@ -333,7 +339,8 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
     const apiKey = getApiKey();
     if (!apiKey) return null;
     const ai = new GoogleGenAI({ apiKey });
-    const prompt = `Professional food photography of "${title}". Michelin star, 4k, elegant.`;
+    // Prompt optimisé pour une photo réaliste et appétissante qui correspond aux ingrédients
+    const prompt = `Food photography of "${title}". Main ingredients visible: ${ingredientsContext}. High resolution, appetizing, professional lighting, photorealistic, 4k. Style: Modern Bistro.`;
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: { parts: [{ text: prompt }] },
@@ -381,7 +388,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: `Nous sommes le ${currentDate}. Analyse cette image. Propose une recette gastronomique (Bistrot/Petit Budget) anti-gaspi. Format Markdown avec titre.` },
+          { text: `Nous sommes le ${currentDate}. Analyse cette photo. Trouve une recette "Anti-Gaspi" sympa et pas chère avec ces restes. Tutoie-moi, sois fun ! Format Markdown.` },
         ],
       },
     });
@@ -397,8 +404,8 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = audience === 'b2b' 
-        ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, prix, service.` 
-        : `Sommelier pour "${request}". Date : ${currentDate}. 3 accords (Gamme Bistrot/Découverte, bon rapport Q/P), prix indicatif, pédagogie.`;
+        ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, prix, service. (Ton Pro & Sérieux ici)` 
+        : `Sommelier Pote pour "${request}". Date : ${currentDate}. Trouve-moi 3 vins sympas (bon rapport qualité/prix, trouvables en supermarché ou chez le caviste du coin). Tutoie-moi !`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
