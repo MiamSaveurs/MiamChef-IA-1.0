@@ -50,7 +50,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
     "Photos de plats Ultra HD (MiamSaveurs™)",
     "Vidéos immersives des étapes",
     "Analyse Nutritionnelle Clinique & Nutri-Score",
-    "Sommelier & Styliste Illimités",
+    "Sommelier IA & Batch Cooking",
     "Scan Frigo Anti-Gaspillage Illimité",
     "Export Drive & Liste Partagée",
     "Mode Cuisine Immersive Vocal",
