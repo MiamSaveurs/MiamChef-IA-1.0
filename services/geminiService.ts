@@ -99,6 +99,49 @@ const recipeSchema: Schema = {
   required: ["markdownContent", "metrics", "utensils", "seoTitle", "seoDescription"],
 };
 
+const weeklyPlanSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    startDate: { type: Type.STRING },
+    batchCookingTips: { type: Type.ARRAY, items: { type: Type.STRING } },
+    days: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          day: { type: Type.STRING },
+          lunch: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              calories: { type: Type.NUMBER },
+              proteins: { type: Type.NUMBER },
+              carbs: { type: Type.NUMBER },
+              fats: { type: Type.NUMBER },
+              ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+          },
+          dinner: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              calories: { type: Type.NUMBER },
+              proteins: { type: Type.NUMBER },
+              carbs: { type: Type.NUMBER },
+              fats: { type: Type.NUMBER },
+              ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+          },
+        },
+        required: ["day", "lunch", "dinner"],
+      },
+    },
+  },
+  required: ["days", "batchCookingTips"],
+};
+
 export const generateChefRecipe = async (
   ingredients: string,
   people: number,
@@ -257,17 +300,23 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             2. Calculer les macros (Protéines, Glucides, Lipides, Kcal) pour chaque repas.
             3. Fournir 3 à 5 astuces précises de "Batch Cooking" pour gagner du temps le week-end.
             
-            JSON strict compatible WeeklyPlan.
+            Respecte scrupuleusement le schéma JSON fourni.
         `;
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
-            config: { responseMimeType: "application/json" }
+            config: { 
+                responseMimeType: "application/json",
+                responseSchema: weeklyPlanSchema
+            }
         });
 
-        return cleanAndParseJSON(response.text);
+        const plan = cleanAndParseJSON(response.text);
+        if (!plan.days) throw new Error("Format de planning invalide.");
+        return plan;
     } catch (e) {
+        console.error("Weekly Planner Error:", e);
         throw e;
     }
 }
