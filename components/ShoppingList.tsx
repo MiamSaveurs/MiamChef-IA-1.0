@@ -91,12 +91,15 @@ const ShoppingList: React.FC = () => {
   };
 
   const cleanSearchTerm = (text: string) => {
-      // Nettoyage robuste des quantités, unités et prépositions pour ne garder que le produit
-      let clean = text.replace(/^[-*•]\s*/, '').trim(); // Puces
-      // Enlève: 500g, 1.5kg, 20cl, 2 c.à.s, 3 tranches, etc.
+      // Nettoyage robuste des quantités
+      let clean = text.replace(/^[-*•]\s*/, '').trim(); 
+      // 1. Suppression du contenu entre parenthèses (Nouvelle méthode)
+      clean = clean.replace(/\s*\(.*?\)/g, '');
+      
+      // 2. Nettoyage de sécurité des unités au cas où
       clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
-      // Enlève les nombres isolés au début (ex: "2 avocats" -> "avocats")
       clean = clean.replace(/^\d+\s+/, '');
+      
       // Capitalize
       return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
   };

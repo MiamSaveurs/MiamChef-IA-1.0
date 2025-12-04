@@ -178,8 +178,9 @@ export const generateChefRecipe = async (
       INSTRUCTIONS STRICTES :
       1. TON : VOUVOIEMENT ("Vous"), ludique, bienveillant.
       2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits de supermarché français. Priorité Petit Budget.
-      3. FORMAT INGRÉDIENTS : LISTE À PUCES. Pour faciliter les courses, mets le nom du produit d'abord, et la quantité entre parenthèses à la fin.
-         Exemple : "- Beurre doux (40g)" et non "40g de beurre".
+      3. FORMAT INGRÉDIENTS : IMPORTANT POUR LE DRIVE. Mets le nom du produit d'abord, et la quantité entre parenthèses à la fin.
+         Exemple correct : "- Lardons fumés (200g)"
+         Exemple incorrect : "- 200g de lardons fumés"
       4. Format : Markdown détaillé.
     `;
 
@@ -221,7 +222,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       INSTRUCTIONS :
       - Adaptez pour "Petit Budget".
       - Utilisez le VOUVOIEMENT.
-      - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". Important pour la liste de courses.
+      - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". La quantité DOIT être à la fin entre parenthèses pour le Drive.
       
       FORMAT JSON STRICT :
       {

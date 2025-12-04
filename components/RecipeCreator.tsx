@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
@@ -8,6 +7,34 @@ import ReactMarkdown from 'react-markdown';
 
 // VOTRE TAG PARTENAIRE AMAZON OFFICIEL
 const AMAZON_TAG = 'miamsaveurs-21';
+
+// DRIVE / SUPERMARKET LOGIC
+const supermarketBrands = [
+  { name: 'E.Leclerc Drive', color: 'bg-blue-600' },
+  { name: 'Carrefour Drive', color: 'bg-blue-500' },
+  { name: 'Intermarché Drive', color: 'bg-red-600' },
+  { name: 'Auchan Drive', color: 'bg-red-500' },
+  { name: 'Courses U', color: 'bg-blue-400' },
+  { name: 'Chronodrive', color: 'bg-green-600' },
+  { name: 'Casino Drive', color: 'bg-green-700' },
+  { name: 'Lidl', color: 'bg-yellow-500' }
+];
+
+const MacroDonut = ({ value, label, color, total }: { value: number, label: string, color: string, total: number }) => {
+  // Approx percentage calculation for visual loop
+  const percentage = total > 0 ? (value / total) * 100 : 0;
+  return (
+      <div className="flex flex-col items-center">
+          <div className="relative w-16 h-16 flex items-center justify-center rounded-full mb-2" 
+               style={{ background: `conic-gradient(${color} ${percentage}%, #e5e7eb 0)` }}>
+              <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
+                 <span className="text-sm font-bold text-gray-700">{value}g</span>
+              </div>
+          </div>
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</span>
+      </div>
+  )
+};
 
 const RecipeCreator: React.FC = () => {
   const [mode, setMode] = useState<'create' | 'search'>('create');
@@ -365,18 +392,6 @@ const RecipeCreator: React.FC = () => {
       }
   };
 
-  // DRIVE / SUPERMARKET LOGIC
-  const supermarketBrands = [
-      { name: 'E.Leclerc Drive', color: 'bg-blue-600' },
-      { name: 'Carrefour Drive', color: 'bg-blue-500' },
-      { name: 'Intermarché Drive', color: 'bg-red-600' },
-      { name: 'Auchan Drive', color: 'bg-red-500' },
-      { name: 'Courses U', color: 'bg-blue-400' },
-      { name: 'Chronodrive', color: 'bg-green-600' },
-      { name: 'Casino Drive', color: 'bg-green-700' },
-      { name: 'Lidl', color: 'bg-yellow-500' }
-  ];
-
   const handleOpenDriveModal = (ingredient: string) => {
       // Use strict cleaning for modal
       const clean = cleanIngredientName(ingredient);
@@ -455,22 +470,6 @@ const RecipeCreator: React.FC = () => {
           alert("Impossible de démarrer le micro.");
       }
   };
-
-  const MacroDonut = ({ value, label, color, total }: { value: number, label: string, color: string, total: number }) => {
-     // Approx percentage calculation for visual loop
-     const percentage = total > 0 ? (value / total) * 100 : 0;
-     return (
-         <div className="flex flex-col items-center">
-             <div className="relative w-16 h-16 flex items-center justify-center rounded-full mb-2" 
-                  style={{ background: `conic-gradient(${color} ${percentage}%, #e5e7eb 0)` }}>
-                 <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
-                    <span className="text-sm font-bold text-gray-700">{value}g</span>
-                 </div>
-             </div>
-             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</span>
-         </div>
-     )
-  }
 
   return (
     <div className="pb-32 px-4 pt-6 max-w-5xl mx-auto min-h-screen font-body">
