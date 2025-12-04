@@ -782,10 +782,10 @@ const RecipeCreator: React.FC = () => {
           <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
               <div className="flex gap-3">
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-gray-500 font-bold text-xs uppercase tracking-wide whitespace-nowrap"><Wand2 size={14}/> Adapter la recette :</div>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Végétarienne")} className="twist-btn bg-white border border-gray-200 text-gray-700 hover:border-green-300 hover:text-green-700 hover:bg-green-50">Vegan</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Très Épicée")} className="twist-btn bg-white border border-gray-200 text-gray-700 hover:border-red-300 hover:text-red-700 hover:bg-red-50">Épicé</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version adaptée aux Enfants")} className="twist-btn bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50">Enfant</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Express (-15 min)")} className="twist-btn bg-white border border-gray-200 text-gray-700 hover:border-yellow-300 hover:text-yellow-700 hover:bg-yellow-50">Express</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Végétarienne")} className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 bg-white border border-gray-200 text-gray-700 hover:border-green-300 hover:text-green-700 hover:bg-green-50">Vegan</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Très Épicée")} className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 bg-white border border-gray-200 text-gray-700 hover:border-red-300 hover:text-red-700 hover:bg-red-50">Épicé</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version adaptée aux Enfants")} className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50">Enfant</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Express (-15 min)")} className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 bg-white border border-gray-200 text-gray-700 hover:border-yellow-300 hover:text-yellow-700 hover:bg-yellow-50">Express</button>
               </div>
           </div>
 
@@ -1070,17 +1070,6 @@ const RecipeCreator: React.FC = () => {
               </div>
           </div>
       )}
-
-      <style>{`
-        .twist-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-      `}</style>
     </div>
   );
 };
