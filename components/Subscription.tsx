@@ -396,11 +396,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
 
       </div>
 
-      {/* Payment Methods Visual Strip - Stripe Logo */}
+      {/* Payment Methods Visual Strip - Stripe Logo (APPLE PAY REMOVED) */}
       <div className="mt-12 flex justify-center gap-4 items-center">
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-8 object-contain" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6 object-contain" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/2560px-Apple_Pay_logo.svg.png" alt="Apple Pay" className="h-6 object-contain" />
       </div>
 
       {/* Trust Badges */}
