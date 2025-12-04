@@ -178,7 +178,8 @@ export const generateChefRecipe = async (
       INSTRUCTIONS STRICTES :
       1. TON : VOUVOIEMENT ("Vous"), ludique, bienveillant.
       2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits de supermarché français. Priorité Petit Budget.
-      3. FORMAT INGRÉDIENTS : Pour faciliter les courses, listez les ingrédients un par un avec une puce.
+      3. FORMAT INGRÉDIENTS : LISTE À PUCES. Pour faciliter les courses, mets le nom du produit d'abord, et la quantité entre parenthèses à la fin.
+         Exemple : "- Beurre doux (40g)" et non "40g de beurre".
       4. Format : Markdown détaillé.
     `;
 
@@ -220,6 +221,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       INSTRUCTIONS :
       - Adaptez pour "Petit Budget".
       - Utilisez le VOUVOIEMENT.
+      - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". Important pour la liste de courses.
       
       FORMAT JSON STRICT :
       {
@@ -269,7 +271,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
       Recette : ${originalRecipe}
       Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Restez simple.
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)".
     `;
 
     const response = await ai.models.generateContent({

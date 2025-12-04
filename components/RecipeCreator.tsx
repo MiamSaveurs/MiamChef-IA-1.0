@@ -86,6 +86,7 @@ const RecipeCreator: React.FC = () => {
 
   const handleGenerate = async () => {
     // FORCE BUTTON UNLOCK if key is missing or something goes wrong, we want to try anyway
+    // Use try/catch to display alerts if it fails
     if (mode === 'create' && !ingredients.trim()) return;
     if (mode === 'search' && !searchQuery.trim()) return;
 
@@ -125,9 +126,7 @@ const RecipeCreator: React.FC = () => {
       console.error(e);
       setStatus('error');
       // Visual feedback if API key issue suspected
-      if (e.message?.includes('API key')) {
-          alert("Erreur : Clé API manquante ou invalide. Vérifiez la configuration Vercel (VITE_API_KEY).");
-      }
+      alert(`Erreur lors de la génération. Vérifiez votre connexion ou la clé API.\nDétails: ${e.message}`);
     }
   };
 
@@ -329,10 +328,12 @@ const RecipeCreator: React.FC = () => {
       // 1. Remove Markdown (*, -, etc)
       let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
       
-      // 2. Remove anything inside parentheses (e.g., "Farine (200g)")
+      // 2. Remove anything inside parentheses (Quantity is now usually here due to prompt)
+      // Ex: "Beurre doux (40g)" -> "Beurre doux"
       clean = clean.replace(/\s*\(.*?\)/g, '');
 
-      // 3. Remove quantities at start (e.g., "200g de", "2 cuillères", "1")
+      // 3. Robust clean of leading numbers/units IF user didn't follow prompt
+      // Ex: "40g de beurre" -> "beurre"
       clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
       
       // 4. Cleanup trailing numbers if any left
@@ -1028,7 +1029,7 @@ const RecipeCreator: React.FC = () => {
                  </div>
             </div>
         </div>
-      )}
+      </div>
 
       {/* DRIVE LOCATOR MODAL */}
       {showDriveModal && (

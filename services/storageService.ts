@@ -2,10 +2,20 @@
 import { SavedRecipe, ShoppingItem, WeeklyPlan } from '../types';
 
 const DB_NAME = 'MiamChefDB';
-const DB_VERSION = 3; // Incremented for Planning support
+const DB_VERSION = 3; // Version stable. NE PAS CHANGER sans stratégie de migration.
 const RECIPE_STORE = 'recipes';
 const SHOPPING_STORE = 'shoppingList';
 const PLANNING_STORE = 'planning';
+
+/*
+ * 🛡️ PROTOCOLE DE SÉCURITÉ DES DONNÉES UTILISATEUR 🛡️
+ * 
+ * RÈGLE D'OR : Les recettes de l'utilisateur ("Mon Carnet") sont SACRÉES.
+ * Elles ne doivent JAMAIS être effacées lors d'une mise à jour de l'application, d'un redéploiement ou d'une correction de bug.
+ * La base de données IndexedDB est persistante.
+ * 
+ * Si une modification de structure est nécessaire, utiliser une migration de version (onupgradeneeded) qui PRÉSERVE les données existantes.
+ */
 
 // Subscription / Trial Logic Storage (using LocalStorage for simplicity as per requirements)
 export const getTrialStatus = (): { startDate: number, isSubscribed: boolean, subscriptionTier: 'free' | 'monthly' | 'annual' | 'lifetime' } => {
