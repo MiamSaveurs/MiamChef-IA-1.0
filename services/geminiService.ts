@@ -311,7 +311,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             1. Générer 14 repas (Midi/Soir) simples, économiques et rapides.
             2. Utilisez des produits courants et pas chers (Pâtes, Riz, Légumes saison, Oeufs...).
             3. Donnez des astuces "Batch Cooking" pour gagner du temps.
-            4. TON : Vouvoiement ("Vous"), motivant.
+            4. TON : Vouvoiement ("Vous"), motivant et ludique.
             
             Respecte scrupuleusement le schéma JSON fourni.
         `;
@@ -405,7 +405,7 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     
     const prompt = audience === 'b2b' 
         ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 
-        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Utilisez le VOUVOIEMENT.`;
+        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
