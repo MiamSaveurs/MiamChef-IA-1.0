@@ -1028,7 +1028,7 @@ const RecipeCreator: React.FC = () => {
                  </div>
             </div>
         </div>
-      </div>
+      )}
 
       {/* DRIVE LOCATOR MODAL */}
       {showDriveModal && (
