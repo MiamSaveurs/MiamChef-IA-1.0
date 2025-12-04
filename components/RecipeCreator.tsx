@@ -324,22 +324,34 @@ const RecipeCreator: React.FC = () => {
   const ingredientsList = getRecipeSection('ingredients');
   const instructionsList = getRecipeSection('instructions');
 
+  // CLEANING FUNCTION FOR INGREDIENTS
+  const cleanIngredientName = (text: string) => {
+      // 1. Remove Markdown (*, -, etc)
+      let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+      
+      // 2. Remove anything inside parentheses (e.g., "Farine (200g)")
+      clean = clean.replace(/\s*\(.*?\)/g, '');
+
+      // 3. Remove quantities at start (e.g., "200g de", "2 cuillères", "1")
+      clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+      
+      // 4. Cleanup trailing numbers if any left
+      clean = clean.replace(/^\d+\s+/, '').trim();
+      
+      // 5. Capitalize
+      return clean.charAt(0).toUpperCase() + clean.slice(1);
+  };
+
   const handleAddSelectedToShoppingList = async () => {
       if (checkedIngredients.size === 0) return;
       
       const selectedItems: string[] = [];
       ingredientsList.forEach((line, idx) => {
           if (checkedIngredients.has(idx)) {
-              // Clean the text: remove bullets, bold/italic AND QUANTITIES
-              let cleanText = line.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+              const cleanText = cleanIngredientName(line);
               
-              // Remove quantities regex
-              cleanText = cleanText.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
-              cleanText = cleanText.replace(/^\d+\s+/, '').trim();
-              cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
-
               // Do not add servings lines
-              if (!cleanText.toLowerCase().startsWith('pour')) {
+              if (!cleanText.toLowerCase().startsWith('pour') && cleanText.length > 1) {
                  selectedItems.push(cleanText);
               }
           }
@@ -349,7 +361,6 @@ const RecipeCreator: React.FC = () => {
           await addToShoppingList(selectedItems);
           setAddedToList(true);
           setTimeout(() => setAddedToList(false), 3000);
-          // Optional: clear selection or keep it? Keeping it shows what was added.
       }
   };
 
@@ -366,9 +377,8 @@ const RecipeCreator: React.FC = () => {
   ];
 
   const handleOpenDriveModal = (ingredient: string) => {
-      // Clean for modal display too
-      let clean = ingredient.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
-      clean = clean.replace(/^\d+\s+/, '').trim();
+      // Use strict cleaning for modal
+      const clean = cleanIngredientName(ingredient);
       
       setSelectedIngredientForDrive(clean);
       setShowDriveModal(true);

@@ -161,7 +161,7 @@ export const generateChefRecipe = async (
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = `
-      Tu es MiamChef IA, le coach culinaire expert en PETIT BUDGET et ANTI-INFLATION.
+      Tu es MiamChef IA, le coach culinaire expert en PETIT BUDGET.
       DATE : ${currentDate}.
       JURIDICTION : FRANCE.
       
@@ -176,10 +176,10 @@ export const generateChefRecipe = async (
       - MOMENT : ${mealTime}
 
       INSTRUCTIONS STRICTES :
-      1. TON : Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique, bienveillant, encourageant. Parlez comme un coach sympa, pas un professeur strict.
-      2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits courants de supermarché français (Leclerc, Intermarché, Lidl...). Pas de truffe, pas d'épices introuvables.
-      3. BUDGET : Priorité absolue aux économies. Proposez une cuisine de tous les jours, pas de la haute gastronomie complexe.
-      4. Format : Markdown détaillé. Mettez un titre accrocheur qui donne faim.
+      1. TON : VOUVOIEMENT ("Vous"), ludique, bienveillant.
+      2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits de supermarché français. Priorité Petit Budget.
+      3. FORMAT INGRÉDIENTS : Pour faciliter les courses, listez les ingrédients un par un avec une puce.
+      4. Format : Markdown détaillé.
     `;
 
     const response = await ai.models.generateContent({
@@ -218,11 +218,10 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
       INSTRUCTIONS :
-      - Adaptez la recette pour qu'elle soit "Petit Budget" et réalisable avec des produits de supermarché.
-      - Utilisez le VOUVOIEMENT ("Vous").
-      - Soyez ludique et clair.
+      - Adaptez pour "Petit Budget".
+      - Utilisez le VOUVOIEMENT.
       
-      IMPORTANT : Répondez UNIQUEMENT avec un objet JSON respectant EXACTEMENT cette structure (sans balises markdown) :
+      FORMAT JSON STRICT :
       {
         "markdownContent": "Texte de la recette...",
         "seoTitle": "Titre...",
@@ -267,10 +266,10 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 
     const prompt = `
       MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
-      Recette originale : ${originalRecipe}
-      Votre mission (Le Twist) : "${modification}"
+      Recette : ${originalRecipe}
+      Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT ("Vous"). Restez simple et économique.
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Restez simple.
     `;
 
     const response = await ai.models.generateContent({
@@ -303,17 +302,16 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const currentDate = "Mercredi 3 Décembre 2025";
 
         const prompt = `
-            PLANNING HEBDOMADAIRE (MiamChef IA - Mode Budget & Famille).
+            PLANNING HEBDOMADAIRE (MiamChef IA).
             Date : ${currentDate}.
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION :
-            1. Générer 14 repas (Midi/Soir) simples, économiques et rapides.
-            2. Utilisez des produits courants et pas chers (Pâtes, Riz, Légumes saison, Oeufs...).
-            3. Donnez des astuces "Batch Cooking" pour gagner du temps.
-            4. TON : Vouvoiement ("Vous"), motivant et ludique.
+            1. Générer 14 repas (Midi/Soir) simples, économiques.
+            2. Ingrédients "Supermarché" uniquement.
+            3. TON : Vouvoiement, ludique.
             
-            Respecte scrupuleusement le schéma JSON fourni.
+            Respecte le schéma JSON.
         `;
 
         const response = await ai.models.generateContent({
