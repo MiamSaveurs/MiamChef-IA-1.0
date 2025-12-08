@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
 
@@ -18,31 +17,6 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  *    - CONTRAINTE : Ingrédients 100% Supermarché France (Leclerc, Carrefour, Inter...).
  *    - STYLE : "Fait Maison", Simple, Economique. PAS de Gastro/Bistrot complexe.
  */
-
-// Helper: Safe API Key Access to prevent crashes (White Screen fix)
-const getApiKey = (): string => {
-  try {
-    // 1. Try VITE prefix (Standard for Vercel/Vite apps)
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
-      // @ts-ignore
-      return import.meta.env.VITE_API_KEY;
-    }
-    // 2. Fallback to other variable names
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.API_KEY) {
-      // @ts-ignore
-      return import.meta.env.API_KEY;
-    }
-    // 3. Last resort
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
-    }
-  } catch (e) {
-    console.warn("API Key check warning");
-  }
-  return ""; 
-};
 
 // Helper to encode file to base64
 export const fileToGenerativePart = async (file: File): Promise<string> => {
@@ -154,10 +128,7 @@ export const generateChefRecipe = async (
   isBatchCooking: boolean
 ): Promise<GeneratedContent> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante. Veuillez configurer VITE_API_KEY.");
-    
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = `
@@ -210,9 +181,7 @@ export const generateChefRecipe = async (
 
 export const searchChefsRecipe = async (query: string, people: number): Promise<GeneratedContent> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
@@ -262,9 +231,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
 
 export const modifyChefRecipe = async (originalRecipe: string, modification: string): Promise<GeneratedContent> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "Mercredi 3 Décembre 2025";
 
     const prompt = `
@@ -299,9 +266,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 
 export const generateWeeklyMenu = async (dietary: string, people: number): Promise<WeeklyPlan> => {
     try {
-        const apiKey = getApiKey();
-        if (!apiKey) throw new Error("Clé API manquante.");
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const currentDate = "Mercredi 3 Décembre 2025";
 
         const prompt = `
@@ -337,9 +302,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
 
 export const generateRecipeImage = async (title: string, ingredientsContext: string): Promise<string | null> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) return null;
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     // Prompt optimisé pour une photo réaliste style "Cuisine Maison"
     const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking.`;
     const response = await ai.models.generateContent({
@@ -355,9 +318,7 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
 
 export const generateStepVideo = async (stepDescription: string): Promise<string | null> => {
     try {
-        const apiKey = getApiKey();
-        if (!apiKey) return null;
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         let operation = await ai.models.generateVideos({
             model: 'veo-3.1-fast-generate-preview',
             prompt: `Cooking step close-up: ${stepDescription}. Home kitchen setting.`,
@@ -372,7 +333,7 @@ export const generateStepVideo = async (stepDescription: string): Promise<string
         if (attempts >= 20) return null;
         const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
         if (!downloadLink) return null;
-        const response = await fetch(`${downloadLink}&key=${apiKey}`);
+        const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
         const blob = await response.blob();
         return URL.createObjectURL(blob);
     } catch (error) { return null; }
@@ -380,9 +341,7 @@ export const generateStepVideo = async (stepDescription: string): Promise<string
 
 export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "Mercredi 3 Décembre 2025";
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -399,9 +358,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
 
 export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b' = 'b2c'): Promise<GeneratedContent> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "Mercredi 3 Décembre 2025";
     
     const prompt = audience === 'b2b' 
@@ -420,9 +377,7 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
 
 export const editDishPhoto = async (imageBase64: string, prompt: string): Promise<string> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("Clé API manquante.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-image",
       contents: {
