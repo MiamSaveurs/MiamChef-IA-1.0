@@ -22,7 +22,7 @@ interface SubscriptionProps {
 }
 
 const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('monthly');
   const [processing, setProcessing] = useState(false);
 
   const handleProcessPayment = (plan: 'annual' | 'monthly' | 'lifetime') => {
@@ -83,7 +83,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       Commencez votre <br/> <span className="italic font-serif">essai gratuit</span>
                   </h1>
                   <p className="text-gray-300 text-sm md:text-base font-light leading-relaxed max-w-sm mx-auto">
-                      Nutrition personnalisée, plus de 1600 recettes et de nouvelles créations chaque jour de la semaine.
+                      Débloquez la puissance illimitée de l'IA. Créez, planifiez et savourez sans aucune limite.
                   </p>
               </div>
 
