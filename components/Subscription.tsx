@@ -45,10 +45,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center font-sans overflow-y-auto overflow-x-hidden">
+    <div className="fixed inset-0 z-[60] bg-black font-sans text-white overflow-y-auto">
       
-      {/* BACKGROUND LUXURY NATURE */}
-      <div className="absolute inset-0 z-0">
+      {/* BACKGROUND LUXURY NATURE (Fixed) */}
+      <div className="fixed inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1470753937643-efeb931202a9?q=80&w=2070&auto=format&fit=crop" 
             className="w-full h-full object-cover filter brightness-[0.35] blur-sm scale-105"
@@ -57,25 +57,25 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
       </div>
 
-      {/* CLOSE BUTTON */}
+      {/* CLOSE BUTTON (Fixed position relative to viewport) */}
       {!isTrialExpired && (
-        <button onClick={onClose} className="absolute top-6 right-6 z-50 text-white/60 hover:text-white transition-colors">
-            <X size={32} />
+        <button onClick={onClose} className="fixed top-6 right-6 z-[70] text-white/60 hover:text-white transition-colors bg-black/20 backdrop-blur-md p-2 rounded-full">
+            <X size={24} />
         </button>
       )}
 
-      {/* ACCESSIBILITY TOGGLE (Hidden corner) */}
+      {/* ACCESSIBILITY TOGGLE */}
       {toggleLargeText && (
-          <button onClick={toggleLargeText} className="absolute top-6 left-6 z-50 text-white/30 hover:text-white transition-colors flex gap-2 items-center text-xs uppercase tracking-widest">
+          <button onClick={toggleLargeText} className="fixed top-6 left-6 z-[70] text-white/30 hover:text-white transition-colors flex gap-2 items-center text-xs uppercase tracking-widest bg-black/20 backdrop-blur-md px-3 py-1 rounded-full">
               <Eye size={16} /> {largeText ? 'Texte Normal' : 'Texte Agrandir'}
           </button>
       )}
 
-      {/* MAIN CARD "CADRE" */}
-      <div className="relative z-10 w-full max-w-lg mx-auto p-6 md:p-0">
+      {/* SCROLLABLE CONTAINER */}
+      <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-12 px-4">
           
-          {/* GLASSMORPHISM CONTAINER */}
-          <div className="bg-[#1a1c1a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden text-white animate-fade-in">
+          {/* GLASSMORPHISM CARD */}
+          <div className="w-full max-w-lg bg-[#1a1c1a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-fade-in">
               
               {/* HEADER */}
               <div className="pt-10 pb-6 px-8 text-center">
@@ -184,8 +184,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                             onClick={() => handleProcessPayment(selectedPlan)}
                             className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              {/* Simple Stripe Text Logo Replacement since SVG might be tricky */}
-                              <span className="font-bold text-lg tracking-tight">Stripe</span>
+                              {/* Stripe Logo SVG */}
+                              <svg viewBox="0 0 60 25" className="h-6 fill-white">
+                                <path d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.94 0-5.05 2.87-8.97 6.73-8.97 4.52 0 5.69 4.39 5.47 10.89zm-5.47-2.39c0-2.05-.58-4.73-2.3-4.73-1.89 0-3.34 2.55-3.67 4.73h5.97zM28.45 6.06c0-1.77-1.02-3.23-3.5-3.23-2.9 0-4.81 1.93-4.81 1.93l-.97-3.4s-1.89-1.3-4.27-1.3c-2.3 0-4.17 1.48-4.17 1.48l-.92-3.4H3.5v12.23h4.6V18.15c0-1.27.34-3.4 2.23-3.4 1.14 0 1.93.58 1.93 1.97v9.65h4.6V18.15c0-1.27.34-3.4 2.23-3.4 1.14 0 1.93.58 1.93 1.97v9.65h4.6V14.15c0-3.68-1.55-8.09-5.17-8.09zm15.65 1.58c1.36 0 2.23.63 2.23 2.07v16.66h4.6V9.71c0-3.68-1.55-8.09-5.17-8.09-2.3 0-4.32 1.55-4.32 1.55l.24-3.1h-4.37v26.3h4.56v-16.7c0-1.27.37-3.62 2.23-3.62zM9.81 0C7.23 0 5.12 1.3 3.96 2.37L4.93 6.3C5.7 5.6 7.23 4.39 8.93 4.39c1.6 0 2.45.92 2.45 2.25 0 .53-.15 1.3-.41 1.97C9.36 8.36 4.9 9.3 4.9 13.6c0 3.32 2.7 5.3 5.92 5.3 2.65 0 4.64-1.2 4.64-1.2l-.22 3.09h4.32V10.2c0-5.83-4.13-10.2-9.74-10.2zm.3 15.6c-1.36 0-1.82-1-1.82-1.89 0-1.6 1.99-2.2 3.69-2.6.22-.05.44-.1.63-.12.02.7.02 1.43.02 2.15 0 1.58-.87 2.46-2.52 2.46z"/>
+                              </svg>
                               <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
                           </button>
 
