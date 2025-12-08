@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Trash2, Eye, Circle, Disc } from 'lucide-react';
+import { Check, X, ShieldCheck, Lock, Trash2, Eye, Circle, Disc, Star, Zap } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
@@ -98,9 +98,9 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           {/* MONTHLY PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('monthly')}
-                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                           >
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-start mb-3">
                                   <div>
                                       <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">Mensuel</span></div>
                                       <div className="text-xs font-medium opacity-90">7 jours gratuits, puis abonnement mensuel.</div>
@@ -109,37 +109,51 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                       {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
+                              {/* FEATURES LIST */}
+                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Accès illimité Chef & Nutrition</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo Anti-Gaspi</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA (Mode Pro inclus)</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sans publicité</div>
+                              </div>
                           </div>
 
                           {/* ANNUAL PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('annual')}
-                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                           >
                               {selectedPlan === 'annual' && (
                                 <div className="absolute -top-3 right-4 bg-[#c25e46] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wide transform group-hover:scale-105 transition-transform">
-                                    Économisez plus de 37 % par an !
+                                    Meilleure Valeur
                                 </div>
                               )}
                               
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-start mb-3">
                                   <div>
                                       <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">Annuel</span></div>
                                       <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">équivalent à 3,33 € par mois</div>
-                                      <div className="text-xs font-medium opacity-90 text-white font-bold bg-white/10 px-2 py-1 rounded inline-block">7 jours gratuits, puis 39,99€/an.</div>
+                                      <div className="text-sm font-bold opacity-100 text-white bg-white/20 px-2 py-1 rounded inline-block">7 jours gratuits, puis 39,99€/an</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
+                              </div>
+                              {/* FEATURES LIST */}
+                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className="text-yellow-400"/> Tout l'offre Liberté</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA & Batch Cooking</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Export Drive & Liste Partagée</div>
+                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> 2 mois offerts</div>
                               </div>
                           </div>
 
                           {/* LIFETIME PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('lifetime')}
-                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'lifetime' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'lifetime' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                           >
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-start mb-3">
                                   <div>
                                       <div className="text-2xl font-display mb-1 text-[#d4af37]">149,99 € <span className="text-sm font-sans font-normal opacity-80 text-white">À Vie</span></div>
                                       <div className="text-xs font-medium opacity-90">Paiement unique. Accès illimité pour toujours.</div>
@@ -147,6 +161,13 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div className="text-white">
                                       {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
+                              </div>
+                              {/* FEATURES LIST */}
+                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2 font-bold"><Zap size={12} fill="currentColor" className="text-yellow-400"/> Toutes les fonctionnalités</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Photos HD & Vidéos immersives</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Futures mises à jour incluses</div>
+                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Rentabilisé en quelques mois</div>
                               </div>
                           </div>
 
@@ -158,16 +179,17 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">2. Créez un compte & Payez</h2>
                       
                       <div className="space-y-3">
-                          {/* STRIPE BUTTON (White background for original logo color) */}
+                          {/* STRIPE BUTTON */}
                           <button 
                             onClick={() => handleProcessPayment(selectedPlan)}
-                            className="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
+                            className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="h-8" alt="Stripe" />
-                              <span className="opacity-80">Payer par Carte</span>
+                              {/* Simple Stripe Text Logo Replacement since SVG might be tricky */}
+                              <span className="font-bold text-lg tracking-tight">Stripe</span>
+                              <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
                           </button>
 
-                          {/* PAYPAL BUTTON (Original Colors) */}
+                          {/* PAYPAL BUTTON */}
                           <button 
                             onClick={() => handleProcessPayment(selectedPlan)}
                             className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
