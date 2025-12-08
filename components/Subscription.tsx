@@ -126,7 +126,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div>
                                       <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">Annuel</span></div>
                                       <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">équivalent à 3,33 € par mois</div>
-                                      <div className="text-xs font-medium opacity-90"><strong>7 jours gratuits</strong>, puis 39,99€/an.</div>
+                                      <div className="text-xs font-medium opacity-90 text-white font-bold bg-white/10 px-2 py-1 rounded inline-block">7 jours gratuits, puis 39,99€/an.</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
@@ -158,20 +158,22 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">2. Créez un compte & Payez</h2>
                       
                       <div className="space-y-3">
+                          {/* STRIPE BUTTON (White background for original logo color) */}
                           <button 
                             onClick={() => handleProcessPayment(selectedPlan)}
-                            className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 border border-white/10 shadow-lg"
+                            className="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="w-16" alt="Stripe" style={{filter: 'invert(1)'}} />
-                              Payer par Carte (Sécurisé)
+                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="h-8" alt="Stripe" />
+                              <span className="opacity-80">Payer par Carte</span>
                           </button>
-                          
+
+                          {/* PAYPAL BUTTON (Original Colors) */}
                           <button 
                             onClick={() => handleProcessPayment(selectedPlan)}
-                            className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 border border-white/10 shadow-lg"
+                            className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <ShieldCheck size={20} />
-                              Poursuivre par courriel (Sécurisé)
+                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
+                              <span className="opacity-90">Payer avec PayPal</span>
                           </button>
                       </div>
                   </div>
