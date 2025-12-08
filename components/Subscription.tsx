@@ -22,7 +22,7 @@ interface SubscriptionProps {
 }
 
 const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
   const [processing, setProcessing] = useState(false);
 
   const handleProcessPayment = (plan: 'annual' | 'monthly' | 'lifetime') => {
@@ -110,7 +110,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div>
                                       <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">Annuel</span></div>
                                       <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">équivalent à 3,33 € par mois</div>
-                                      <div className="text-xs font-medium opacity-90">7 jours gratuits, puis renouvellement annuel.</div>
+                                      <div className="text-xs font-medium opacity-90"><strong>7 jours gratuits</strong>, puis 39,99€/an.</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
@@ -134,14 +134,23 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               </div>
                           </div>
 
-                      </div>
-                  </div>
+                          {/* LIFETIME PLAN */}
+                          <div 
+                            onClick={() => setSelectedPlan('lifetime')}
+                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'lifetime' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                          >
+                              <div className="flex justify-between items-center">
+                                  <div>
+                                      <div className="text-2xl font-display mb-1 text-[#d4af37]">149,99 € <span className="text-sm font-sans font-normal opacity-80 text-white">À Vie</span></div>
+                                      <div className="text-xs font-medium opacity-90">Paiement unique. Accès illimité pour toujours.</div>
+                                  </div>
+                                  <div className="text-white">
+                                      {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
+                                  </div>
+                              </div>
+                          </div>
 
-                  {/* LIFETIME LINK (Subtle) */}
-                  <div className="text-center">
-                      <button onClick={() => handleProcessPayment('lifetime')} className="text-xs text-[#d4af37] hover:text-white transition-colors underline decoration-1 underline-offset-4">
-                          Ou préférez-vous un accès À VIE pour 149,99 € ? (Paiement unique)
-                      </button>
+                      </div>
                   </div>
 
                   {/* STEP 2: CREATE ACCOUNT (PAYMENT) */}
@@ -161,14 +170,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                             onClick={() => handleProcessPayment(selectedPlan)}
                             className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 border border-white/10 shadow-lg"
                           >
-                              <svg className="w-5 h-5 fill-current" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z"/></svg>
-                              Continuer avec Apple (Stripe)
-                          </button>
-
-                          <button 
-                            onClick={() => handleProcessPayment(selectedPlan)}
-                            className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 border border-white/10 shadow-lg"
-                          >
                               <ShieldCheck size={20} />
                               Poursuivre par courriel (Sécurisé)
                           </button>
@@ -178,7 +179,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                   {/* FOOTER */}
                   <p className="text-[10px] text-center text-gray-400 leading-relaxed px-4">
                       En vous abonnant, vous acceptez nos <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">conditions d'utilisation</button> et <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">notre politique de confidentialité</button>.
-                      <br/>Vous ne serez pas débité avant la fin de votre essai gratuit de 7 jours.
+                      <br/>Vous ne serez pas débité avant la fin de votre essai gratuit de 7 jours (sauf offre À Vie).
                   </p>
 
               </div>
