@@ -144,7 +144,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className="text-yellow-400"/> Tout l'offre Liberté</div>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA & Batch Cooking</div>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Export Drive & Liste Partagée</div>
-                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> 2 mois offerts</div>
+                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Accès prioritaire nouveautés</div>
                               </div>
                           </div>
 
@@ -165,8 +165,8 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               {/* FEATURES LIST */}
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
                                   <div className="flex items-center gap-2 font-bold"><Zap size={12} fill="currentColor" className="text-yellow-400"/> Toutes les fonctionnalités</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA & Batch Cooking</div>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Photos HD & Vidéos immersives</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Futures mises à jour incluses</div>
                                   <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Rentabilisé en quelques mois</div>
                               </div>
                           </div>
