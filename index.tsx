@@ -11,7 +11,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = { hasError: false, error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         <div style={{ padding: 20, textAlign: 'center', fontFamily: 'sans-serif' }}>
           <h1 style={{ color: '#ef4444' }}>Oups !</h1>
           <p>Une erreur est survenue.</p>
-          <button onClick={() => window.location.reload()} style={{ marginTop: 20, padding: '10px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: 5 }}>
+          <button onClick={() => window.location.reload()} style={{ marginTop: 20, padding: '10px 20px', background: '#509f2a', color: 'white', border: 'none', borderRadius: 5 }}>
             Recharger
           </button>
         </div>

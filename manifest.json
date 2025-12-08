@@ -4,7 +4,7 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1a1a",
-  "theme_color": "#10b981",
+  "theme_color": "#509f2a",
   "version": "1.0.0",
   "description": "Le premier livre de cuisine infini. Votre assistant culinaire intelligent à double cerveau crée des recettes uniques, sur-mesure et illimitées.",
   "icons": [
