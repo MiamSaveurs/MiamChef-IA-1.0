@@ -95,7 +95,23 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       
                       <div className="space-y-4">
                           
-                          {/* ANNUAL PLAN (SELECTED) */}
+                          {/* MONTHLY PLAN */}
+                          <div 
+                            onClick={() => setSelectedPlan('monthly')}
+                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                          >
+                              <div className="flex justify-between items-center">
+                                  <div>
+                                      <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">Mensuel</span></div>
+                                      <div className="text-xs font-medium opacity-90">7 jours gratuits, puis abonnement mensuel.</div>
+                                  </div>
+                                  <div className="text-white">
+                                      {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
+                                  </div>
+                              </div>
+                          </div>
+
+                          {/* ANNUAL PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('annual')}
                             className={`relative p-5 rounded-2xl border transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
@@ -114,22 +130,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
-                                  </div>
-                              </div>
-                          </div>
-
-                          {/* MONTHLY PLAN */}
-                          <div 
-                            onClick={() => setSelectedPlan('monthly')}
-                            className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
-                          >
-                              <div className="flex justify-between items-center">
-                                  <div>
-                                      <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">Mensuel</span></div>
-                                      <div className="text-xs font-medium opacity-90">7 jours gratuits, puis abonnement mensuel.</div>
-                                  </div>
-                                  <div className="text-white">
-                                      {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
                           </div>
@@ -162,8 +162,8 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                             onClick={() => handleProcessPayment(selectedPlan)}
                             className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 border border-white/10 shadow-lg"
                           >
-                              <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" className="w-5 h-5" alt="Google" />
-                              Continuer avec Google (Stripe)
+                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" className="w-16" alt="Stripe" style={{filter: 'invert(1)'}} />
+                              Payer par Carte (Sécurisé)
                           </button>
                           
                           <button 
