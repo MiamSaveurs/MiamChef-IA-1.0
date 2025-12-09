@@ -5,10 +5,19 @@ import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
 // ==========================================
-// 🔴 ZONE DE CONFIGURATION PAIEMENT STRIPE 🔴
+// 🔴 ZONE DE CONFIGURATION PAIEMENT 🔴
 // ==========================================
+
+// 1. Collez vos liens de paiement STRIPE ici
 const STRIPE_LINKS = {
     monthly: "", 
+    annual: "", 
+    lifetime: ""
+};
+
+// 2. Collez vos liens de paiement PAYPAL ici (Onglet "E-mail" lors de la création du bouton)
+const PAYPAL_LINKS = {
+    monthly: "", // Ex: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XXXX
     annual: "", 
     lifetime: ""
 };
@@ -25,21 +34,33 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
   const [processing, setProcessing] = useState(false);
 
-  const handleProcessPayment = (plan: 'annual' | 'monthly' | 'lifetime') => {
+  const handleProcessPayment = (plan: 'annual' | 'monthly' | 'lifetime', provider: 'stripe' | 'paypal') => {
       setProcessing(true);
       
-      // 1. CHECK FOR REAL STRIPE LINK
-      const stripeLink = STRIPE_LINKS[plan];
-      if (stripeLink && stripeLink.length > 5) {
-          setTimeout(() => { window.location.href = stripeLink; }, 1000);
+      let paymentLink = "";
+
+      // 1. CHOIX DU LIEN SELON LE FOURNISSEUR
+      if (provider === 'paypal') {
+          paymentLink = PAYPAL_LINKS[plan];
+      } else {
+          paymentLink = STRIPE_LINKS[plan];
+      }
+
+      // 2. REDIRECTION RÉELLE
+      if (paymentLink && paymentLink.length > 5) {
+          // Petit délai pour l'effet visuel
+          setTimeout(() => { 
+              window.location.href = paymentLink; 
+          }, 500);
           return;
       }
 
-      // 2. FALLBACK: SIMULATION
+      // 3. FALLBACK: SIMULATION (Si aucun lien n'est configuré)
       setTimeout(() => {
           setProcessing(false);
           startSubscription(plan);
-          alert(`MODE SIMULATION : Abonnement ${plan} activé !`);
+          alert(`MODE SIMULATION (${provider.toUpperCase()}) : Abonnement ${plan} activé !`);
+          // En production, supprimez cette partie simulation ou commentez-la
           window.location.reload();
       }, 2000);
   };
@@ -181,7 +202,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       <div className="space-y-3">
                           {/* STRIPE BUTTON */}
                           <button 
-                            onClick={() => handleProcessPayment(selectedPlan)}
+                            onClick={() => handleProcessPayment(selectedPlan, 'stripe')}
                             className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
                               {/* Stripe Logo Official (Wikimedia) - White Filter */}
@@ -195,7 +216,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
 
                           {/* PAYPAL BUTTON */}
                           <button 
-                            onClick={() => handleProcessPayment(selectedPlan)}
+                            onClick={() => handleProcessPayment(selectedPlan, 'paypal')}
                             className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
                               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
