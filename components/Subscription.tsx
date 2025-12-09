@@ -119,9 +119,11 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   </div>
                               </div>
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className="text-yellow-400"/> Tout l'abonnement Mensuel</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Fonctions exclusives (Batch Cooking)</div>
-                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Accès prioritaire nouveautés</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Création Illimitée (Cuisine & Pâtisserie)</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo IA & Anti-Gaspillage</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA (Accords Mets & Vins)</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Semainier & Batch Cooking</div>
+                                  <div className="flex items-center gap-2 text-yellow-200"><Star size={12} fill="currentColor" className="text-yellow-400"/> Accès prioritaire aux nouveautés</div>
                               </div>
                           </div>
 
@@ -138,6 +140,13 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div className="text-white">
                                       {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
+                              </div>
+                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Création Illimitée (Cuisine & Pâtisserie)</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo IA & Anti-Gaspillage</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA (Accords Mets & Vins)</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Semainier & Batch Cooking</div>
+                                  <div className="flex items-center gap-2 text-[#d4af37] font-bold"><Star size={12} fill="currentColor" /> Mises à jour futures incluses à vie</div>
                               </div>
                           </div>
 
