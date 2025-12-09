@@ -1,23 +1,23 @@
 
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Trash2, Eye, Circle, Disc, Star, Zap } from 'lucide-react';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, Zap } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
 // ==========================================
-// 🔴 ZONE DE CONFIGURATION PAIEMENT 🔴
+// CONFIGURATION DES LIENS DE PAIEMENT
 // ==========================================
 
-// 1. Collez vos liens de paiement STRIPE ici
-const STRIPE_LINKS = {
-    monthly: "", 
+// 1. Collez vos liens PayPal ici (depuis l'onglet "E-mail" lors de la création du bouton sur PayPal)
+const PAYPAL_LINKS = {
+    monthly: "", // Ex: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=...
     annual: "", 
-    lifetime: ""
+    lifetime: "" 
 };
 
-// 2. Collez vos liens de paiement PAYPAL ici (Onglet "E-mail" lors de la création du bouton)
-const PAYPAL_LINKS = {
-    monthly: "", // Ex: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XXXX
+// 2. Collez vos liens Stripe ici (si utilisé)
+const STRIPE_LINKS = {
+    monthly: "", 
     annual: "", 
     lifetime: ""
 };
@@ -39,28 +39,25 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       
       let paymentLink = "";
 
-      // 1. CHOIX DU LIEN SELON LE FOURNISSEUR
       if (provider === 'paypal') {
           paymentLink = PAYPAL_LINKS[plan];
       } else {
           paymentLink = STRIPE_LINKS[plan];
       }
 
-      // 2. REDIRECTION RÉELLE
+      // Redirection vers le lien de paiement s'il existe
       if (paymentLink && paymentLink.length > 5) {
-          // Petit délai pour l'effet visuel
           setTimeout(() => { 
               window.location.href = paymentLink; 
           }, 500);
           return;
       }
 
-      // 3. FALLBACK: SIMULATION (Si aucun lien n'est configuré)
+      // Mode simulation (si aucun lien n'est configuré)
       setTimeout(() => {
           setProcessing(false);
           startSubscription(plan);
-          alert(`MODE SIMULATION (${provider.toUpperCase()}) : Abonnement ${plan} activé !`);
-          // En production, supprimez cette partie simulation ou commentez-la
+          alert(`Abonnement ${plan} activé (Mode Test). Ajoutez vos liens dans le code pour activer le paiement réel.`);
           window.location.reload();
       }, 2000);
   };
@@ -68,7 +65,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   return (
     <div className="fixed inset-0 z-[60] bg-black font-sans text-white overflow-y-auto">
       
-      {/* BACKGROUND LUXURY NATURE (Fixed) */}
+      {/* BACKGROUND IMAGE */}
       <div className="fixed inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1470753937643-efeb931202a9?q=80&w=2070&auto=format&fit=crop" 
@@ -78,7 +75,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
       </div>
 
-      {/* CLOSE BUTTON (Fixed position relative to viewport) */}
+      {/* CLOSE BUTTON */}
       {!isTrialExpired && (
         <button onClick={onClose} className="fixed top-6 right-6 z-[70] text-white/60 hover:text-white transition-colors bg-black/20 backdrop-blur-md p-2 rounded-full">
             <X size={24} />
@@ -95,16 +92,15 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       {/* SCROLLABLE CONTAINER */}
       <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-12 px-4">
           
-          {/* GLASSMORPHISM CARD */}
           <div className="w-full max-w-lg bg-[#1a1c1a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-fade-in">
               
               {/* HEADER */}
               <div className="pt-10 pb-6 px-8 text-center">
                   <h1 className="font-display text-4xl md:text-5xl mb-4 text-white drop-shadow-sm font-normal">
-                      Commencez votre <br/> <span className="italic font-serif">essai gratuit</span>
+                      MiamChef <span className="text-[#509f2a] italic">Premium</span>
                   </h1>
                   <p className="text-gray-300 text-sm md:text-base font-light leading-relaxed max-w-sm mx-auto">
-                      Débloquez la puissance illimitée de l'IA. Créez, planifiez et savourez sans aucune limite.
+                      Débloquez tout le potentiel de votre assistant culinaire. Création illimitée, Sommelier IA et bien plus.
                   </p>
               </div>
 
@@ -112,7 +108,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                   
                   {/* STEP 1: CHOOSE PLAN */}
                   <div>
-                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">1. Choisissez votre forfait</h2>
+                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">1. Choisissez votre offre</h2>
                       
                       <div className="space-y-4">
                           
@@ -123,18 +119,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           >
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">Mensuel</span></div>
-                                      <div className="text-xs font-medium opacity-90">7 jours gratuits, puis abonnement mensuel.</div>
+                                      <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">/ mois</span></div>
+                                      <div className="text-xs font-medium opacity-90">Sans engagement. Annulable à tout moment.</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              {/* FEATURES LIST */}
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Accès illimité Chef & Nutrition</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Accès illimité Chef & Sommelier</div>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo Anti-Gaspi</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA (Mode Pro inclus)</div>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sans publicité</div>
                               </div>
                           </div>
@@ -146,25 +140,22 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           >
                               {selectedPlan === 'annual' && (
                                 <div className="absolute -top-3 right-4 bg-[#c25e46] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wide transform group-hover:scale-105 transition-transform">
-                                    MEILLEUR FORFAIT
+                                    Meilleure Offre
                                 </div>
                               )}
                               
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">Annuel</span></div>
-                                      <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">équivalent à 3,33 € par mois</div>
-                                      <div className="text-sm font-bold opacity-100 text-white bg-white/20 px-2 py-1 rounded inline-block">7 jours gratuits, puis 39,99€/an</div>
+                                      <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
+                                      <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">Soit 2 mois offerts</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              {/* FEATURES LIST */}
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className="text-yellow-400"/> Tout l'offre Liberté</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA & Batch Cooking</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Export Drive & Liste Partagée</div>
+                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className="text-yellow-400"/> Tout l'abonnement Mensuel</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Fonctions exclusives (Batch Cooking)</div>
                                   <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Accès prioritaire nouveautés</div>
                               </div>
                           </div>
@@ -183,37 +174,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                       {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              {/* FEATURES LIST */}
-                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2 font-bold"><Zap size={12} fill="currentColor" className="text-yellow-400"/> Toutes les fonctionnalités</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA & Batch Cooking</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Photos HD & Vidéos immersives</div>
-                                  <div className="flex items-center gap-2 text-yellow-200"><Check size={12} className="opacity-70"/> Rentabilisé en quelques mois</div>
-                              </div>
                           </div>
 
                       </div>
                   </div>
 
-                  {/* STEP 2: CREATE ACCOUNT (PAYMENT) */}
+                  {/* STEP 2: PAYMENT BUTTONS */}
                   <div>
-                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">2. Créez un compte & Payez</h2>
+                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">2. Règlement sécurisé</h2>
                       
                       <div className="space-y-3">
-                          {/* STRIPE BUTTON */}
-                          <button 
-                            onClick={() => handleProcessPayment(selectedPlan, 'stripe')}
-                            className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
-                          >
-                              {/* Stripe Logo Official (Wikimedia) - White Filter */}
-                              <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" 
-                                className="h-8 w-auto brightness-0 invert" 
-                                alt="Stripe" 
-                              />
-                              <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
-                          </button>
-
                           {/* PAYPAL BUTTON */}
                           <button 
                             onClick={() => handleProcessPayment(selectedPlan, 'paypal')}
@@ -222,13 +192,30 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
                               <span className="opacity-90">Payer avec PayPal</span>
                           </button>
+
+                          {/* STRIPE BUTTON */}
+                          <button 
+                            onClick={() => handleProcessPayment(selectedPlan, 'stripe')}
+                            className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
+                          >
+                              <img 
+                                src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" 
+                                className="h-8 w-auto brightness-0 invert" 
+                                alt="Stripe" 
+                              />
+                              <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
+                          </button>
+                      </div>
+                      
+                      <div className="flex justify-center gap-4 mt-4 text-[10px] text-gray-400">
+                          <div className="flex items-center gap-1"><Lock size={10}/> Paiement chiffré SSL</div>
+                          <div className="flex items-center gap-1"><ShieldCheck size={10}/> Garantie Satisfait ou Remboursé</div>
                       </div>
                   </div>
 
                   {/* FOOTER */}
                   <p className="text-[10px] text-center text-gray-400 leading-relaxed px-4">
-                      En vous abonnant, vous acceptez nos <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">conditions d'utilisation</button> et <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">notre politique de confidentialité</button>.
-                      <br/>Vous ne serez pas débité avant la fin de votre essai gratuit de 7 jours (sauf offre À Vie).
+                      En vous abonnant, vous acceptez nos <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">CGV</button>.
                   </p>
 
               </div>
