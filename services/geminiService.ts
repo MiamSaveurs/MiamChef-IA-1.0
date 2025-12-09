@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
 
@@ -11,11 +12,9 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 3. ADN "WINNER" : Innovation perpétuelle, mais ACCESSIBLE À TOUS.
  * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo".
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
- * 6. PERSONNALITÉ : 
- *    - TON : VOUVOIEMENT ("Vous"), Ludique, Pédagogique, Bienveillant.
- *    - CIBLE : Familles, Étudiants, Cuisine du quotidien.
- *    - CONTRAINTE : Ingrédients 100% Supermarché France (Leclerc, Carrefour, Inter...).
- *    - STYLE : "Fait Maison", Simple, Economique. PAS de Gastro/Bistrot complexe.
+ * 6. PERSONNALITÉ "DOUBLE CERVEAU" :
+ *    - MODE CUISINIER : Audace, Improvisation, Feu, "Pifomètre maîtrisé".
+ *    - MODE PÂTISSIER : Rigueur absolue, Chimie, Précision au gramme près, Esthétique.
  */
 
 // Helper to encode file to base64
@@ -125,34 +124,42 @@ export const generateChefRecipe = async (
   dietary: string,
   mealTime: string,
   cuisineStyle: string,
-  isBatchCooking: boolean
+  isBatchCooking: boolean,
+  chefMode: 'cuisine' | 'patisserie'
 ): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "Mercredi 3 Décembre 2025";
+    const currentDate = "3 Décembre 2025";
     
+    // PERSONA SELECTOR
+    const persona = chefMode === 'patisserie' 
+        ? `MODE: GRAND CHEF PÂTISSIER (Double Cerveau: Sucré).
+           STYLE: Précision chirurgicale, Chimie des aliments, Esthétique, Gourmandise absolue.
+           TON: Rigoureux mais passionné, encourage la précision (pesée).`
+        : `MODE: GRAND CHEF CUISINIER (Double Cerveau: Salé).
+           STYLE: Bistronomie, Improvisation maîtrisée, Assaisonnement parfait, Audace.
+           TON: Chaleureux, "Bon vivant", encourage l'instinct.`;
+
     const prompt = `
-      Tu es MiamChef IA, le coach culinaire expert en PETIT BUDGET.
-      DATE : ${currentDate}.
-      JURIDICTION : FRANCE.
+      CONTEXTE : Nous sommes le ${currentDate}.
+      IDENTITÉ : MiamChef IA.
+      ${persona}
       
-      MISSION : Créer une recette économique, familiale et délicieuse.
+      MISSION : Créer une recette exceptionnelle mais accessible (Supermarché).
       
       PARAMÈTRES :
       - INGRÉDIENTS DISPOS : ${ingredients}
-      - STYLE : ${cuisineStyle} (Reste simple et accessible)
-      - BATCH COOKING : ${isBatchCooking ? "OUI (Donnez des astuces pour gagner du temps)" : "NON"}
+      - STYLE CULTUREL : ${cuisineStyle}
       - PERSONNES : ${people}
       - RÉGIME : ${dietary}
       - MOMENT : ${mealTime}
+      - BATCH COOKING : ${isBatchCooking ? "OUI (Inclure étapes de conservation)" : "NON"}
 
       INSTRUCTIONS STRICTES :
-      1. TON : VOUVOIEMENT ("Vous"), ludique, bienveillant.
-      2. INGRÉDIENTS : Utilisez UNIQUEMENT des produits de supermarché français. Priorité Petit Budget.
-      3. FORMAT INGRÉDIENTS : IMPORTANT POUR LE DRIVE. Mets le nom du produit d'abord, et la quantité entre parenthèses à la fin.
-         Exemple correct : "- Lardons fumés (200g)"
-         Exemple incorrect : "- 200g de lardons fumés"
-      4. Format : Markdown détaillé.
+      1. VOUVOIEMENT.
+      2. INGRÉDIENTS : Format "- Produit (Quantité)". Ex: "- Farine T55 (250g)".
+      3. Si Mode Pâtissier : Soyez intransigeant sur les pesées et les températures.
+      4. Si Mode Cuisinier : Soyez créatif sur les associations de saveurs.
     `;
 
     const response = await ai.models.generateContent({
@@ -182,7 +189,7 @@ export const generateChefRecipe = async (
 export const searchChefsRecipe = async (query: string, people: number): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "Mercredi 3 Décembre 2025";
+    const currentDate = "3 Décembre 2025";
 
     const prompt = `
       Tu es MiamChef IA. DATE : ${currentDate}.
@@ -232,7 +239,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
 export const modifyChefRecipe = async (originalRecipe: string, modification: string): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "Mercredi 3 Décembre 2025";
+    const currentDate = "3 Décembre 2025";
 
     const prompt = `
       MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
@@ -267,7 +274,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 export const generateWeeklyMenu = async (dietary: string, people: number): Promise<WeeklyPlan> => {
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const currentDate = "Mercredi 3 Décembre 2025";
+        const currentDate = "3 Décembre 2025";
 
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).
@@ -342,7 +349,7 @@ export const generateStepVideo = async (stepDescription: string): Promise<string
 export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "Mercredi 3 Décembre 2025";
+    const currentDate = "3 Décembre 2025";
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: {
@@ -359,7 +366,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
 export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b' = 'b2c'): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "Mercredi 3 Décembre 2025";
+    const currentDate = "3 Décembre 2025";
     
     const prompt = audience === 'b2b' 
         ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 
