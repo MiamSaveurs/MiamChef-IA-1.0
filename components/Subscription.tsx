@@ -1,26 +1,8 @@
 
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, Zap } from 'lucide-react';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
-
-// ==========================================
-// CONFIGURATION DES LIENS DE PAIEMENT
-// ==========================================
-
-// 1. Collez vos liens PayPal ici (depuis l'onglet "E-mail" lors de la création du bouton sur PayPal)
-const PAYPAL_LINKS = {
-    monthly: "", // Ex: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=...
-    annual: "", 
-    lifetime: "" 
-};
-
-// 2. Collez vos liens Stripe ici (si utilisé)
-const STRIPE_LINKS = {
-    monthly: "", 
-    annual: "", 
-    lifetime: ""
-};
 
 interface SubscriptionProps {
   onClose: () => void;
@@ -34,32 +16,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
   const [processing, setProcessing] = useState(false);
 
-  const handleProcessPayment = (plan: 'annual' | 'monthly' | 'lifetime', provider: 'stripe' | 'paypal') => {
+  const handleProcessPayment = () => {
       setProcessing(true);
       
-      let paymentLink = "";
-
-      if (provider === 'paypal') {
-          paymentLink = PAYPAL_LINKS[plan];
-      } else {
-          paymentLink = STRIPE_LINKS[plan];
-      }
-
-      // Redirection vers le lien de paiement s'il existe
-      if (paymentLink && paymentLink.length > 5) {
-          setTimeout(() => { 
-              window.location.href = paymentLink; 
-          }, 500);
-          return;
-      }
-
-      // Mode simulation (si aucun lien n'est configuré)
+      // Simulation standard du paiement (État original)
       setTimeout(() => {
           setProcessing(false);
-          startSubscription(plan);
-          alert(`Abonnement ${plan} activé (Mode Test). Ajoutez vos liens dans le code pour activer le paiement réel.`);
-          window.location.reload();
-      }, 2000);
+          startSubscription(selectedPlan);
+          alert("Félicitations ! Votre abonnement MiamChef Premium est activé.");
+          window.location.reload(); 
+      }, 1500);
   };
 
   return (
@@ -147,7 +113,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               <div className="flex justify-between items-start mb-3">
                                   <div>
                                       <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
-                                      <div className="text-[10px] opacity-60 uppercase tracking-wider mb-2">Soit 2 mois offerts</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
@@ -186,24 +151,36 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       <div className="space-y-3">
                           {/* PAYPAL BUTTON */}
                           <button 
-                            onClick={() => handleProcessPayment(selectedPlan, 'paypal')}
+                            onClick={handleProcessPayment}
                             className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
-                              <span className="opacity-90">Payer avec PayPal</span>
+                              {processing ? (
+                                  <span className="animate-pulse">Traitement en cours...</span>
+                              ) : (
+                                  <>
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
+                                    <span className="opacity-90">Payer avec PayPal</span>
+                                  </>
+                              )}
                           </button>
 
                           {/* STRIPE BUTTON */}
                           <button 
-                            onClick={() => handleProcessPayment(selectedPlan, 'stripe')}
+                            onClick={handleProcessPayment}
                             className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" 
-                                className="h-8 w-auto brightness-0 invert" 
-                                alt="Stripe" 
-                              />
-                              <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
+                              {processing ? (
+                                  <span className="animate-pulse">Traitement en cours...</span>
+                              ) : (
+                                  <>
+                                    <img 
+                                        src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" 
+                                        className="h-8 w-auto brightness-0 invert" 
+                                        alt="Stripe" 
+                                    />
+                                    <span className="opacity-80 font-normal text-sm border-l border-white/20 pl-3">Payer par Carte</span>
+                                  </>
+                              )}
                           </button>
                       </div>
                       
