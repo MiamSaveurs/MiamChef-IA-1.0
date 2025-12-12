@@ -47,7 +47,7 @@ const RecipeCreator: React.FC = () => {
   const [ingredients, setIngredients] = useState('');
   const [dietary, setDietary] = useState('');
   const [mealTime, setMealTime] = useState('');
-  const [cuisineStyle, setCuisineStyle] = useState('Bistrot Français'); 
+  const [cuisineStyle, setCuisineStyle] = useState('Cuisine Française'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   
   // Search state
@@ -191,7 +191,7 @@ const RecipeCreator: React.FC = () => {
     setImageStatus('loading');
     try {
       const titleMatch = recipeText.match(/^#\s+(.+)$/m);
-      const title = titleMatch ? titleMatch[1] : (mode === 'search' ? searchQuery : 'Plat Gastronomique');
+      const title = titleMatch ? titleMatch[1] : (mode === 'search' ? searchQuery : 'Plat Gourmand');
       
       const imageUrl = await generateRecipeImage(title, context);
       if (imageUrl) {
@@ -530,7 +530,7 @@ const RecipeCreator: React.FC = () => {
                                         value={cuisineStyle}
                                         onChange={(e) => setCuisineStyle(e.target.value)}
                                     >
-                                        <option value="Bistrot Français">🇫🇷 Bistrot Français</option>
+                                        <option value="Cuisine Française">🇫🇷 Cuisine Française</option>
                                         <option value="Italien (Trattoria)">🇮🇹 Italien (Trattoria)</option>
                                         <option value="Asiatique (Street Food)">🌏 Asiatique (Street Food)</option>
                                         <option value="Japonais (Authentique)">🇯🇵 Japonais (Authentique)</option>

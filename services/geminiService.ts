@@ -137,7 +137,7 @@ export const generateChefRecipe = async (
            STYLE: Précision chirurgicale, Chimie des aliments, Esthétique, Gourmandise absolue.
            TON: Rigoureux mais passionné, encourage la précision (pesée).`
         : `MODE: GRAND CHEF CUISINIER (Double Cerveau: Salé).
-           STYLE: Bistronomie, Improvisation maîtrisée, Assaisonnement parfait, Audace.
+           STYLE: Cuisine Authentique, Improvisation maîtrisée, Assaisonnement parfait, Audace.
            TON: Chaleureux, "Bon vivant", encourage l'instinct.`;
 
     const prompt = `
