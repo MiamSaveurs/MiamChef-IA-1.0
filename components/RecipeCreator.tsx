@@ -427,7 +427,7 @@ const RecipeCreator: React.FC = () => {
             <div>
             <h2 className="text-3xl font-display text-chef-dark leading-none">Atelier du Chef</h2>
             <p className="text-gray-500 text-sm font-body">
-                Décembre 2025 • Double Cerveau Actif
+                Décembre 2025
             </p>
             </div>
         </header>
