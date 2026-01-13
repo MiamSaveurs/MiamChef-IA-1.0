@@ -57,29 +57,52 @@ const SmartTimer: React.FC = () => {
             oscillator.connect(gainNode);
             gainNode.connect(ctx.destination);
 
-            // Use a high pitch sine wave which cuts through noise well
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, startTime); // A5 note
-            oscillator.frequency.exponentialRampToValueAtTime(880, startTime + 0.1);
+            // 'triangle' wave cuts through noise better than 'sine'
+            oscillator.type = 'triangle'; 
             
-            // Envelope to avoid clicking
+            // High pitch A5 (880Hz) to A6 (1760Hz) ramp for urgency
+            oscillator.frequency.setValueAtTime(880, startTime); 
+            oscillator.frequency.linearRampToValueAtTime(880, startTime + 0.1);
+            
+            // Volume Envelope - Louder (1.0 gain)
             gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(0.6, startTime + 0.05); // Attack
-            gainNode.gain.linearRampToValueAtTime(0, startTime + 0.2);   // Decay
+            gainNode.gain.linearRampToValueAtTime(1.0, startTime + 0.05); // Fast attack to max volume
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.25); // Sharp decay
 
             oscillator.start(startTime);
-            oscillator.stop(startTime + 0.2);
+            oscillator.stop(startTime + 0.3);
         };
 
-        // Schedule 5 beeps with intervals
-        // Beep ... pause ... Beep ... pause ...
-        for (let i = 0; i < 5; i++) {
-            scheduleBeep(now + i * 0.5); // One beep every 500ms
+        // SCHEDULE: 3 Sets of 5 Beeps
+        // Set 1 starts at T+0
+        // Set 2 starts at T+2.5s
+        // Set 3 starts at T+5.0s
+        
+        for (let set = 0; set < 3; set++) {
+            const setStart = now + (set * 2.5);
+            
+            for (let i = 0; i < 5; i++) {
+                // 5 beeps separated by 300ms
+                scheduleBeep(setStart + (i * 0.3)); 
+            }
         }
 
-        // Vibrate pattern: 5 times (200ms vibe, 300ms pause)
+        // Vibrate pattern: 3 sequences matching the audio
+        // [beep, pause, beep, pause...] x 5, then long pause, then repeat
         if (navigator.vibrate) {
-            navigator.vibrate([200, 300, 200, 300, 200, 300, 200, 300, 200]);
+            const beepVibe = 200;
+            const shortPause = 100;
+            const longPause = 1000;
+            
+            const singleSet = [
+                beepVibe, shortPause, 
+                beepVibe, shortPause, 
+                beepVibe, shortPause, 
+                beepVibe, shortPause, 
+                beepVibe
+            ];
+            
+            navigator.vibrate([...singleSet, longPause, ...singleSet, longPause, ...singleSet]);
         }
     };
 

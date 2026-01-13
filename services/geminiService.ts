@@ -211,7 +211,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
@@ -250,7 +250,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -290,7 +290,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         `;
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-3-flash-preview",
             contents: prompt,
             config: { 
                 responseMimeType: "application/json",
@@ -351,7 +351,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentDate = "3 Décembre 2025";
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
@@ -373,7 +373,7 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
         : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue.`;
     
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: { tools: [{ googleSearch: {} }] },
     });
