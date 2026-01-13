@@ -10,7 +10,8 @@ export enum AppView {
   SHOPPING_LIST = 'SHOPPING_LIST',
   VALUE_PROPOSITION = 'VALUE_PROPOSITION',
   LEGAL = 'LEGAL',
-  PLANNING = 'PLANNING'
+  PLANNING = 'PLANNING',
+  TIMER = 'TIMER'
 }
 
 export interface GroundingChunk {

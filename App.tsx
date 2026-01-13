@@ -12,6 +12,7 @@ import ShoppingList from './components/ShoppingList';
 import ValueProposition from './components/ValueProposition';
 import LegalDocuments from './components/LegalDocuments';
 import MealPlanner from './components/MealPlanner';
+import SmartTimer from './components/SmartTimer';
 import { getTrialStatus, startSubscription } from './services/storageService';
 import { AppView } from './types';
 import { ChefHat, ArrowRight, WifiOff } from 'lucide-react';
@@ -82,7 +83,7 @@ const App: React.FC = () => {
             const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
             if (daysPassed > 7) {
                 setIsTrialExpired(true);
-                if (currentView !== AppView.RECIPE_BOOK && currentView !== AppView.SHOPPING_LIST && currentView !== AppView.HOME && currentView !== AppView.LEGAL && currentView !== AppView.VALUE_PROPOSITION) {
+                if (currentView !== AppView.RECIPE_BOOK && currentView !== AppView.SHOPPING_LIST && currentView !== AppView.HOME && currentView !== AppView.LEGAL && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.TIMER) {
                     setCurrentView(AppView.SUBSCRIPTION);
                 }
             }
@@ -108,7 +109,7 @@ const App: React.FC = () => {
     }
   };
 
-  const isSafeView = currentView === AppView.RECIPE_BOOK || currentView === AppView.SHOPPING_LIST || currentView === AppView.HOME || currentView === AppView.LEGAL || currentView === AppView.VALUE_PROPOSITION;
+  const isSafeView = currentView === AppView.RECIPE_BOOK || currentView === AppView.SHOPPING_LIST || currentView === AppView.HOME || currentView === AppView.LEGAL || currentView === AppView.VALUE_PROPOSITION || currentView === AppView.TIMER;
   const isLockedByExpiration = isTrialExpired && !isSubscribed && !isSafeView;
 
   if (!hasKey && !isSafeView && isOnline) {
@@ -151,6 +152,7 @@ const App: React.FC = () => {
       case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} />;
       case AppView.LEGAL: return <LegalDocuments onClose={() => setCurrentView(AppView.HOME)} />;
       case AppView.PLANNING: return <MealPlanner />;
+      case AppView.TIMER: return <SmartTimer />;
       default: return <Home setView={setCurrentView} isOnline={isOnline} />;
     }
   };

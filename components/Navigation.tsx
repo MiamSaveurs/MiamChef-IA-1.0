@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ChefHat, Camera, Wine, Home, ShoppingCart, Calendar } from 'lucide-react';
+import { ChefHat, Camera, Wine, Home, ShoppingCart, Calendar, Timer } from 'lucide-react';
 import { AppView } from '../types';
 import { getShoppingList } from '../services/storageService';
 
@@ -45,9 +45,9 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
     { view: AppView.HOME, label: 'Studio', icon: Home, requiresOnline: false },
     { view: AppView.PLANNING, label: 'Semaine', icon: Calendar, requiresOnline: true },
     { view: AppView.RECIPE_CREATOR, label: 'Chef', icon: ChefHat, requiresOnline: true },
+    { view: AppView.TIMER, label: 'Chrono', icon: Timer, requiresOnline: false },
     { view: AppView.SCAN_FRIDGE, label: 'Scan', icon: Camera, requiresOnline: true },
     { view: AppView.SHOPPING_LIST, label: 'Courses', icon: ShoppingCart, requiresOnline: false, badge: shoppingCount },
-    { view: AppView.SOMMELIER, label: 'Vins', icon: Wine, requiresOnline: true },
   ];
 
   const handleNavClick = (item: any) => {
