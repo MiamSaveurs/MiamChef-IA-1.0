@@ -127,7 +127,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
             </div>
             <div className="relative h-48 rounded-[2rem] overflow-hidden shadow-card group-hover:shadow-xl transition-all bg-gradient-to-br from-green-900 to-emerald-900 border border-green-800">
                 <div className="absolute right-0 top-0 w-1/2 h-full opacity-50 mix-blend-overlay">
-                     <img src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Chef" />
+                     <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Chef en cuisine" />
                 </div>
                 <div className="absolute inset-0 p-6 w-2/3 flex flex-col justify-center relative z-10">
                     <div className="flex items-center gap-2 mb-2 text-green-100">
