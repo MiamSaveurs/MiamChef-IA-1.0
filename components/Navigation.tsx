@@ -8,9 +8,10 @@ interface NavigationProps {
   currentView: AppView;
   setView: (view: AppView) => void;
   isOnline?: boolean;
+  hasActiveTimer?: boolean;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline = true }) => {
+const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline = true, hasActiveTimer = false }) => {
   const [shoppingCount, setShoppingCount] = useState(0);
 
   const updateCount = async () => {
@@ -45,7 +46,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
     { view: AppView.HOME, label: 'Studio', icon: Home, requiresOnline: false },
     { view: AppView.PLANNING, label: 'Semaine', icon: Calendar, requiresOnline: true },
     { view: AppView.RECIPE_CREATOR, label: 'Chef', icon: ChefHat, requiresOnline: true },
-    { view: AppView.TIMER, label: 'Chrono', icon: Timer, requiresOnline: false },
+    { view: AppView.TIMER, label: 'Chrono', icon: Timer, requiresOnline: false, isTimer: true },
     { view: AppView.SCAN_FRIDGE, label: 'Scan', icon: Camera, requiresOnline: true },
     { view: AppView.SHOPPING_LIST, label: 'Courses', icon: ShoppingCart, requiresOnline: false, badge: shoppingCount },
   ];
@@ -78,11 +79,16 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
                   strokeWidth={isActive ? 2.5 : 2}
                 />
                 
-                {/* Notification Badge */}
+                {/* Shopping Notification Badge */}
                 {item.view === AppView.SHOPPING_LIST && shoppingCount > 0 && (
                     <div className="absolute top-0 right-0 z-20 -mr-1 -mt-1 bg-red-500 text-white text-[9px] font-bold h-4 w-4 flex items-center justify-center rounded-full border border-white shadow-sm animate-bounce-slow">
                         {shoppingCount > 9 ? '9+' : shoppingCount}
                     </div>
+                )}
+
+                {/* Active Timer Indicator (Orange Dot) */}
+                {item.isTimer && hasActiveTimer && (
+                     <div className="absolute top-0 right-0 z-20 -mr-1 -mt-1 h-3 w-3 bg-orange-500 rounded-full border border-white shadow-sm animate-pulse"></div>
                 )}
 
                 <span className={`absolute -bottom-1 text-[8px] font-bold tracking-tight transition-all duration-300 ${isActive ? 'opacity-100 text-chef-green translate-y-0' : 'opacity-0 translate-y-1'}`}>
