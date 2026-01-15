@@ -29,6 +29,7 @@ const App: React.FC = () => {
   const [largeText, setLargeText] = useState(localStorage.getItem('miamchef_large_text') === 'true');
 
   // GLOBAL TIMER STATE (Avec initialisation depuis LocalStorage)
+  // Le timer est géré ici (Racine) pour ne JAMAIS s'arrêter lors de la navigation.
   const [timerTarget, setTimerTarget] = useState<number | null>(() => {
       const saved = localStorage.getItem('miamchef_timer_target');
       return saved ? parseInt(saved, 10) : null;
@@ -45,7 +46,7 @@ const App: React.FC = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const alarmPlayedRef = useRef(false);
 
-  // Sauvegarde automatique du Timer
+  // Sauvegarde automatique du Timer pour résister au rafraîchissement
   useEffect(() => {
     if (timerTarget) localStorage.setItem('miamchef_timer_target', timerTarget.toString());
     else localStorage.removeItem('miamchef_timer_target');
@@ -63,7 +64,7 @@ const App: React.FC = () => {
     localStorage.setItem('miamchef_large_text', String(largeText));
   }, [largeText]);
 
-  // LOGIQUE MINUTEUR
+  // LOGIQUE MINUTEUR ROBUSTE (Basée sur le Temps Absolu)
   useEffect(() => {
     if (!timerTarget) return;
 
@@ -76,6 +77,7 @@ const App: React.FC = () => {
             if (!alarmPlayedRef.current) {
                 alarmPlayedRef.current = true;
                 playAlarm();
+                sendNotification("C'est prêt !", "Le minuteur MiamChef est terminé.");
                 setTimerTarget(null); // Fin du chrono
             }
         } else {
@@ -104,6 +106,31 @@ const App: React.FC = () => {
     }
   };
 
+  const requestNotificationPermission = async () => {
+    if ("Notification" in window && Notification.permission === "default") {
+        try {
+            await Notification.requestPermission();
+        } catch (e) {
+            console.log("Notifications refusées");
+        }
+    }
+  };
+
+  const sendNotification = (title: string, body: string) => {
+    if ("Notification" in window && Notification.permission === "granted") {
+        try {
+            new Notification(title, { 
+                body, 
+                icon: "https://cdn-icons-png.flaticon.com/512/3565/3565418.png",
+                requireInteraction: true,
+                silent: false
+            });
+        } catch (e) {
+            console.error("Erreur notification", e);
+        }
+    }
+  };
+
   const playAlarm = () => {
     initAudio();
     const ctx = audioContextRef.current!;
@@ -128,6 +155,7 @@ const App: React.FC = () => {
         oscillator.stop(startTime + 0.5);
     };
 
+    // Alarme : 3 séries de 5 bips
     for (let set = 0; set < 3; set++) {
         const setStart = now + (set * 2.5);
         for (let i = 0; i < 5; i++) {
@@ -143,6 +171,7 @@ const App: React.FC = () => {
 
   const handleStartTimer = (seconds: number) => {
       initAudio();
+      requestNotificationPermission(); // Demande la permission pour alerter en arrière-plan
       const now = Date.now();
       setTimerDuration(seconds);
       setTimerTarget(now + seconds * 1000);
@@ -161,6 +190,7 @@ const App: React.FC = () => {
               const now = Date.now();
               setTimerTarget(now + timeLeft * 1000);
               alarmPlayedRef.current = false;
+              requestNotificationPermission();
           } else if (timerDuration > 0) {
               handleStartTimer(timerDuration);
           }
