@@ -8,7 +8,7 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * ======================================================================================
  * 
  * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS de la FoodTech "Petit Budget".
- * 2. DATE SYSTÈME : 15 JANVIER 2026 (Temps Réel).
+ * 2. DATE SYSTÈME : DYNAMIQUE (Temps Réel).
  * 3. ADN "WINNER" : Innovation perpétuelle, mais ACCESSIBLE À TOUS.
  * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo".
  * 5. JURIDICTION : Droit Français & Européen (RGPD, Loi Evin, INCO).
@@ -18,6 +18,16 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 7. PROMESSE COMMERCIALE (CRITIQUE) : L'utilisateur DOIT économiser 30% sur son budget courses dès la première semaine (Période d'essai).
  *    Chaque ingrédient proposé doit être rentabilisé. Pas d'ingrédient exotique utilisé une seule fois.
  */
+
+// Helper: Calculate Season
+const getCurrentSeason = (date: Date): string => {
+    const month = date.getMonth(); // 0-11
+    // Hiver: Dec, Jan, Fev, Mars (partiel) -> Simplification par mois pleins
+    if (month === 11 || month === 0 || month === 1 || month === 2) return "Hiver";
+    if (month >= 3 && month <= 5) return "Printemps";
+    if (month >= 6 && month <= 8) return "Été";
+    return "Automne";
+};
 
 // Helper to encode file to base64
 export const fileToGenerativePart = async (file: File): Promise<string> => {
@@ -131,7 +141,9 @@ export const generateChefRecipe = async (
 ): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "15 Janvier 2026";
+    const today = new Date();
+    const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const currentSeason = getCurrentSeason(today);
     
     // PERSONA SELECTOR
     const persona = chefMode === 'patisserie' 
@@ -145,7 +157,7 @@ export const generateChefRecipe = async (
            VOCABULAIRE: Saisir, Déglacer, Suer, Mijoter, Dresser, Assaisonner.`;
 
     const prompt = `
-      CONTEXTE : Nous sommes le ${currentDate} (Hiver).
+      CONTEXTE : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       IDENTITÉ : MiamChef IA.
       ${persona}
       
@@ -165,7 +177,7 @@ export const generateChefRecipe = async (
       3. Si Mode Pâtissier : SOYEZ INTRANSIGEANT SUR LES PESÉES ET LES TEMPÉRATURES. Donnez des astuces de montage précises.
       4. Si Mode Cuisinier : Encouragez l'instinct ("Goûtez et rectifiez l'assaisonnement").
       5. TITRE : Doit être vendeur et gourmand (Ex: "Le Paris-Brest Revisité à la Pistache" ou "Risotto Crémeux aux Asperges").
-      6. SAISONNALITÉ OBLIGATOIRE (HIVER) : Vous devez IMPÉRATIVEMENT utiliser des fruits et légumes de saison en Janvier (Ex: PAS de tomates, courgettes, aubergines, poivrons, fraises, framboises). Privilégiez : Choux, Poireaux, Courges, Agrumes, Pommes, Poires, Kiwis, Endives, Mâche, Carottes, Céleri, Navet. Adaptez la recette demandée aux produits d'hiver si nécessaire.
+      6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Vous devez IMPÉRATIVEMENT utiliser des fruits et légumes de saison pour ${currentDate}. Refusez poliment et proposez une alternative si l'utilisateur demande un produit hors-saison (Ex: Tomate en Hiver).
       7. OPTIMISATION DU PRIX (OBJECTIF -30%) : L'utilisateur est en période d'essai, il doit voir qu'il économise. Privilégiez toujours les ingrédients bruts (moins chers) aux produits transformés. Si une alternative moins chère existe sans sacrifier le goût, proposez-la en astuce.
     `;
 
@@ -196,17 +208,19 @@ export const generateChefRecipe = async (
 export const searchChefsRecipe = async (query: string, people: number): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "15 Janvier 2026";
+    const today = new Date();
+    const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const currentSeason = getCurrentSeason(today);
 
     const prompt = `
-      Tu es MiamChef IA. DATE : ${currentDate}.
+      Tu es MiamChef IA. DATE : ${currentDate} (${currentSeason}).
       Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
       INSTRUCTIONS :
       - Adaptez pour "Petit Budget" (Objectif 30% d'économie sur le panier moyen).
       - Utilisez le VOUVOIEMENT.
       - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". La quantité DOIT être à la fin entre parenthèses pour le Drive.
-      - SAISONNALITÉ : Si la recette originale contient des légumes d'été (tomates, courgettes...), proposez une variante hivernale adaptée au 15 Janvier ou précisez d'utiliser des conserves/surgelés UNIQUEMENT si indispensable.
+      - SAISONNALITÉ : Si la recette originale contient des légumes hors-saison (pour ${currentSeason}), proposez une variante adaptée ou précisez d'utiliser des conserves/surgelés UNIQUEMENT si indispensable.
       
       FORMAT JSON STRICT :
       {
@@ -247,14 +261,16 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
 export const modifyChefRecipe = async (originalRecipe: string, modification: string): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "15 Janvier 2026";
+    const today = new Date();
+    const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const currentSeason = getCurrentSeason(today);
 
     const prompt = `
-      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate}.
+      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate} (${currentSeason}).
       Recette : ${originalRecipe}
       Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (Hiver) si des ingrédients sont ajoutés. Gardez en tête l'objectif d'économie budgétaire.
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (${currentSeason}) si des ingrédients sont ajoutés. Gardez en tête l'objectif d'économie budgétaire.
     `;
 
     const response = await ai.models.generateContent({
@@ -282,11 +298,13 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 export const generateWeeklyMenu = async (dietary: string, people: number): Promise<WeeklyPlan> => {
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const currentDate = "15 Janvier 2026";
+        const today = new Date();
+        const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        const currentSeason = getCurrentSeason(today);
 
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).
-            Date : ${currentDate} (HIVER).
+            Date : ${currentDate} (${currentSeason}).
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION CRITIQUE : Faire économiser 30% sur le budget courses de l'utilisateur.
@@ -300,7 +318,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             1. Générer 14 repas (Midi/Soir) simples, économiques.
             2. Ingrédients "Supermarché" uniquement.
             3. TON : Vouvoiement, ludique.
-            4. SAISONNALITÉ STRICTE : Nous sommes le 15 Janvier. Utilisez UNIQUEMENT des produits de saison d'hiver (Choux, Courges, Poireaux, Endives, Agrumes, Pommes de terre, etc.). PAS de tomates, fraises, courgettes ou aubergines fraiches.
+            4. SAISONNALITÉ STRICTE : Nous sommes le ${currentDate}. Utilisez UNIQUEMENT des produits de saison (${currentSeason}).
             
             Respecte le schéma JSON.
         `;
@@ -326,8 +344,9 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
 export const generateRecipeImage = async (title: string, ingredientsContext: string): Promise<string | null> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const currentSeason = getCurrentSeason(new Date());
     // Prompt optimisé pour une photo réaliste style "Cuisine Maison"
-    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking. Season: Winter.`;
+    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking. Season: ${currentSeason}.`;
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: { parts: [{ text: prompt }] },
@@ -365,13 +384,16 @@ export const generateStepVideo = async (stepDescription: string): Promise<string
 export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "15 Janvier 2026";
+    const today = new Date();
+    const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const currentSeason = getCurrentSeason(today);
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: `Nous sommes le ${currentDate} (HIVER). Analysez cette photo. 
+          { text: `Nous sommes le ${currentDate} (Saison: ${currentSeason}). Analysez cette photo. 
           OBJECTIF BUDGET : Dépense 0€. Maximisez l'utilisation des restes visibles sur la photo pour créer une recette.
           Si vous devez ajouter des ingrédients, choisissez UNIQUEMENT des basiques ultra-économiques (farine, oeufs, huile, riz).
           Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
@@ -385,7 +407,8 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
 export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b' = 'b2c'): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const currentDate = "15 Janvier 2026";
+    const today = new Date();
+    const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     
     const prompt = audience === 'b2b' 
         ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 

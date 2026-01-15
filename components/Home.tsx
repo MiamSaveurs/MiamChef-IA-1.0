@@ -18,6 +18,16 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       }
   };
 
+  // Date du jour formatée en Français (ex: Jeudi 24 Octobre 2024)
+  const today = new Date().toLocaleDateString('fr-FR', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  });
+  // Capitalize first letter
+  const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
+
   return (
     <div className="relative min-h-screen font-body bg-white overflow-x-hidden">
       
@@ -32,11 +42,16 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
 
         <div className="relative z-10 px-6 pt-8 max-w-lg mx-auto">
             <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-2">
-                    <div className="bg-chef-green p-1.5 rounded-lg">
-                        <ChefHat size={20} className="text-white" />
+                <div className="flex items-center gap-3">
+                    <div className="bg-chef-green p-2 rounded-xl shadow-lg shadow-green-900/50">
+                        <ChefHat size={24} className="text-white" />
                     </div>
-                    <span className="font-display text-xl tracking-wide">MiamChef IA</span>
+                    <div className="flex flex-col">
+                        <span className="font-display text-2xl tracking-wide leading-none">MiamChef IA</span>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
+                            <Calendar size={8} /> {formattedDate}
+                        </span>
+                    </div>
                 </div>
                 <button 
                     onClick={() => setView(AppView.SUBSCRIPTION)}
@@ -221,7 +236,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
              </button>
              {/* Tech Status for Debugging */}
              <div className="flex gap-2 opacity-30 hover:opacity-100 transition-opacity mt-2">
-                 <span className="text-[9px] bg-gray-200 px-1 rounded">v1.0.0</span>
+                 <span className="text-[9px] bg-gray-200 px-1 rounded">v1.1.0</span>
                  <span className={`text-[9px] px-1 rounded ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
              </div>
         </div>
