@@ -15,6 +15,8 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 6. PERSONNALITÉ "DOUBLE CERVEAU" :
  *    - MODE CUISINIER : Audace, Improvisation, Feu, "Pifomètre maîtrisé".
  *    - MODE PÂTISSIER : Rigueur absolue, Chimie, Précision au gramme près, Esthétique.
+ * 7. PROMESSE COMMERCIALE (CRITIQUE) : L'utilisateur DOIT économiser 30% sur son budget courses dès la première semaine (Période d'essai).
+ *    Chaque ingrédient proposé doit être rentabilisé. Pas d'ingrédient exotique utilisé une seule fois.
  */
 
 // Helper to encode file to base64
@@ -147,7 +149,7 @@ export const generateChefRecipe = async (
       IDENTITÉ : MiamChef IA.
       ${persona}
       
-      MISSION : Créer une recette exceptionnelle mais accessible (Produits Supermarché).
+      MISSION : Créer une recette exceptionnelle mais accessible.
       
       PARAMÈTRES :
       - INGRÉDIENTS DISPOS : ${ingredients}
@@ -164,6 +166,7 @@ export const generateChefRecipe = async (
       4. Si Mode Cuisinier : Encouragez l'instinct ("Goûtez et rectifiez l'assaisonnement").
       5. TITRE : Doit être vendeur et gourmand (Ex: "Le Paris-Brest Revisité à la Pistache" ou "Risotto Crémeux aux Asperges").
       6. SAISONNALITÉ OBLIGATOIRE (HIVER) : Vous devez IMPÉRATIVEMENT utiliser des fruits et légumes de saison en Janvier (Ex: PAS de tomates, courgettes, aubergines, poivrons, fraises, framboises). Privilégiez : Choux, Poireaux, Courges, Agrumes, Pommes, Poires, Kiwis, Endives, Mâche, Carottes, Céleri, Navet. Adaptez la recette demandée aux produits d'hiver si nécessaire.
+      7. OPTIMISATION DU PRIX (OBJECTIF -30%) : L'utilisateur est en période d'essai, il doit voir qu'il économise. Privilégiez toujours les ingrédients bruts (moins chers) aux produits transformés. Si une alternative moins chère existe sans sacrifier le goût, proposez-la en astuce.
     `;
 
     const response = await ai.models.generateContent({
@@ -200,10 +203,10 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
       INSTRUCTIONS :
-      - Adaptez pour "Petit Budget".
+      - Adaptez pour "Petit Budget" (Objectif 30% d'économie sur le panier moyen).
       - Utilisez le VOUVOIEMENT.
       - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". La quantité DOIT être à la fin entre parenthèses pour le Drive.
-      - SAISONNALITÉ : Si la recette originale contient des légumes d'été (tomates, courgettes...), proposez une variante hivernale adaptée au 15 Janvier ou précisez d'utiliser des conserves/surgelés si indispensable.
+      - SAISONNALITÉ : Si la recette originale contient des légumes d'été (tomates, courgettes...), proposez une variante hivernale adaptée au 15 Janvier ou précisez d'utiliser des conserves/surgelés UNIQUEMENT si indispensable.
       
       FORMAT JSON STRICT :
       {
@@ -251,7 +254,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
       Recette : ${originalRecipe}
       Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (Hiver) si des ingrédients sont ajoutés.
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (Hiver) si des ingrédients sont ajoutés. Gardez en tête l'objectif d'économie budgétaire.
     `;
 
     const response = await ai.models.generateContent({
@@ -286,7 +289,14 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             Date : ${currentDate} (HIVER).
             Pour ${people} personnes. Régime : ${dietary}.
             
-            MISSION :
+            MISSION CRITIQUE : Faire économiser 30% sur le budget courses de l'utilisateur.
+            
+            STRATÉGIE "CROSS-UTILISATION" (OBLIGATOIRE) :
+            1. Ne faites JAMAIS acheter un légume pour une seule recette. Exemple : Si vous mettez du Chou Rouge le Lundi Midi (Salade), remettez-le le Mercredi Soir (Poêlée) pour finir le produit.
+            2. Privilégiez les produits bruts et de saison (moins chers au kilo).
+            3. Limitez la viande (coûteux) ou proposez des morceaux économiques mijotés.
+            
+            INSTRUCTIONS :
             1. Générer 14 repas (Midi/Soir) simples, économiques.
             2. Ingrédients "Supermarché" uniquement.
             3. TON : Vouvoiement, ludique.
@@ -361,7 +371,10 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: `Nous sommes le ${currentDate} (HIVER). Analysez cette photo. Trouvez une recette "Anti-Gaspi" économique et simple avec ces restes. IMPORTANT : Si vous devez ajouter des ingrédients frais pour compléter, choisissez UNIQUEMENT des produits de saison (Janvier). Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
+          { text: `Nous sommes le ${currentDate} (HIVER). Analysez cette photo. 
+          OBJECTIF BUDGET : Dépense 0€. Maximisez l'utilisation des restes visibles sur la photo pour créer une recette.
+          Si vous devez ajouter des ingrédients, choisissez UNIQUEMENT des basiques ultra-économiques (farine, oeufs, huile, riz).
+          Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
         ],
       },
     });
@@ -376,7 +389,7 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     
     const prompt = audience === 'b2b' 
         ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 
-        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue.`;
+        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Privilégiez les pépites abordables aux grands crus hors de prix. Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
