@@ -38,6 +38,7 @@ const MacroDonut = ({ value, label, color, total }: { value: number, label: stri
 
 const RecipeCreator: React.FC = () => {
   const [mode, setMode] = useState<'create' | 'search'>('create');
+  const currentYear = new Date().getFullYear();
   
   // DOUBLE CERVEAU STATE
   const [chefMode, setChefMode] = useState<'cuisine' | 'patisserie'>('cuisine');
@@ -109,7 +110,7 @@ const RecipeCreator: React.FC = () => {
 
       const steps = mode === 'create' 
         ? (chefMode === 'patisserie' ? stepsPatisserie : stepsCuisine)
-        : ["Recherche sur le web 2025...", "Adaptation MiamChef...", "Analyse diététique...", "Calcul du prix...", "Finalisation..."];
+        : [`Recherche sur le web ${currentYear}...`, "Adaptation MiamChef...", "Analyse diététique...", "Calcul du prix...", "Finalisation..."];
       
       let i = 0;
       setLoadingStep(steps[0]);
@@ -165,7 +166,7 @@ const RecipeCreator: React.FC = () => {
     } catch (e: any) {
       console.error(e);
       setStatus('error');
-      alert(`Erreur 2025 : ${e.message}`);
+      alert(`Erreur : ${e.message}`);
     }
   };
 
@@ -687,7 +688,7 @@ const RecipeCreator: React.FC = () => {
                     <>
                         <img src={generatedImage} alt="Plat final" className="w-full h-full object-cover" />
                         <div className="absolute bottom-4 right-4 z-10">
-                             <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><Sparkles size={12} className={chefMode === 'patisserie' ? "text-pink-400" : "text-chef-green"} /> MiamChef IA 2025</div>
+                             <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><Sparkles size={12} className={chefMode === 'patisserie' ? "text-pink-400" : "text-chef-green"} /> MiamChef IA {currentYear}</div>
                         </div>
                     </>
                 ) : imageStatus !== 'loading' && (

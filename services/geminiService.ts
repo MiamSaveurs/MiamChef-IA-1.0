@@ -345,12 +345,21 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentSeason = getCurrentSeason(new Date());
-    // Prompt optimisé pour une photo réaliste style "Cuisine Maison"
-    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking. Season: ${currentSeason}.`;
+    // Prompt optimisé pour une photo "Ultra-Réaliste" en 4K
+    const prompt = `Professional ultra-realistic 4k food photography of the final dish "${title}". Ingredients visible: ${ingredientsContext}. Professional plating, gastronomic presentation, highly detailed, cinematic lighting, depth of field, 8k resolution. Style: Haute Cuisine meets Home Cooking. Season: ${currentSeason}.`;
+    
+    // Utilisation du modèle PRO pour une qualité maximale (4K)
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-3-pro-image-preview',
       contents: { parts: [{ text: prompt }] },
+      config: {
+        imageConfig: {
+          imageSize: "4K", // Demande explicite de 4K
+          aspectRatio: "16:9" 
+        }
+      }
     });
+    
     for (const part of response.candidates?.[0]?.content?.parts || []) {
       if (part.inlineData) return `data:image/png;base64,${part.inlineData.data}`;
     }
