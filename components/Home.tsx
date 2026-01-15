@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, PiggyBank, HeartPulse, ShoppingCart, FileText, Briefcase, Calendar } from 'lucide-react';
+import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, ShoppingCart, FileText, Briefcase, Calendar } from 'lucide-react';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -108,7 +108,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                 </div>
                 <div className="w-px h-12 bg-gray-100"></div>
                 <div className="flex flex-col items-center gap-2 w-1/3 group-hover:scale-105 transition-transform delay-150">
-                    <div className="p-3 bg-blue-50 text-blue-500 rounded-full mb-1"><PiggyBank size={24} /></div>
+                    <div className="p-3 bg-blue-50 text-blue-500 rounded-full mb-1"><Euro size={24} /></div>
                     <span className="text-xs font-bold text-gray-600 uppercase">Économies</span>
                 </div>
             </div>

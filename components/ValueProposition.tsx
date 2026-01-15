@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, Fingerprint, HeartPulse, PiggyBank, ArrowRight, ChefHat, ShieldCheck, Star, Briefcase, Globe2, Layers, Clock, Wine, ShoppingCart } from 'lucide-react';
+import { X, Fingerprint, HeartPulse, Euro, ArrowRight, ChefHat, ShieldCheck, Star, Briefcase, Globe2, Layers, Clock, Wine, ShoppingCart } from 'lucide-react';
 
 interface ValuePropositionProps {
   onClose: () => void;
@@ -101,7 +101,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
             
             <div className="relative z-10">
                 <div className="w-14 h-14 bg-white text-blue-500 rounded-2xl flex items-center justify-center shadow-md mb-6">
-                    <PiggyBank size={32} />
+                    <Euro size={32} />
                 </div>
                 <h2 className="text-3xl font-display text-chef-dark mb-4">Le Pouvoir d'Achat</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
