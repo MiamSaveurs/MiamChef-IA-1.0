@@ -806,7 +806,7 @@ const RecipeCreator: React.FC = () => {
                      <ul className="space-y-3">
                         {ingredientsList.map((line, idx) => {
                             const isChecked = checkedIngredients.has(idx);
-                            const cleanText = line.replace(/^[-*]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
+                            const cleanText = line.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
                             const isServingLine = cleanText.toLowerCase().startsWith('pour ') && (cleanText.toLowerCase().includes('personne') || cleanText.toLowerCase().includes('convive'));
                             
                             if (isServingLine) {
@@ -825,26 +825,32 @@ const RecipeCreator: React.FC = () => {
                             return (
                                 <li 
                                     key={idx} 
-                                    className={`flex items-center gap-3 p-2 rounded-lg transition-colors group ${isChecked ? lightColor : 'hover:bg-gray-50'}`}
+                                    className={`flex items-start gap-3 p-3 rounded-xl transition-all border group ${isChecked ? `${borderColor} ${lightColor}` : 'border-transparent hover:bg-gray-50'}`}
+                                    onClick={() => toggleIngredientCheck(idx)}
                                 >
+                                    {/* CHECKBOX RENFORCÉE ET AGRANDIE (24px vs 20px) */}
                                     <div 
-                                        onClick={() => toggleIngredientCheck(idx)}
-                                        className={`cursor-pointer mt-1 min-w-[20px] h-[20px] rounded border transition-colors flex items-center justify-center ${isChecked ? `${primaryColor} ${borderColor}` : `border-gray-300 bg-white group-hover:${borderColor}`}`}
+                                        className={`mt-0.5 relative flex-shrink-0 w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center cursor-pointer ${
+                                            isChecked 
+                                            ? `${primaryColor} ${borderColor}` 
+                                            : `border-gray-300 bg-white group-hover:${borderColor}`
+                                        }`}
                                     >
-                                        {isChecked && <Check size={14} className="text-white" />}
+                                        {isChecked && <Check size={16} className="text-white" strokeWidth={3} />}
                                     </div>
+                                    
                                     <span 
-                                        onClick={() => toggleIngredientCheck(idx)}
-                                        className={`cursor-pointer text-sm font-medium leading-tight transition-all flex-1 ${isChecked ? `${textColor} font-bold` : 'text-gray-700'}`}
+                                        className={`text-base leading-tight transition-all select-none flex-1 ${isChecked ? `${textColor} font-bold` : 'text-gray-700'}`}
                                     >
                                         {cleanText}
                                     </span>
+                                    
                                     <button 
-                                        onClick={() => handleOpenDriveModal(cleanText)}
+                                        onClick={(e) => { e.stopPropagation(); handleOpenDriveModal(cleanText); }}
                                         title="Trouver au Drive"
-                                        className="p-1.5 rounded-full text-gray-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                        className="p-2 rounded-full text-gray-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                                     >
-                                        <ShoppingCart size={14} />
+                                        <ShoppingCart size={18} />
                                     </button>
                                 </li>
                             );
