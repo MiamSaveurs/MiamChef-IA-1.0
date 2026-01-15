@@ -143,7 +143,7 @@ export const generateChefRecipe = async (
            VOCABULAIRE: Saisir, Déglacer, Suer, Mijoter, Dresser, Assaisonner.`;
 
     const prompt = `
-      CONTEXTE : Nous sommes le ${currentDate}.
+      CONTEXTE : Nous sommes le ${currentDate} (Hiver).
       IDENTITÉ : MiamChef IA.
       ${persona}
       
@@ -163,6 +163,7 @@ export const generateChefRecipe = async (
       3. Si Mode Pâtissier : SOYEZ INTRANSIGEANT SUR LES PESÉES ET LES TEMPÉRATURES. Donnez des astuces de montage précises.
       4. Si Mode Cuisinier : Encouragez l'instinct ("Goûtez et rectifiez l'assaisonnement").
       5. TITRE : Doit être vendeur et gourmand (Ex: "Le Paris-Brest Revisité à la Pistache" ou "Risotto Crémeux aux Asperges").
+      6. SAISONNALITÉ OBLIGATOIRE (HIVER) : Vous devez IMPÉRATIVEMENT utiliser des fruits et légumes de saison en Janvier (Ex: PAS de tomates, courgettes, aubergines, poivrons, fraises, framboises). Privilégiez : Choux, Poireaux, Courges, Agrumes, Pommes, Poires, Kiwis, Endives, Mâche, Carottes, Céleri, Navet. Adaptez la recette demandée aux produits d'hiver si nécessaire.
     `;
 
     const response = await ai.models.generateContent({
@@ -202,6 +203,7 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       - Adaptez pour "Petit Budget".
       - Utilisez le VOUVOIEMENT.
       - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". La quantité DOIT être à la fin entre parenthèses pour le Drive.
+      - SAISONNALITÉ : Si la recette originale contient des légumes d'été (tomates, courgettes...), proposez une variante hivernale adaptée au 15 Janvier ou précisez d'utiliser des conserves/surgelés si indispensable.
       
       FORMAT JSON STRICT :
       {
@@ -249,7 +251,7 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
       Recette : ${originalRecipe}
       Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)".
+      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (Hiver) si des ingrédients sont ajoutés.
     `;
 
     const response = await ai.models.generateContent({
@@ -281,13 +283,14 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
 
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).
-            Date : ${currentDate}.
+            Date : ${currentDate} (HIVER).
             Pour ${people} personnes. Régime : ${dietary}.
             
             MISSION :
             1. Générer 14 repas (Midi/Soir) simples, économiques.
             2. Ingrédients "Supermarché" uniquement.
             3. TON : Vouvoiement, ludique.
+            4. SAISONNALITÉ STRICTE : Nous sommes le 15 Janvier. Utilisez UNIQUEMENT des produits de saison d'hiver (Choux, Courges, Poireaux, Endives, Agrumes, Pommes de terre, etc.). PAS de tomates, fraises, courgettes ou aubergines fraiches.
             
             Respecte le schéma JSON.
         `;
@@ -314,7 +317,7 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     // Prompt optimisé pour une photo réaliste style "Cuisine Maison"
-    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking.`;
+    const prompt = `Delicious home-cooked meal photography of "${title}". Ingredients visible: ${ingredientsContext}. Natural lighting, cozy kitchen atmosphere, appetizing, high resolution, 4k. Style: Authentic Home Cooking. Season: Winter.`;
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: { parts: [{ text: prompt }] },
@@ -358,7 +361,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
       contents: {
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
-          { text: `Nous sommes le ${currentDate}. Analysez cette photo. Trouvez une recette "Anti-Gaspi" économique et simple avec ces restes. Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
+          { text: `Nous sommes le ${currentDate} (HIVER). Analysez cette photo. Trouvez une recette "Anti-Gaspi" économique et simple avec ces restes. IMPORTANT : Si vous devez ajouter des ingrédients frais pour compléter, choisissez UNIQUEMENT des produits de saison (Janvier). Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
         ],
       },
     });
