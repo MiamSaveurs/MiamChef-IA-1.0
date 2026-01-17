@@ -2,7 +2,35 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList } from 'lucide-react';
+import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Layers, Beef, Milk, Wheat, Coffee, Droplet, Package } from 'lucide-react';
+
+// --- LOGIQUE DE CATÉGORISATION (RAYONS) ---
+
+const CATEGORIES = {
+  PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', bg: 'bg-green-100', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'légume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'épinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pastèque', 'patate', 'terre', 'radis'] },
+  PROTEIN: { id: 'protein', label: 'Viandes & Poissons', icon: Beef, color: 'text-red-600', bg: 'bg-red-100', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'thon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'haché', 'merguez', 'chipolata', 'rôti', 'filet', 'escalope'] },
+  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-500', bg: 'bg-blue-100', keywords: ['lait', 'beurre', 'crème', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comté', 'cheddar', 'mozzarella', 'parmesan', 'chèvre', 'feta', 'blanc', 'skyr', 'dessert'] },
+  GROCERY: { id: 'grocery', label: 'Épicerie', icon: Wheat, color: 'text-amber-600', bg: 'bg-amber-100', keywords: ['riz', 'pâte', 'farine', 'sucre', 'huile', 'sel', 'poivre', 'conserve', 'sauce', 'pain', 'biscotte', 'céréale', 'biscuit', 'gâteau', 'chocolat', 'miel', 'confiture', 'café', 'thé', 'épice', 'vinaigre', 'moutarde', 'mayonnaise', 'ketchup', 'bouillon', 'cube', 'levure', 'vanille', 'amande', 'noix', 'chips', 'apéro'] },
+  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-cyan-600', bg: 'bg-cyan-100', keywords: ['eau', 'jus', 'vin', 'bière', 'soda', 'coca', 'sirop', 'boisson', 'alcool', 'cidre', 'limonade'] },
+  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-600', bg: 'bg-purple-100', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'éponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant'] },
+  OTHER: { id: 'other', label: 'Divers', icon: Package, color: 'text-gray-500', bg: 'bg-gray-100', keywords: [] }
+};
+
+const getCategory = (itemText: string) => {
+    const clean = itemText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    for (const key in CATEGORIES) {
+        // @ts-ignore
+        const cat = CATEGORIES[key];
+        if (cat.id === 'other') continue;
+        if (cat.keywords.some((k: string) => clean.includes(k))) {
+            return key;
+        }
+    }
+    return 'OTHER';
+};
+
+// --- FIN LOGIQUE CATÉGORISATION ---
 
 const ShoppingList: React.FC = () => {
   const [items, setItems] = useState<ShoppingItem[]>([]);
@@ -33,15 +61,17 @@ const ShoppingList: React.FC = () => {
   const loadItems = async () => {
     try {
       const data = await getShoppingList();
-      data.sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? 1 : -1));
+      // On garde le tri checked/unchecked pour la logique interne, mais l'affichage sera géré par les catégories
       setItems(data);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
   const handleToggle = async (item: ShoppingItem) => {
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, checked: !i.checked } : i).sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? 1 : -1)));
+    // Optimistic update
+    const updatedItems = items.map(i => i.id === item.id ? { ...i, checked: !i.checked } : i);
+    setItems(updatedItems);
     await toggleShoppingItem(item);
-    loadItems();
+    loadItems(); // Refresh to be sure
   };
 
   const handleDelete = async (id: number) => {
@@ -50,14 +80,9 @@ const ShoppingList: React.FC = () => {
   };
 
   const handleClear = async (e: React.MouseEvent) => {
-    // SUPPRESSION RADICALE ET IMMÉDIATE
     e.preventDefault();
     e.stopPropagation();
-    
-    // 1. Mise à jour de l'affichage tout de suite
     setItems([]); 
-    
-    // 2. Nettoyage base de données en arrière-plan
     await clearShoppingList();
   };
 
@@ -91,16 +116,10 @@ const ShoppingList: React.FC = () => {
   };
 
   const cleanSearchTerm = (text: string) => {
-      // Nettoyage robuste des quantités
       let clean = text.replace(/^[-*•]\s*/, '').trim(); 
-      // 1. Suppression du contenu entre parenthèses (Nouvelle méthode)
       clean = clean.replace(/\s*\(.*?\)/g, '');
-      
-      // 2. Nettoyage de sécurité des unités au cas où
       clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
       clean = clean.replace(/^\d+\s+/, '');
-      
-      // Capitalize
       return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
   };
 
@@ -110,11 +129,8 @@ const ShoppingList: React.FC = () => {
           setDriveStep('retailers');
           return;
       }
-      // Nettoyage agressif avant recherche
       const clean = cleanSearchTerm(itemText);
       const url = `${selectedRetailer.urlPattern}${encodeURIComponent(clean)}`;
-      
-      // Sécurité URL
       if (selectedRetailer.urlPattern) {
           window.open(url, '_blank');
       } else {
@@ -127,6 +143,18 @@ const ShoppingList: React.FC = () => {
       copyToClipboard(allText);
       alert("Liste complète copiée !");
   };
+
+  // --- GROUPING LOGIC ---
+  const activeItems = items.filter(i => !i.checked);
+  const checkedItems = items.filter(i => i.checked);
+
+  // Group active items by category
+  const groupedItems: Record<string, ShoppingItem[]> = {};
+  activeItems.forEach(item => {
+      const catKey = getCategory(item.text);
+      if (!groupedItems[catKey]) groupedItems[catKey] = [];
+      groupedItems[catKey].push(item);
+  });
 
   return (
     <div className="pb-32 px-4 pt-6 max-w-2xl mx-auto min-h-screen font-body">
@@ -149,7 +177,7 @@ const ShoppingList: React.FC = () => {
             )}
         </div>
         
-        {/* BARRE D'AJOUT RAPIDE AVEC MICRO */}
+        {/* BARRE D'AJOUT RAPIDE */}
         <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 mb-6 flex gap-2">
              <div className="relative flex-1">
                  <input 
@@ -160,9 +188,6 @@ const ShoppingList: React.FC = () => {
                         if (e.key === 'Enter') {
                             const val = (e.target as HTMLInputElement).value;
                             if (val.trim()) {
-                                // Add logic via storageService usually, but here we can just reload or add locally?
-                                // For simplicity in this component, we rely on props or context usually, but here we use storage directly.
-                                // We need a local function to add single item.
                                 import('../services/storageService').then(mod => {
                                     mod.addToShoppingList([cleanSearchTerm(val)]).then(() => {
                                         (e.target as HTMLInputElement).value = '';
@@ -175,8 +200,6 @@ const ShoppingList: React.FC = () => {
                  />
                  <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
              </div>
-             {/* Note: Mic logic is complex to duplicate here without duplicating the full speech recognition code. 
-                 For now, manual entry is enhanced. */}
         </div>
 
         <div className="flex gap-3">
@@ -189,25 +212,71 @@ const ShoppingList: React.FC = () => {
         </div>
       </header>
 
-      {loading ? <div className="flex justify-center py-20"><div className="animate-spin text-chef-green"><Store /></div></div> : items.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-20"><div className="animate-spin text-chef-green"><Store /></div></div>
+      ) : items.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
              <Leaf size={48} className="mx-auto text-green-200 mb-4" />
              <p className="text-gray-400 font-display text-xl">Votre liste est vide.</p>
           </div>
       ) : (
-          <div className="bg-white rounded-[2rem] shadow-card border border-gray-100 overflow-hidden mb-8">
-             {items.map((item) => (
-                 <div key={item.id} className={`flex items-center gap-4 p-4 border-b border-gray-50 last:border-none ${item.checked ? 'bg-gray-50' : ''}`}>
-                    <div onClick={() => handleToggle(item)} className={`cursor-pointer w-6 h-6 rounded-lg border-2 flex items-center justify-center ${item.checked ? 'bg-chef-green border-chef-green' : 'border-gray-300'}`}>
-                        {item.checked && <Check size={14} className="text-white" />}
-                    </div>
-                    {/* DISPLAY CLEANED TEXT (NO QUANTITIES) */}
-                    <span onClick={() => handleToggle(item)} className={`flex-1 font-body text-lg cursor-pointer ${item.checked ? 'text-gray-400 line-through' : 'text-chef-dark'}`}>
-                        {cleanSearchTerm(item.text)}
-                    </span>
-                    <button onClick={() => handleDelete(item.id)} className="text-gray-300 hover:text-red-400 p-2"><Trash2 size={18} /></button>
+          <div className="space-y-6">
+             
+             {/* 1. DISPLAY ACTIVE ITEMS BY CATEGORY */}
+             {Object.keys(CATEGORIES).map(catKey => {
+                 // @ts-ignore
+                 const categoryInfo = CATEGORIES[catKey];
+                 const catItems = groupedItems[catKey];
+                 
+                 if (!catItems || catItems.length === 0) return null;
+
+                 const Icon = categoryInfo.icon;
+
+                 return (
+                     <div key={catKey} className="bg-white rounded-[2rem] shadow-card border border-gray-100 overflow-hidden">
+                        <div className={`px-4 py-3 border-b border-gray-50 flex items-center gap-2 ${categoryInfo.bg}`}>
+                            <Icon size={18} className={categoryInfo.color} />
+                            <h3 className={`font-bold text-sm uppercase tracking-wide ${categoryInfo.color}`}>{categoryInfo.label}</h3>
+                            <span className="ml-auto text-xs font-bold opacity-50 bg-white px-2 py-0.5 rounded-full">{catItems.length}</span>
+                        </div>
+                        <div>
+                             {catItems.map((item) => (
+                                 <div key={item.id} className="flex items-center gap-4 p-4 border-b border-gray-50 last:border-none">
+                                    <div onClick={() => handleToggle(item)} className="cursor-pointer w-6 h-6 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-chef-green transition-colors">
+                                    </div>
+                                    <span onClick={() => handleToggle(item)} className="flex-1 font-body text-lg cursor-pointer text-chef-dark">
+                                        {cleanSearchTerm(item.text)}
+                                    </span>
+                                    <button onClick={() => handleDelete(item.id)} className="text-gray-300 hover:text-red-400 p-2"><Trash2 size={18} /></button>
+                                 </div>
+                             ))}
+                        </div>
+                     </div>
+                 );
+             })}
+
+             {/* 2. COMPLETED ITEMS (ALWAYS AT BOTTOM) */}
+             {checkedItems.length > 0 && (
+                 <div className="mt-8">
+                     <div className="flex items-center gap-2 mb-3 px-2 opacity-50">
+                         <Check size={16} />
+                         <span className="text-xs font-bold uppercase tracking-widest">Déjà dans le panier ({checkedItems.length})</span>
+                     </div>
+                     <div className="bg-gray-50 rounded-[2rem] border border-gray-100 overflow-hidden opacity-70">
+                        {checkedItems.map((item) => (
+                             <div key={item.id} className="flex items-center gap-4 p-4 border-b border-gray-100 last:border-none">
+                                <div onClick={() => handleToggle(item)} className="cursor-pointer w-6 h-6 rounded-lg border-2 border-chef-green bg-chef-green flex items-center justify-center">
+                                    <Check size={14} className="text-white" />
+                                </div>
+                                <span onClick={() => handleToggle(item)} className="flex-1 font-body text-lg cursor-pointer text-gray-400 line-through decoration-gray-400">
+                                    {cleanSearchTerm(item.text)}
+                                </span>
+                                <button onClick={() => handleDelete(item.id)} className="text-gray-300 hover:text-red-400 p-2"><Trash2 size={18} /></button>
+                             </div>
+                        ))}
+                     </div>
                  </div>
-             ))}
+             )}
           </div>
       )}
       
