@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream } from 'lucide-react';
+import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal, PiggyBank } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 // VOTRE TAG PARTENAIRE AMAZON OFFICIEL
@@ -52,6 +52,7 @@ const RecipeCreator: React.FC = () => {
   
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
   const [sources, setSources] = useState<GroundingChunk[]>([]);
 
   // Shared state
@@ -149,7 +150,7 @@ const RecipeCreator: React.FC = () => {
       if (mode === 'create') {
         result = await generateChefRecipe(ingredients, people, dietary, mealTime, cuisineStyle, isBatchCooking, chefMode);
       } else {
-        result = await searchChefsRecipe(searchQuery, people);
+        result = await searchChefsRecipe(searchQuery, people, searchType);
       }
       
       setRecipe(result.text);
@@ -632,7 +633,7 @@ const RecipeCreator: React.FC = () => {
                             <label className={`block text-sm font-bold text-chef-dark flex items-center gap-2`}><Search size={18} className={textColor} /> Nom de la recette</label>
                             {isListening && listeningTarget === 'search' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
                         </div>
-                        <div className="relative">
+                        <div className="relative mb-3">
                             <input 
                                 type="text" 
                                 className={`w-full p-4 pr-32 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 ${ringColor} focus:bg-white outline-none font-body transition-all`} 
@@ -653,6 +654,30 @@ const RecipeCreator: React.FC = () => {
                             >
                                 {isListening && listeningTarget === 'search' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
                             </button>
+                        </div>
+
+                        {/* AUTHENTIC VS ECONOMICAL TOGGLE */}
+                        <div className="bg-gray-50 p-1.5 rounded-xl flex items-center justify-between border border-gray-100">
+                             <button
+                                onClick={() => setSearchType('authentic')}
+                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                    searchType === 'authentic' 
+                                    ? 'bg-white text-yellow-600 shadow-sm border border-yellow-100' 
+                                    : 'text-gray-400 hover:text-gray-600'
+                                }`}
+                             >
+                                 <Medal size={14} /> Recette Authentique
+                             </button>
+                             <button
+                                onClick={() => setSearchType('economical')}
+                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                    searchType === 'economical' 
+                                    ? 'bg-white text-chef-green shadow-sm border border-green-100' 
+                                    : 'text-gray-400 hover:text-gray-600'
+                                }`}
+                             >
+                                 <PiggyBank size={14} /> Recette Économique
+                             </button>
                         </div>
                         </div>
                     )}

@@ -208,23 +208,33 @@ export const generateChefRecipe = async (
   }
 };
 
-export const searchChefsRecipe = async (query: string, people: number): Promise<GeneratedContent> => {
+export const searchChefsRecipe = async (query: string, people: number, searchType: 'economical' | 'authentic'): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const today = new Date();
     const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const currentSeason = getCurrentSeason(today);
 
+    // Définition de la stratégie selon le choix utilisateur
+    const strategyInstruction = searchType === 'economical' 
+        ? `- MODE ÉCONOMIQUE ACTIVÉ : Adaptez pour "Petit Budget" (Objectif 30% d'économie). Proposez des alternatives moins chères si les ingrédients originaux sont onéreux.`
+        : `- MODE AUTHENTIQUE ACTIVÉ : Respectez la tradition culinaire à la lettre. Utilisez les ingrédients nobles originaux (AOP, AOC, beurre, crème, vin, morceaux spécifiques) sans chercher à économiser. La qualité et le goût priment sur le prix.`;
+
     const prompt = `
       Tu es MiamChef IA. DATE : ${currentDate} (${currentSeason}).
       Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
-      INSTRUCTIONS :
-      - Adaptez pour "Petit Budget" (Objectif 30% d'économie).
+      INSTRUCTIONS STRATÉGIQUES :
+      ${strategyInstruction}
+      
+      INSTRUCTIONS DE FORMATAGE (CRITIQUE) :
       - FORMAT INGRÉDIENTS : "- Nom Produit Précis (Quantité)".
-      - CONDITIONNEMENT (TRI AUTO) : Précisez TOUJOURS si c'est "en boîte", "surgelé", "frais" ou "sec".
-        Exemple : Ne dites pas "Petits pois", dites "Petits pois surgelés" ou "Petits pois en conserve". Ne dites pas "Thon", dites "Thon en boîte".
-      - SAISONNALITÉ : Si la recette originale contient des légumes hors-saison (${currentSeason}), imposez la variante "surgelé" ou "en conserve".
+      - CONDITIONNEMENT (TRI AUTO) : Précisez TOUJOURS si c'est "en boîte", "surgelé", "frais" ou "sec", MÊME EN MODE AUTHENTIQUE (ex: "Crème liquide entière fraîche", "Tomates San Marzano en conserve").
+        Cela est nécessaire pour que l'application puisse trier la liste de courses.
+      
+      SAISONNALITÉ : 
+      - En mode Économique : Si hors saison (${currentSeason}), imposez "surgelé" ou "conserve".
+      - En mode Authentique : Si hors saison, suggérez l'alternative de qualité (ex: "Tomates en conserve de qualité supérieure" plutôt que des tomates fraîches insipides en hiver).
       
       FORMAT JSON STRICT :
       {
