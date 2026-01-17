@@ -173,12 +173,15 @@ export const generateChefRecipe = async (
 
       INSTRUCTIONS STRICTES DE GÉNÉRATION :
       1. VOUVOIEMENT obligatoire.
-      2. INGRÉDIENTS : Format "- Produit (Quantité)". Ex: "- Farine T55 (250g)".
-      3. Si Mode Pâtissier : SOYEZ INTRANSIGEANT SUR LES PESÉES ET LES TEMPÉRATURES. Donnez des astuces de montage précises.
-      4. Si Mode Cuisinier : Encouragez l'instinct ("Goûtez et rectifiez l'assaisonnement").
-      5. TITRE : Doit être vendeur et gourmand (Ex: "Le Paris-Brest Revisité à la Pistache" ou "Risotto Crémeux aux Asperges").
-      6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Vous devez IMPÉRATIVEMENT utiliser des fruits et légumes de saison pour ${currentDate}. Refusez poliment et proposez une alternative si l'utilisateur demande un produit hors-saison (Ex: Tomate en Hiver).
-      7. OPTIMISATION DU PRIX (OBJECTIF -30%) : L'utilisateur est en période d'essai, il doit voir qu'il économise. Privilégiez toujours les ingrédients bruts (moins chers) aux produits transformés. Si une alternative moins chère existe sans sacrifier le goût, proposez-la en astuce.
+      2. INGRÉDIENTS & LISTE DE COURSES (CRITIQUE) :
+         - Format : "- Produit (Quantité)". 
+         - PRÉCISION DU CONDITIONNEMENT OBLIGATOIRE : Pour faciliter le tri automatique dans la liste de courses, vous devez préciser l'état du produit.
+         - EXEMPLES À SUIVRE : "Thon en boîte" (pas juste Thon), "Maïs en conserve", "Haricots verts surgelés", "Pavé de saumon frais", "Tomates pelées en bocal", "Pois chiches secs".
+      3. Si Mode Pâtissier : SOYEZ INTRANSIGEANT SUR LES PESÉES.
+      4. Si Mode Cuisinier : Encouragez l'instinct.
+      5. TITRE : Doit être vendeur et gourmand.
+      6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Utilisez des produits de saison. Si hors saison, précisez explicitement "surgelé" ou "en conserve".
+      7. OPTIMISATION DU PRIX : Privilégiez les produits bruts.
     `;
 
     const response = await ai.models.generateContent({
@@ -217,10 +220,11 @@ export const searchChefsRecipe = async (query: string, people: number): Promise<
       Recherchez et adaptez la recette : "${query}" pour ${people} personnes.
       
       INSTRUCTIONS :
-      - Adaptez pour "Petit Budget" (Objectif 30% d'économie sur le panier moyen).
-      - Utilisez le VOUVOIEMENT.
-      - FORMAT INGRÉDIENTS : "- Nom Produit (Quantité)". La quantité DOIT être à la fin entre parenthèses pour le Drive.
-      - SAISONNALITÉ : Si la recette originale contient des légumes hors-saison (pour ${currentSeason}), proposez une variante adaptée ou précisez d'utiliser des conserves/surgelés UNIQUEMENT si indispensable.
+      - Adaptez pour "Petit Budget" (Objectif 30% d'économie).
+      - FORMAT INGRÉDIENTS : "- Nom Produit Précis (Quantité)".
+      - CONDITIONNEMENT (TRI AUTO) : Précisez TOUJOURS si c'est "en boîte", "surgelé", "frais" ou "sec".
+        Exemple : Ne dites pas "Petits pois", dites "Petits pois surgelés" ou "Petits pois en conserve". Ne dites pas "Thon", dites "Thon en boîte".
+      - SAISONNALITÉ : Si la recette originale contient des légumes hors-saison (${currentSeason}), imposez la variante "surgelé" ou "en conserve".
       
       FORMAT JSON STRICT :
       {
@@ -270,7 +274,9 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
       Recette : ${originalRecipe}
       Mission (Twist) : "${modification}"
       
-      Consigne : Gardez le ton ludique et le VOUVOIEMENT. Gardez le format ingrédients "- Produit (Quantité)". Veillez à respecter la saisonnalité (${currentSeason}) si des ingrédients sont ajoutés. Gardez en tête l'objectif d'économie budgétaire.
+      Consigne : Gardez le ton ludique.
+      IMPORTANT : Si vous ajoutez des ingrédients, précisez leur conditionnement (ex: "en boîte", "surgelé") pour le tri de la liste de courses.
+      Respectez la saisonnalité (${currentSeason}).
     `;
 
     const response = await ai.models.generateContent({
@@ -307,18 +313,18 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             Date : ${currentDate} (${currentSeason}).
             Pour ${people} personnes. Régime : ${dietary}.
             
-            MISSION CRITIQUE : Faire économiser 30% sur le budget courses de l'utilisateur.
+            MISSION : Faire économiser 30% sur le budget.
             
-            STRATÉGIE "CROSS-UTILISATION" (OBLIGATOIRE) :
-            1. Ne faites JAMAIS acheter un légume pour une seule recette. Exemple : Si vous mettez du Chou Rouge le Lundi Midi (Salade), remettez-le le Mercredi Soir (Poêlée) pour finir le produit.
-            2. Privilégiez les produits bruts et de saison (moins chers au kilo).
-            3. Limitez la viande (coûteux) ou proposez des morceaux économiques mijotés.
+            INSTRUCTIONS INGRÉDIENTS (TRI AUTOMATIQUE) :
+            Dans les listes d'ingrédients, soyez EXPLICITE sur le conditionnement :
+            - "Thon en boîte" (pas juste Thon)
+            - "Épinards surgelés" (si hors saison)
+            - "Haricots rouges en conserve"
+            - "Saumon frais"
             
-            INSTRUCTIONS :
-            1. Générer 14 repas (Midi/Soir) simples, économiques.
-            2. Ingrédients "Supermarché" uniquement.
-            3. TON : Vouvoiement, ludique.
-            4. SAISONNALITÉ STRICTE : Nous sommes le ${currentDate}. Utilisez UNIQUEMENT des produits de saison (${currentSeason}).
+            STRATÉGIE "CROSS-UTILISATION" :
+            1. Réutilisez les légumes non finis d'un repas à l'autre.
+            2. Privilégiez les produits de saison (${currentSeason}).
             
             Respecte le schéma JSON.
         `;
@@ -404,7 +410,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
           { text: `Nous sommes le ${currentDate} (Saison: ${currentSeason}). Analysez cette photo. 
           OBJECTIF BUDGET : Dépense 0€. Maximisez l'utilisation des restes visibles sur la photo pour créer une recette.
-          Si vous devez ajouter des ingrédients, choisissez UNIQUEMENT des basiques ultra-économiques (farine, oeufs, huile, riz).
+          Si vous devez ajouter des ingrédients, précisez leur conditionnement (ex: "en boîte", "sec", "frais") pour la liste de courses.
           Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
         ],
       },
