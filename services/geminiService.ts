@@ -280,13 +280,26 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
     const currentSeason = getCurrentSeason(today);
 
     const prompt = `
-      MODIFICATION DE RECETTE (MiamChef IA). DATE : ${currentDate} (${currentSeason}).
-      Recette : ${originalRecipe}
-      Mission (Twist) : "${modification}"
+      RÔLE : Tu es MiamChef IA.
+      DATE : ${currentDate} (Saison: ${currentSeason}).
       
-      Consigne : Gardez le ton ludique.
-      IMPORTANT : Si vous ajoutez des ingrédients, précisez leur conditionnement (ex: "en boîte", "surgelé") pour le tri de la liste de courses.
-      Respectez la saisonnalité (${currentSeason}).
+      TÂCHE : RÉÉCRIRE ENTIÈREMENT la recette ci-dessous en appliquant STRICTEMENT la modification demandée (Twist).
+      Ne te contente pas de commenter, tu dois générer une NOUVELLE recette complète.
+      
+      RECETTE ORIGINALE :
+      """
+      ${originalRecipe}
+      """
+      
+      MODIFICATION DEMANDÉE (TWIST) : "${modification}"
+      
+      INSTRUCTIONS :
+      1. MODIFICATION TITRE : Change le "seoTitle" pour refléter le twist (ex: "Blanquette de Veau" devient "Blanquette Végétale").
+      2. MODIFICATION CONTENU : Adapte les ingrédients, les étapes et les métriques (calories, etc.).
+      3. LISTE DE COURSES : Comme toujours, précise le conditionnement des ingrédients (ex: "en boîte", "surgelé", "frais") pour le tri automatique.
+      4. TON : Garde le ton ludique et professionnel de MiamChef.
+      
+      FORMAT DE SORTIE ATTENDU : JSON complet (Markdown, Metrics, Ustensiles, SEO).
     `;
 
     const response = await ai.models.generateContent({
