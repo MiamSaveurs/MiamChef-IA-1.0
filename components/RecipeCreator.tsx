@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal, PiggyBank } from 'lucide-react';
+import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 // VOTRE TAG PARTENAIRE AMAZON OFFICIEL
@@ -676,7 +676,7 @@ const RecipeCreator: React.FC = () => {
                                     : 'text-gray-400 hover:text-gray-600'
                                 }`}
                              >
-                                 <PiggyBank size={14} /> Recette Économique
+                                 <Euro size={14} /> Recette Économique
                              </button>
                         </div>
                         </div>
