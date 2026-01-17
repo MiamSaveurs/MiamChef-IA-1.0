@@ -2,34 +2,85 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Layers, Beef, Milk, Wheat, Coffee, Droplet, Package } from 'lucide-react';
+import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, Fish } from 'lucide-react';
 
-// --- LOGIQUE DE CATÉGORISATION (RAYONS) ---
+// --- LOGIQUE DE CATÉGORISATION AVANCÉE (TYPE SUPERMARCHÉ) ---
 
-// NOTE : Tous les keywords doivent être SANS ACCENTS pour correspondre à la logique de normalisation
 const CATEGORIES = {
-  PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', bg: 'bg-green-100', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau'] },
-  PROTEIN: { id: 'protein', label: 'Viandes & Poissons', icon: Beef, color: 'text-red-600', bg: 'bg-red-100', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'thon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon'] },
-  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-500', bg: 'bg-blue-100', keywords: ['lait', 'beurre', 'creme', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comte', 'cheddar', 'mozzarella', 'parmesan', 'chevre', 'feta', 'blanc', 'skyr', 'dessert', 'gruyere'] },
-  GROCERY: { id: 'grocery', label: 'Épicerie Sèche', icon: Wheat, color: 'text-amber-600', bg: 'bg-amber-100', keywords: ['riz', 'pate', 'farine', 'sucre', 'huile', 'sel', 'poivre', 'conserve', 'sauce', 'pain', 'biscotte', 'cereale', 'biscuit', 'gateau', 'chocolat', 'miel', 'confiture', 'cafe', 'the', 'epice', 'vinaigre', 'moutarde', 'mayonnaise', 'ketchup', 'bouillon', 'cube', 'levure', 'vanille', 'amande', 'noix', 'chips', 'apero', 'semoule', 'lentille', 'pois', 'haricot', 'couscous', 'quinoa', 'boulgour', 'mais', 'ble', 'sarrasin', 'flocons', 'muesli', 'cacao', 'puree'] },
-  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-cyan-600', bg: 'bg-cyan-100', keywords: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'sirop', 'boisson', 'alcool', 'cidre', 'limonade'] },
-  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-600', bg: 'bg-purple-100', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'eponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant', 'sopalin', 'aluminium', 'film'] },
+  FRESH_PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', bg: 'bg-green-100', 
+    keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau', 'clementine', 'mandarine', 'raisin', 'brocoli'] },
+  
+  FRESH_MARKET: { id: 'market', label: 'Boucherie & Poissonnerie', icon: Beef, color: 'text-red-600', bg: 'bg-red-100', 
+    keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon', 'charcuterie', 'salami', 'pave', 'truite', 'bar', 'daurade'] },
+  
+  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-500', bg: 'bg-blue-100', 
+    keywords: ['lait', 'beurre', 'creme', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comte', 'cheddar', 'mozzarella', 'parmesan', 'chevre', 'feta', 'blanc', 'skyr', 'dessert', 'gruyere', 'roquefort', 'camembert', 'brie', 'ricotta', 'mascarpone', 'grec'] },
+  
+  GROCERY_SAVORY: { id: 'grocery_savory', label: 'Épicerie Salée & Conserves', icon: Wheat, color: 'text-amber-700', bg: 'bg-amber-100', 
+    keywords: ['pate', 'riz', 'semoule', 'puree', 'huile', 'vinaigre', 'sel', 'poivre', 'epice', 'moutarde', 'mayonnaise', 'ketchup', 'sauce', 'conserve', 'boite', 'bocal', 'thon', 'sardine', 'maquereau', 'haricot', 'pois', 'lentille', 'mais', 'cornichon', 'olive', 'boulgour', 'quinoa', 'couscous', 'chips', 'apero', 'cacahuete', 'bouillon', 'cube', 'soupe', 'crouton', 'tapenade', 'pesto'] },
+  
+  GROCERY_SWEET: { id: 'grocery_sweet', label: 'Épicerie Sucrée', icon: Candy, color: 'text-pink-600', bg: 'bg-pink-100', 
+    keywords: ['sucre', 'farine', 'chocolat', 'biscuit', 'gateau', 'cereale', 'muesli', 'confiture', 'miel', 'pate a tartiner', 'nutella', 'bonbon', 'compote', 'sirop', 'vanille', 'levure', 'cacao', 'cafe', 'the', 'tisane', 'capsule', 'dosette', 'pain', 'biscotte', 'brioche', 'madeleine', 'speculoos'] },
+  
+  FROZEN: { id: 'frozen', label: 'Surgelés', icon: Snowflake, color: 'text-cyan-600', bg: 'bg-cyan-100', 
+    keywords: ['surgele', 'congele', 'glace', 'sorbet', 'frite', 'pizza', 'nugget'] },
+
+  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-indigo-600', bg: 'bg-indigo-100', 
+    keywords: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'boisson', 'alcool', 'cidre', 'limonade', 'whisky', 'vodka', 'rhum', 'champagne', 'volvic', 'evian', 'perrier'] },
+  
+  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-600', bg: 'bg-purple-100', 
+    keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'eponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant', 'sopalin', 'aluminium', 'film', 'rasoir', 'deodorant', 'couche', 'lingette'] },
+  
   OTHER: { id: 'other', label: 'Divers', icon: Package, color: 'text-gray-500', bg: 'bg-gray-100', keywords: [] }
 };
 
 const getCategory = (itemText: string) => {
-    // Normalisation : mise en minuscule et suppression des accents
+    // 1. Normalisation : mise en minuscule et suppression des accents
     const clean = itemText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
+    // 2. RÈGLES DE PRIORITÉ (OVERRIDES)
+
+    // A. Surgelés : Mot clé prioritaire
+    if (clean.includes('surgele') || clean.includes('congele') || clean.includes('glace')) {
+        return 'FROZEN';
+    }
+
+    // B. Conserves & Bocaux : Bascule en Épicerie Salée par défaut, ou Sucrée si contexte
+    if (clean.includes('boite') || clean.includes('conserve') || clean.includes('bocal')) {
+        // Ex: "Poires au sirop en boite" -> Sucrée
+        if (clean.includes('sirop') || clean.includes('fruit') || clean.includes('poire') || clean.includes('peche') || clean.includes('ananas')) {
+            return 'GROCERY_SWEET';
+        }
+        return 'GROCERY_SAVORY';
+    }
+
+    // C. Exceptions Spécifiques "Thon"
+    // "Thon frais" ou "Pavé de thon" -> MARKET (Poissonnerie)
+    if (clean.includes('thon') && (clean.includes('frais') || clean.includes('pave') || clean.includes('steak'))) {
+        return 'FRESH_MARKET';
+    }
+    // "Thon" tout court -> GROCERY_SAVORY (Conserve implicite)
+    if (clean.includes('thon')) {
+        return 'GROCERY_SAVORY';
+    }
+
+    // D. "Sirop" -> Épicerie Sucrée (ex: Poires au sirop, Sirop de grenadine)
+    if (clean.includes('sirop')) {
+        return 'GROCERY_SWEET';
+    }
+
+    // 3. RECHERCHE CLASSIQUE PAR MOTS-CLÉS
     for (const key in CATEGORIES) {
         // @ts-ignore
         const cat = CATEGORIES[key];
         if (cat.id === 'other') continue;
+        
         // On vérifie si un des mots-clés est présent dans le texte
         if (cat.keywords.some((k: string) => clean.includes(k))) {
             return key;
         }
     }
+
     return 'OTHER';
 };
 
@@ -64,17 +115,15 @@ const ShoppingList: React.FC = () => {
   const loadItems = async () => {
     try {
       const data = await getShoppingList();
-      // On garde le tri checked/unchecked pour la logique interne, mais l'affichage sera géré par les catégories
       setItems(data);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
   const handleToggle = async (item: ShoppingItem) => {
-    // Optimistic update
     const updatedItems = items.map(i => i.id === item.id ? { ...i, checked: !i.checked } : i);
     setItems(updatedItems);
     await toggleShoppingItem(item);
-    loadItems(); // Refresh to be sure
+    loadItems();
   };
 
   const handleDelete = async (id: number) => {
@@ -111,7 +160,6 @@ const ShoppingList: React.FC = () => {
   const handleRetailerSelect = (retailer: any) => {
       setSelectedRetailer(retailer);
       localStorage.setItem('miamchef_retailer', JSON.stringify(retailer));
-      
       if (userCity.trim()) {
           window.open(`https://www.google.com/maps/search/${encodeURIComponent(`Drive ${retailer.name} ${userCity}`)}`, '_blank');
       }
@@ -134,11 +182,7 @@ const ShoppingList: React.FC = () => {
       }
       const clean = cleanSearchTerm(itemText);
       const url = `${selectedRetailer.urlPattern}${encodeURIComponent(clean)}`;
-      if (selectedRetailer.urlPattern) {
-          window.open(url, '_blank');
-      } else {
-          alert("Erreur de lien magasin. Veuillez réessayer.");
-      }
+      window.open(url, '_blank');
   };
 
   const handleCopyAll = () => {
@@ -167,7 +211,7 @@ const ShoppingList: React.FC = () => {
                 <div className="p-3 bg-blue-50 rounded-2xl"><ShoppingCart className="text-blue-500" size={28} /></div>
                 <div>
                     <h2 className="text-3xl font-display text-chef-dark leading-none">Liste de Courses</h2>
-                    <p className="text-gray-500 text-sm font-body">Zéro papier, Zéro oubli</p>
+                    <p className="text-gray-500 text-sm font-body">Rayon par Rayon</p>
                 </div>
             </div>
             {items.length > 0 && (
@@ -185,7 +229,7 @@ const ShoppingList: React.FC = () => {
              <div className="relative flex-1">
                  <input 
                     type="text" 
-                    placeholder="Ajouter (ex: Lait, Oeufs)..." 
+                    placeholder="Ajouter (ex: Lait, Thon en boite, Poires au sirop)..." 
                     className="w-full pl-4 pr-10 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-chef-green outline-none"
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
