@@ -6,23 +6,26 @@ import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardL
 
 // --- LOGIQUE DE CATÉGORISATION (RAYONS) ---
 
+// NOTE : Tous les keywords doivent être SANS ACCENTS pour correspondre à la logique de normalisation
 const CATEGORIES = {
-  PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', bg: 'bg-green-100', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'légume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'épinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pastèque', 'patate', 'terre', 'radis'] },
-  PROTEIN: { id: 'protein', label: 'Viandes & Poissons', icon: Beef, color: 'text-red-600', bg: 'bg-red-100', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'thon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'haché', 'merguez', 'chipolata', 'rôti', 'filet', 'escalope'] },
-  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-500', bg: 'bg-blue-100', keywords: ['lait', 'beurre', 'crème', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comté', 'cheddar', 'mozzarella', 'parmesan', 'chèvre', 'feta', 'blanc', 'skyr', 'dessert'] },
-  GROCERY: { id: 'grocery', label: 'Épicerie', icon: Wheat, color: 'text-amber-600', bg: 'bg-amber-100', keywords: ['riz', 'pâte', 'farine', 'sucre', 'huile', 'sel', 'poivre', 'conserve', 'sauce', 'pain', 'biscotte', 'céréale', 'biscuit', 'gâteau', 'chocolat', 'miel', 'confiture', 'café', 'thé', 'épice', 'vinaigre', 'moutarde', 'mayonnaise', 'ketchup', 'bouillon', 'cube', 'levure', 'vanille', 'amande', 'noix', 'chips', 'apéro'] },
-  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-cyan-600', bg: 'bg-cyan-100', keywords: ['eau', 'jus', 'vin', 'bière', 'soda', 'coca', 'sirop', 'boisson', 'alcool', 'cidre', 'limonade'] },
-  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-600', bg: 'bg-purple-100', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'éponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant'] },
+  PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', bg: 'bg-green-100', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau'] },
+  PROTEIN: { id: 'protein', label: 'Viandes & Poissons', icon: Beef, color: 'text-red-600', bg: 'bg-red-100', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'thon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon'] },
+  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-500', bg: 'bg-blue-100', keywords: ['lait', 'beurre', 'creme', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comte', 'cheddar', 'mozzarella', 'parmesan', 'chevre', 'feta', 'blanc', 'skyr', 'dessert', 'gruyere'] },
+  GROCERY: { id: 'grocery', label: 'Épicerie Sèche', icon: Wheat, color: 'text-amber-600', bg: 'bg-amber-100', keywords: ['riz', 'pate', 'farine', 'sucre', 'huile', 'sel', 'poivre', 'conserve', 'sauce', 'pain', 'biscotte', 'cereale', 'biscuit', 'gateau', 'chocolat', 'miel', 'confiture', 'cafe', 'the', 'epice', 'vinaigre', 'moutarde', 'mayonnaise', 'ketchup', 'bouillon', 'cube', 'levure', 'vanille', 'amande', 'noix', 'chips', 'apero', 'semoule', 'lentille', 'pois', 'haricot', 'couscous', 'quinoa', 'boulgour', 'mais', 'ble', 'sarrasin', 'flocons', 'muesli', 'cacao', 'puree'] },
+  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-cyan-600', bg: 'bg-cyan-100', keywords: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'sirop', 'boisson', 'alcool', 'cidre', 'limonade'] },
+  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-600', bg: 'bg-purple-100', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'eponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant', 'sopalin', 'aluminium', 'film'] },
   OTHER: { id: 'other', label: 'Divers', icon: Package, color: 'text-gray-500', bg: 'bg-gray-100', keywords: [] }
 };
 
 const getCategory = (itemText: string) => {
+    // Normalisation : mise en minuscule et suppression des accents
     const clean = itemText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
     for (const key in CATEGORIES) {
         // @ts-ignore
         const cat = CATEGORIES[key];
         if (cat.id === 'other') continue;
+        // On vérifie si un des mots-clés est présent dans le texte
         if (cat.keywords.some((k: string) => clean.includes(k))) {
             return key;
         }
