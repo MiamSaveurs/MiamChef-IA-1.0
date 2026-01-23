@@ -644,29 +644,31 @@ const RecipeCreator: React.FC = () => {
                         <div>
                         <div className="flex justify-between items-center mb-3">
                             <label className={`block text-sm font-bold text-chef-dark flex items-center gap-2`}><Search size={18} className={textColor} /> Nom de la recette</label>
-                            {isListening && listeningTarget === 'search' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
+                            <div className="flex items-center gap-2">
+                                {isListening && listeningTarget === 'search' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
+                                {/* MIC BUTTON FOR SEARCH */}
+                                <button 
+                                    onClick={() => startListening('search')}
+                                    className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold shadow-sm ${
+                                        isListening && listeningTarget === 'search' 
+                                        ? 'bg-red-500 text-white animate-pulse' 
+                                        : `${primaryColor} text-white hover:opacity-90`
+                                    }`}
+                                    title="Dicter la recherche"
+                                >
+                                    {isListening && listeningTarget === 'search' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
+                                </button>
+                            </div>
                         </div>
                         <div className="relative mb-3">
                             <input 
                                 type="text" 
-                                className={`w-full p-4 pr-32 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 ${ringColor} focus:bg-white outline-none font-body transition-all`} 
+                                className={`w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 ${ringColor} focus:bg-white outline-none font-body transition-all`} 
                                 placeholder={chefMode === 'patisserie' ? "Ex: Fraisier, Paris-Brest, Macarons, Saint-Honoré..." : "Ex: Blanquette de veau, Risotto, Pad Thai..."} 
                                 value={searchQuery} 
                                 onChange={(e) => setSearchQuery(e.target.value)} 
                                 onKeyDown={(e) => e.key === 'Enter' && handleGenerate()} 
                             />
-                            {/* MIC BUTTON FOR SEARCH */}
-                            <button 
-                                onClick={() => startListening('search')}
-                                className={`absolute top-1/2 -translate-y-1/2 right-2 px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold ${
-                                    isListening && listeningTarget === 'search' 
-                                    ? 'bg-red-500 text-white animate-pulse' 
-                                    : `${primaryColor} text-white hover:opacity-90`
-                                }`}
-                                title="Dicter la recherche"
-                            >
-                                {isListening && listeningTarget === 'search' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
-                            </button>
                         </div>
 
                         {/* AUTHENTIC VS ECONOMICAL TOGGLE */}
