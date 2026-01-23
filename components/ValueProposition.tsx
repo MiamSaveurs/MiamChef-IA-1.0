@@ -109,7 +109,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                         <strong className="text-chef-dark">Le Constat :</strong> Chaque année, un foyer français jette en moyenne <span className="text-red-500 font-bold">400€</span> de nourriture.
                     </p>
                     <p>
-                        <strong className="text-chef-dark">MiamChef IA :</strong> Avec la fonction <span className="font-bold text-blue-600">Scan Anti-Gaspi</span>, un simple clic transforme les restes du frigo, placards ou garde-manger en un plat gastronomique.
+                        <strong className="text-chef-dark">MiamChef IA :</strong> Avec la fonction <span className="font-bold text-blue-600">Scan Anti-Gaspi</span>, un simple clic transforme les restes du frigo, placards ou garde-manger en un plat savoureux.
                     </p>
 
                     <div className="bg-white p-4 rounded-xl border border-blue-100 shadow-sm mt-4 text-center">

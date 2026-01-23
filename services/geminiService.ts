@@ -7,7 +7,7 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 🧠 PROTOCOLE D'EXPANSION STRATÉGIQUE (MÉMOIRE DU SYSTÈME MIAMCHEF IA) 🧠
  * ======================================================================================
  * 
- * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS de la FoodTech "Petit Budget".
+ * 1. IDENTITÉ : MiamChef IA est le LEADER FRANÇAIS de la FoodTech "Cuisine Intelligente".
  * 2. DATE SYSTÈME : DYNAMIQUE (Temps Réel).
  * 3. ADN "WINNER" : Innovation perpétuelle, mais ACCESSIBLE À TOUS.
  * 4. OBSESSION CLIENT : Satisfaction absolue. Effet "Wahoo".
@@ -18,6 +18,31 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan } from "../types";
  * 7. PROMESSE COMMERCIALE (CRITIQUE) : L'utilisateur DOIT économiser 30% sur son budget courses dès la première semaine (Période d'essai).
  *    Chaque ingrédient proposé doit être rentabilisé. Pas d'ingrédient exotique utilisé une seule fois.
  */
+
+// --- INSTRUCTIONS DE SÉCURITÉ DE MARQUE (GLOBALES) ---
+const BANNED_WORDS_INSTRUCTION = `
+      🚨 RÈGLE D'OR (SÉCURITÉ DE MARQUE - APPLICATION STRICTE) 🚨
+      Il est STRICTEMENT INTERDIT d'utiliser les mots suivants (et leurs variations) dans le texte généré :
+      1. 🚫 "Bistrot" / "Bistronomique" -> Remplacer OBLIGATOIREMENT par : "Cuisine de Chef", "Raffiné", "Gourmand", "Authentique".
+      2. 🚫 "Gastronomie" / "Gastronomique" -> Remplacer OBLIGATOIREMENT par : "Haute Cuisine", "Excellence", "Cuisine d'Exception", "Savoureux".
+      3. 🚫 "Petit budget" -> Remplacer OBLIGATOIREMENT par : "Économique", "Abordable", "Malin", "Budget Maîtrisé", "Optimisé".
+      
+      Si tu es tenté d'utiliser un de ces mots interdits, tu DOIS utiliser le synonyme imposé.
+`;
+
+// --- FONCTION DE NETTOYAGE FORCE (FAIL-SAFE) ---
+// Cette fonction repasse sur le texte généré par l'IA pour supprimer les mots interdits s'ils sont passés au travers.
+const sanitizeText = (text: string | undefined): string => {
+    if (!text) return "";
+    let clean = text;
+
+    // Remplacement brutal des mots interdits (Case insensitive)
+    clean = clean.replace(/bistrot|bistronomique/gi, "Cuisine de Chef");
+    clean = clean.replace(/gastronomie|gastronomique/gi, "Cuisine d'Exception");
+    clean = clean.replace(/petit budget/gi, "Économique");
+    
+    return clean;
+};
 
 // Helper: Calculate Season
 const getCurrentSeason = (date: Date): string => {
@@ -151,7 +176,7 @@ export const generateChefRecipe = async (
            STYLE: Précision chimique, Esthétique parfaite, Gourmandise absolue.
            PHILOSOPHIE: La pâtisserie est une science exacte. Pas d'improvisation sur les pesées.
            VOCABULAIRE: Chemiser, Foisonner, Macaronner, Fleurer, Napper, Pocher.`
-        : `MODE: GRAND CHEF CUISINIER BISTRONOMIQUE (Cerveau Salé).
+        : `MODE: GRAND CHEF CUISINIER D'EXCEPTION (Cerveau Salé).
            STYLE: Cuisine du marché, Improvisation géniale, Maîtrise du feu.
            PHILOSOPHIE: La cuisine vient du coeur. On goûte, on rectifie, on ose.
            VOCABULAIRE: Saisir, Déglacer, Suer, Mijoter, Dresser, Assaisonner.`;
@@ -188,6 +213,8 @@ export const generateChefRecipe = async (
       5. TITRE : Doit être vendeur, gourmand et refléter les ingrédients/envies de l'utilisateur.
       6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Si hors saison, imposez "surgelé" ou "conserve".
       7. OPTIMISATION DU PRIX : Privilégiez les produits bruts.
+
+      ${BANNED_WORDS_INSTRUCTION}
     `;
 
     const response = await ai.models.generateContent({
@@ -202,11 +229,11 @@ export const generateChefRecipe = async (
 
     const data = cleanAndParseJSON(response.text || "{}");
     return {
-      text: data.markdownContent || "Erreur de contenu recette.",
+      text: sanitizeText(data.markdownContent) || "Erreur de contenu recette.", // NETTOYAGE ICI
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: data.seoTitle,
-      seoDescription: data.seoDescription
+      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
+      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
     };
   } catch (error) {
     console.error("Error generating recipe:", error);
@@ -223,8 +250,8 @@ export const searchChefsRecipe = async (query: string, people: number, searchTyp
 
     // Définition de la stratégie selon le choix utilisateur
     const strategyInstruction = searchType === 'economical' 
-        ? `- MODE ÉCONOMIQUE ACTIVÉ : Adaptez pour "Petit Budget" (Objectif 30% d'économie). Proposez des alternatives moins chères si les ingrédients originaux sont onéreux.`
-        : `- MODE AUTHENTIQUE ACTIVÉ : Respectez la tradition culinaire à la lettre. Utilisez les ingrédients nobles originaux (AOP, AOC, beurre, crème, vin, morceaux spécifiques) sans chercher à économiser. La qualité et le goût priment sur le prix.`;
+        ? `- MODE ÉCONOMIQUE ACTIVÉ : Adaptez pour optimiser les coûts (Objectif 30% d'économie). Proposez des alternatives plus abordables.`
+        : `- MODE AUTHENTIQUE ACTIVÉ : Respectez la tradition culinaire à la lettre. Utilisez les ingrédients nobles originaux (AOP, AOC, beurre, crème, vin, morceaux spécifiques).`;
 
     const prompt = `
       Tu es MiamChef IA. DATE : ${currentDate} (${currentSeason}).
@@ -241,6 +268,8 @@ export const searchChefsRecipe = async (query: string, people: number, searchTyp
       SAISONNALITÉ : 
       - En mode Économique : Si hors saison (${currentSeason}), imposez "surgelé" ou "conserve".
       - En mode Authentique : Si hors saison, suggérez l'alternative de qualité (ex: "Tomates en conserve de qualité supérieure" plutôt que des tomates fraîches insipides en hiver).
+      
+      ${BANNED_WORDS_INSTRUCTION}
       
       FORMAT JSON STRICT :
       {
@@ -266,12 +295,12 @@ export const searchChefsRecipe = async (query: string, people: number, searchTyp
     ).filter((c: any) => c.web);
 
     return {
-      text: data.markdownContent || "Non trouvé.",
+      text: sanitizeText(data.markdownContent) || "Non trouvé.", // NETTOYAGE ICI
       groundingChunks: groundingChunks,
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: data.seoTitle,
-      seoDescription: data.seoDescription
+      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
+      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
     };
   } catch (error) {
     throw error;
@@ -305,6 +334,8 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
       3. LISTE DE COURSES : Comme toujours, précise le conditionnement des ingrédients (ex: "en boîte", "surgelé", "frais") pour le tri automatique.
       4. TON : Garde le ton ludique et professionnel de MiamChef.
       
+      ${BANNED_WORDS_INSTRUCTION}
+      
       FORMAT DE SORTIE ATTENDU : JSON complet (Markdown, Metrics, Ustensiles, SEO).
     `;
 
@@ -319,11 +350,11 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 
     const data = cleanAndParseJSON(response.text || "{}");
     return {
-      text: data.markdownContent || "Erreur modification.",
+      text: sanitizeText(data.markdownContent) || "Erreur modification.", // NETTOYAGE ICI
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: data.seoTitle,
-      seoDescription: data.seoDescription
+      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
+      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
     };
   } catch (error) {
     throw error;
@@ -342,7 +373,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             Date : ${currentDate} (${currentSeason}).
             Pour ${people} personnes. Régime : ${dietary}.
             
-            MISSION : Faire économiser 30% sur le budget.
+            MISSION : Optimiser les coûts (Objectif 30% d'économie).
             
             INSTRUCTIONS INGRÉDIENTS (TRI AUTOMATIQUE) :
             Dans les listes d'ingrédients, soyez EXPLICITE sur le conditionnement :
@@ -354,6 +385,8 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             STRATÉGIE "CROSS-UTILISATION" :
             1. Réutilisez les légumes non finis d'un repas à l'autre.
             2. Privilégiez les produits de saison (${currentSeason}).
+            
+            ${BANNED_WORDS_INSTRUCTION}
             
             Respecte le schéma JSON.
         `;
@@ -381,7 +414,7 @@ export const generateRecipeImage = async (title: string, ingredientsContext: str
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const currentSeason = getCurrentSeason(new Date());
     // Prompt optimisé pour une photo "Ultra-Réaliste" en 4K
-    const prompt = `Professional ultra-realistic 4k food photography of the final dish "${title}". Ingredients visible: ${ingredientsContext}. Professional plating, gastronomic presentation, highly detailed, cinematic lighting, depth of field, 8k resolution. Style: Haute Cuisine meets Home Cooking. Season: ${currentSeason}.`;
+    const prompt = `Professional ultra-realistic 4k food photography of the final dish "${title}". Ingredients visible: ${ingredientsContext}. Professional plating, elegant presentation, highly detailed, cinematic lighting, depth of field, 8k resolution. Style: Haute Cuisine meets Home Cooking. Season: ${currentSeason}. NO TEXT, NO LOGOS.`;
     
     // Utilisation du modèle PRO pour une qualité maximale (4K)
     const response = await ai.models.generateContent({
@@ -438,13 +471,15 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
         parts: [
           { inlineData: { mimeType: "image/jpeg", data: imageBase64 } },
           { text: `Nous sommes le ${currentDate} (Saison: ${currentSeason}). Analysez cette photo. 
-          OBJECTIF BUDGET : Dépense 0€. Maximisez l'utilisation des restes visibles sur la photo pour créer une recette.
+          OBJECTIF : Dépense 0€. Maximisez l'utilisation des restes visibles sur la photo pour créer une recette.
           Si vous devez ajouter des ingrédients, précisez leur conditionnement (ex: "en boîte", "sec", "frais") pour la liste de courses.
-          Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.` },
+          Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique ! Format Markdown.
+          
+          ${BANNED_WORDS_INSTRUCTION}` },
         ],
       },
     });
-    return response.text || "Erreur scan.";
+    return sanitizeText(response.text) || "Erreur scan."; // NETTOYAGE ICI
   } catch (error) { throw error; }
 };
 
@@ -456,7 +491,8 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     
     const prompt = audience === 'b2b' 
         ? `Sommelier Pro pour "${request}". Date : ${currentDate}. Pitch commercial, stratégie marge. (Ton Pro & Sérieux)` 
-        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Privilégiez les pépites abordables aux grands crus hors de prix. Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue.`;
+        : `Sommelier Conseil pour "${request}". Date : ${currentDate}. Trouvez 3 vins avec un excellent rapport qualité/prix (disponibles en supermarché ou caviste de quartier). Privilégiez les pépites abordables aux grands crus hors de prix. Utilisez le VOUVOIEMENT ("Vous"). Soyez ludique et pédagogue. 
+        ${BANNED_WORDS_INSTRUCTION}`;
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -464,7 +500,10 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
       config: { tools: [{ googleSearch: {} }] },
     });
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((c: any) => ({ web: c.web })).filter((c: any) => c.web);
-    return { text: response.text || "Erreur sommelier.", groundingChunks };
+    return { 
+        text: sanitizeText(response.text) || "Erreur sommelier.", // NETTOYAGE ICI
+        groundingChunks 
+    };
   } catch (error) { throw error; }
 };
 
