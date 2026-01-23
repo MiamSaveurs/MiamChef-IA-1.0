@@ -611,7 +611,21 @@ const RecipeCreator: React.FC = () => {
                                 {chefMode === 'patisserie' ? <Wheat size={18} className={textColor}/> : <Utensils size={18} className={textColor} />} 
                                 Ingrédients & Envies
                             </label>
-                            {isListening && listeningTarget === 'ingredients' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
+                            
+                            <div className="flex items-center gap-2">
+                                {isListening && listeningTarget === 'ingredients' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
+                                <button 
+                                    onClick={() => startListening('ingredients')}
+                                    className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold shadow-sm ${
+                                        isListening && listeningTarget === 'ingredients' 
+                                        ? 'bg-red-500 text-white animate-pulse' 
+                                        : `${primaryColor} text-white hover:opacity-90`
+                                    }`}
+                                    title="Dicter les ingrédients et envies"
+                                >
+                                    {isListening && listeningTarget === 'ingredients' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
+                                </button>
+                            </div>
                         </div>
                         <div className="relative">
                             <textarea 
@@ -620,18 +634,6 @@ const RecipeCreator: React.FC = () => {
                                 value={ingredients} 
                                 onChange={(e) => setIngredients(e.target.value)} 
                             />
-                            {/* MIC BUTTON FOR INGREDIENTS */}
-                            <button 
-                                onClick={() => startListening('ingredients')}
-                                className={`absolute bottom-3 right-3 px-4 py-2 rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm font-bold ${
-                                    isListening && listeningTarget === 'ingredients' 
-                                    ? 'bg-red-500 text-white animate-pulse' 
-                                    : `${primaryColor} text-white hover:opacity-90`
-                                }`}
-                                title="Dicter les ingrédients et envies"
-                            >
-                                {isListening && listeningTarget === 'ingredients' ? <><MicOff size={16} /> Stop</> : <><Mic size={16} /> Dicter</>}
-                            </button>
                         </div>
                         <p className="text-[10px] text-gray-400 mt-2 flex items-center gap-1">
                             <MessageCircle size={10} />
