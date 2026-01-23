@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal, PiggyBank } from 'lucide-react';
+import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal, PiggyBank, MessageCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 // VOTRE TAG PARTENAIRE AMAZON OFFICIEL
@@ -608,14 +608,14 @@ const RecipeCreator: React.FC = () => {
                         <div className="flex justify-between items-center mb-3">
                             <label className={`block text-sm font-bold text-chef-dark flex items-center gap-2`}>
                                 {chefMode === 'patisserie' ? <Wheat size={18} className={textColor}/> : <Utensils size={18} className={textColor} />} 
-                                Ingrédients Disponibles
+                                Ingrédients & Envies
                             </label>
                             {isListening && listeningTarget === 'ingredients' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
                         </div>
                         <div className="relative">
                             <textarea 
                                 className={`w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 ${ringColor} focus:bg-white outline-none resize-none font-body transition-all min-h-[140px]`} 
-                                placeholder={chefMode === 'patisserie' ? "Ex: Farine, sucre, chocolat, oeufs, beurre, vanille..." : "Ex: J'ai du poulet, deux courgettes, de la crème et du citron..."} 
+                                placeholder={chefMode === 'patisserie' ? "Ex: J'ai de la farine et des pommes, je voudrais un gâteau moelleux mais pas trop sucré..." : "Ex: J'ai du poulet, du riz, et j'aimerais un plat épicé façon asiatique mais rapide à faire..."} 
                                 value={ingredients} 
                                 onChange={(e) => setIngredients(e.target.value)} 
                             />
@@ -627,11 +627,15 @@ const RecipeCreator: React.FC = () => {
                                     ? 'bg-red-500 text-white animate-pulse' 
                                     : `${primaryColor} text-white hover:opacity-90`
                                 }`}
-                                title="Dicter les ingrédients"
+                                title="Dicter les ingrédients et envies"
                             >
                                 {isListening && listeningTarget === 'ingredients' ? <><MicOff size={16} /> Stop</> : <><Mic size={16} /> Dicter</>}
                             </button>
                         </div>
+                        <p className="text-[10px] text-gray-400 mt-2 flex items-center gap-1">
+                            <MessageCircle size={10} />
+                            Astuce : Parlez naturellement à l'IA (ex: "Je veux utiliser mes restes de pâtes mais au four").
+                        </p>
                         </div>
                     ) : (
                         <div>

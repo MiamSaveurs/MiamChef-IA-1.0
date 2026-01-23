@@ -131,7 +131,7 @@ const weeklyPlanSchema: Schema = {
 };
 
 export const generateChefRecipe = async (
-  ingredients: string,
+  userConfig: string, // Renamed from ingredients to userConfig to reflect mixed input
   people: number,
   dietary: string,
   mealTime: string,
@@ -161,10 +161,17 @@ export const generateChefRecipe = async (
       IDENTITÉ : MiamChef IA.
       ${persona}
       
-      MISSION : Créer une recette exceptionnelle mais accessible.
+      MISSION : Créer une recette exceptionnelle sur-mesure.
       
-      PARAMÈTRES :
-      - INGRÉDIENTS DISPOS : ${ingredients}
+      ANALYSE DE LA DEMANDE UTILISATEUR (LANGAGE NATUREL) :
+      L'utilisateur fournit le texte suivant : "${userConfig}"
+      
+      TA MISSION D'ANALYSE SÉMANTIQUE :
+      1. IDENTIFIE les ingrédients mentionnés dans ce texte.
+      2. IDENTIFIE les intentions, envies, commentaires ou contraintes (ex: "je veux du croquant", "j'ai pas de four", "c'est pour un anniversaire").
+      3. UTILISE ces intentions pour orienter la recette.
+      
+      PARAMÈTRES ADDITIONNELS :
       - STYLE CULTUREL : ${cuisineStyle}
       - PERSONNES : ${people}
       - RÉGIME : ${dietary}
@@ -175,12 +182,11 @@ export const generateChefRecipe = async (
       1. VOUVOIEMENT obligatoire.
       2. INGRÉDIENTS & LISTE DE COURSES (CRITIQUE) :
          - Format : "- Produit (Quantité)". 
-         - PRÉCISION DU CONDITIONNEMENT OBLIGATOIRE : Pour faciliter le tri automatique dans la liste de courses, vous devez préciser l'état du produit.
-         - EXEMPLES À SUIVRE : "Thon en boîte" (pas juste Thon), "Maïs en conserve", "Haricots verts surgelés", "Pavé de saumon frais", "Tomates pelées en bocal", "Pois chiches secs".
+         - PRÉCISION DU CONDITIONNEMENT OBLIGATOIRE : Précisez l'état du produit pour le tri (ex: "Thon en boîte", "Haricots verts surgelés", "Pois chiches secs").
       3. Si Mode Pâtissier : SOYEZ INTRANSIGEANT SUR LES PESÉES.
-      4. Si Mode Cuisinier : Encouragez l'instinct.
-      5. TITRE : Doit être vendeur et gourmand.
-      6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Utilisez des produits de saison. Si hors saison, précisez explicitement "surgelé" ou "en conserve".
+      4. Si Mode Cuisinier : Encouragez l'instinct mais respectez les demandes de l'utilisateur.
+      5. TITRE : Doit être vendeur, gourmand et refléter les ingrédients/envies de l'utilisateur.
+      6. SAISONNALITÉ OBLIGATOIRE (${currentSeason}) : Si hors saison, imposez "surgelé" ou "conserve".
       7. OPTIMISATION DU PRIX : Privilégiez les produits bruts.
     `;
 
