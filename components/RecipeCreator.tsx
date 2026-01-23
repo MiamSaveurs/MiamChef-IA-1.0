@@ -544,6 +544,7 @@ const RecipeCreator: React.FC = () => {
                                         onChange={(e) => setCuisineStyle(e.target.value)}
                                     >
                                         <option value="Cuisine Française">🇫🇷 Cuisine Française</option>
+                                        <option value="Régime Méditerranéen">🌊 Régime Méditerranéen (Santé)</option>
                                         <option value="Italien (Trattoria)">🇮🇹 Italien (Trattoria)</option>
                                         <option value="Asiatique (Street Food)">🌏 Asiatique (Street Food)</option>
                                         <option value="Japonais (Authentique)">🇯🇵 Japonais (Authentique)</option>
