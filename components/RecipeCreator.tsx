@@ -519,6 +519,7 @@ const RecipeCreator: React.FC = () => {
                                         onChange={(e) => setDietary(e.target.value)}
                                     >
                                         <option value="">Classique (Aucun)</option>
+                                        <option value="Régime Méditerranéen">Régime Méditerranéen</option>
                                         <option value="Végétarien">Végétarien</option>
                                         <option value="Végétalien (Vegan)">Végétalien (Vegan)</option>
                                         <option value="Sans Gluten">Sans Gluten</option>
@@ -544,7 +545,6 @@ const RecipeCreator: React.FC = () => {
                                         onChange={(e) => setCuisineStyle(e.target.value)}
                                     >
                                         <option value="Cuisine Française">🇫🇷 Cuisine Française</option>
-                                        <option value="Régime Méditerranéen">🌊 Régime Méditerranéen (Santé)</option>
                                         <option value="Italien (Trattoria)">🇮🇹 Italien (Trattoria)</option>
                                         <option value="Asiatique (Street Food)">🌏 Asiatique (Street Food)</option>
                                         <option value="Japonais (Authentique)">🇯🇵 Japonais (Authentique)</option>
