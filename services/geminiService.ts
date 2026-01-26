@@ -210,10 +210,11 @@ export const generateChefRecipe = async (
     let dietaryInstruction = `RÉGIME : ${dietary}`;
     if (dietary === "Régime Méditerranéen") {
         dietaryInstruction += `
-        ⚠️ INSTRUCTIONS SPÉCIALES RÉGIME MÉDITERRANÉEN :
-        1. RATIO VITAL : 80% Végétal (Légumes, fruits, céréales, légumineuses) / 20% Animal (Privilégier poisson, volaille, œufs. Limiter viande rouge).
-        2. GRAISSES : Utiliser EXCLUSIVEMENT l'huile d'olive (cuisson/froid) ou l'huile de colza (assaisonnement pour Oméga 3).
-        3. SANTÉ : Recette équilibrée, riche en fibres et antioxydants.
+        ⚠️ INSTRUCTIONS SPÉCIALES RÉGIME MÉDITERRANÉEN (CRÉTOIS) :
+        1. BASE QUOTIDIENNE : Légumes, fruits, céréales complètes, légumineuses (lentilles, pois chiches), noix.
+        2. GRAISSES : Huile d'olive (principale).
+        3. MODÉRÉ (Hebdo) : Poisson, Volaille, Oeufs, Laitages.
+        4. RARE (Mensuel) : Viande rouge.
         `;
     }
 
@@ -406,18 +407,28 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
 
         let specialInstructions = "";
         
+        // --- LOGIQUE SPÉCIFIQUE DEMANDÉE POUR LE RÉGIME MÉDITERRANÉEN ---
         if (dietary === "Régime Méditerranéen") {
             specialInstructions = `
-            🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN STRICT (Crétois) :
-            1. STRUCTURE : Tu DOIS générer 4 REPAS par jour (Petit-déjeuner, Déjeuner, En-cas, Dîner).
-            2. CIBLE CALORIQUE : Viser une moyenne de 2000 Kcal / jour au total.
-            3. RATIO D'OR (80/20) : 
-               - 80% d'ingrédients VÉGÉTAUX (Fruits, légumes, légumineuses, céréales complètes, noix).
-               - 20% d'ingrédients ANIMAUX (Privilégier Poisson, Volaille, Œufs. Viande rouge très occasionnelle).
-            4. LIPIDES : Utiliser EXCLUSIVEMENT l'huile d'olive et occasionnellement l'huile de colza (Oméga 3).
-            5. STYLE : Cuisine saine, fraîche, colorée, herbes aromatiques.
+            🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN (CRÉTOIS) - STANDARD "MEILLEUR OUVRIER DE FRANCE" :
+            
+            1. LOI DE LA VARIÉTÉ ABSOLUE (ANTI-RÉPÉTITION) :
+               - IL EST STRICTEMENT INTERDIT de proposer la même protéine animale deux repas de suite.
+               - INTERDIT : Poulet midi -> Poulet soir.
+               - INTERDIT : Poulet soir -> Poulet lendemain midi.
+               - Tu DOIS alterner : Poisson / Légumineuses / Volaille / Oeufs / Légumineuses.
+               - SI TU METS DU POULET LUNDI SOIR, TU NE PEUX PAS EN METTRE MARDI MIDI. C'EST UNE FAUTE GRAVE.
+
+            2. LA VRAIE PYRAMIDE MÉDITERRANÉENNE :
+               - Base (Tous les repas) : Légumes de saison, Fruits, Céréales complètes, Huile d'olive, Herbes.
+               - Protéines Végétales (Légumineuses) : Pois chiches, Lentilles, Haricots blancs (Au moins 3-4 fois par semaine).
+               - Protéines Animales : Poisson (gras et maigre), Volaille, Oeufs. Viande rouge MAX 1 fois par semaine ou absente.
+            
+            3. STRUCTURE : Tu DOIS générer 4 REPAS par jour (Petit-déjeuner, Déjeuner, En-cas, Dîner).
+            4. CIBLE CALORIQUE : Viser une moyenne de 2000 Kcal / jour au total.
             `;
         } else {
+            // --- LOGIQUE POUR LES AUTRES RÉGIMES (INCHANGÉE) ---
             specialInstructions = `
             STRUCTURE : Générer les repas principaux (Petit-déjeuner, Déjeuner, En-cas, Dîner) adaptés au régime ${dietary}.
             Tente de fournir 4 repas si pertinent, sinon reste sur le standard Déjeuner/Dîner.
