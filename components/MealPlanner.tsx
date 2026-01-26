@@ -36,6 +36,9 @@ const MealPlanner: React.FC = () => {
             const newPlan = await generateWeeklyMenu(dietary, people);
             if (!newPlan) throw new Error("L'IA n'a pas renvoyé de planning valide.");
             
+            // SECURITY: Ensure ID is present for IndexedDB
+            if (!newPlan.id) newPlan.id = 'current';
+
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');

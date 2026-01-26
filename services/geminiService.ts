@@ -484,6 +484,10 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
 
         const plan = cleanAndParseJSON(response.text);
         if (!plan.days) throw new Error("Format de planning invalide.");
+        
+        // CRITICAL FIX: FORCE ID FOR INDEXEDDB PERSISTENCE
+        plan.id = 'current';
+        
         return plan;
     } catch (e) {
         console.error("Weekly Planner Error:", e);
