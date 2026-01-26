@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
-import { Calendar, Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Lightbulb, Clock, ChefHat, Soup, ChevronDown, Utensils, AlertCircle } from 'lucide-react';
+import { Calendar, Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Clock, ChefHat, Soup, ChevronDown, Utensils, AlertCircle, Coffee, Croissant } from 'lucide-react';
 
 const MealPlanner: React.FC = () => {
     const [plan, setPlan] = useState<WeeklyPlan | null>(null);
@@ -35,20 +35,14 @@ const MealPlanner: React.FC = () => {
             console.error("Erreur planning:", e);
             setStatus('error');
             setErrorMessage(e.message || "Erreur de connexion à l'IA. Vérifiez votre clé API.");
-            // Force alert for immediate feedback
             alert(`Erreur : ${e.message || "Vérifiez votre clé API ou votre connexion."}`);
         }
     };
 
     const handleDeletePlan = async (e: React.MouseEvent) => {
-        // Suppression radicale et immédiate
         e.preventDefault();
         e.stopPropagation();
-        
-        // 1. Mise à jour visuelle immédiate
         setPlan(null); 
-        
-        // 2. Nettoyage BDD
         await deleteWeeklyPlan();
     };
 
@@ -56,13 +50,13 @@ const MealPlanner: React.FC = () => {
         if (!plan) return;
         const allIngredients: string[] = [];
         plan.days.forEach(day => {
+            if (day.breakfast?.ingredients) allIngredients.push(...day.breakfast.ingredients);
             if (day.lunch.ingredients) allIngredients.push(...day.lunch.ingredients);
+            if (day.snack?.ingredients) allIngredients.push(...day.snack.ingredients);
             if (day.dinner.ingredients) allIngredients.push(...day.dinner.ingredients);
         });
         
-        // Clean ingredients before adding
         const cleanedIngredients = allIngredients.map(text => {
-             // Nettoyage robuste des quantités, unités et prépositions
              let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim(); 
              clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
              clean = clean.replace(/^\d+\s+/, '').trim();
@@ -104,10 +98,10 @@ const MealPlanner: React.FC = () => {
         const count = plan.days.length || 7;
         
         plan.days.forEach(day => {
-            totalCals += (day.lunch.calories || 0) + (day.dinner.calories || 0);
-            totalP += (day.lunch.proteins || 0) + (day.dinner.proteins || 0);
-            totalC += (day.lunch.carbs || 0) + (day.dinner.carbs || 0);
-            totalF += (day.lunch.fats || 0) + (day.dinner.fats || 0);
+            totalCals += (day.breakfast?.calories || 0) + (day.lunch.calories || 0) + (day.snack?.calories || 0) + (day.dinner.calories || 0);
+            totalP += (day.breakfast?.proteins || 0) + (day.lunch.proteins || 0) + (day.snack?.proteins || 0) + (day.dinner.proteins || 0);
+            totalC += (day.breakfast?.carbs || 0) + (day.lunch.carbs || 0) + (day.snack?.carbs || 0) + (day.dinner.carbs || 0);
+            totalF += (day.breakfast?.fats || 0) + (day.lunch.fats || 0) + (day.snack?.fats || 0) + (day.dinner.fats || 0);
         });
         
         return {
@@ -170,7 +164,7 @@ const MealPlanner: React.FC = () => {
                             <div className="mb-6">
                                 <Sparkles size={48} className="text-purple-300 mx-auto mb-4" />
                                 <h3 className="font-display text-2xl text-chef-dark mb-2">Générer votre Menu</h3>
-                                <p className="text-gray-500 text-sm">Création de 14 repas sur-mesure + Liste de courses</p>
+                                <p className="text-gray-500 text-sm">Création de menus complets (Petit-déj, Déjeuner, En-cas, Dîner) + Liste de courses</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                                 <div>
@@ -178,7 +172,7 @@ const MealPlanner: React.FC = () => {
                                     <div className="relative">
                                         <select value={dietary} onChange={(e) => setDietary(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium outline-none cursor-pointer appearance-none">
                                             <option value="Équilibré (Classique)">Équilibré</option>
-                                            <option value="Régime Méditerranéen">Régime Méditerranéen</option>
+                                            <option value="Régime Méditerranéen">Régime Méditerranéen (80/20)</option>
                                             <option value="Végétarien">Végétarien</option>
                                             <option value="Vegan">Vegan</option>
                                             <option value="Halal">Halal</option>
@@ -245,7 +239,7 @@ const MealPlanner: React.FC = () => {
                         {/* Stats Dashboard */}
                         <div className="bg-white p-6 rounded-3xl shadow-card border border-purple-100 mb-6">
                             <div className="grid grid-cols-4 gap-4 text-center divide-x divide-gray-100">
-                                <div><div className="text-2xl font-display text-chef-dark">{stats.calories}</div><div className="text-[10px] text-gray-400 font-bold uppercase">Kcal/j (Moy)</div></div>
+                                <div><div className="text-2xl font-display text-chef-dark">{stats.calories}</div><div className="text-[10px] text-gray-400 font-bold uppercase">Kcal/j (Total)</div></div>
                                 <div><div className="text-xl font-display text-blue-500">{stats.proteins}g</div><div className="text-[10px] text-gray-400 font-bold uppercase">Protéines</div></div>
                                 <div><div className="text-xl font-display text-yellow-500">{stats.carbs}g</div><div className="text-[10px] text-gray-400 font-bold uppercase">Glucides</div></div>
                                 <div><div className="text-xl font-display text-red-500">{stats.fats}g</div><div className="text-[10px] text-gray-400 font-bold uppercase">Lipides</div></div>
@@ -258,20 +252,37 @@ const MealPlanner: React.FC = () => {
                                     <h4 className="font-display text-xl text-chef-dark mb-4 pb-2 border-b border-gray-50 text-purple-700 flex justify-between items-center">
                                         {day.day}
                                     </h4>
-                                    <div className="space-y-4 flex-1">
+                                    <div className="space-y-3 flex-1">
+                                        {/* Breakfast */}
+                                        {day.breakfast && (
+                                            <div className="bg-yellow-50 p-3 rounded-2xl border border-yellow-100">
+                                                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><Coffee size={12}/> Petit-Déj</span>
+                                                <p className="font-bold text-gray-800 line-clamp-2 leading-tight text-xs">{day.breakfast.name}</p>
+                                                <div className="mt-1 text-[9px] text-gray-400">{day.breakfast.calories} Kcal</div>
+                                            </div>
+                                        )}
+
+                                        {/* Lunch */}
                                         <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><ChefHat size={12}/> Midi</span>
                                             <p className="font-bold text-gray-800 line-clamp-3 leading-tight text-sm">{day.lunch.name}</p>
-                                            <div className="mt-2 text-[10px] text-gray-400 flex gap-2">
-                                                <span>{day.lunch.calories} Kcal</span>
-                                            </div>
+                                            <div className="mt-1 text-[9px] text-gray-400">{day.lunch.calories} Kcal</div>
                                         </div>
+
+                                        {/* Snack */}
+                                        {day.snack && (
+                                            <div className="bg-green-50 p-3 rounded-2xl border border-green-100">
+                                                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><Croissant size={12}/> En-cas</span>
+                                                <p className="font-bold text-gray-800 line-clamp-2 leading-tight text-xs">{day.snack.name}</p>
+                                                <div className="mt-1 text-[9px] text-gray-400">{day.snack.calories} Kcal</div>
+                                            </div>
+                                        )}
+
+                                        {/* Dinner */}
                                         <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><Soup size={12}/> Soir</span>
                                             <p className="font-bold text-gray-800 line-clamp-3 leading-tight text-sm">{day.dinner.name}</p>
-                                            <div className="mt-2 text-[10px] text-gray-400 flex gap-2">
-                                                <span>{day.dinner.calories} Kcal</span>
-                                            </div>
+                                            <div className="mt-1 text-[9px] text-gray-400">{day.dinner.calories} Kcal</div>
                                         </div>
                                     </div>
                                 </div>

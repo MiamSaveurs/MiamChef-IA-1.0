@@ -1,4 +1,5 @@
 
+
 export enum AppView {
   HOME = 'HOME',
   RECIPE_CREATOR = 'RECIPE_CREATOR',
@@ -73,7 +74,9 @@ export interface Meal {
 
 export interface DayPlan {
   day: string; // Lundi, Mardi...
+  breakfast?: Meal; // Optionnel car les anciens plans n'en ont pas
   lunch: Meal;
+  snack?: Meal;    // Optionnel car les anciens plans n'en ont pas
   dinner: Meal;
 }
 

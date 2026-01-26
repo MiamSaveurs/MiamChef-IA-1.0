@@ -123,7 +123,31 @@ const weeklyPlanSchema: Schema = {
         type: Type.OBJECT,
         properties: {
           day: { type: Type.STRING },
+          breakfast: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              calories: { type: Type.NUMBER },
+              proteins: { type: Type.NUMBER },
+              carbs: { type: Type.NUMBER },
+              fats: { type: Type.NUMBER },
+              ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+          },
           lunch: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              calories: { type: Type.NUMBER },
+              proteins: { type: Type.NUMBER },
+              carbs: { type: Type.NUMBER },
+              fats: { type: Type.NUMBER },
+              ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+          },
+          snack: {
             type: Type.OBJECT,
             properties: {
               name: { type: Type.STRING },
@@ -148,7 +172,7 @@ const weeklyPlanSchema: Schema = {
             required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
           },
         },
-        required: ["day", "lunch", "dinner"],
+        required: ["day", "breakfast", "lunch", "snack", "dinner"],
       },
     },
   },
@@ -181,6 +205,16 @@ export const generateChefRecipe = async (
            PHILOSOPHIE: La cuisine vient du coeur. On goûte, on rectifie, on ose.
            VOCABULAIRE: Saisir, Déglacer, Suer, Mijoter, Dresser, Assaisonner.`;
 
+    let dietaryInstruction = `RÉGIME : ${dietary}`;
+    if (dietary === "Régime Méditerranéen") {
+        dietaryInstruction += `
+        ⚠️ INSTRUCTIONS SPÉCIALES RÉGIME MÉDITERRANÉEN :
+        1. RATIO VITAL : 80% Végétal (Légumes, fruits, céréales, légumineuses) / 20% Animal (Privilégier poisson, volaille, œufs. Limiter viande rouge).
+        2. GRAISSES : Utiliser EXCLUSIVEMENT l'huile d'olive (cuisson/froid) ou l'huile de colza (assaisonnement pour Oméga 3).
+        3. SANTÉ : Recette équilibrée, riche en fibres et antioxydants.
+        `;
+    }
+
     const prompt = `
       CONTEXTE : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       IDENTITÉ : MiamChef IA.
@@ -199,7 +233,7 @@ export const generateChefRecipe = async (
       PARAMÈTRES ADDITIONNELS :
       - STYLE CULTUREL : ${cuisineStyle}
       - PERSONNES : ${people}
-      - RÉGIME : ${dietary}
+      - ${dietaryInstruction}
       - MOMENT : ${mealTime}
       - BATCH COOKING : ${isBatchCooking && chefMode === 'cuisine' ? "OUI (Inclure étapes de conservation)" : "NON"}
 
@@ -229,11 +263,11 @@ export const generateChefRecipe = async (
 
     const data = cleanAndParseJSON(response.text || "{}");
     return {
-      text: sanitizeText(data.markdownContent) || "Erreur de contenu recette.", // NETTOYAGE ICI
+      text: sanitizeText(data.markdownContent) || "Erreur de contenu recette.", 
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
-      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
+      seoTitle: sanitizeText(data.seoTitle),
+      seoDescription: sanitizeText(data.seoDescription) 
     };
   } catch (error) {
     console.error("Error generating recipe:", error);
@@ -295,12 +329,12 @@ export const searchChefsRecipe = async (query: string, people: number, searchTyp
     ).filter((c: any) => c.web);
 
     return {
-      text: sanitizeText(data.markdownContent) || "Non trouvé.", // NETTOYAGE ICI
+      text: sanitizeText(data.markdownContent) || "Non trouvé.", 
       groundingChunks: groundingChunks,
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
-      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
+      seoTitle: sanitizeText(data.seoTitle),
+      seoDescription: sanitizeText(data.seoDescription) 
     };
   } catch (error) {
     throw error;
@@ -350,11 +384,11 @@ export const modifyChefRecipe = async (originalRecipe: string, modification: str
 
     const data = cleanAndParseJSON(response.text || "{}");
     return {
-      text: sanitizeText(data.markdownContent) || "Erreur modification.", // NETTOYAGE ICI
+      text: sanitizeText(data.markdownContent) || "Erreur modification.", 
       metrics: data.metrics,
       utensils: data.utensils,
-      seoTitle: sanitizeText(data.seoTitle), // NETTOYAGE ICI
-      seoDescription: sanitizeText(data.seoDescription) // NETTOYAGE ICI
+      seoTitle: sanitizeText(data.seoTitle),
+      seoDescription: sanitizeText(data.seoDescription) 
     };
   } catch (error) {
     throw error;
@@ -368,12 +402,33 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
         const currentSeason = getCurrentSeason(today);
 
+        let specialInstructions = "";
+        
+        if (dietary === "Régime Méditerranéen") {
+            specialInstructions = `
+            🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN STRICT (Crétois) :
+            1. STRUCTURE : Tu DOIS générer 4 REPAS par jour (Petit-déjeuner, Déjeuner, En-cas, Dîner).
+            2. CIBLE CALORIQUE : Viser une moyenne de 2000 Kcal / jour au total.
+            3. RATIO D'OR (80/20) : 
+               - 80% d'ingrédients VÉGÉTAUX (Fruits, légumes, légumineuses, céréales complètes, noix).
+               - 20% d'ingrédients ANIMAUX (Privilégier Poisson, Volaille, Œufs. Viande rouge très occasionnelle).
+            4. LIPIDES : Utiliser EXCLUSIVEMENT l'huile d'olive et occasionnellement l'huile de colza (Oméga 3).
+            5. STYLE : Cuisine saine, fraîche, colorée, herbes aromatiques.
+            `;
+        } else {
+            specialInstructions = `
+            STRUCTURE : Générer les repas principaux (Petit-déjeuner, Déjeuner, En-cas, Dîner) adaptés au régime ${dietary}.
+            `;
+        }
+
         const prompt = `
             PLANNING HEBDOMADAIRE (MiamChef IA).
             Date : ${currentDate} (${currentSeason}).
             Pour ${people} personnes. Régime : ${dietary}.
             
-            MISSION : Optimiser les coûts (Objectif 30% d'économie).
+            ${specialInstructions}
+            
+            MISSION : Optimiser les coûts (Objectif 30% d'économie) tout en respectant scrupuleusement le régime.
             
             INSTRUCTIONS INGRÉDIENTS (TRI AUTOMATIQUE) :
             Dans les listes d'ingrédients, soyez EXPLICITE sur le conditionnement :
@@ -388,7 +443,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             
             ${BANNED_WORDS_INSTRUCTION}
             
-            Respecte le schéma JSON.
+            Respecte le schéma JSON (Inclure Petit-déjeuner et En-cas).
         `;
 
         const response = await ai.models.generateContent({
@@ -479,7 +534,7 @@ export const scanFridgeAndSuggest = async (imageBase64: string): Promise<string>
         ],
       },
     });
-    return sanitizeText(response.text) || "Erreur scan."; // NETTOYAGE ICI
+    return sanitizeText(response.text) || "Erreur scan."; 
   } catch (error) { throw error; }
 };
 
@@ -501,7 +556,7 @@ export const getSommelierAdvice = async (request: string, audience: 'b2c' | 'b2b
     });
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((c: any) => ({ web: c.web })).filter((c: any) => c.web);
     return { 
-        text: sanitizeText(response.text) || "Erreur sommelier.", // NETTOYAGE ICI
+        text: sanitizeText(response.text) || "Erreur sommelier.", 
         groundingChunks 
     };
   } catch (error) { throw error; }
