@@ -8,6 +8,7 @@ import { Calendar, Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Clo
 const MealPlanner: React.FC = () => {
     const [plan, setPlan] = useState<WeeklyPlan | null>(null);
     const [status, setStatus] = useState<LoadingState>('idle');
+    const [isInitializing, setIsInitializing] = useState(true); // NOUVEAU : État de chargement initial
     const [errorMessage, setErrorMessage] = useState('');
     const [dietary, setDietary] = useState('Équilibré (Classique)');
     const [people, setPeople] = useState(2);
@@ -16,8 +17,15 @@ const MealPlanner: React.FC = () => {
     useEffect(() => { loadPlan(); }, []);
 
     const loadPlan = async () => {
-        const saved = await getWeeklyPlan();
-        if (saved) setPlan(saved);
+        try {
+            const saved = await getWeeklyPlan();
+            if (saved) setPlan(saved);
+        } catch (e) {
+            console.error("Erreur chargement sauvegarde", e);
+        } finally {
+            // On signale que le chargement est fini, qu'il y ait un plan ou non
+            setIsInitializing(false);
+        }
     };
 
     const handleGenerate = async () => {
@@ -40,6 +48,8 @@ const MealPlanner: React.FC = () => {
     };
 
     const handleDeletePlan = async (e: React.MouseEvent) => {
+        if (!confirm("Voulez-vous vraiment effacer cette semaine et recommencer ?")) return;
+        
         e.preventDefault();
         e.stopPropagation();
         setPlan(null); 
@@ -113,6 +123,16 @@ const MealPlanner: React.FC = () => {
     };
     const stats = calculateStats();
 
+    // RENDU DU CHARGEMENT INITIAL (Pour éviter le "flash" du formulaire vide)
+    if (isInitializing) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#f9fafb]">
+                <Loader2 className="animate-spin text-chef-green mb-3" size={40} />
+                <p className="text-gray-500 font-display text-lg animate-pulse">Récupération de votre semaine...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="pb-32 px-4 pt-6 max-w-6xl mx-auto min-h-screen font-body">
              <header className="mb-8 flex items-center justify-between">
@@ -125,8 +145,8 @@ const MealPlanner: React.FC = () => {
                 </div>
                 {plan && (
                     <div className="flex gap-2">
-                        <button onClick={handleDownloadPDF} className="bg-purple-50 text-purple-600 p-3 rounded-full hover:bg-purple-100 transition-colors shadow-sm"><Download size={20} /></button>
-                        <button onClick={handleDeletePlan} className="bg-red-50 text-red-500 p-3 rounded-full hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-100"><Trash2 size={20} /></button>
+                        <button onClick={handleDownloadPDF} className="bg-purple-50 text-purple-600 p-3 rounded-full hover:bg-purple-100 transition-colors shadow-sm" title="Télécharger PDF"><Download size={20} /></button>
+                        <button onClick={handleDeletePlan} className="bg-red-50 text-red-500 p-3 rounded-full hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-100" title="Effacer la semaine (X)"><Trash2 size={20} /></button>
                     </div>
                 )}
             </header>
