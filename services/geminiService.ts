@@ -210,11 +210,9 @@ export const generateChefRecipe = async (
     let dietaryInstruction = `RÉGIME : ${dietary}`;
     if (dietary === "Régime Méditerranéen") {
         dietaryInstruction += `
-        ⚠️ INSTRUCTIONS SPÉCIALES RÉGIME MÉDITERRANÉEN (CRÉTOIS) :
-        1. BASE QUOTIDIENNE : Légumes, fruits, céréales complètes, légumineuses (lentilles, pois chiches), noix.
-        2. GRAISSES : Huile d'olive (principale).
-        3. MODÉRÉ (Hebdo) : Poisson, Volaille, Oeufs, Laitages.
-        4. RARE (Mensuel) : Viande rouge.
+        ⚠️ RÉGIME MÉDITERRANÉEN STRICT (80% Végétal / 20% Animal).
+        Si c'est un plat principal quotidien : Privilégier une base Végétarienne (Légumineuses).
+        Si c'est un plat "plaisir" (2-3 fois/semaine) : Poisson ou Volaille.
         `;
     }
 
@@ -410,22 +408,30 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         // --- LOGIQUE SPÉCIFIQUE DEMANDÉE POUR LE RÉGIME MÉDITERRANÉEN ---
         if (dietary === "Régime Méditerranéen") {
             specialInstructions = `
-            🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN (CRÉTOIS) - STANDARD "MEILLEUR OUVRIER DE FRANCE" :
+            🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN STRICT (80% VÉGÉTAL / 20% ANIMAL) :
+            C'EST UN ORDRE ABSOLU. TU DOIS RESPECTER LE RATIO 80/20.
             
-            1. LOI DE LA VARIÉTÉ ABSOLUE (ANTI-RÉPÉTITION) :
-               - IL EST STRICTEMENT INTERDIT de proposer la même protéine animale deux repas de suite.
-               - INTERDIT : Poulet midi -> Poulet soir.
-               - INTERDIT : Poulet soir -> Poulet lendemain midi.
-               - Tu DOIS alterner : Poisson / Légumineuses / Volaille / Oeufs / Légumineuses.
-               - SI TU METS DU POULET LUNDI SOIR, TU NE PEUX PAS EN METTRE MARDI MIDI. C'EST UNE FAUTE GRAVE.
+            SUR LES 14 REPAS PRINCIPAUX (7 Déjeuners + 7 Dîners) :
+            1. 🟢 10 à 11 REPAS DOIVENT ÊTRE 100% VÉGÉTARIENS (Basés sur Légumineuses + Céréales).
+               - Ex: Lentilles, Pois Chiches, Haricots Blancs, Quinoa, Épeautre.
+               - C'est la base de l'alimentation. Pas de viande ni poisson ici.
+            
+            2. 🔴 3 à 4 REPAS MAX AVEC PROTÉINES ANIMALES :
+               - 2x POISSON (Dont 1 gras).
+               - 1x VOLAILLE (Poulet/Dinde).
+               - 1x OEUFS (Optionnel).
+               - VIANDE ROUGE INTERDITE cette semaine.
 
-            2. LA VRAIE PYRAMIDE MÉDITERRANÉENNE :
-               - Base (Tous les repas) : Légumes de saison, Fruits, Céréales complètes, Huile d'olive, Herbes.
-               - Protéines Végétales (Légumineuses) : Pois chiches, Lentilles, Haricots blancs (Au moins 3-4 fois par semaine).
-               - Protéines Animales : Poisson (gras et maigre), Volaille, Oeufs. Viande rouge MAX 1 fois par semaine ou absente.
-            
-            3. STRUCTURE : Tu DOIS générer 4 REPAS par jour (Petit-déjeuner, Déjeuner, En-cas, Dîner).
-            4. CIBLE CALORIQUE : Viser une moyenne de 2000 Kcal / jour au total.
+            3. EXEMPLE DE STRUCTURE OBLIGATOIRE :
+               - Lundi : Végétal / Végétal
+               - Mardi : Végétal / POISSON
+               - Mercredi : Végétal / Végétal
+               - Jeudi : Végétal / VOLAILLE
+               - Vendredi : Végétal / Végétal
+               - Samedi : Végétal / POISSON
+               - Dimanche : Végétal / OEUFS
+
+            NE SERS PAS DE VIANDE/POISSON TOUS LES JOURS. C'EST INTERDIT.
             `;
         } else {
             // --- LOGIQUE POUR LES AUTRES RÉGIMES (INCHANGÉE) ---
