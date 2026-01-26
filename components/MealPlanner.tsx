@@ -123,6 +123,21 @@ const MealPlanner: React.FC = () => {
     };
     const stats = calculateStats();
 
+    // Fonction pour nettoyer et afficher les ingrédients (enlève les quantités si présentes)
+    const renderIngredients = (ingredients: string[] = []) => {
+        if (!ingredients || ingredients.length === 0) return '';
+        
+        const cleaned = ingredients.map(text => {
+             // Enlève les quantités (ex: "100g de Riz" -> "Riz")
+             let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').trim(); 
+             clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+             return clean.charAt(0).toUpperCase() + clean.slice(1);
+        });
+
+        // Affiche les 3-4 premiers ingrédients
+        return cleaned.slice(0, 4).join(', ') + (cleaned.length > 4 ? '...' : '');
+    };
+
     // RENDU DU CHARGEMENT INITIAL (Pour éviter le "flash" du formulaire vide)
     if (isInitializing) {
         return (
@@ -278,7 +293,8 @@ const MealPlanner: React.FC = () => {
                                             <div className="bg-yellow-50 p-3 rounded-2xl border border-yellow-100">
                                                 <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><Coffee size={12}/> Petit-Déj</span>
                                                 <p className="font-bold text-gray-800 line-clamp-2 leading-tight text-xs">{day.breakfast.name}</p>
-                                                <div className="mt-1 text-[9px] text-gray-400">{day.breakfast.calories} Kcal</div>
+                                                <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.breakfast.ingredients)}</p>
+                                                <div className="mt-1 text-[9px] text-gray-400 font-bold">{day.breakfast.calories} Kcal</div>
                                             </div>
                                         )}
 
@@ -286,7 +302,8 @@ const MealPlanner: React.FC = () => {
                                         <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><ChefHat size={12}/> Midi</span>
                                             <p className="font-bold text-gray-800 line-clamp-3 leading-tight text-sm">{day.lunch.name}</p>
-                                            <div className="mt-1 text-[9px] text-gray-400">{day.lunch.calories} Kcal</div>
+                                            <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.lunch.ingredients)}</p>
+                                            <div className="mt-1 text-[9px] text-gray-400 font-bold">{day.lunch.calories} Kcal</div>
                                         </div>
 
                                         {/* Snack */}
@@ -294,7 +311,8 @@ const MealPlanner: React.FC = () => {
                                             <div className="bg-green-50 p-3 rounded-2xl border border-green-100">
                                                 <span className="text-[10px] font-bold text-green-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><Croissant size={12}/> En-cas</span>
                                                 <p className="font-bold text-gray-800 line-clamp-2 leading-tight text-xs">{day.snack.name}</p>
-                                                <div className="mt-1 text-[9px] text-gray-400">{day.snack.calories} Kcal</div>
+                                                <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.snack.ingredients)}</p>
+                                                <div className="mt-1 text-[9px] text-gray-400 font-bold">{day.snack.calories} Kcal</div>
                                             </div>
                                         )}
 
@@ -302,7 +320,8 @@ const MealPlanner: React.FC = () => {
                                         <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><Soup size={12}/> Soir</span>
                                             <p className="font-bold text-gray-800 line-clamp-3 leading-tight text-sm">{day.dinner.name}</p>
-                                            <div className="mt-1 text-[9px] text-gray-400">{day.dinner.calories} Kcal</div>
+                                            <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.dinner.ingredients)}</p>
+                                            <div className="mt-1 text-[9px] text-gray-400 font-bold">{day.dinner.calories} Kcal</div>
                                         </div>
                                     </div>
                                 </div>

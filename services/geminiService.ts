@@ -430,7 +430,17 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             
             MISSION : Optimiser les coûts (Objectif 30% d'économie) tout en respectant scrupuleusement le régime.
             
-            INSTRUCTIONS INGRÉDIENTS (TRI AUTOMATIQUE) :
+            🚨 INSTRUCTIONS IMPORTANTES SUR LES TITRES ET LE CONTENU :
+            1. TITRES DES REPAS ("name") : Ils doivent être DESCRIPTIFS et explicites sur le contenu de l'assiette.
+               - INTERDIT : "Bol Zen", "Pause Croquante", "Délice du Jardin", "Saveurs du Sud". (Noms marketing abstraits).
+               - OBLIGATOIRE : "Salade de Pois Chiches, Feta et Tomates", "Poulet Rôti aux Herbes et Pommes de Terre", "Yaourt Grec et Noix".
+               - L'utilisateur doit savoir ce qu'il mange juste en lisant le titre.
+            
+            2. INGRÉDIENTS DANS LE JSON :
+               - Fournissez la liste des ingrédients principaux pour chaque repas.
+               - Dans la mesure du possible, listez simplement les noms des ingrédients sans les quantités dans l'array "ingredients" pour l'affichage carte, OU mettez les quantités si nécessaire pour la liste de courses (l'app nettoiera l'affichage).
+            
+            INSTRUCTIONS LISTE DE COURSES (TRI AUTOMATIQUE) :
             Dans les listes d'ingrédients, soyez EXPLICITE sur le conditionnement :
             - "Thon en boîte" (pas juste Thon)
             - "Épinards surgelés" (si hors saison)
