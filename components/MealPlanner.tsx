@@ -178,6 +178,7 @@ const MealPlanner: React.FC = () => {
                                     <div className="relative">
                                         <select value={dietary} onChange={(e) => setDietary(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium outline-none cursor-pointer appearance-none">
                                             <option value="Équilibré (Classique)">Équilibré</option>
+                                            <option value="Régime Méditerranéen">Régime Méditerranéen</option>
                                             <option value="Végétarien">Végétarien</option>
                                             <option value="Vegan">Vegan</option>
                                             <option value="Halal">Halal</option>
