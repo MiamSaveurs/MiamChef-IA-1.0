@@ -433,6 +433,11 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             
             MISSION : Optimiser les coûts (Objectif 30% d'économie) tout en respectant scrupuleusement le régime.
             
+            🚨 DISTRIBUTION CALORIQUE STRICTE (CHRONONUTRITION) :
+            1. DÉJEUNER (MIDI) : C'est le repas principal. Il DOIT être le plus calorique de la journée (environ 35-40% du total). Viser 700-850 Kcal.
+            2. DÎNER (SOIR) : Il DOIT être plus LÉGER que le déjeuner pour le sommeil (environ 25-30% du total). Viser 450-600 Kcal.
+            3. RÈGLE ABSOLUE : Calories Déjeuner > Calories Dîner. Ne faites JAMAIS l'inverse.
+
             🚨 INSTRUCTIONS IMPORTANTES SUR LES TITRES ET LE CONTENU :
             1. TITRES DES REPAS ("name") : Ils doivent être DESCRIPTIFS et explicites sur le contenu de l'assiette.
                - INTERDIT : "Bol Zen", "Pause Croquante", "Délice du Jardin", "Saveurs du Sud". (Noms marketing abstraits).
