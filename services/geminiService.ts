@@ -409,29 +409,21 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         if (dietary === "Régime Méditerranéen") {
             specialInstructions = `
             🚨 PROTOCOLE RÉGIME MÉDITERRANÉEN STRICT (80% VÉGÉTAL / 20% ANIMAL) :
-            C'EST UN ORDRE ABSOLU. TU DOIS RESPECTER LE RATIO 80/20.
             
-            SUR LES 14 REPAS PRINCIPAUX (7 Déjeuners + 7 Dîners) :
-            1. 🟢 10 à 11 REPAS DOIVENT ÊTRE 100% VÉGÉTARIENS (Basés sur Légumineuses + Céréales).
-               - Ex: Lentilles, Pois Chiches, Haricots Blancs, Quinoa, Épeautre.
-               - C'est la base de l'alimentation. Pas de viande ni poisson ici.
+            SUR LES 14 REPAS PRINCIPAUX DE LA SEMAINE (7 Déjeuners + 7 Dîners) :
+            1. TU AS LE DROIT À MAXIMUM 4 REPAS AVEC PROTÉINES ANIMALES (Viande/Poisson/Oeufs). PAS UN DE PLUS.
+               - Idéalement : 2x Poisson, 1x Volaille, 1x Oeufs.
+               - INTERDICTION FORMELLE de viande rouge cette semaine.
+
+            2. LES 10 AUTRES REPAS DOIVENT ÊTRE 100% VÉGÉTARIENS.
+               - Utilise : Lentilles, Pois Chiches, Haricots, Quinoa, Épeautre, Fèves.
+               - Ce sont les plats principaux. Sois créatif.
+
+            3. JAMAIS DEUX JOURS DE SUITE AVEC DES PROTÉINES ANIMALES.
+               - Si Lundi Midi il y a du Poulet -> Mardi doit être 100% Végétal.
+               - Si Mardi Soir il y a du Poisson -> Mercredi doit être 100% Végétal.
             
-            2. 🔴 3 à 4 REPAS MAX AVEC PROTÉINES ANIMALES :
-               - 2x POISSON (Dont 1 gras).
-               - 1x VOLAILLE (Poulet/Dinde).
-               - 1x OEUFS (Optionnel).
-               - VIANDE ROUGE INTERDITE cette semaine.
-
-            3. EXEMPLE DE STRUCTURE OBLIGATOIRE :
-               - Lundi : Végétal / Végétal
-               - Mardi : Végétal / POISSON
-               - Mercredi : Végétal / Végétal
-               - Jeudi : Végétal / VOLAILLE
-               - Vendredi : Végétal / Végétal
-               - Samedi : Végétal / POISSON
-               - Dimanche : Végétal / OEUFS
-
-            NE SERS PAS DE VIANDE/POISSON TOUS LES JOURS. C'EST INTERDIT.
+            C'EST LA RÈGLE D'OR DE L'APPLICATION. RESPECTE LE RATIO 80/20 OU RIEN.
             `;
         } else {
             // --- LOGIQUE POUR LES AUTRES RÉGIMES (INCHANGÉE) ---
