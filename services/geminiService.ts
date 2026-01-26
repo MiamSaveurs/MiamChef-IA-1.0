@@ -133,7 +133,7 @@ const weeklyPlanSchema: Schema = {
               fats: { type: Type.NUMBER },
               ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+            required: ["name", "calories", "ingredients"],
           },
           lunch: {
             type: Type.OBJECT,
@@ -145,7 +145,7 @@ const weeklyPlanSchema: Schema = {
               fats: { type: Type.NUMBER },
               ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+            required: ["name", "calories", "ingredients"],
           },
           snack: {
             type: Type.OBJECT,
@@ -157,7 +157,7 @@ const weeklyPlanSchema: Schema = {
               fats: { type: Type.NUMBER },
               ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+            required: ["name", "calories", "ingredients"],
           },
           dinner: {
             type: Type.OBJECT,
@@ -169,10 +169,12 @@ const weeklyPlanSchema: Schema = {
               fats: { type: Type.NUMBER },
               ingredients: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ["name", "calories", "ingredients", "proteins", "carbs", "fats"],
+            required: ["name", "calories", "ingredients"],
           },
         },
-        required: ["day", "breakfast", "lunch", "snack", "dinner"],
+        // IMPORTANT: On ne rend obligatoire que le jour, le déjeuner et le dîner.
+        // Si l'IA omet le petit-déj (ex: régime intermittent) ou plante, le JSON reste valide.
+        required: ["day", "lunch", "dinner"],
       },
     },
   },
@@ -418,6 +420,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
         } else {
             specialInstructions = `
             STRUCTURE : Générer les repas principaux (Petit-déjeuner, Déjeuner, En-cas, Dîner) adaptés au régime ${dietary}.
+            Tente de fournir 4 repas si pertinent, sinon reste sur le standard Déjeuner/Dîner.
             `;
         }
 
@@ -453,7 +456,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number): Promi
             
             ${BANNED_WORDS_INSTRUCTION}
             
-            Respecte le schéma JSON (Inclure Petit-déjeuner et En-cas).
+            Respecte le schéma JSON (Inclure Petit-déjeuner et En-cas SI POSSIBLE).
         `;
 
         const response = await ai.models.generateContent({
