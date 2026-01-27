@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Crown, Fingerprint, Euro, HeartPulse, Briefcase, Calendar } from 'lucide-react';
-import { WickerBasket, GourmetBook } from './Icons';
+import { ChefHat, Camera, Wine, ArrowRight, Crown, Briefcase, Calendar } from 'lucide-react';
+import { WickerBasket, GourmetBook, PremiumFingerprint, PremiumHeart, PremiumEuro } from './Icons';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -107,22 +107,22 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           <div className="bg-white rounded-[2rem] p-7 shadow-2xl text-center">
               <div className="flex justify-around items-center mb-6 px-2">
                   <div className="flex flex-col items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-[#f4fcf0] text-[#509f2a] flex items-center justify-center border border-[#e8f5e3]">
-                          <Fingerprint size={20} />
+                      <div className="w-12 h-12 rounded-full bg-[#f4fcf0] flex items-center justify-center border border-[#e8f5e3] shadow-inner">
+                          <PremiumFingerprint size={28} />
                       </div>
                       <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Sur-Mesure</span>
                   </div>
                   <div className="w-[1px] h-8 bg-gray-100"></div>
                   <div className="flex flex-col items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-[#fff5f5] text-[#eb5757] flex items-center justify-center border border-[#ffebeb]">
-                          <HeartPulse size={20} />
+                      <div className="w-12 h-12 rounded-full bg-[#fff5f5] flex items-center justify-center border border-[#ffebeb] shadow-inner">
+                          <PremiumHeart size={28} />
                       </div>
                       <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Santé</span>
                   </div>
                   <div className="w-[1px] h-8 bg-gray-100"></div>
                   <div className="flex flex-col items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-[#f0f7ff] text-[#2d9cdb] flex items-center justify-center border border-[#e3f0ff]">
-                          <Euro size={20} />
+                      <div className="w-12 h-12 rounded-full bg-[#f0f7ff] flex items-center justify-center border border-[#e3f0ff] shadow-inner">
+                          <PremiumEuro size={28} />
                       </div>
                       <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Économies</span>
                   </div>

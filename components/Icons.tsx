@@ -87,3 +87,31 @@ export const GourmetBook = ({ size = 24, className = "" }: { size?: number, clas
     <path d="M30 82H78" stroke="#EFEBE9" strokeWidth="1" opacity="0.5" />
   </svg>
 );
+
+export const PremiumFingerprint = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 20C33.4315 20 20 33.4315 20 50C20 66.5685 33.4315 80 50 80C66.5685 80 80 66.5685 80 50" stroke="#509f2a" strokeWidth="4" strokeLinecap="round" opacity="0.3"/>
+    <path d="M35 50C35 41.7157 41.7157 35 50 35C58.2843 35 65 41.7157 65 50" stroke="#509f2a" strokeWidth="6" strokeLinecap="round" />
+    <path d="M42 60C42 55.5817 45.5817 52 50 52C54.4183 52 58 55.5817 58 60" stroke="#509f2a" strokeWidth="4" strokeLinecap="round" />
+    <path d="M28 50C28 37.8497 37.8497 28 50 28C62.1503 28 72 37.8497 72 50" stroke="#509f2a" strokeWidth="3" strokeLinecap="round" opacity="0.6"/>
+    <circle cx="50" cy="50" r="45" stroke="#509f2a" strokeWidth="1" strokeDasharray="4 4" opacity="0.2" />
+  </svg>
+);
+
+export const PremiumHeart = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 80C50 80 20 62 20 40C20 28 30 20 40 20C45 20 48 22 50 25C52 22 55 20 60 20C70 20 80 28 80 40C80 62 50 80 50 80Z" fill="#eb5757" />
+    <path d="M35 32C30 35 28 40 28 40" stroke="white" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+    <path d="M30 60L45 45L55 55L70 40" stroke="white" strokeWidth="4" strokeLinecap="round" strokeJoin="round" opacity="0.8" />
+  </svg>
+);
+
+export const PremiumEuro = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <circle cx="50" cy="50" r="40" fill="#2d9cdb" />
+    <path d="M65 35C60 30 50 30 45 35C38 42 38 58 45 65C50 70 60 70 65 65" stroke="white" strokeWidth="8" strokeLinecap="round" />
+    <path d="M35 45H55" stroke="white" strokeWidth="6" strokeLinecap="round" />
+    <path d="M35 55H55" stroke="white" strokeWidth="6" strokeLinecap="round" />
+    <circle cx="50" cy="50" r="35" stroke="white" strokeWidth="1" opacity="0.3" />
+  </svg>
+);
