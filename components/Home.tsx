@@ -138,33 +138,35 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       {/* --- FEATURE CARDS SECTION --- */}
       <div className="px-6 space-y-10">
           
-          {/* 1. ATELIER DU CHEF (L'image est ici) */}
+          {/* 1. ATELIER DU CHEF */}
           <div>
               <div className="flex justify-between items-end mb-3">
                   <h3 className="font-display text-lg text-white">Atelier du Chef</h3>
-                  <span className="bg-[#dcfce7] text-[#166534] text-[8px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Créations Uniques</span>
+                  <span className="bg-[#1e1e1e] text-[#509f2a] text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">CRÉATIONS UNIQUES</span>
               </div>
               <div 
                   onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)}
-                  className={`bg-[#064e3b] rounded-3xl p-6 relative overflow-hidden h-44 cursor-pointer border border-[#065f46] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+                  className={`bg-[#064e3b] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#065f46] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
               >
-                  {/* Image de fond (Chef) */}
+                  {/* Image de fond (Chef comme sur l'image) */}
                   <img 
-                    src="https://images.unsplash.com/photo-1577214450302-6029b9f7a750?auto=format&fit=crop&w=800&q=80" 
-                    className="absolute right-0 top-0 h-full w-[65%] object-cover z-0 grayscale-[20%] transition-transform duration-700 group-hover:scale-105" 
-                    alt="Chef cuisiner" 
+                    src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=800&q=80" 
+                    className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" 
+                    alt="Chef" 
                   />
                   
-                  {/* Overlay Dégradé Vert (comme sur l'image fournie) */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#064e3b] via-[#064e3b]/85 to-transparent z-10"></div>
+                  {/* Overlay Dégradé pour le texte */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#064e3b] via-[#064e3b]/90 to-transparent z-10"></div>
                   
-                  {/* Contenu texte */}
                   <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-2 text-white">
-                          <ChefHat size={22} className="text-white" />
-                          <span className="font-bold text-base font-display">Création de Recette</span>
+                      <div className="text-[#509f2a] text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">Chef</div>
+                      <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
+                              <ChefHat size={28} className="text-white" />
+                          </div>
+                          <h4 className="font-display text-2xl text-white leading-tight">Création de<br/>Recette</h4>
                       </div>
-                      <p className="text-[#a7f3d0] text-[11px] leading-snug font-medium max-w-[190px]">
+                      <p className="text-[#a7f3d0] text-xs leading-relaxed font-medium max-w-[200px]">
                           Créez des recettes uniques avec ce que vous avez, adaptées à votre style.
                       </p>
                   </div>
@@ -175,21 +177,23 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           <div>
               <div className="flex justify-between items-end mb-3">
                   <h3 className="font-display text-lg text-white">Votre Semaine</h3>
-                  <span className="bg-[#f3e8ff] text-[#6b21a8] text-[8px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Charge Mentale : Zéro</span>
+                  <span className="bg-[#1e1e1e] text-purple-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">CHARGE MENTALE : ZÉRO</span>
               </div>
               <div 
                   onClick={() => handleProtectedAction(AppView.PLANNING)}
-                  className={`bg-[#4c1d95] rounded-3xl p-6 relative overflow-hidden h-44 cursor-pointer border border-[#5b21b6] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+                  className={`bg-[#2e1a47] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#3e2361] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
               >
-                  <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=600&q=80" className="absolute right-0 top-0 h-full w-[65%] object-cover z-0 grayscale-[20%]" alt="Planning" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#4c1d95] via-[#4c1d95]/85 to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Planning" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#2e1a47] via-[#2e1a47]/90 to-transparent z-10"></div>
                   
                   <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-2 text-white">
-                          <Calendar size={22} className="text-white" />
-                          <span className="font-bold text-base font-display">Organisateur Semainier</span>
+                      <div className="flex items-center gap-3 mb-4 text-white">
+                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
+                             <Calendar size={28} className="text-white" />
+                          </div>
+                          <h4 className="font-display text-2xl leading-tight">Organisateur<br/>Semainier</h4>
                       </div>
-                      <p className="text-[#ddd6fe] text-[11px] leading-snug font-medium max-w-[190px]">
+                      <p className="text-[#ddd6fe] text-xs leading-relaxed font-medium max-w-[200px]">
                           L'IA génère vos menus du Lundi au Dimanche et remplit votre liste de courses.
                       </p>
                   </div>
@@ -200,21 +204,23 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           <div>
               <div className="flex justify-between items-end mb-3">
                   <h3 className="font-display text-lg text-white">Stop au Gaspillage</h3>
-                  <span className="bg-[#dbeafe] text-[#1e40af] text-[8px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Rentabilisé en 2 jours</span>
+                  <span className="bg-[#1e1e1e] text-blue-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">RENTABILISÉ EN 2 JOURS</span>
               </div>
               <div 
                   onClick={() => handleProtectedAction(AppView.SCAN_FRIDGE)}
-                  className={`bg-[#1e3a8a] rounded-3xl p-6 relative overflow-hidden h-44 cursor-pointer border border-[#1e40af] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+                  className={`bg-[#1a3b5c] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#1e40af] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
               >
-                  <img src="https://images.unsplash.com/photo-1584473457406-6240486418e9?auto=format&fit=crop&w=600&q=80" className="absolute right-0 top-0 h-full w-[65%] object-cover z-0 grayscale-[20%]" alt="Fridge" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a8a] via-[#1e3a8a]/85 to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1584473457406-6240486418e9?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Fridge" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#1a3b5c] via-[#1a3b5c]/90 to-transparent z-10"></div>
                   
                   <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-2 text-white">
-                          <Camera size={22} className="text-white" />
-                          <span className="font-bold text-base font-display">Scan Frigo IA</span>
+                      <div className="flex items-center gap-3 mb-4 text-white">
+                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
+                             <Camera size={28} className="text-white" />
+                          </div>
+                          <h4 className="font-display text-2xl leading-tight">Scan Frigo IA</h4>
                       </div>
-                      <p className="text-[#bfdbfe] text-[11px] leading-snug font-medium max-w-[190px]">
+                      <p className="text-[#bfdbfe] text-xs leading-relaxed font-medium max-w-[200px]">
                           Prenez une photo, l'IA crée une recette culinaire avec vos restes.
                       </p>
                   </div>
@@ -225,21 +231,23 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           <div>
               <div className="flex justify-between items-end mb-3">
                   <h3 className="font-display text-lg text-white">L'Accord Parfait</h3>
-                  <span className="bg-[#fee2e2] text-[#991b1b] text-[8px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Amateurs & Pros</span>
+                  <span className="bg-[#1e1e1e] text-red-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">AMATEURS & PROS</span>
               </div>
               <div 
                   onClick={() => handleProtectedAction(AppView.SOMMELIER)}
-                  className={`bg-[#7f1d1d] rounded-3xl p-6 relative overflow-hidden h-44 cursor-pointer border border-[#991b1b] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+                  className={`bg-[#4a1a1a] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#991b1b] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
               >
-                  <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80" className="absolute right-0 top-0 h-full w-[65%] object-cover z-0 grayscale-[20%]" alt="Wine" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#7f1d1d] via-[#7f1d1d]/85 to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Wine" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#4a1a1a] via-[#4a1a1a]/90 to-transparent z-10"></div>
                   
                   <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-2 text-white">
-                          <Wine size={22} className="text-white" />
-                          <span className="font-bold text-base font-display">Sommelier IA</span>
+                      <div className="flex items-center gap-3 mb-4 text-white">
+                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
+                             <Wine size={28} className="text-white" />
+                          </div>
+                          <h4 className="font-display text-2xl leading-tight">Sommelier IA</h4>
                       </div>
-                      <p className="text-[#fecaca] text-[11px] leading-snug font-medium max-w-[190px]">
+                      <p className="text-[#fecaca] text-xs leading-relaxed font-medium max-w-[200px]">
                           Pour vos dîners ou vos clients. L'accord mets & vins idéal instantané.
                       </p>
                   </div>
