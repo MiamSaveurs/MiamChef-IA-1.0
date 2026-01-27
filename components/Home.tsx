@@ -1,17 +1,15 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ArrowRight, Briefcase } from 'lucide-react';
+import { ArrowRight, Star, Utensils } from 'lucide-react';
 import { 
   WickerBasket, 
   GourmetBook, 
-  PremiumFingerprint, 
-  PremiumHeart, 
-  PremiumEuro, 
   PremiumChefHat, 
   PremiumCamera, 
   PremiumWine, 
   PremiumCalendar,
+  PremiumPlus,
   PremiumCrown
 } from './Icons';
 
@@ -26,243 +24,172 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       if (isOnline) {
           setView(view);
       } else {
-          alert("Cette fonctionnalité nécessite une connexion internet pour utiliser l'Intelligence Artificielle.");
+          alert("Cette fonctionnalité nécessite internet.");
       }
   };
 
   const today = new Date().toLocaleDateString('fr-FR', { 
     weekday: 'long', 
     day: 'numeric', 
-    month: 'long', 
-    year: 'numeric' 
+    month: 'long'
   });
   const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
 
   return (
-    <div className="relative min-h-screen font-body bg-[#111111] text-white overflow-x-hidden pb-40">
+    <div className="relative min-h-screen font-body bg-[#050505] text-white overflow-x-hidden pb-40">
       
+      {/* --- DECORATION --- */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_50%_0%,#1a2e10_0%,transparent_70%)] opacity-30 pointer-events-none"></div>
+
       {/* --- HEADER --- */}
-      <div className="px-6 pt-6 flex justify-between items-start">
-          <div className="flex items-center gap-2">
-              <div className="bg-[#509f2a] p-1.5 rounded-lg shadow-lg">
-                  <PremiumChefHat size={22} className="text-white" />
+      <div className="relative z-10 px-6 pt-8 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+              <div className="bg-[#509f2a] p-2 rounded-xl">
+                  <PremiumChefHat size={24} className="text-white" />
               </div>
               <div>
-                  <h1 className="font-display text-xl text-white leading-none tracking-tight">MiamChef IA</h1>
-                  <p className="text-[#666] text-[9px] uppercase font-bold tracking-[0.15em] mt-0.5">
-                      {formattedDate}
-                  </p>
+                  <h1 className="font-display text-2xl text-white tracking-tight">MiamChef IA</h1>
+                  <p className="text-[#666] text-[10px] uppercase font-black tracking-widest">{formattedDate}</p>
               </div>
           </div>
-          <button 
-            onClick={() => setView(AppView.SUBSCRIPTION)}
-            className="flex items-center gap-1.5 bg-[#252525] border border-[#333] px-3 py-1 rounded-lg hover:bg-[#333] transition-colors"
-          >
-              <PremiumCrown size={14} />
-              <span className="text-[9px] font-bold text-white uppercase tracking-wider">Premium</span>
-          </button>
+          <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setView(AppView.SUBSCRIPTION)}
+                className="p-3 bg-white/5 rounded-full border border-white/10 text-[#509f2a] hover:bg-white/10 transition-colors"
+                title="Devenir Premium"
+              >
+                  <PremiumCrown size={20} />
+              </button>
+              <button 
+                onClick={() => setView(AppView.SHOPPING_LIST)}
+                className="p-3 bg-white/5 rounded-full border border-white/10 text-[#509f2a] hover:bg-white/10 transition-colors"
+                title="Ma liste de courses"
+              >
+                  <WickerBasket size={20} />
+              </button>
+          </div>
       </div>
 
-      {/* --- HERO SECTION --- */}
-      <div className="px-6 pt-8 pb-6">
-          <div className="inline-flex items-center gap-2 bg-[#252525] px-2.5 py-1 rounded-md mb-6 border border-[#333]">
-               <Briefcase size={10} className="text-[#666]" />
-               <span className="text-[8px] font-bold uppercase tracking-wider text-[#666]">Pour Particuliers & Professionnels</span>
+      {/* --- HERO --- */}
+      <div className="relative z-10 px-6 pt-16 pb-8">
+          <div className="space-y-1">
+              <h2 className="text-[42px] font-display text-white leading-[0.9] tracking-tighter">
+                  Qu'est-ce qu'on
+              </h2>
+              <h2 className="text-[50px] font-display text-[#509f2a] leading-[0.9] tracking-tighter italic">
+                  mange ce soir ?
+              </h2>
           </div>
-
-          <h2 className="text-[38px] font-display text-white leading-[1.05] mb-1">
-              Créez des recettes
-          </h2>
-          <h2 className="text-[38px] font-display text-white leading-[1.05] mb-1">
-              uniques
-          </h2>
-          <h2 className="text-[38px] font-display text-[#509f2a] leading-[1.05] mb-5">
-              avec ce que vous avez.
-          </h2>
-          <p className="text-[#888] text-sm font-medium leading-tight max-w-[280px] mb-8">
-              Le premier livre de cuisine <span className="text-white font-bold">infini</span>. Le Couteau Suisse culinaire français indispensable.
+          
+          <p className="text-[#999] text-base font-medium leading-relaxed max-w-[300px] mt-6">
+              Votre assistant pour cuisiner simplement avec ce que vous avez dans vos placards.
           </p>
 
-          {/* Boutons Hero (Carnet / Liste) */}
-          <div className="grid grid-cols-2 gap-3 mb-8">
+          {/* BOUTONS D'ACCÈS RAPIDES */}
+          <div className="grid grid-cols-2 gap-4 mt-10">
               <button 
                   onClick={() => setView(AppView.RECIPE_BOOK)}
-                  className="bg-[#1a1a1a] p-3.5 rounded-xl flex items-center gap-3 hover:bg-[#222] transition-colors border border-[#252525]"
+                  className="bg-white/[0.03] p-5 rounded-3xl flex flex-col gap-4 border border-white/5 group active:scale-95 transition-all"
               >
-                  <div className="w-9 h-9 rounded-lg bg-[#f0b12b] flex items-center justify-center text-white shrink-0">
-                      <GourmetBook size={24} />
+                  <div className="w-10 h-10 rounded-xl bg-[#111] flex items-center justify-center text-[#509f2a] border border-white/10">
+                      <GourmetBook size={20} />
                   </div>
                   <div className="text-left">
-                      <span className="block text-white font-bold text-[10px] uppercase tracking-wide">Mon Carnet</span>
-                      <span className="block text-[#555] text-[9px]">Mes Recettes</span>
+                      <span className="block text-white font-bold text-xs uppercase tracking-wide">Mes Recettes</span>
+                      <span className="block text-[#555] text-[10px]">Mon carnet perso</span>
                   </div>
               </button>
 
               <button 
                   onClick={() => setView(AppView.SHOPPING_LIST)}
-                  className="bg-[#1a1a1a] p-3.5 rounded-xl flex items-center gap-3 hover:bg-[#222] transition-colors border border-[#252525]"
+                  className="bg-white/[0.03] p-5 rounded-3xl flex flex-col gap-4 border border-white/5 group active:scale-95 transition-all"
               >
-                  <div className="w-9 h-9 rounded-lg bg-[#3b82f6] flex items-center justify-center text-white shrink-0 overflow-hidden">
-                      <WickerBasket size={24} />
+                  <div className="w-10 h-10 rounded-xl bg-[#111] flex items-center justify-center border border-white/10">
+                      <WickerBasket size={22} />
                   </div>
                   <div className="text-left">
-                      <span className="block text-white font-bold text-[10px] uppercase tracking-wide">Ma Liste</span>
-                      <span className="block text-[#555] text-[9px]">Mes Courses</span>
+                      <span className="block text-white font-bold text-xs uppercase tracking-wide">Mes Courses</span>
+                      <span className="block text-[#555] text-[10px]">Ma liste à acheter</span>
                   </div>
               </button>
           </div>
       </div>
 
-      {/* --- WHITE CARD (SUR-MESURE) --- */}
-      <div className="px-6 mb-12">
-          <div className="bg-white rounded-[2rem] p-7 shadow-2xl text-center">
-              <div className="flex justify-around items-center mb-6 px-2">
-                  <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-full bg-[#f4fcf0] flex items-center justify-center border border-[#e8f5e3] shadow-inner">
-                          <PremiumFingerprint size={28} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Sur-Mesure</span>
-                  </div>
-                  <div className="w-[1px] h-8 bg-gray-100"></div>
-                  <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-full bg-[#fff5f5] flex items-center justify-center border border-[#ffebeb] shadow-inner">
-                          <PremiumHeart size={28} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Santé</span>
-                  </div>
-                  <div className="w-[1px] h-8 bg-gray-100"></div>
-                  <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-full bg-[#f0f7ff] flex items-center justify-center border border-[#e3f0ff] shadow-inner">
-                          <PremiumEuro size={28} />
-                      </div>
-                      <span className="text-[9px] font-bold text-[#666] uppercase tracking-wider">Économies</span>
-                  </div>
-              </div>
-              <button 
-                  onClick={() => setView(AppView.VALUE_PROPOSITION)}
-                  className="w-full border border-gray-100 text-[#444] font-bold text-[10px] py-3 rounded-xl uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
-              >
-                  Découvrir nos solutions <ArrowRight size={12} className="text-[#509f2a]" />
-              </button>
-          </div>
-      </div>
-
-      {/* --- FEATURE CARDS SECTION --- */}
-      <div className="px-6 space-y-10">
-          
-          {/* 1. ATELIER DU CHEF */}
-          <div>
-              <div className="flex justify-between items-end mb-3">
-                  <h3 className="font-display text-lg text-white">Atelier du Chef</h3>
-                  <span className="bg-[#1e1e1e] text-[#509f2a] text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">CRÉATIONS UNIQUES</span>
-              </div>
-              <div 
-                  onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)}
-                  className={`bg-[#064e3b] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#065f46] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
-              >
-                  <img 
-                    src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=800&q=80" 
-                    className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" 
-                    alt="Chef" 
+      {/* --- FONCTION PRINCIPALE --- */}
+      <div className="relative z-10 px-6 mb-10">
+          <div 
+              onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)}
+              className="bg-[#111] rounded-[2.5rem] p-1 border border-white/10 shadow-2xl group cursor-pointer overflow-hidden active:scale-[0.98] transition-all"
+          >
+              <div className="relative h-60 overflow-hidden rounded-[2.4rem]">
+                   <img 
+                      src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80" 
+                      className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700" 
+                      alt="Cuisine" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#064e3b] via-[#064e3b]/90 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
                   
-                  <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="text-[#509f2a] text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">Chef</div>
-                      <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                              <PremiumChefHat size={32} />
+                  <div className="absolute bottom-6 left-6 right-6">
+                      <div className="flex items-center gap-4 mb-3">
+                          <div className="p-3 bg-[#509f2a] rounded-2xl shadow-lg">
+                              <PremiumChefHat size={32} className="text-white" />
                           </div>
-                          <h4 className="font-display text-2xl text-white leading-tight">Création de<br/>Recette</h4>
+                          <div>
+                            <h3 className="font-display text-3xl text-white leading-none">Nouvelle Recette</h3>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#509f2a] mt-1">Cuisiner ou Pâtisser</p>
+                          </div>
                       </div>
-                      <p className="text-[#a7f3d0] text-xs leading-relaxed font-medium max-w-[200px]">
-                          Créez des recettes uniques avec ce que vous avez, adaptées à votre style.
+                      <p className="text-gray-400 text-sm leading-snug">
+                          Dites-moi ce que vous avez, je vous trouve une idée de plat ou de dessert.
                       </p>
                   </div>
               </div>
           </div>
+      </div>
 
-          {/* 2. SEMAINIER */}
-          <div>
-              <div className="flex justify-between items-end mb-3">
-                  <h3 className="font-display text-lg text-white">Votre Semaine</h3>
-                  <span className="bg-[#1e1e1e] text-purple-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">CHARGE MENTALE : ZÉRO</span>
+      {/* --- AUTRES OUTILS --- */}
+      <div className="relative z-10 px-6 grid grid-cols-1 gap-5 pb-20">
+          <div 
+              onClick={() => handleProtectedAction(AppView.SCAN_FRIDGE)}
+              className="bg-white/[0.03] border border-white/5 p-5 rounded-[2rem] flex items-center gap-5 hover:bg-white/[0.06] transition-all cursor-pointer group"
+          >
+              <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+                  <PremiumCamera size={24} className="text-blue-400" />
               </div>
-              <div 
-                  onClick={() => handleProtectedAction(AppView.PLANNING)}
-                  className={`bg-[#2e1a47] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#3e2361] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
-              >
-                  <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Planning" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#2e1a47] via-[#2e1a47]/90 to-transparent z-10"></div>
-                  
-                  <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-3 mb-4 text-white">
-                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <PremiumCalendar size={32} />
-                          </div>
-                          <h4 className="font-display text-2xl leading-tight">Organisateur<br/>Semainier</h4>
-                      </div>
-                      <p className="text-[#ddd6fe] text-xs leading-relaxed font-medium max-w-[200px]">
-                          L'IA génère vos menus du Lundi au Dimanche et remplit votre liste de courses.
-                      </p>
-                  </div>
+              <div className="flex-1">
+                  <h4 className="text-lg font-display text-white">Vider mon frigo</h4>
+                  <p className="text-[#666] text-xs">Prenez une photo de vos restes pour avoir une idée.</p>
               </div>
+              <ArrowRight size={18} className="text-white/20" />
           </div>
 
-          {/* 3. SCAN FRIGO */}
-          <div>
-              <div className="flex justify-between items-end mb-3">
-                  <h3 className="font-display text-lg text-white">Stop au Gaspillage</h3>
-                  <span className="bg-[#1e1e1e] text-blue-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">RENTABILISÉ EN 2 JOURS</span>
+          <div 
+              onClick={() => handleProtectedAction(AppView.SOMMELIER)}
+              className="bg-white/[0.03] border border-white/5 p-5 rounded-[2rem] flex items-center gap-5 hover:bg-white/[0.06] transition-all cursor-pointer group"
+          >
+              <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20">
+                  <PremiumWine size={24} className="text-red-400" />
               </div>
-              <div 
-                  onClick={() => handleProtectedAction(AppView.SCAN_FRIDGE)}
-                  className={`bg-[#1a3b5c] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#1e40af] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
-              >
-                  <img src="https://images.unsplash.com/photo-1584473457406-6240486418e9?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Fridge" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#1a3b5c] via-[#1a3b5c]/90 to-transparent z-10"></div>
-                  
-                  <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-3 mb-4 text-white">
-                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <PremiumCamera size={32} />
-                          </div>
-                          <h4 className="font-display text-2xl leading-tight">Scan Frigo IA</h4>
-                      </div>
-                      <p className="text-[#bfdbfe] text-xs leading-relaxed font-medium max-w-[200px]">
-                          Prenez une photo, l'IA crée une recette culinaire avec vos restes.
-                      </p>
-                  </div>
+              <div className="flex-1">
+                  <h4 className="text-lg font-display text-white">Quel vin choisir ?</h4>
+                  <p className="text-[#666] text-xs">Trouvez la bonne bouteille pour accompagner votre plat.</p>
               </div>
+              <ArrowRight size={18} className="text-white/20" />
           </div>
 
-          {/* 4. SOMMELIER */}
-          <div>
-              <div className="flex justify-between items-end mb-3">
-                  <h3 className="font-display text-lg text-white">L'Accord Parfait</h3>
-                  <span className="bg-[#1e1e1e] text-red-400 text-[8px] font-bold px-2 py-0.5 rounded border border-[#333] uppercase tracking-wider">AMATEURS & PROS</span>
+          <div 
+              onClick={() => handleProtectedAction(AppView.PLANNING)}
+              className="bg-white/[0.03] border border-white/5 p-5 rounded-[2rem] flex items-center gap-5 hover:bg-white/[0.06] transition-all cursor-pointer group"
+          >
+              <div className="p-4 bg-[#509f2a]/10 rounded-2xl border border-[#509f2a]/20">
+                  <PremiumCalendar size={24} className="text-[#509f2a]" />
               </div>
-              <div 
-                  onClick={() => handleProtectedAction(AppView.SOMMELIER)}
-                  className={`bg-[#4a1a1a] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#991b1b] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
-              >
-                  <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" alt="Wine" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#4a1a1a] via-[#4a1a1a]/90 to-transparent z-10"></div>
-                  
-                  <div className="relative z-20 h-full flex flex-col justify-center">
-                      <div className="flex items-center gap-3 mb-4 text-white">
-                          <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <PremiumWine size={32} />
-                          </div>
-                          <h4 className="font-display text-2xl leading-tight">Sommelier IA</h4>
-                      </div>
-                      <p className="text-[#fecaca] text-xs leading-relaxed font-medium max-w-[200px]">
-                          Pour vos dîners ou vos clients. L'accord mets & vins idéal instantané.
-                      </p>
-                  </div>
+              <div className="flex-1">
+                  <h4 className="text-lg font-display text-white">Ma semaine de menus</h4>
+                  <p className="text-[#666] text-xs">Organisez vos repas du lundi au dimanche.</p>
               </div>
+              <ArrowRight size={18} className="text-white/20" />
           </div>
-
       </div>
     </div>
   );
