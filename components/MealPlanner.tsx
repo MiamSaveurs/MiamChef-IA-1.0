@@ -3,8 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
-import { Sparkles, Loader2, ShoppingCart, Check, Trash2, Download, Clock, Soup, ChevronDown, Utensils, AlertCircle, Coffee, Croissant } from 'lucide-react';
-import { PremiumCalendar, PremiumChefHat } from './Icons';
+import { Loader2 } from 'lucide-react';
+import { 
+    PremiumCalendar, 
+    PremiumChefHat, 
+    PremiumDownload, 
+    PremiumTrash, 
+    PremiumSparkles, 
+    PremiumShoppingCart, 
+    PremiumCheck, 
+    PremiumTimer, 
+    PremiumUtensils, 
+    PremiumAlertCircle, 
+    PremiumCoffee, 
+    PremiumSoup, 
+    PremiumChevronDown 
+} from './Icons';
 
 const MealPlanner: React.FC = () => {
     const [plan, setPlan] = useState<WeeklyPlan | null>(null);
@@ -148,15 +162,15 @@ const MealPlanner: React.FC = () => {
                 </div>
                 {plan && (
                     <div className="flex gap-2">
-                        <button onClick={handleDownloadPDF} className="bg-purple-50 text-purple-600 p-3 rounded-full hover:bg-purple-100 transition-colors shadow-sm" title="Télécharger PDF"><Download size={20} /></button>
-                        <button onClick={handleDeletePlan} className="bg-red-50 text-red-500 p-3 rounded-full hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-100" title="Effacer"><Trash2 size={20} /></button>
+                        <button onClick={handleDownloadPDF} className="bg-purple-50 text-purple-600 p-3 rounded-full hover:bg-purple-100 transition-colors shadow-sm" title="Télécharger PDF"><PremiumDownload size={20} /></button>
+                        <button onClick={handleDeletePlan} className="bg-red-50 text-red-500 p-3 rounded-full hover:bg-red-100 transition-colors shadow-sm cursor-pointer border border-red-100" title="Effacer"><PremiumTrash size={20} /></button>
                     </div>
                 )}
             </header>
 
             {status === 'error' && errorMessage && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-700 font-bold animate-pulse">
-                    <AlertCircle size={24} />
+                    <PremiumAlertCircle size={24} />
                     <span>{errorMessage}</span>
                 </div>
             )}
@@ -168,7 +182,7 @@ const MealPlanner: React.FC = () => {
                             Étape 1
                         </div>
                         <h3 className="font-display text-2xl text-orange-900 mb-2 flex items-center gap-2">
-                            <Utensils size={24} className="text-orange-600" /> Préparation (Batch Cooking)
+                            <PremiumUtensils size={24} /> Préparation (Batch Cooking)
                         </h3>
                         <p className="text-orange-800/70 text-sm mb-4">
                             Instructions de préparation du dimanche pour gagner du temps en semaine.
@@ -178,7 +192,7 @@ const MealPlanner: React.FC = () => {
                     <div className="bg-white p-8 rounded-[2rem] shadow-card border border-gray-100 text-center relative z-10">
                         <div className="max-w-md mx-auto space-y-6">
                             <div className="mb-6">
-                                <Sparkles size={48} className="text-purple-300 mx-auto mb-4" />
+                                <PremiumSparkles size={48} className="mx-auto mb-4" />
                                 <h3 className="font-display text-2xl text-chef-dark mb-2">Générer votre Menu</h3>
                                 <p className="text-gray-500 text-sm">Menus complets et liste de courses automatique</p>
                             </div>
@@ -193,7 +207,7 @@ const MealPlanner: React.FC = () => {
                                             <option value="Vegan">Vegan</option>
                                             <option value="Keto">Keto</option>
                                         </select>
-                                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                        <PremiumChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                     </div>
                                 </div>
                                 <div>
@@ -202,12 +216,12 @@ const MealPlanner: React.FC = () => {
                                         <select value={people} onChange={(e) => setPeople(parseInt(e.target.value))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium outline-none cursor-pointer appearance-none">
                                             {[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n}>{n} personne{n > 1 ? 's' : ''}</option>)}
                                         </select>
-                                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                        <PremiumChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                     </div>
                                 </div>
                             </div>
                             <button onClick={handleGenerate} disabled={status === 'loading'} className="w-full bg-chef-green text-white font-display text-xl py-4 rounded-2xl shadow-lg hover:bg-green-600 transition-all flex items-center justify-center gap-2">
-                                {status === 'loading' ? <Loader2 className="animate-spin" /> : <Sparkles />} {status === 'loading' ? 'L\'IA réfléchit...' : 'Générer ma semaine'}
+                                {status === 'loading' ? <Loader2 className="animate-spin" /> : <PremiumSparkles />} {status === 'loading' ? 'L\'IA réfléchit...' : 'Générer ma semaine'}
                             </button>
                         </div>
                     </div>
@@ -219,14 +233,14 @@ const MealPlanner: React.FC = () => {
                             Étape 1 : Organisation
                         </div>
                         <h4 className="font-display text-2xl text-orange-900 mb-4 flex items-center gap-2">
-                            <Utensils size={28} className="text-orange-600" /> 
+                            <PremiumUtensils size={28} /> 
                             Préparation (Batch Cooking)
                         </h4>
                         {plan.batchCookingTips && plan.batchCookingTips.length > 0 ? (
                             <ul className="grid md:grid-cols-2 gap-4">
                                 {plan.batchCookingTips.map((tip, idx) => (
                                     <li key={idx} className="flex gap-3 text-sm text-orange-900 bg-white p-4 rounded-xl border border-orange-100 shadow-sm items-start">
-                                        <Clock size={20} className="shrink-0 mt-0.5 text-orange-500" /> 
+                                        <PremiumTimer size={20} className="shrink-0 mt-0.5" /> 
                                         <span className="font-medium leading-relaxed">{tip}</span>
                                     </li>
                                 ))}
@@ -258,7 +272,7 @@ const MealPlanner: React.FC = () => {
                                     <div className="space-y-3 flex-1">
                                         {day.breakfast && (
                                             <div className="bg-yellow-50 p-3 rounded-2xl border border-yellow-100">
-                                                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><Coffee size={12}/> Petit-Déj</span>
+                                                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumCoffee size={12}/> Petit-Déj</span>
                                                 <p className="font-bold text-gray-800 line-clamp-2 leading-tight text-xs">{day.breakfast.name}</p>
                                                 <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.breakfast.ingredients)}</p>
                                             </div>
@@ -269,7 +283,7 @@ const MealPlanner: React.FC = () => {
                                             <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.lunch.ingredients)}</p>
                                         </div>
                                         <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><Soup size={12}/> Soir</span>
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumSoup size={12}/> Soir</span>
                                             <p className="font-bold text-gray-800 line-clamp-3 leading-tight text-sm">{day.dinner.name}</p>
                                             <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.dinner.ingredients)}</p>
                                         </div>
@@ -282,7 +296,7 @@ const MealPlanner: React.FC = () => {
                     <div className="fixed bottom-24 left-0 w-full px-4 md:px-0 z-40 pointer-events-none print:hidden" data-html2canvas-ignore="true">
                          <div className="max-w-md mx-auto pointer-events-auto">
                             <button onClick={handleExportToShoppingList} disabled={addedToList} className={`w-full py-4 rounded-2xl shadow-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${addedToList ? 'bg-green-700 text-white' : 'bg-chef-green text-white hover:scale-105'}`}>
-                                {addedToList ? <><Check /> Liste générée !</> : <><ShoppingCart /> Tout ajouter à ma liste</>}
+                                {addedToList ? <><PremiumCheck size={24} /> Liste générée !</> : <><PremiumShoppingCart size={24} /> Tout ajouter à ma liste</>}
                             </button>
                          </div>
                     </div>

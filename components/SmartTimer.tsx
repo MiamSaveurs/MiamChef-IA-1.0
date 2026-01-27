@@ -1,17 +1,37 @@
 
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Plus, Minus, Flame, Droplet, Egg, Beef, Wheat } from 'lucide-react';
-import { PremiumTimer, PremiumChefHat } from './Icons';
+import { 
+    PremiumTimer, 
+    PremiumChefHat, 
+    PremiumPlay, 
+    PremiumPause, 
+    PremiumRotateCcw, 
+    PremiumPlus, 
+    PremiumMinus, 
+    PremiumFlame, 
+    PremiumDroplet, 
+    PremiumEgg, 
+    PremiumBeef, 
+    PremiumWheat 
+} from './Icons';
 
-const PRESETS = [
-    { label: "Oeuf à la coque", time: 180, icon: Egg, color: "text-yellow-500" },
-    { label: "Oeuf Mollet", time: 360, icon: Egg, color: "text-orange-500" },
-    { label: "Oeuf Dur", time: 540, icon: Egg, color: "text-red-500" },
-    { label: "Pâtes Al Dente", time: 480, icon: Wheat, color: "text-yellow-600" },
-    { label: "Riz Blanc", time: 660, icon: Wheat, color: "text-gray-600" },
-    { label: "Légumes Vapeur", time: 900, icon: Droplet, color: "text-green-500" },
-    { label: "Steak Saignant", time: 150, icon: Beef, color: "text-red-600" },
-    { label: "Steak À point", time: 240, icon: Beef, color: "text-amber-700" },
+// Explicitly type the preset to allow JSX usage of the 'icon' property
+interface TimerPreset {
+    label: string;
+    time: number;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    color: string;
+}
+
+const PRESETS: TimerPreset[] = [
+    { label: "Oeuf à la coque", time: 180, icon: PremiumEgg, color: "text-yellow-500" },
+    { label: "Oeuf Mollet", time: 360, icon: PremiumEgg, color: "text-orange-500" },
+    { label: "Oeuf Dur", time: 540, icon: PremiumEgg, color: "text-red-500" },
+    { label: "Pâtes Al Dente", time: 480, icon: PremiumWheat, color: "text-yellow-600" },
+    { label: "Riz Blanc", time: 660, icon: PremiumWheat, color: "text-gray-600" },
+    { label: "Légumes Vapeur", time: 900, icon: PremiumDroplet, color: "text-blue-400" },
+    { label: "Steak Saignant", time: 150, icon: PremiumBeef, color: "text-red-600" },
+    { label: "Steak À point", time: 240, icon: PremiumBeef, color: "text-amber-700" },
 ];
 
 interface SmartTimerProps {
@@ -103,7 +123,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                             className="w-14 h-14 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition-colors"
                             title="Réinitialiser"
                         >
-                            <RotateCcw size={24} />
+                            <PremiumRotateCcw size={24} />
                         </button>
                         
                         <button 
@@ -112,7 +132,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                             className={`w-20 h-20 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-all ${isActive ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-chef-green text-white shadow-green-200'}`}
                             title={isActive ? "Pause" : "Démarrer"}
                         >
-                            {isActive ? <Pause size={32} fill="white" /> : <Play size={32} fill="white" className="ml-1" />}
+                            {isActive ? <PremiumPause size={32} className="text-white" /> : <PremiumPlay size={32} className="text-white ml-1" />}
                         </button>
 
                          <div className="flex flex-col items-center gap-2">
@@ -136,7 +156,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                                 onClick={() => setCustomMinutes(Math.max(1, customMinutes - 1))}
                                 className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 text-gray-600 font-bold border border-gray-200"
                             >
-                                <Minus size={20} />
+                                <PremiumMinus size={20} />
                             </button>
                             <div className="flex-1 text-center">
                                 <span className="text-3xl font-display text-chef-dark">{customMinutes}</span>
@@ -146,7 +166,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                                 onClick={() => setCustomMinutes(Math.min(120, customMinutes + 1))}
                                 className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 text-gray-600 font-bold border border-gray-200"
                             >
-                                <Plus size={20} />
+                                <PremiumPlus size={20} />
                             </button>
                             <button 
                                 onClick={handleCustomStart}
@@ -159,7 +179,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
 
                     <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
                         <h3 className="font-bold text-chef-dark mb-4 flex items-center gap-2">
-                            <Flame size={18} className="text-orange-500"/> Cuissons Parfaites
+                            <PremiumFlame size={18} /> Cuissons Parfaites
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
                             {PRESETS.map((preset, idx) => {
@@ -170,7 +190,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                                         onClick={() => onStart(preset.time)}
                                         className="bg-gray-50 hover:bg-gray-100 p-3 rounded-xl text-left flex items-center gap-3 transition-colors group border border-transparent hover:border-gray-200"
                                     >
-                                        <div className={`p-2 rounded-lg bg-white shadow-sm ${preset.color}`}>
+                                        <div className={`p-2 rounded-lg bg-white shadow-sm`}>
                                             <Icon size={18} />
                                         </div>
                                         <div>
