@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, ShoppingCart, FileText, Briefcase, Calendar } from 'lucide-react';
+import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, ShoppingCart, Briefcase, Calendar, Sparkles } from 'lucide-react';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -18,228 +18,224 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       }
   };
 
-  // Date du jour formatée en Français (ex: Jeudi 24 Octobre 2024)
   const today = new Date().toLocaleDateString('fr-FR', { 
     weekday: 'long', 
     day: 'numeric', 
     month: 'long', 
     year: 'numeric' 
   });
-  // Capitalize first letter
   const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
 
   return (
-    <div className="relative min-h-screen font-body bg-white overflow-x-hidden">
+    <div className="relative min-h-screen font-body bg-[#111111] text-white overflow-x-hidden pb-32">
       
-      {/* HERO SECTION */}
-      <div className="relative bg-chef-dark text-white rounded-b-[3rem] shadow-2xl overflow-hidden pb-12">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/food.png')]"></div>
-        <div 
-            className="absolute inset-0 opacity-40 bg-cover bg-center mix-blend-overlay"
-            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop')` }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-chef-dark/90"></div>
-
-        <div className="relative z-10 px-6 pt-8 max-w-lg mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-3">
-                    <div className="bg-chef-green p-2 rounded-xl shadow-lg shadow-green-900/50">
-                        <ChefHat size={24} className="text-white" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-display text-2xl tracking-wide leading-none">MiamChef IA</span>
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
-                            <Calendar size={8} /> {formattedDate}
-                        </span>
-                    </div>
-                </div>
-                <button 
-                    onClick={() => setView(AppView.SUBSCRIPTION)}
-                    className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full hover:bg-white/20 transition-all group"
-                >
-                    <Crown size={16} className="text-yellow-400 fill-yellow-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-xs font-bold text-yellow-100 uppercase tracking-wider">Premium</span>
-                </button>
-            </div>
-
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full mb-4">
-                 <Briefcase size={12} className="text-chef-green" />
-                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-200">Pour Particuliers & Professionnels</span>
-            </div>
-
-            <h1 className="text-5xl font-display leading-tight mb-4">
-                Créez des recettes uniques <br/>
-                <span className="text-chef-green">avec ce que vous avez.</span>
-            </h1>
-            <p className="text-gray-300 text-lg font-light mb-8 leading-relaxed">
-                Le premier livre de cuisine <strong className="text-white font-bold">infini</strong>. Le Couteau Suisse culinaire français indispensable.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-                <button 
-                    onClick={() => setView(AppView.RECIPE_BOOK)}
-                    className="bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-2xl flex items-center justify-between group transition-all"
-                >
-                    <div className="w-10 h-10 shrink-0 bg-yellow-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <Book size={20} />
-                    </div>
-                    <div className="text-right">
-                        <div className="font-bold text-white text-sm leading-tight">Mon Carnet</div>
-                        <div className="text-[10px] text-gray-400 group-hover:text-gray-300">Mes Recettes</div>
-                    </div>
-                </button>
-
-                <button 
-                    onClick={() => setView(AppView.SHOPPING_LIST)}
-                    className="bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-2xl flex items-center justify-between group transition-all"
-                >
-                    <div className="w-10 h-10 shrink-0 bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <ShoppingCart size={20} />
-                    </div>
-                    <div className="text-right">
-                        <div className="font-bold text-white text-sm leading-tight">Ma Liste</div>
-                        <div className="text-[10px] text-gray-400 group-hover:text-gray-300">Mes Courses</div>
-                    </div>
-                </button>
-            </div>
-        </div>
+      {/* --- HEADER --- */}
+      <div className="px-6 pt-8 flex justify-between items-start">
+          <div>
+              <div className="flex items-center gap-2 mb-1">
+                  <div className="bg-chef-green p-1.5 rounded-lg">
+                      <ChefHat size={20} className="text-white" />
+                  </div>
+                  <h1 className="font-display text-2xl text-white tracking-wide">MiamChef IA</h1>
+              </div>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest flex items-center gap-1">
+                  <Calendar size={10} /> {formattedDate}
+              </p>
+          </div>
+          <button 
+            onClick={() => setView(AppView.SUBSCRIPTION)}
+            className="flex items-center gap-2 bg-[#2a2a2a] border border-[#333] px-3 py-1.5 rounded-lg hover:bg-[#333] transition-colors"
+          >
+              <Crown size={14} className="text-yellow-500 fill-yellow-500" />
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider">Premium</span>
+          </button>
       </div>
 
-      {/* VALUE PROPOSITION BUTTON */}
-      <div className="px-6 -mt-8 relative z-20 max-w-lg mx-auto mb-12">
-        <button 
-            onClick={() => setView(AppView.VALUE_PROPOSITION)}
-            className="w-full bg-white rounded-3xl shadow-xl p-6 text-center border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col items-center"
-        >
-            <div className="flex justify-between items-center w-full mb-4">
-                <div className="flex flex-col items-center gap-2 w-1/3 group-hover:scale-105 transition-transform">
-                    <div className="p-3 bg-green-50 text-chef-green rounded-full mb-1"><Fingerprint size={24} /></div>
-                    <span className="text-xs font-bold text-gray-600 uppercase">Sur-Mesure</span>
-                </div>
-                <div className="w-px h-12 bg-gray-100"></div>
-                <div className="flex flex-col items-center gap-2 w-1/3 group-hover:scale-105 transition-transform delay-75">
-                    <div className="p-3 bg-red-50 text-red-500 rounded-full mb-1"><HeartPulse size={24} /></div>
-                    <span className="text-xs font-bold text-gray-600 uppercase">Santé</span>
-                </div>
-                <div className="w-px h-12 bg-gray-100"></div>
-                <div className="flex flex-col items-center gap-2 w-1/3 group-hover:scale-105 transition-transform delay-150">
-                    <div className="p-3 bg-blue-50 text-blue-500 rounded-full mb-1"><Euro size={24} /></div>
-                    <span className="text-xs font-bold text-gray-600 uppercase">Économies</span>
-                </div>
-            </div>
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-chef-green border border-chef-green/20 px-4 py-2 rounded-full hover:bg-chef-green hover:text-white transition-colors uppercase tracking-wide">
-                Découvrir nos solutions <ArrowRight size={12}/>
-            </span>
-        </button>
+      {/* --- HERO SECTION --- */}
+      <div className="px-6 pt-6 pb-8">
+          <div className="inline-flex items-center gap-2 bg-[#2a2a2a] px-3 py-1.5 rounded-lg mb-6 border border-[#333]">
+               <Briefcase size={12} className="text-gray-400" />
+               <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Pour Particuliers & Professionnels</span>
+          </div>
+
+          <h2 className="text-4xl font-display text-white leading-[1.1] mb-2">
+              Créez des recettes <br/> uniques
+          </h2>
+          <h2 className="text-4xl font-display text-chef-green leading-[1.1] mb-4">
+              avec ce que vous avez.
+          </h2>
+          <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-sm mb-8">
+              Le premier livre de cuisine <span className="text-white font-bold">infini</span>. Le Couteau Suisse culinaire français indispensable.
+          </p>
+
+          {/* Boutons Hero */}
+          <div className="grid grid-cols-2 gap-4">
+              <button 
+                  onClick={() => setView(AppView.RECIPE_BOOK)}
+                  className="bg-[#1e1e1e] p-4 rounded-2xl flex items-center gap-4 hover:bg-[#252525] transition-colors border border-[#2a2a2a]"
+              >
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500 flex items-center justify-center text-white shrink-0">
+                      <Book size={20} />
+                  </div>
+                  <div className="text-left">
+                      <span className="block text-white font-bold text-xs uppercase tracking-wide">Mon Carnet</span>
+                      <span className="block text-gray-500 text-[10px]">Mes Recettes</span>
+                  </div>
+              </button>
+
+              <button 
+                  onClick={() => setView(AppView.SHOPPING_LIST)}
+                  className="bg-[#1e1e1e] p-4 rounded-2xl flex items-center gap-4 hover:bg-[#252525] transition-colors border border-[#2a2a2a]"
+              >
+                  <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shrink-0">
+                      <ShoppingCart size={20} />
+                  </div>
+                  <div className="text-left">
+                      <span className="block text-white font-bold text-xs uppercase tracking-wide">Ma Liste</span>
+                      <span className="block text-gray-500 text-[10px]">Mes Courses</span>
+                  </div>
+              </button>
+          </div>
       </div>
 
-      <div className="px-6 pb-24 max-w-lg mx-auto space-y-6">
-        {/* ATELIER DU CHEF */}
-        <div onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)} className={`group cursor-pointer ${!isOnline ? 'opacity-60 grayscale' : ''}`}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-2xl text-chef-dark">Atelier du Chef</h3>
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wide">Créations Uniques</span>
-            </div>
-            <div className="relative h-48 rounded-[2rem] overflow-hidden shadow-card group-hover:shadow-xl transition-all bg-gradient-to-br from-green-900 to-emerald-900 border border-green-800">
-                <div className="absolute right-0 top-0 w-1/2 h-full opacity-50 mix-blend-overlay">
-                     <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Chef en cuisine" />
-                </div>
-                <div className="absolute inset-0 p-6 w-2/3 flex flex-col justify-center relative z-10">
-                    <div className="flex items-center gap-2 mb-2 text-green-100">
-                        <ChefHat size={24} /> <span className="font-bold">Création de Recette</span>
-                    </div>
-                    <p className="text-sm text-white/90 leading-relaxed font-medium">Créez des recettes uniques avec ce que vous avez, adaptées à votre style.</p>
-                </div>
-            </div>
-        </div>
+      {/* --- VALUE PROPOSITION CARD (WHITE) --- */}
+      <div className="px-6 mb-10 relative z-10">
+          <div className="bg-white rounded-3xl p-6 shadow-xl text-center">
+              <div className="flex justify-center items-center gap-8 mb-6">
+                  <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-green-50 text-chef-green flex items-center justify-center border border-green-100">
+                          <Fingerprint size={20} />
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Sur-Mesure</span>
+                  </div>
+                  <div className="w-px h-10 bg-gray-100"></div>
+                  <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center border border-red-100">
+                          <HeartPulse size={20} />
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Santé</span>
+                  </div>
+                  <div className="w-px h-10 bg-gray-100"></div>
+                  <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center border border-blue-100">
+                          <Euro size={20} />
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Économies</span>
+                  </div>
+              </div>
+              <button 
+                  onClick={() => setView(AppView.VALUE_PROPOSITION)}
+                  className="w-full border border-gray-200 text-gray-600 font-bold text-xs py-3 rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+              >
+                  Découvrir nos solutions <ArrowRight size={14} />
+              </button>
+          </div>
+      </div>
 
-        {/* SEMAINIER */}
-        <div onClick={() => handleProtectedAction(AppView.PLANNING)} className={`group cursor-pointer ${!isOnline ? 'opacity-60 grayscale' : ''}`}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-2xl text-chef-dark">Votre Semaine</h3>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-[10px] font-bold uppercase tracking-wide">Charge Mentale : Zéro</span>
-            </div>
-            <div className="relative h-48 rounded-[2rem] overflow-hidden shadow-card group-hover:shadow-xl transition-all bg-gradient-to-br from-purple-900 to-indigo-900 border border-purple-800">
-                <div className="absolute right-0 top-0 w-1/2 h-full opacity-50 mix-blend-overlay">
-                     <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Planning" />
-                </div>
-                <div className="absolute inset-0 p-6 w-2/3 flex flex-col justify-center relative z-10">
-                    <div className="flex items-center gap-2 mb-2 text-purple-100">
-                        <Calendar size={24} /> <span className="font-bold">Organisateur Semainier</span>
-                    </div>
-                    <p className="text-sm text-white/90 leading-relaxed font-medium">L'IA génère vos menus du Lundi au Dimanche et remplit votre liste de courses.</p>
-                </div>
-            </div>
-        </div>
+      {/* --- FEATURE CARDS (COLORED) --- */}
+      <div className="px-6 space-y-8">
+          
+          {/* 1. ATELIER DU CHEF (VERT) */}
+          <div>
+              <div className="flex justify-between items-end mb-3">
+                  <h3 className="font-display text-xl text-white">Atelier du Chef</h3>
+                  <span className="bg-[#1e1e1e] text-chef-green text-[9px] font-bold px-2 py-1 rounded border border-[#333] uppercase">Créations Uniques</span>
+              </div>
+              <div 
+                  onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)}
+                  className={`bg-[#0f392b] rounded-3xl p-6 relative overflow-hidden h-48 cursor-pointer border border-[#1a4a39] group transition-transform active:scale-[0.99] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+              >
+                  {/* Background Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0f392b] to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1556910103-1c02745a30bf?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Chef" />
+                  
+                  <div className="relative z-20 h-full flex flex-col justify-center max-w-[60%]">
+                      <div className="flex items-center gap-2 mb-3 text-white">
+                          <ChefHat size={24} />
+                          <span className="font-bold text-lg font-display">Création de Recette</span>
+                      </div>
+                      <p className="text-gray-300 text-xs leading-relaxed font-medium">
+                          Créez des recettes uniques avec ce que vous avez, adaptées à votre style.
+                      </p>
+                  </div>
+              </div>
+          </div>
 
-        {/* SCAN ANTI-GASPI */}
-        <div onClick={() => handleProtectedAction(AppView.SCAN_FRIDGE)} className={`group cursor-pointer ${!isOnline ? 'opacity-60 grayscale' : ''}`}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-2xl text-chef-dark">Stop au Gaspillage</h3>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wide">Rentabilisé en 2 jours</span>
-            </div>
-            <div className="relative h-48 rounded-[2rem] overflow-hidden shadow-card group-hover:shadow-xl transition-all bg-gradient-to-br from-blue-900 to-blue-800 border border-blue-800">
-                <div className="absolute right-0 top-0 w-1/2 h-full opacity-50 mix-blend-overlay">
-                     <img src="https://images.unsplash.com/photo-1584473457406-6240486418e9?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Scan" />
-                </div>
-                <div className="absolute inset-0 p-6 w-2/3 flex flex-col justify-center relative z-10">
-                    <div className="flex items-center gap-2 mb-2 text-blue-100">
-                        <Camera size={24} /> <span className="font-bold">Scan Frigo IA</span>
-                    </div>
-                    <p className="text-sm text-white/90 leading-relaxed font-medium">Prenez une photo, l'IA crée une recette culinaire avec vos restes.</p>
-                </div>
-            </div>
-        </div>
+          {/* 2. SEMAINIER (VIOLET) */}
+          <div>
+              <div className="flex justify-between items-end mb-3">
+                  <h3 className="font-display text-xl text-white">Votre Semaine</h3>
+                  <span className="bg-[#1e1e1e] text-purple-400 text-[9px] font-bold px-2 py-1 rounded border border-[#333] uppercase">Charge Mentale : Zéro</span>
+              </div>
+              <div 
+                  onClick={() => handleProtectedAction(AppView.PLANNING)}
+                  className={`bg-[#2e1a47] rounded-3xl p-6 relative overflow-hidden h-48 cursor-pointer border border-[#3e2361] group transition-transform active:scale-[0.99] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+              >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#2e1a47] to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Planning" />
+                  
+                  <div className="relative z-20 h-full flex flex-col justify-center max-w-[60%]">
+                      <div className="flex items-center gap-2 mb-3 text-white">
+                          <Calendar size={24} />
+                          <span className="font-bold text-lg font-display">Organisateur Semainier</span>
+                      </div>
+                      <p className="text-gray-300 text-xs leading-relaxed font-medium">
+                          L'IA génère vos menus du Lundi au Dimanche et remplit votre liste de courses.
+                      </p>
+                  </div>
+              </div>
+          </div>
 
-        {/* SOMMELIER */}
-        <div onClick={() => handleProtectedAction(AppView.SOMMELIER)} className={`group cursor-pointer ${!isOnline ? 'opacity-60 grayscale' : ''}`}>
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-2xl text-chef-dark">L'Accord Parfait</h3>
-                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold uppercase tracking-wide">Amateurs & Pros</span>
-            </div>
-            <div className="relative h-48 rounded-[2rem] overflow-hidden shadow-card group-hover:shadow-xl transition-all bg-gradient-to-br from-red-900 to-red-800 border border-red-800">
-                <div className="absolute right-0 top-0 w-1/2 h-full opacity-50 mix-blend-overlay">
-                    <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover rounded-l-[2rem]" alt="Sommelier" />
-                </div>
-                <div className="absolute inset-0 p-6 w-2/3 flex flex-col justify-center relative z-10">
-                    <div className="flex items-center gap-2 mb-2 text-red-100">
-                        <Wine size={24} /> <span className="font-bold">Sommelier IA</span>
-                    </div>
-                    <p className="text-sm text-white/90 leading-relaxed font-medium">Pour vos dîners ou vos clients.</p>
-                </div>
-                <div className="absolute bottom-0 w-full bg-black/20 text-white/60 text-[8px] px-6 py-2 text-center uppercase tracking-wider">
-                    L'abus d'alcool est dangereux pour la santé.
-                </div>
-            </div>
-        </div>
+          {/* 3. SCAN FRIGO (BLEU) */}
+          <div>
+              <div className="flex justify-between items-end mb-3">
+                  <h3 className="font-display text-xl text-white">Stop au Gaspillage</h3>
+                  <span className="bg-[#1e1e1e] text-blue-400 text-[9px] font-bold px-2 py-1 rounded border border-[#333] uppercase">Rentabilisé en 2 jours</span>
+              </div>
+              <div 
+                  onClick={() => handleProtectedAction(AppView.SCAN_FRIDGE)}
+                  className={`bg-[#1a3b5c] rounded-3xl p-6 relative overflow-hidden h-48 cursor-pointer border border-[#234e7a] group transition-transform active:scale-[0.99] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+              >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#1a3b5c] to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1584473457406-6240486418e9?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Fridge" />
+                  
+                  <div className="relative z-20 h-full flex flex-col justify-center max-w-[60%]">
+                      <div className="flex items-center gap-2 mb-3 text-white">
+                          <Camera size={24} />
+                          <span className="font-bold text-lg font-display">Scan Frigo IA</span>
+                      </div>
+                      <p className="text-gray-300 text-xs leading-relaxed font-medium">
+                          Prenez une photo, l'IA crée une recette culinaire avec vos restes.
+                      </p>
+                  </div>
+              </div>
+          </div>
 
-        {/* PREMIUM BANNER */}
-        <div onClick={() => setView(AppView.SUBSCRIPTION)} className="mt-12 bg-gray-900 rounded-[2rem] p-8 text-center relative overflow-hidden cursor-pointer shadow-2xl group">
-            <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/food.png')]"></div>
-            <div className="relative z-10">
-                <Crown size={40} className="text-yellow-400 mx-auto mb-4 animate-bounce-slow" />
-                <h3 className="font-display text-3xl text-white mb-2">Passez au niveau Chef</h3>
-                <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">
-                    Rentabilisez votre abonnement dès le premier mois grâce aux économies réalisées.
-                </p>
-                <button className="bg-chef-green text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-green-600 transition-colors w-full group-hover:scale-105 transform duration-300">
-                    Découvrir l'offre Premium
-                </button>
-            </div>
-        </div>
+          {/* 4. SOMMELIER (ROUGE) */}
+          <div>
+              <div className="flex justify-between items-end mb-3">
+                  <h3 className="font-display text-xl text-white">L'Accord Parfait</h3>
+                  <span className="bg-[#1e1e1e] text-red-400 text-[9px] font-bold px-2 py-1 rounded border border-[#333] uppercase">Amateurs & Pros</span>
+              </div>
+              <div 
+                  onClick={() => handleProtectedAction(AppView.SOMMELIER)}
+                  className={`bg-[#4a1a1a] rounded-3xl p-6 relative overflow-hidden h-48 cursor-pointer border border-[#662222] group transition-transform active:scale-[0.99] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
+              >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#4a1a1a] to-transparent z-10"></div>
+                  <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80" className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Wine" />
+                  
+                  <div className="relative z-20 h-full flex flex-col justify-center max-w-[60%]">
+                      <div className="flex items-center gap-2 mb-3 text-white">
+                          <Wine size={24} />
+                          <span className="font-bold text-lg font-display">Sommelier IA</span>
+                      </div>
+                      <p className="text-gray-300 text-xs leading-relaxed font-medium">
+                          Pour vos dîners ou vos clients. L'accord mets & vins idéal instantané.
+                      </p>
+                  </div>
+              </div>
+          </div>
 
-        {/* Footer */}
-        <div className="text-center pt-8 pb-4 flex flex-col items-center gap-2">
-             <p className="text-xs text-gray-400 font-medium">MiamChef IA by MiamSaveurs © {new Date().getFullYear()}</p>
-             <button onClick={() => setView(AppView.LEGAL)} className="text-[10px] text-gray-300 hover:text-chef-green flex items-center gap-1">
-                 <FileText size={10} /> Mentions Légales
-             </button>
-             {/* Tech Status for Debugging */}
-             <div className="flex gap-2 opacity-30 hover:opacity-100 transition-opacity mt-2">
-                 <span className="text-[9px] bg-gray-200 px-1 rounded">v1.1.0</span>
-                 <span className={`text-[9px] px-1 rounded ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
-             </div>
-        </div>
       </div>
     </div>
   );

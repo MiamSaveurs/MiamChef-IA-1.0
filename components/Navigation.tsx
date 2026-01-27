@@ -17,7 +17,6 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
   const updateCount = async () => {
       try {
           const items = await getShoppingList();
-          // Count only unchecked items
           const count = items.filter(i => !i.checked).length;
           setShoppingCount(count);
       } catch (e) {
@@ -26,16 +25,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
   };
 
   useEffect(() => {
-      // Initial fetch
       updateCount();
-
-      // Listen for updates from storage events
       const handleUpdate = () => updateCount();
       window.addEventListener('shopping-list-updated', handleUpdate);
-
-      // Robust Polling (every 2 seconds) to ensure sync
       const interval = setInterval(updateCount, 2000);
-
       return () => {
           window.removeEventListener('shopping-list-updated', handleUpdate);
           clearInterval(interval);
@@ -58,8 +51,8 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
 
   return (
     <div className="fixed bottom-0 left-0 w-full z-50 pointer-events-none pb-6">
-      <nav className="glass-nav border border-white/20 shadow-xl max-w-lg mx-auto rounded-full pointer-events-auto mx-4 mb-2">
-        <div className="flex justify-between items-center px-4 py-3">
+      <nav className="bg-white/90 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-full pointer-events-auto max-w-lg mx-auto mx-4 mb-2 p-2">
+        <div className="flex justify-between items-center px-4">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.view;
@@ -70,31 +63,28 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
                 key={item.view}
                 onClick={() => handleNavClick(item)}
                 disabled={isDisabled}
-                className={`relative group flex flex-col items-center justify-center w-10 h-12 transition-all duration-300 ${isDisabled ? 'opacity-30 cursor-not-allowed grayscale' : ''}`}
+                className={`relative group flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all duration-200 
+                    ${isActive 
+                        ? 'text-chef-green bg-green-50' 
+                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'} 
+                    ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
               >
-                <div className={`absolute inset-0 rounded-full bg-chef-green/10 scale-0 transition-transform duration-300 ${isActive ? 'scale-100' : 'group-hover:scale-75'}`}></div>
+                
                 <Icon 
-                  size={20} 
-                  className={`relative z-10 transition-all duration-300 ${isActive ? 'text-chef-green -translate-y-1' : 'text-gray-400 group-hover:text-chef-dark'}`} 
+                  size={24} 
                   strokeWidth={isActive ? 2.5 : 2}
+                  className={`relative z-10 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} 
                 />
                 
-                {/* Shopping Notification Badge */}
                 {item.view === AppView.SHOPPING_LIST && shoppingCount > 0 && (
-                    <div className="absolute top-0 right-0 z-20 -mr-1 -mt-1 bg-red-500 text-white text-[9px] font-bold h-4 w-4 flex items-center justify-center rounded-full border border-white shadow-sm animate-bounce-slow">
-                        {shoppingCount > 9 ? '9+' : shoppingCount}
+                    <div className="absolute top-2 right-2 z-20 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 border border-white">
+                        <span className="text-white text-[9px] font-bold">{shoppingCount > 9 ? '9+' : shoppingCount}</span>
                     </div>
                 )}
 
-                {/* Active Timer Indicator (Orange Dot) */}
                 {item.isTimer && hasActiveTimer && (
-                     <div className="absolute top-0 right-0 z-20 -mr-1 -mt-1 h-3 w-3 bg-orange-500 rounded-full border border-white shadow-sm animate-pulse"></div>
+                     <div className="absolute top-2 right-2 z-20 h-2 w-2 rounded-full bg-orange-500 animate-pulse"></div>
                 )}
-
-                <span className={`absolute -bottom-1 text-[8px] font-bold tracking-tight transition-all duration-300 ${isActive ? 'opacity-100 text-chef-green translate-y-0' : 'opacity-0 translate-y-1'}`}>
-                  {item.label}
-                </span>
-                {isActive && <div className="absolute top-0 right-1 w-1.5 h-1.5 bg-chef-green rounded-full shadow-glow"></div>}
               </button>
             );
           })}
