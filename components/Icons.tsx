@@ -31,7 +31,179 @@ export const PremiumChefHat = ({ size = 24, className = "" }: { size?: number, c
     <rect x="25" y="65" width="50" height="15" rx="2" fill="#F5F5F5" />
     <rect x="25" y="65" width="50" height="15" rx="2" stroke="#E0E0E0" strokeWidth="1" />
     <path d="M35 72H65" stroke="#509f2a" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
-    <path d="M40 35C40 35 45 32 50 32C55 32 60 35 60 35" stroke="#E0E0E0" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumCake = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="20" y="55" width="60" height="25" rx="4" fill="#FCE4EC" />
+    <rect x="25" y="40" width="50" height="15" rx="3" fill="#F8BBD0" />
+    <path d="M30 40C30 35 35 30 50 30C65 30 70 35 70 40" stroke="#F06292" strokeWidth="2" strokeDasharray="4 2" opacity="0.5"/>
+    <circle cx="50" cy="25" r="5" fill="#E91E63" />
+    <path d="M50 25L50 15" stroke="#FFD54F" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumCroissant = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M20 60C20 40 40 25 50 25C60 25 80 40 80 60" stroke="#8D6E63" strokeWidth="12" strokeLinecap="round" />
+    <path d="M25 55C25 45 40 35 50 35C60 35 75 45 75 55" stroke="#A1887F" strokeWidth="8" strokeLinecap="round" opacity="0.4" />
+    <path d="M35 35L40 50M50 30V45M65 35L60 50" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.3" />
+  </svg>
+);
+
+export const PremiumSparkles = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 15L55 45L85 50L55 55L50 85L45 55L15 50L45 45L50 15Z" fill="#FFD54F" />
+    <path d="M75 20L78 30L88 33L78 36L75 46L72 36L62 33L72 30L75 20Z" fill="#FFB300" opacity="0.7" />
+    <circle cx="50" cy="50" r="10" fill="white" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </svg>
+);
+
+export const PremiumSearch = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <circle cx="45" cy="45" r="30" stroke="#509f2a" strokeWidth="8" />
+    <circle cx="45" cy="45" r="22" fill="#509f2a" opacity="0.05" />
+    <line x1="68" y1="68" x2="88" y2="88" stroke="#509f2a" strokeWidth="10" strokeLinecap="round" />
+    <path d="M35 35C35 35 38 32 42 32" stroke="white" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+  </svg>
+);
+
+export const PremiumUsers = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <circle cx="50" cy="35" r="15" fill="#444" />
+    <path d="M25 75C25 60 35 50 50 50C65 50 75 60 75 75V85H25V75Z" fill="#333" />
+    <circle cx="30" cy="45" r="10" fill="#666" opacity="0.6" />
+    <path d="M10 80C10 70 15 65 25 65C35 65 40 70 40 80V85H10V80Z" fill="#555" opacity="0.6" />
+  </svg>
+);
+
+export const PremiumLeaf = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 85C50 85 80 65 80 40C80 20 60 15 50 15C40 15 20 20 20 40C20 65 50 85 50 85Z" fill="#81C784" />
+    <path d="M50 85V15" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" />
+    <path d="M50 65L70 45M50 50L65 35M50 65L30 45M50 50L35 35" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+  </svg>
+);
+
+export const PremiumWheat = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 90V20" stroke="#FFD54F" strokeWidth="4" strokeLinecap="round" />
+    <ellipse cx="40" cy="35" rx="8" ry="12" fill="#FFD54F" />
+    <ellipse cx="60" cy="45" rx="8" ry="12" fill="#FFD54F" />
+    <ellipse cx="40" cy="55" rx="8" ry="12" fill="#FFD54F" />
+    <ellipse cx="60" cy="65" rx="8" ry="12" fill="#FFD54F" />
+    <ellipse cx="50" cy="20" rx="6" ry="10" fill="#FFD54F" />
+  </svg>
+);
+
+export const PremiumUtensils = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="35" y="20" width="8" height="40" rx="4" fill="#9E9E9E" />
+    <path d="M35 30V20C35 20 40 15 45 20V30" stroke="#757575" strokeWidth="2" opacity="0.5"/>
+    <path d="M60 20L65 60H55L60 20Z" fill="#BDBDBD" />
+    <rect x="58" y="60" width="4" height="20" rx="1" fill="#757575" />
+    <rect x="37" y="60" width="4" height="20" rx="1" fill="#757575" />
+  </svg>
+);
+
+export const PremiumMedal = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M30 15L50 40L70 15" stroke="#eb5757" strokeWidth="12" strokeLinecap="round" />
+    <circle cx="50" cy="60" r="25" fill="#FFD54F" stroke="#FBC02D" strokeWidth="4" />
+    <circle cx="50" cy="60" r="18" stroke="white" strokeWidth="1" opacity="0.3" />
+    <path d="M45 55L50 65L55 55" stroke="#FBC02D" strokeWidth="4" strokeLinecap="round" strokeJoin="round" />
+  </svg>
+);
+
+export const PremiumPlus = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <circle cx="50" cy="50" r="40" fill="white" opacity="0.1" />
+    <rect x="45" y="25" width="10" height="50" rx="5" fill="currentColor" />
+    <rect x="25" y="45" width="50" height="10" rx="5" fill="currentColor" />
+  </svg>
+);
+
+export const PremiumShoppingCart = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M20 20H30L40 70H80L90 35H35" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeJoin="round" />
+    <circle cx="45" cy="85" r="7" fill="currentColor" />
+    <circle cx="75" cy="85" r="7" fill="currentColor" />
+    <rect x="45" y="40" width="30" height="15" rx="2" fill="currentColor" opacity="0.2" />
+  </svg>
+);
+
+export const PremiumPlay = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M35 25L75 50L35 75V25Z" fill="currentColor" />
+    <path d="M38 35L65 50L38 65" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.2" />
+  </svg>
+);
+
+export const PremiumDownload = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 20V65" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+    <path d="M30 45L50 65L70 45" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeJoin="round" />
+    <path d="M20 80H80" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumVideo = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="15" y="30" width="50" height="40" rx="6" fill="currentColor" />
+    <path d="M65 40L85 30V70L65 60V40Z" fill="currentColor" />
+    <circle cx="35" cy="50" r="5" fill="white" opacity="0.3" />
+  </svg>
+);
+
+export const PremiumVolume = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M20 40H35L55 20V80L35 60H20V40Z" fill="currentColor" />
+    <path d="M65 35C70 40 70 60 65 65" stroke="currentColor" strokeWidth="6" strokeLinecap="round" opacity="0.5" />
+    <path d="M75 25C85 35 85 65 75 75" stroke="currentColor" strokeWidth="6" strokeLinecap="round" opacity="0.3" />
+  </svg>
+);
+
+export const PremiumMic = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="40" y="15" width="20" height="45" rx="10" fill="currentColor" />
+    <path d="M25 45C25 60 35 70 50 70C65 70 75 60 75 45" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <line x1="50" y1="70" x2="50" y2="85" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <line x1="35" y1="85" x2="65" y2="85" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumMicOff = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M40 15V45" stroke="currentColor" strokeWidth="8" strokeLinecap="round" opacity="0.3" />
+    <path d="M50 70C65 70 75 60 75 45" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <line x1="20" y1="20" x2="80" y2="80" stroke="#eb5757" strokeWidth="10" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumX = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" strokeWidth="12" strokeLinecap="round" />
+    <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" strokeWidth="12" strokeLinecap="round" />
+  </svg>
+);
+
+export const PremiumMapPin = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 15C33 15 20 28 20 45C20 65 50 85 50 85C50 85 80 65 80 45C80 28 67 15 50 15Z" fill="#eb5757" />
+    <circle cx="50" cy="45" r="10" fill="white" />
+    <ellipse cx="50" cy="85" rx="15" ry="5" fill="black" opacity="0.1" />
+  </svg>
+);
+
+export const PremiumStore = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="20" y="45" width="60" height="40" fill="currentColor" opacity="0.2" />
+    <path d="M15 45L50 20L85 45" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeJoin="round" />
+    <rect x="35" y="65" width="10" height="20" fill="currentColor" />
+    <rect x="55" y="65" width="10" height="10" fill="currentColor" />
   </svg>
 );
 

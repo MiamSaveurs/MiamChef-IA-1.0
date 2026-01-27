@@ -3,9 +3,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { Utensils, Users, Leaf, Loader2, Sparkles, Search, Download, Clock, Euro, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Wheat, Video, Check, Image as ImageIcon, Wand2, Plus, Globe2, Layers, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, Medal, ShoppingCart } from 'lucide-react';
+import { Loader2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Wheat, Video, Check, Image as ImageIcon, Wand2, Plus, Globe2, Layers, ChevronDown, MapPin, Store, Mic, MicOff, Medal, ShoppingCart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { GourmetBook, PremiumChefHat } from './Icons';
+import { 
+  GourmetBook, 
+  PremiumChefHat, 
+  PremiumCake, 
+  PremiumCroissant, 
+  PremiumSparkles, 
+  PremiumSearch, 
+  PremiumUsers, 
+  PremiumLeaf, 
+  PremiumTimer, 
+  PremiumGlobe, 
+  PremiumLayers, 
+  PremiumWheat, 
+  PremiumUtensils, 
+  PremiumMedal, 
+  PremiumEuro, 
+  PremiumPlay, 
+  PremiumPlus, 
+  PremiumShoppingCart, 
+  PremiumVideo, 
+  PremiumVolume, 
+  PremiumMic, 
+  PremiumMicOff, 
+  PremiumX, 
+  PremiumMapPin, 
+  PremiumStore, 
+  PremiumDownload 
+} from './Icons';
 
 const MacroDonut = ({ value, label, color, total }: { value: number, label: string, color: string, total: number }) => {
   const percentage = total > 0 ? (value / total) * 100 : 0;
@@ -387,7 +414,7 @@ const RecipeCreator: React.FC = () => {
       <div className="print:hidden">
         <header className="mb-8 flex items-center gap-3">
             <div className={`p-3 rounded-full border border-white/10 ${chefMode === 'patisserie' ? 'bg-pink-500/10' : 'bg-chef-green/10'}`}>
-                {chefMode === 'patisserie' ? <Cake className="text-pink-400" size={28}/> : <PremiumChefHat size={32} />}
+                {chefMode === 'patisserie' ? <PremiumCake size={28}/> : <PremiumChefHat size={32} />}
             </div>
             <div>
             <h2 className={`text-3xl font-serif leading-none text-white`}>
@@ -413,7 +440,7 @@ const RecipeCreator: React.FC = () => {
                     className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'patisserie' ? 'bg-pink-500 text-white' : 'text-gray-500 hover:text-white'}`}
                 >
                     <div className="flex items-center gap-2">
-                         <Croissant size={16} /> Pâtissier
+                         <PremiumCroissant size={16} /> Pâtissier
                     </div>
                 </button>
             </div>
@@ -428,7 +455,7 @@ const RecipeCreator: React.FC = () => {
                 mode === 'create' ? `bg-white/10 text-white` : 'text-gray-500 hover:text-gray-300'
             }`}
             >
-            <Sparkles size={14} /> Créer
+            <PremiumSparkles size={14} /> Créer
             </button>
             <button
             onClick={() => { setMode('search'); setRecipe(''); setMetrics(null); setUtensils([]); setGeneratedImage(null); }}
@@ -436,7 +463,7 @@ const RecipeCreator: React.FC = () => {
                 mode === 'search' ? `bg-white/10 text-white` : 'text-gray-500 hover:text-gray-300'
             }`}
             >
-            <Search size={14} /> Rechercher
+            <PremiumSearch size={14} /> Rechercher
             </button>
         </div>
         )}
@@ -448,7 +475,7 @@ const RecipeCreator: React.FC = () => {
             <div className="md:col-span-1 space-y-4">
                 <div className="bg-[#161816] p-5 rounded-3xl border border-white/10">
                     <h3 className="font-bold text-gray-500 text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <Users size={12} /> Configuration
+                        <PremiumUsers size={12} /> Configuration
                     </h3>
                     <div className="space-y-4">
                         <div>
@@ -464,7 +491,7 @@ const RecipeCreator: React.FC = () => {
                             <div>
                                 <label className="block text-xs font-bold text-gray-400 mb-1">Diététique</label>
                                 <div className="relative">
-                                    <Leaf size={16} className="absolute top-3 left-3 text-gray-500 pointer-events-none" />
+                                    <PremiumLeaf size={16} className="absolute top-3 left-3 pointer-events-none" />
                                     <select 
                                         className="w-full pl-9 pr-10 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer outline-none font-medium text-gray-300"
                                         value={dietary}
@@ -488,7 +515,7 @@ const RecipeCreator: React.FC = () => {
                             </div>
                             
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-1 flex items-center gap-2"><Globe2 size={12} className="text-blue-400"/> Voyage / Style</label>
+                                <label className="block text-xs font-bold text-gray-400 mb-1 flex items-center gap-2"><PremiumGlobe size={12}/> Voyage / Style</label>
                                 <div className="relative">
                                     <select 
                                         className="w-full px-3 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer pr-10 outline-none font-medium text-gray-300"
@@ -512,7 +539,7 @@ const RecipeCreator: React.FC = () => {
                             <div>
                                 <label className="block text-xs font-bold text-gray-400 mb-1">Moment</label>
                                 <div className="relative">
-                                    <Clock size={16} className="absolute top-3 left-3 text-gray-500 pointer-events-none" />
+                                    <PremiumTimer size={16} className="absolute top-3 left-3 pointer-events-none" />
                                     <select 
                                         className="w-full pl-9 pr-10 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer outline-none font-medium text-gray-300"
                                         value={mealTime} 
@@ -539,7 +566,7 @@ const RecipeCreator: React.FC = () => {
                                     <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isBatchCooking ? 'bg-chef-green' : 'bg-gray-700'}`}>
                                         <Check size={14} className="text-white" />
                                     </div>
-                                    <span className={`text-xs font-bold ${isBatchCooking ? 'text-chef-green' : 'text-gray-500'}`}><Layers size={12} className="inline mr-1"/> Batch Cooking</span>
+                                    <span className={`text-xs font-bold ${isBatchCooking ? 'text-chef-green' : 'text-gray-500'}`}><PremiumLayers size={12} className="inline mr-1"/> Batch Cooking</span>
                                 </div>
                             )}
                         </div>
@@ -555,7 +582,7 @@ const RecipeCreator: React.FC = () => {
                         <div>
                         <div className="flex justify-between items-center mb-3">
                             <label className={`block text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2`}>
-                                {chefMode === 'patisserie' ? <Wheat size={14} className="text-pink-400"/> : <Utensils size={14} className="text-chef-green" />} 
+                                {chefMode === 'patisserie' ? <PremiumWheat size={14}/> : <PremiumUtensils size={14}/>} 
                                 Ingrédients & Envies
                             </label>
                             
@@ -569,7 +596,7 @@ const RecipeCreator: React.FC = () => {
                                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                     }`}
                                 >
-                                    {isListening && listeningTarget === 'ingredients' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
+                                    {isListening && listeningTarget === 'ingredients' ? <><PremiumMicOff size={14} /> Stop</> : <><PremiumMic size={14} /> Dicter</>}
                                 </button>
                             </div>
                         </div>
@@ -585,7 +612,7 @@ const RecipeCreator: React.FC = () => {
                     ) : (
                         <div>
                         <div className="flex justify-between items-center mb-3">
-                            <label className={`block text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2`}><Search size={14} className="text-chef-green" /> Nom de la recette</label>
+                            <label className={`block text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2`}><PremiumSearch size={14} /> Nom de la recette</label>
                             <div className="flex items-center gap-2">
                                 <button 
                                     onClick={() => startListening('search')}
@@ -595,7 +622,7 @@ const RecipeCreator: React.FC = () => {
                                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                     }`}
                                 >
-                                    {isListening && listeningTarget === 'search' ? <><MicOff size={14} /> Stop</> : <><Mic size={14} /> Dicter</>}
+                                    {isListening && listeningTarget === 'search' ? <><PremiumMicOff size={14} /> Stop</> : <><PremiumMic size={14} /> Dicter</>}
                                 </button>
                             </div>
                         </div>
@@ -620,7 +647,7 @@ const RecipeCreator: React.FC = () => {
                                     : 'text-gray-500 hover:text-gray-300'
                                 }`}
                              >
-                                 <Medal size={14} /> Authentique
+                                 <PremiumMedal size={14} /> Authentique
                              </button>
                              <button
                                 onClick={() => setSearchType('economical')}
@@ -630,13 +657,13 @@ const RecipeCreator: React.FC = () => {
                                     : 'text-gray-500 hover:text-gray-300'
                                 }`}
                              >
-                                 <Euro size={14} /> Économique
+                                 <PremiumEuro size={14} /> Économique
                              </button>
                         </div>
                         </div>
                     )}
                     <button onClick={handleGenerate} disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)} className="w-full mt-6 bg-white text-black font-display text-xl py-4 rounded-2xl shadow-glow hover:bg-gray-200 hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 disabled:opacity-50 disabled:translate-y-0">
-                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <Sparkles size={20} className="text-chef-green"/> : <Search size={20} className="text-chef-green"/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Trouver la Recette'}</>)}
+                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <PremiumSparkles size={20}/> : <PremiumSearch size={20}/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Trouver la Recette'}</>)}
                     </button>
                 </div>
             </div>
@@ -667,7 +694,7 @@ const RecipeCreator: React.FC = () => {
                     <>
                         <img src={generatedImage} alt="Plat final" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                         <div className="absolute bottom-4 right-4 z-10">
-                             <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><Sparkles size={12} className={chefMode === 'patisserie' ? "text-pink-400" : "text-chef-green"} /> MiamChef IA {currentYear}</div>
+                             <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><PremiumSparkles size={12} /> MiamChef IA {currentYear}</div>
                         </div>
                     </>
                 ) : imageStatus !== 'loading' && (
@@ -687,13 +714,13 @@ const RecipeCreator: React.FC = () => {
                 <button onClick={() => { setRecipe(''); setGeneratedImage(null); }} className="p-2 hover:bg-white/5 rounded-full text-gray-500 transition-colors"><ChevronLeft size={24}/></button>
                 <div className="flex gap-3">
                      <button onClick={startImmersiveMode} className="bg-chef-green text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-green-400 transition-colors shadow-glow">
-                        <Play size={16} fill="currentColor" /> <span className="hidden sm:inline">Cuisiner</span>
+                        <PremiumPlay size={16} className="text-black" /> <span className="hidden sm:inline">Cuisiner</span>
                      </button>
                      <button onClick={handleSaveToBook} disabled={isSaved} className={`px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-sm border transition-colors ${isSaved ? 'bg-green-900/20 text-green-400 border-green-500/30' : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'}`}>
                         {isSaved ? <Check size={18} /> : <GourmetBook size={18} />} {isSaved ? 'Enregistré' : 'Sauvegarder'}
                      </button>
                      <button onClick={handleDownloadPDF} className="p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-                        <Download size={20} />
+                        <PremiumDownload size={20} />
                      </button>
                 </div>
             </div>
@@ -743,7 +770,7 @@ const RecipeCreator: React.FC = () => {
                             const cleanText = line.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
                             const isServingLine = cleanText.toLowerCase().startsWith('pour ') && (cleanText.toLowerCase().includes('personne') || cleanText.toLowerCase().includes('convive'));
                             
-                            if (isServingLine) return <li key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-white/5"><Users size={14} className="text-gray-400" /><span className="text-sm font-bold text-gray-300">{cleanText}</span></li>;
+                            if (isServingLine) return <li key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-white/5"><PremiumUsers size={14} /><span className="text-sm font-bold text-gray-300">{cleanText}</span></li>;
 
                             return (
                                 <li 
@@ -755,7 +782,7 @@ const RecipeCreator: React.FC = () => {
                                         {isChecked && <Check size={12} className="text-black" strokeWidth={3} />}
                                     </div>
                                     <span className={`text-base leading-tight transition-all select-none flex-1 ${isChecked ? 'text-gray-500 line-through' : 'text-gray-200'}`}>{cleanText}</span>
-                                    <button onClick={(e) => { e.stopPropagation(); handleOpenDriveModal(cleanText); }} className="p-2 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/20 transition-colors opacity-0 group-hover:opacity-100"><ShoppingCart size={16} /></button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleOpenDriveModal(cleanText); }} className="p-2 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/20 transition-colors opacity-0 group-hover:opacity-100"><PremiumShoppingCart size={16} /></button>
                                 </li>
                             );
                         })}
@@ -766,7 +793,7 @@ const RecipeCreator: React.FC = () => {
                         disabled={checkedIngredients.size === 0 || addedToList}
                         className={`w-full mt-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${addedToList ? 'bg-green-900/20 text-green-400 border border-green-500/20' : 'bg-white/10 text-white hover:bg-white/20'}`}
                      >
-                        {addedToList ? <><Check size={18} /> Ajouté !</> : <><Plus size={18} /> Ajouter à ma liste</>}
+                        {addedToList ? <><Check size={18} /> Ajouté !</> : <><PremiumPlus size={18} /> Ajouter à ma liste</>}
                      </button>
                  </div>
               </div>
@@ -804,7 +831,7 @@ const RecipeCreator: React.FC = () => {
                     <div className="p-2 bg-white/10 rounded-lg"><PremiumChefHat size={24} /></div>
                     <span className="font-display text-xl">Mode Cuisine</span>
                 </div>
-                <button onClick={() => setImmersiveMode(false)} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><X size={24}/></button>
+                <button onClick={() => setImmersiveMode(false)} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><PremiumX size={24}/></button>
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
@@ -823,7 +850,7 @@ const RecipeCreator: React.FC = () => {
                                 onClick={handleGenerateVideo}
                                 className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-bold flex items-center justify-center gap-2 mx-auto transition-all border border-white/20 mb-4"
                             >
-                                <Video size={20} /> 
+                                <PremiumVideo size={20} /> 
                                 <span>Voir l'étape (IA)</span>
                             </button>
                             <div className="font-display text-2xl md:text-3xl leading-tight px-4 line-clamp-4">
@@ -840,7 +867,7 @@ const RecipeCreator: React.FC = () => {
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-lg px-4">
                  <div className="bg-[#1a1c1a] border border-white/10 rounded-2xl p-2 flex items-center justify-between shadow-2xl">
                     <button onClick={() => setCurrentStep(Math.max(0, currentStep - 1))} disabled={currentStep === 0} className="p-4 rounded-xl hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronLeft size={28} /></button>
-                    <button onClick={() => speakStep(parsedSteps[currentStep])} className="p-4 bg-chef-green text-black rounded-xl shadow-lg hover:scale-105 transition-transform"><Volume2 size={28}/></button>
+                    <button onClick={() => speakStep(parsedSteps[currentStep])} className="p-4 bg-chef-green text-black rounded-xl shadow-lg hover:scale-105 transition-transform"><PremiumVolume size={28}/></button>
                     <button onClick={() => setCurrentStep(Math.min(parsedSteps.length - 1, currentStep + 1))} disabled={currentStep === parsedSteps.length - 1} className="p-4 rounded-xl hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronRight size={28} /></button>
                  </div>
             </div>
@@ -851,16 +878,16 @@ const RecipeCreator: React.FC = () => {
       {showDriveModal && (
           <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-[#161816] rounded-[2rem] w-full max-w-md p-6 shadow-2xl relative animate-fade-in border border-white/20">
-                  <button onClick={() => setShowDriveModal(false)} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"><X size={20} className="text-gray-500 hover:text-white"/></button>
+                  <button onClick={() => setShowDriveModal(false)} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"><PremiumX size={20} className="text-gray-500 hover:text-white"/></button>
                   <h3 className="font-serif text-2xl text-white mb-1">Trouver un Drive</h3>
                   <p className="text-sm text-gray-400 mb-6">Pour acheter : <strong className="text-white">{selectedIngredientForDrive}</strong></p>
                   <div className="mb-6">
-                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1"><MapPin size={12} /> Votre Ville</label>
+                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1"><PremiumMapPin size={12} /> Votre Ville</label>
                       <input type="text" value={userCity} onChange={handleCityChange} placeholder="Ex: Lyon, Paris 15..." className="w-full p-3 bg-[#0a0c0a] border border-white/10 rounded-xl outline-none font-bold text-white"/>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                       {supermarketBrands.map((brand) => (
-                          <button key={brand.name} onClick={() => findDrive(brand.name)} className={`p-3 rounded-xl text-white font-bold text-sm shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 ${brand.color}`}><Store size={16} /> {brand.name}</button>
+                          <button key={brand.name} onClick={() => findDrive(brand.name)} className={`p-3 rounded-xl text-white font-bold text-sm shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 ${brand.color}`}><PremiumStore size={16} /> {brand.name}</button>
                       ))}
                   </div>
               </div>
