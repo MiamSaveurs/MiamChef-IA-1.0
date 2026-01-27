@@ -21,12 +21,15 @@ import {
   PremiumGlobe,
   PremiumLayers,
   PremiumFlame,
-  PremiumCheck
+  PremiumCheck,
+  PremiumMedal,
+  PremiumTimer
 } from './Icons';
 
 const RecipeCreator: React.FC = () => {
   const [mode, setMode] = useState<'create' | 'search'>('create');
   const [chefMode, setChefMode] = useState<'cuisine' | 'patisserie'>('cuisine');
+  const [complexity, setComplexity] = useState<'authentic' | 'fast'>('authentic');
   const [ingredients, setIngredients] = useState('');
   const [dietary, setDietary] = useState('Équilibré');
   const [mealTime, setMealTime] = useState('Dîner');
@@ -69,7 +72,7 @@ const RecipeCreator: React.FC = () => {
     try {
       let result;
       if (mode === 'create') {
-        result = await generateChefRecipe(ingredients, people, dietary, mealTime, cuisineStyle, isBatchCooking, chefMode);
+        result = await generateChefRecipe(ingredients, people, dietary, mealTime, cuisineStyle, isBatchCooking, chefMode, complexity);
       } else {
         result = await searchChefsRecipe(searchQuery, people, searchType);
       }
@@ -180,6 +183,35 @@ const RecipeCreator: React.FC = () => {
                 onChange={(e) => mode === 'create' ? setIngredients(e.target.value) : setSearchQuery(e.target.value)}
               />
           </div>
+
+          {/* Complexity Signature Switch */}
+          {mode === 'create' && (
+              <div className="space-y-3">
+                  <label className="block text-xs font-bold text-[#509f2a] uppercase tracking-widest px-1">Signature Culinaire</ts-label>
+                  <div className="grid grid-cols-2 gap-4">
+                      <button 
+                        onClick={() => setComplexity('authentic')}
+                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${complexity === 'authentic' ? 'border-[#509f2a] bg-[#509f2a]/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
+                      >
+                          <PremiumMedal size={20} className={complexity === 'authentic' ? 'text-[#509f2a]' : ''} />
+                          <div className="text-left">
+                              <span className="block font-display text-lg leading-none">Authentique</span>
+                              <span className="text-[10px] font-bold uppercase opacity-60">Tradition & Précision</span>
+                          </div>
+                      </button>
+                      <button 
+                        onClick={() => setComplexity('fast')}
+                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${complexity === 'fast' ? 'border-[#509f2a] bg-[#509f2a]/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
+                      >
+                          <PremiumTimer size={20} className={complexity === 'fast' ? 'text-[#509f2a]' : ''} />
+                          <div className="text-left">
+                              <span className="block font-display text-lg leading-none">Rapide</span>
+                              <span className="text-[10px] font-bold uppercase opacity-60">Efficacité & Goût</span>
+                          </div>
+                      </button>
+                  </div>
+              </div>
+          )}
 
           {/* Advanced Options Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
