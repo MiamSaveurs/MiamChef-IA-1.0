@@ -1,8 +1,19 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Crown, Briefcase, Calendar } from 'lucide-react';
-import { WickerBasket, GourmetBook, PremiumFingerprint, PremiumHeart, PremiumEuro } from './Icons';
+import { ArrowRight, Briefcase } from 'lucide-react';
+import { 
+  WickerBasket, 
+  GourmetBook, 
+  PremiumFingerprint, 
+  PremiumHeart, 
+  PremiumEuro, 
+  PremiumChefHat, 
+  PremiumCamera, 
+  PremiumWine, 
+  PremiumCalendar,
+  PremiumCrown
+} from './Icons';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -34,7 +45,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       <div className="px-6 pt-6 flex justify-between items-start">
           <div className="flex items-center gap-2">
               <div className="bg-[#509f2a] p-1.5 rounded-lg shadow-lg">
-                  <ChefHat size={18} className="text-white" />
+                  <PremiumChefHat size={22} className="text-white" />
               </div>
               <div>
                   <h1 className="font-display text-xl text-white leading-none tracking-tight">MiamChef IA</h1>
@@ -47,7 +58,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
             onClick={() => setView(AppView.SUBSCRIPTION)}
             className="flex items-center gap-1.5 bg-[#252525] border border-[#333] px-3 py-1 rounded-lg hover:bg-[#333] transition-colors"
           >
-              <Crown size={12} className="text-yellow-500 fill-yellow-500" />
+              <PremiumCrown size={14} />
               <span className="text-[9px] font-bold text-white uppercase tracking-wider">Premium</span>
           </button>
       </div>
@@ -149,21 +160,18 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   onClick={() => handleProtectedAction(AppView.RECIPE_CREATOR)}
                   className={`bg-[#064e3b] rounded-[2rem] p-8 relative overflow-hidden h-56 cursor-pointer border border-[#065f46] group transition-all active:scale-[0.98] ${!isOnline ? 'opacity-50 grayscale' : ''}`}
               >
-                  {/* Image de fond (Chef comme sur l'image) */}
                   <img 
                     src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=800&q=80" 
                     className="absolute right-0 top-0 h-full w-[60%] object-cover z-0 opacity-80 transition-transform duration-700 group-hover:scale-105" 
                     alt="Chef" 
                   />
-                  
-                  {/* Overlay Dégradé pour le texte */}
                   <div className="absolute inset-0 bg-gradient-to-r from-[#064e3b] via-[#064e3b]/90 to-transparent z-10"></div>
                   
                   <div className="relative z-20 h-full flex flex-col justify-center">
                       <div className="text-[#509f2a] text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">Chef</div>
                       <div className="flex items-center gap-3 mb-4">
                           <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                              <ChefHat size={28} className="text-white" />
+                              <PremiumChefHat size={32} />
                           </div>
                           <h4 className="font-display text-2xl text-white leading-tight">Création de<br/>Recette</h4>
                       </div>
@@ -190,7 +198,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   <div className="relative z-20 h-full flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-4 text-white">
                           <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <Calendar size={28} className="text-white" />
+                             <PremiumCalendar size={32} />
                           </div>
                           <h4 className="font-display text-2xl leading-tight">Organisateur<br/>Semainier</h4>
                       </div>
@@ -217,7 +225,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   <div className="relative z-20 h-full flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-4 text-white">
                           <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <Camera size={28} className="text-white" />
+                             <PremiumCamera size={32} />
                           </div>
                           <h4 className="font-display text-2xl leading-tight">Scan Frigo IA</h4>
                       </div>
@@ -244,7 +252,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   <div className="relative z-20 h-full flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-4 text-white">
                           <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                             <Wine size={28} className="text-white" />
+                             <PremiumWine size={32} />
                           </div>
                           <h4 className="font-display text-2xl leading-tight">Sommelier IA</h4>
                       </div>

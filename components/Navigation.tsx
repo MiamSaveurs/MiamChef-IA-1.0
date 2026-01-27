@@ -1,9 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { ChefHat, Camera, Wine, Home, Calendar, Timer } from 'lucide-react';
 import { AppView } from '../types';
 import { getShoppingList } from '../services/storageService';
-import { WickerBasket } from './Icons';
+import { 
+  WickerBasket, 
+  PremiumChefHat, 
+  PremiumCamera, 
+  PremiumWine, 
+  PremiumCalendar, 
+  PremiumTimer, 
+  PremiumHome 
+} from './Icons';
 
 interface NavigationProps {
   currentView: AppView;
@@ -37,11 +44,11 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
   }, []);
 
   const navItems = [
-    { view: AppView.HOME, label: 'Studio', icon: Home, requiresOnline: false },
-    { view: AppView.PLANNING, label: 'Semaine', icon: Calendar, requiresOnline: true },
-    { view: AppView.RECIPE_CREATOR, label: 'Chef', icon: ChefHat, requiresOnline: true },
-    { view: AppView.TIMER, label: 'Chrono', icon: Timer, requiresOnline: false, isTimer: true },
-    { view: AppView.SCAN_FRIDGE, label: 'Scan', icon: Camera, requiresOnline: true },
+    { view: AppView.HOME, label: 'Studio', icon: PremiumHome, requiresOnline: false },
+    { view: AppView.PLANNING, label: 'Semaine', icon: PremiumCalendar, requiresOnline: true },
+    { view: AppView.RECIPE_CREATOR, label: 'Chef', icon: PremiumChefHat, requiresOnline: true },
+    { view: AppView.TIMER, label: 'Chrono', icon: PremiumTimer, requiresOnline: false, isTimer: true },
+    { view: AppView.SCAN_FRIDGE, label: 'Scan', icon: PremiumCamera, requiresOnline: true },
     { view: AppView.SHOPPING_LIST, label: 'Courses', icon: WickerBasket, requiresOnline: false, badge: shoppingCount },
   ];
 
@@ -71,15 +78,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline 
                     ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
               >
                 
-                {item.view === AppView.SHOPPING_LIST ? (
-                  <WickerBasket size={24} className={`relative z-10 transition-transform duration-200 ${isActive ? 'scale-110' : 'grayscale opacity-60'}`} />
-                ) : (
-                  <Icon 
-                    size={24} 
-                    strokeWidth={isActive ? 2.5 : 2}
-                    className={`relative z-10 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} 
-                  />
-                )}
+                <Icon 
+                  size={26} 
+                  className={`relative z-10 transition-transform duration-200 ${isActive ? 'scale-110' : 'grayscale opacity-60'}`} 
+                />
                 
                 {item.view === AppView.SHOPPING_LIST && shoppingCount > 0 && (
                     <div className="absolute top-2 right-2 z-20 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 border border-white">

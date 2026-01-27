@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Timer, Play, Pause, RotateCcw, Plus, Minus, ChefHat, Flame, Droplet, Egg, Beef, Wheat } from 'lucide-react';
+import { Play, Pause, RotateCcw, Plus, Minus, Flame, Droplet, Egg, Beef, Wheat } from 'lucide-react';
+import { PremiumTimer, PremiumChefHat } from './Icons';
 
 const PRESETS = [
     { label: "Oeuf à la coque", time: 180, icon: Egg, color: "text-yellow-500" },
@@ -44,7 +45,6 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
         onStart(customMinutes * 60);
     };
 
-    // Calculate progress for circle
     const progress = initialTime > 0 ? ((initialTime - timeLeft) / initialTime) * 100 : 0;
     const dashOffset = 283 - (283 * progress) / 100;
 
@@ -52,7 +52,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
         <div className="pb-32 px-4 pt-6 max-w-3xl mx-auto min-h-screen font-body animate-fade-in bg-[#f9fafb]">
             <header className="mb-8 flex items-center gap-3">
                 <div className="p-3 bg-teal-50 rounded-2xl">
-                    <Timer className="text-teal-600" size={28} />
+                    <PremiumTimer size={32} />
                 </div>
                 <div>
                     <h2 className="text-3xl font-display text-chef-dark leading-none">Chrono Chef</h2>
@@ -61,12 +61,9 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
             </header>
 
             <div className="grid md:grid-cols-2 gap-8">
-                {/* TIMER VISUALIZATION */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-card border border-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
                     
-                    {/* Circle SVG */}
                     <div className="relative w-64 h-64 flex items-center justify-center mb-8">
-                         {/* Background Circle */}
                         <svg className="absolute w-full h-full transform -rotate-90 p-4">
                             <circle
                                 cx="50%"
@@ -76,7 +73,6 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                                 strokeWidth="8"
                                 fill="transparent"
                             />
-                            {/* Progress Circle */}
                             <circle
                                 cx="50%"
                                 cy="50%"
@@ -91,7 +87,6 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                             />
                         </svg>
                         
-                        {/* Time Text */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                             <span className="text-6xl font-display text-chef-dark tracking-wider">
                                 {formatTime(timeLeft)}
@@ -102,7 +97,6 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                         </div>
                     </div>
 
-                    {/* Controls */}
                     <div className="flex items-center gap-6">
                         <button 
                             onClick={onReset}
@@ -131,13 +125,11 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                     </div>
                 </div>
 
-                {/* PRESETS & CUSTOM */}
                 <div className="space-y-6">
                     
-                    {/* Custom Input */}
                     <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
                         <h3 className="font-bold text-chef-dark mb-4 flex items-center gap-2">
-                            <ChefHat size={18} className="text-chef-green"/> Minuteur Libre
+                            <PremiumChefHat size={22} /> Minuteur Libre
                         </h3>
                         <div className="flex items-center gap-4">
                             <button 
@@ -165,7 +157,6 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                         </div>
                     </div>
 
-                    {/* Presets Grid */}
                     <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
                         <h3 className="font-bold text-chef-dark mb-4 flex items-center gap-2">
                             <Flame size={18} className="text-orange-500"/> Cuissons Parfaites

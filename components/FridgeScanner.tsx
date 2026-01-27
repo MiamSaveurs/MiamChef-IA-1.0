@@ -1,9 +1,11 @@
+
 import React, { useState, useRef } from 'react';
 import { scanFridgeAndSuggest, fileToGenerativePart, generateRecipeImage } from '../services/geminiService';
 import { saveRecipeToBook } from '../services/storageService';
 import { LoadingState } from '../types';
-import { Camera, Sparkles, Loader2, Upload, RefreshCw, ShieldCheck, Lock, Book, Check, Image as ImageIcon } from 'lucide-react';
+import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { PremiumCamera } from './Icons';
 
 const FridgeScanner: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -82,7 +84,7 @@ const FridgeScanner: React.FC = () => {
     <div className="pb-32 px-4 pt-6 max-w-3xl mx-auto min-h-screen">
        <header className="mb-8 flex items-center gap-3">
         <div className="p-3 bg-blue-50 rounded-2xl">
-          <Camera className="text-blue-500" size={28} />
+          <PremiumCamera size={32} />
         </div>
         <div>
            <h2 className="text-3xl font-display text-chef-dark leading-none">Scan Anti-Gaspi</h2>
@@ -124,7 +126,7 @@ const FridgeScanner: React.FC = () => {
           )}
         </div>
 
-        <div className="w-full max-w-md mt-6">
+        <div className="w-full max-md mt-6">
            <button
             onClick={handleScan}
             disabled={!base64Image || status === 'loading'}
@@ -137,7 +139,6 @@ const FridgeScanner: React.FC = () => {
             )}
           </button>
           
-          {/* GDPR Reassurance */}
           <div className="mt-4 flex flex-col items-center gap-1 text-center">
               <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium uppercase tracking-wider bg-gray-50 px-3 py-1 rounded-full">
                   <Lock size={10} /> 100% Confidentiel & Sécurisé
@@ -152,7 +153,6 @@ const FridgeScanner: React.FC = () => {
       {result && (
         <div className="bg-white p-6 rounded-3xl shadow-card border border-gray-100 animate-fade-in mb-8">
            
-           {/* Result Header & Actions */}
            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-100">
              <div className="flex items-center gap-2">
                  <div className="p-2 bg-green-100 rounded-lg text-chef-green"><Sparkles size={20} /></div>
@@ -168,7 +168,6 @@ const FridgeScanner: React.FC = () => {
              </button>
            </div>
 
-           {/* Generated Image Preview */}
            {generatedImage ? (
                <div className="w-full h-48 md:h-64 bg-gray-100 rounded-2xl overflow-hidden mb-6 relative shadow-md">
                    <img src={generatedImage} alt="Recette générée" className="w-full h-full object-cover" />
@@ -177,7 +176,6 @@ const FridgeScanner: React.FC = () => {
                    </div>
                </div>
            ) : status === 'success' ? (
-                // Placeholder while loading image
                <div className="w-full h-32 bg-gray-50 rounded-2xl border border-dashed border-gray-200 mb-6 flex items-center justify-center gap-2 text-gray-400">
                    <Loader2 size={20} className="animate-spin text-chef-green" />
                    <span className="text-sm font-medium">Création de la photo du plat...</span>

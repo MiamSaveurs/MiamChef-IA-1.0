@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, Download, Clock, Euro, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Wheat, Video, Check, Image as ImageIcon, Wand2, Plus, Globe2, Layers, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, Medal, ShoppingCart } from 'lucide-react';
+import { Utensils, Users, Leaf, Loader2, Sparkles, Search, Download, Clock, Euro, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Wheat, Video, Check, Image as ImageIcon, Wand2, Plus, Globe2, Layers, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, Medal, ShoppingCart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { GourmetBook } from './Icons';
+import { GourmetBook, PremiumChefHat } from './Icons';
 
 const MacroDonut = ({ value, label, color, total }: { value: number, label: string, color: string, total: number }) => {
   const percentage = total > 0 ? (value / total) * 100 : 0;
@@ -387,7 +387,7 @@ const RecipeCreator: React.FC = () => {
       <div className="print:hidden">
         <header className="mb-8 flex items-center gap-3">
             <div className={`p-3 rounded-full border border-white/10 ${chefMode === 'patisserie' ? 'bg-pink-500/10' : 'bg-chef-green/10'}`}>
-                {chefMode === 'patisserie' ? <Cake className="text-pink-400" size={28}/> : <ChefHat className="text-chef-green" size={28} />}
+                {chefMode === 'patisserie' ? <Cake className="text-pink-400" size={28}/> : <PremiumChefHat size={32} />}
             </div>
             <div>
             <h2 className={`text-3xl font-serif leading-none text-white`}>
@@ -406,7 +406,7 @@ const RecipeCreator: React.FC = () => {
                     onClick={() => setChefMode('cuisine')}
                     className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'cuisine' ? 'bg-chef-green text-black' : 'text-gray-500 hover:text-white'}`}
                 >
-                    <ChefHat size={16} /> Cuisinier
+                    <PremiumChefHat size={18} /> Cuisinier
                 </button>
                 <button
                     onClick={() => setChefMode('patisserie')}
@@ -801,7 +801,7 @@ const RecipeCreator: React.FC = () => {
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md text-white flex flex-col immersive-enter">
             <div className="p-6 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 bg-white/10 rounded-lg"><ChefHat size={20} /></div>
+                    <div className="p-2 bg-white/10 rounded-lg"><PremiumChefHat size={24} /></div>
                     <span className="font-display text-xl">Mode Cuisine</span>
                 </div>
                 <button onClick={() => setImmersiveMode(false)} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><X size={24}/></button>

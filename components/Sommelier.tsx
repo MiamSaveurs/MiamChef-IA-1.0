@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { getSommelierAdvice } from '../services/geminiService';
 import { LoadingState, GroundingChunk } from '../types';
-import { Wine, Search, Loader2, ExternalLink, Sparkles, User, Briefcase, FileText, TrendingUp, Euro, ChefHat } from 'lucide-react';
+import { Search, Loader2, ExternalLink, Sparkles, User, Briefcase, FileText, TrendingUp, Euro } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { PremiumWine, PremiumChefHat } from './Icons';
 
 type UserType = 'individual' | 'pro';
 
@@ -39,7 +40,7 @@ const Sommelier: React.FC = () => {
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
             <div className={`p-3 rounded-2xl transition-colors ${userType === 'pro' ? 'bg-red-50' : 'bg-green-50'}`}>
-                <Wine className={`${userType === 'pro' ? 'text-red-600' : 'text-chef-green'}`} size={28} />
+                <PremiumWine size={32} />
             </div>
             <div>
                 <h2 className="text-3xl font-display text-chef-dark leading-none">Sommelier IA</h2>
@@ -49,7 +50,6 @@ const Sommelier: React.FC = () => {
             </div>
         </div>
 
-        {/* Toggle User Type */}
         <div className="bg-white border border-gray-100 p-1.5 rounded-xl flex items-center font-bold text-sm shadow-sm">
             <button 
                 onClick={() => { setUserType('individual'); setAdvice(''); setQuery(''); }}
@@ -62,7 +62,7 @@ const Sommelier: React.FC = () => {
                 className={`ml-1 px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all ${
                     userType === 'pro' 
                     ? 'bg-white border-2 border-red-600 text-red-600 shadow-md' 
-                    : 'text-red-600 hover:bg-red-50' // Always Red Text
+                    : 'text-red-600 hover:bg-red-50' 
                 }`}
             >
                 <Briefcase size={18} className="text-red-600" strokeWidth={userType === 'pro' ? 3 : 2.5} /> 
@@ -71,10 +71,8 @@ const Sommelier: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
       <div className={`rounded-[2.5rem] p-6 md:p-10 shadow-card border transition-all mb-8 ${userType === 'pro' ? 'bg-white border-yellow-400 ring-4 ring-yellow-50' : 'bg-white border-gray-100'}`}>
         
-        {/* Intro Text */}
         <div className="mb-8 text-center">
             {userType === 'pro' && (
                 <div className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">
@@ -91,7 +89,6 @@ const Sommelier: React.FC = () => {
             </p>
         </div>
 
-        {/* Input Section */}
         <div className="max-w-2xl mx-auto w-full space-y-4">
             <div className="flex items-center px-4 py-2 gap-3 rounded-2xl border transition-colors bg-gray-50 border-gray-100 focus-within:ring-2 focus-within:ring-chef-green focus-within:bg-white">
                 <Search className="text-gray-400" />
@@ -105,7 +102,6 @@ const Sommelier: React.FC = () => {
                 />
             </div>
 
-            {/* Pro Quick Actions - Modern Cards */}
             {userType === 'pro' && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <button 
@@ -141,7 +137,6 @@ const Sommelier: React.FC = () => {
                 </div>
             )}
 
-            {/* Individual Action */}
             {userType === 'individual' && (
                 <button
                     onClick={() => handleAsk()}
@@ -154,12 +149,11 @@ const Sommelier: React.FC = () => {
         </div>
       </div>
 
-      {/* Results Area */}
       {advice && (
         <div className={`p-8 rounded-[2rem] shadow-card border animate-fade-in relative mb-8 ${userType === 'pro' ? 'bg-white border-yellow-400/30' : 'bg-white border-gray-100'}`}>
            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
              <div className="flex items-center gap-2">
-                <ChefHat size={24} className={userType === 'pro' ? 'text-red-600' : 'text-chef-green'} />
+                <PremiumChefHat size={28} />
                 <h3 className="font-display text-2xl text-chef-dark m-0 border-none p-0">
                     {userType === 'pro' ? 'L\'Expertise MiamChef' : 'La Sélection'}
                 </h3>
