@@ -414,7 +414,8 @@ const RecipeCreator: React.FC = () => {
       <div className="print:hidden">
         <header className="mb-8 flex items-center gap-3">
             <div className={`p-3 rounded-2xl shadow-sm border ${chefMode === 'patisserie' ? 'bg-pink-100 border-pink-200' : 'bg-green-100 border-green-200'}`}>
-                {chefMode === 'patisserie' ? <PremiumCake size={28}/> : <PremiumChefHat size={32} />}
+                {/* Icône Chapeau de Chef utilisée même en Pâtisserie pour l'identité de marque */}
+                <PremiumChefHat size={chefMode === 'patisserie' ? 28 : 32} />
             </div>
             <div>
             <h2 className={`text-3xl font-display leading-none text-emerald-900`}>
@@ -440,7 +441,8 @@ const RecipeCreator: React.FC = () => {
                     className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'patisserie' ? 'bg-pink-500 text-white shadow-md' : 'text-emerald-700/60 hover:text-emerald-900'}`}
                 >
                     <div className="flex items-center gap-2">
-                         <PremiumCroissant size={16} /> Pâtissier
+                         {/* Utilisation systématique du chapeau de chef */}
+                         <PremiumChefHat size={18} /> Pâtissier
                     </div>
                 </button>
             </div>
@@ -579,7 +581,8 @@ const RecipeCreator: React.FC = () => {
             <div className="md:col-span-2 space-y-6">
                 <div className="bg-white p-6 rounded-[2.5rem] border border-green-50 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                        {chefMode === 'patisserie' ? <PremiumCake size={120} /> : <PremiumChefHat size={120} />}
+                        {/* Filigrane : utilisation du Chapeau de Chef pour la Pâtisserie aussi */}
+                        <PremiumChefHat size={120} />
                     </div>
                     
                     {mode === 'create' ? (
@@ -698,7 +701,7 @@ const RecipeCreator: React.FC = () => {
                     <>
                         <img src={generatedImage} alt="Plat final" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                         <div className="absolute bottom-6 right-6 z-10">
-                             <div className="bg-emerald-900/60 backdrop-blur-xl text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 border border-white/20"><PremiumSparkles size={14} /> MiamChef IA Excellence {currentYear}</div>
+                             <div className="bg-emerald-900/60 backdrop-blur-xl text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 border border-white/20"><PremiumChefHat size={14} /> MiamChef IA Excellence {currentYear}</div>
                         </div>
                     </>
                 ) : imageStatus !== 'loading' && (
