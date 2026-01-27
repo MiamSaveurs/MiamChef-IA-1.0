@@ -6,27 +6,22 @@ import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
 import { 
   ChevronLeft, 
   ChevronDown, 
-  Users, 
-  Timer, 
-  Globe2, 
-  Leaf, 
-  Utensils, 
-  Sparkles, 
-  Search, 
-  Plus, 
-  Check, 
-  Book,
   Camera,
-  Layers,
-  Flame
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
   GourmetBook, 
   PremiumChefHat, 
   PremiumCake, 
-  PremiumCroissant,
-  PremiumSparkles
+  PremiumSparkles,
+  PremiumSearch,
+  PremiumUtensils,
+  PremiumUsers,
+  PremiumLeaf,
+  PremiumGlobe,
+  PremiumLayers,
+  PremiumFlame,
+  PremiumCheck
 } from './Icons';
 
 const RecipeCreator: React.FC = () => {
@@ -123,7 +118,7 @@ const RecipeCreator: React.FC = () => {
               </div>
               <div>
                 <h2 className="text-3xl font-display text-white leading-none">Atelier du Chef</h2>
-                <p className="text-[#509f2a] text-[10px] font-bold tracking-widest uppercase mt-1">Création Haute Couture</p>
+                <p className="text-[#509f2a] text-[10px] font-bold tracking-widest uppercase mt-1">Excellence Culinaire</p>
               </div>
           </div>
           
@@ -143,13 +138,13 @@ const RecipeCreator: React.FC = () => {
                 onClick={() => setMode('create')}
                 className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'create' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
-                  <Sparkles size={16} /> Créer
+                  <PremiumSparkles size={18} className={mode === 'create' ? 'text-white' : 'text-[#509f2a]'} /> Créer
               </button>
               <button 
                 onClick={() => setMode('search')}
                 className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'search' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
-                  <Search size={16} /> Rechercher
+                  <PremiumSearch size={18} className={mode === 'search' ? 'text-white' : 'text-[#509f2a]'} /> Rechercher
               </button>
           </div>
 
@@ -160,14 +155,14 @@ const RecipeCreator: React.FC = () => {
                     onClick={() => setChefMode('cuisine')}
                     className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'cuisine' ? 'border-[#509f2a] bg-[#509f2a]/10' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
-                      <Utensils size={24} className={chefMode === 'cuisine' ? 'text-[#509f2a]' : ''} />
+                      <PremiumUtensils size={32} className={chefMode === 'cuisine' ? 'text-[#509f2a]' : 'text-white'} />
                       <span className="font-display text-lg">Cuisinier</span>
                   </button>
                   <button 
                     onClick={() => setChefMode('patisserie')}
                     className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'patisserie' ? 'border-[#509f2a] bg-[#509f2a]/10' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
-                      <PremiumCake size={32} />
+                      <PremiumCake size={32} className={chefMode === 'patisserie' ? 'text-[#509f2a]' : 'text-white'} />
                       <span className="font-display text-lg">Pâtissier</span>
                   </button>
               </div>
@@ -192,7 +187,7 @@ const RecipeCreator: React.FC = () => {
               <div className="bg-white/5 p-4 rounded-2xl border border-white/5 space-y-4">
                   <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-white/60">
-                          <Users size={16} />
+                          <PremiumUsers size={18} />
                           <span className="text-xs font-bold uppercase">Convives</span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -204,7 +199,7 @@ const RecipeCreator: React.FC = () => {
                   
                   <div className="space-y-2">
                       <div className="flex items-center gap-2 text-white/60">
-                          <Leaf size={16} />
+                          <PremiumLeaf size={18} />
                           <span className="text-xs font-bold uppercase">Régime</span>
                       </div>
                       <select 
@@ -213,6 +208,8 @@ const RecipeCreator: React.FC = () => {
                         className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
                       >
                           <option value="Équilibré">Équilibré (Standard)</option>
+                          <option value="Halal">Halal</option>
+                          <option value="Cacher">Cacher</option>
                           <option value="Végétarien">Végétarien</option>
                           <option value="Vegan">Vegan</option>
                           <option value="Sans Gluten">Sans Gluten</option>
@@ -225,7 +222,7 @@ const RecipeCreator: React.FC = () => {
               <div className="bg-white/5 p-4 rounded-2xl border border-white/5 space-y-4">
                   <div className="space-y-2">
                       <div className="flex items-center gap-2 text-white/60">
-                          <Globe2 size={16} />
+                          <PremiumGlobe size={18} />
                           <span className="text-xs font-bold uppercase">Style</span>
                       </div>
                       <select 
@@ -244,7 +241,7 @@ const RecipeCreator: React.FC = () => {
 
                   <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center gap-2 text-white/60">
-                          <Layers size={16} />
+                          <PremiumLayers size={18} />
                           <span className="text-xs font-bold uppercase">Batch Cooking</span>
                       </div>
                       <button 
@@ -285,7 +282,7 @@ const RecipeCreator: React.FC = () => {
                     disabled={isSaved}
                     className={`flex-1 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${isSaved ? 'bg-white/10 text-[#509f2a] border border-[#509f2a]/30' : 'bg-[#509f2a] text-white shadow-lg'}`}
                 >
-                    {isSaved ? <Check size={20} /> : <Book size={20} />}
+                    {isSaved ? <PremiumCheck size={20} /> : <GourmetBook size={20} />}
                     {isSaved ? 'Enregistré' : 'Enregistrer au carnet'}
                 </button>
             </div>
@@ -337,7 +334,7 @@ const RecipeCreator: React.FC = () => {
                     {utensils.length > 0 && (
                         <div className="mt-12 pt-8 border-t border-white/5">
                             <h4 className="font-display text-xl text-[#509f2a] mb-4 flex items-center gap-2">
-                                <Flame size={18} /> Matériel nécessaire
+                                <PremiumFlame size={18} /> Matériel nécessaire
                             </h4>
                             <div className="flex flex-wrap gap-2">
                                 {utensils.map((u, i) => (
