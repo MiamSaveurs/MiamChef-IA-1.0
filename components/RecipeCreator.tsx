@@ -17,7 +17,7 @@ import {
   PremiumSearch,
   PremiumUtensils,
   PremiumUsers,
-  PremiumLeaf,
+  PremiumHeart,
   PremiumGlobe,
   PremiumLayers,
   PremiumFlame,
@@ -108,7 +108,7 @@ const RecipeCreator: React.FC = () => {
   };
 
   return (
-    <div className="pb-32 px-4 pt-6 max-w-4xl mx-auto min-h-screen bg-[#050505] text-white">
+    <div className="pb-32 px-4 pt-6 max-w-4xl mx-auto min-h-screen bg-[#050505] text-white selection:bg-[#509f2a] selection:text-white">
       
       {/* Header */}
       <header className="mb-8 flex items-center justify-between">
@@ -133,18 +133,18 @@ const RecipeCreator: React.FC = () => {
         <div className="space-y-6 animate-fade-in">
           
           {/* Mode Tabs */}
-          <div className="bg-white/5 p-1.5 rounded-2xl flex gap-1">
+          <div className="bg-white/5 p-1.5 rounded-2xl flex gap-1 border border-white/5">
               <button 
                 onClick={() => setMode('create')}
                 className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'create' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
-                  <PremiumSparkles size={18} className={mode === 'create' ? 'text-white' : 'text-[#509f2a]'} /> Créer
+                  <PremiumSparkles size={18} className={mode === 'create' ? 'text-white' : 'text-white/40'} /> Créer
               </button>
               <button 
                 onClick={() => setMode('search')}
                 className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'search' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
-                  <PremiumSearch size={18} className={mode === 'search' ? 'text-white' : 'text-[#509f2a]'} /> Rechercher
+                  <PremiumSearch size={18} className={mode === 'search' ? 'text-white' : 'text-white/40'} /> Rechercher
               </button>
           </div>
 
@@ -153,14 +153,14 @@ const RecipeCreator: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setChefMode('cuisine')}
-                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'cuisine' ? 'border-[#509f2a] bg-[#509f2a]/10' : 'border-white/5 bg-white/5 opacity-40'}`}
+                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'cuisine' ? 'border-[#509f2a] bg-[#509f2a]/10 shadow-[0_0_20px_rgba(80,159,42,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
                       <PremiumUtensils size={32} className={chefMode === 'cuisine' ? 'text-[#509f2a]' : 'text-white'} />
                       <span className="font-display text-lg">Cuisinier</span>
                   </button>
                   <button 
                     onClick={() => setChefMode('patisserie')}
-                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'patisserie' ? 'border-[#509f2a] bg-[#509f2a]/10' : 'border-white/5 bg-white/5 opacity-40'}`}
+                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'patisserie' ? 'border-[#509f2a] bg-[#509f2a]/10 shadow-[0_0_20px_rgba(80,159,42,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
                       <PremiumCake size={32} className={chefMode === 'patisserie' ? 'text-[#509f2a]' : 'text-white'} />
                       <span className="font-display text-lg">Pâtissier</span>
@@ -174,7 +174,7 @@ const RecipeCreator: React.FC = () => {
                   {mode === 'create' ? 'Quels ingrédients avez-vous ?' : 'Quel plat recherchez-vous ?'}
               </label>
               <textarea 
-                className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl outline-none resize-none min-h-[120px] text-lg text-white focus:border-[#509f2a]/50 transition-all"
+                className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl outline-none resize-none min-h-[120px] text-lg text-white focus:border-[#509f2a]/50 transition-all placeholder:text-white/20"
                 placeholder={mode === 'create' ? "Ex: 2 escalopes de poulet, crème, champignons..." : "Ex: Tarte tatin, Blanquette de veau..."}
                 value={mode === 'create' ? ingredients : searchQuery}
                 onChange={(e) => mode === 'create' ? setIngredients(e.target.value) : setSearchQuery(e.target.value)}
@@ -186,26 +186,26 @@ const RecipeCreator: React.FC = () => {
               
               <div className="bg-white/5 p-4 rounded-2xl border border-white/5 space-y-4">
                   <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-white/60">
+                      <div className="flex items-center gap-2 text-white/40">
                           <PremiumUsers size={18} />
-                          <span className="text-xs font-bold uppercase">Convives</span>
+                          <span className="text-xs font-bold uppercase tracking-wide">Convives</span>
                       </div>
                       <div className="flex items-center gap-3">
-                          <button onClick={() => setPeople(Math.max(1, people - 1))} className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">-</button>
+                          <button onClick={() => setPeople(Math.max(1, people - 1))} className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">-</button>
                           <span className="font-display text-xl w-6 text-center">{people}</span>
-                          <button onClick={() => setPeople(people + 1)} className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">+</button>
+                          <button onClick={() => setPeople(people + 1)} className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">+</button>
                       </div>
                   </div>
                   
                   <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-white/60">
-                          <PremiumLeaf size={18} />
-                          <span className="text-xs font-bold uppercase">Régime</span>
+                      <div className="flex items-center gap-2 text-white/40">
+                          <PremiumHeart size={18} />
+                          <span className="text-xs font-bold uppercase tracking-wide">Régime</span>
                       </div>
                       <select 
                         value={dietary} 
                         onChange={(e) => setDietary(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
+                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none focus:border-[#509f2a]/30"
                       >
                           <option value="Équilibré">Équilibré (Standard)</option>
                           <option value="Halal">Halal</option>
@@ -221,14 +221,14 @@ const RecipeCreator: React.FC = () => {
 
               <div className="bg-white/5 p-4 rounded-2xl border border-white/5 space-y-4">
                   <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-white/60">
+                      <div className="flex items-center gap-2 text-white/40">
                           <PremiumGlobe size={18} />
-                          <span className="text-xs font-bold uppercase">Style</span>
+                          <span className="text-xs font-bold uppercase tracking-wide">Style</span>
                       </div>
                       <select 
                         value={cuisineStyle} 
                         onChange={(e) => setCuisineStyle(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
+                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none focus:border-[#509f2a]/30"
                       >
                           <option value="Cuisine Française">Cuisine Française</option>
                           <option value="Italien">Italien</option>
@@ -240,15 +240,15 @@ const RecipeCreator: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center gap-2 text-white/60">
+                      <div className="flex items-center gap-2 text-white/40">
                           <PremiumLayers size={18} />
-                          <span className="text-xs font-bold uppercase">Batch Cooking</span>
+                          <span className="text-xs font-bold uppercase tracking-wide">Batch Cooking</span>
                       </div>
                       <button 
                         onClick={() => setIsBatchCooking(!isBatchCooking)}
                         className={`w-12 h-6 rounded-full transition-all relative ${isBatchCooking ? 'bg-[#509f2a]' : 'bg-white/10'}`}
                       >
-                          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isBatchCooking ? 'left-7' : 'left-1'}`}></div>
+                          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isBatchCooking ? 'left-7 shadow-sm' : 'left-1'}`}></div>
                       </button>
                   </div>
               </div>
@@ -258,7 +258,7 @@ const RecipeCreator: React.FC = () => {
           <button 
             onClick={handleGenerate}
             disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)}
-            className="w-full py-5 bg-[#509f2a] text-white rounded-[2rem] font-display text-2xl shadow-xl shadow-[#509f2a]/10 hover:bg-green-600 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-5 bg-[#509f2a] text-white rounded-[2rem] font-display text-2xl shadow-xl shadow-[#509f2a]/20 hover:bg-green-600 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
           >
               {status === 'loading' ? (
                   <>
@@ -267,7 +267,7 @@ const RecipeCreator: React.FC = () => {
                   </>
               ) : (
                   <>
-                    <PremiumSparkles size={24} />
+                    <PremiumSparkles size={24} className="text-white" />
                     <span>Inspirer le Chef</span>
                   </>
               )}
