@@ -38,7 +38,7 @@ const MacroDonut = ({ value, label, color, total }: { value: number, label: stri
   const percentage = total > 0 ? (value / total) * 100 : 0;
   return (
       <div className="flex flex-col items-center">
-          <div className="relative w-16 h-16 flex items-center justify-center rounded-full mb-2 bg-[#161816] border border-white/10">
+          <div className="relative w-16 h-16 flex items-center justify-center rounded-full mb-2 bg-white border border-gray-100 shadow-inner">
               <div 
                 className="absolute inset-0 rounded-full"
                 style={{
@@ -48,10 +48,10 @@ const MacroDonut = ({ value, label, color, total }: { value: number, label: stri
                 }}
               ></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                 <span className="text-sm font-serif font-bold text-white">{value}g</span>
+                 <span className="text-sm font-bold text-chef-dark">{value}g</span>
               </div>
           </div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">{label}</span>
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
       </div>
   )
 };
@@ -408,19 +408,19 @@ const RecipeCreator: React.FC = () => {
   ];
 
   return (
-    <div className="pb-32 px-4 pt-6 max-w-5xl mx-auto min-h-screen font-body text-white">
+    <div className="pb-32 px-4 pt-6 max-w-5xl mx-auto min-h-screen font-body text-chef-dark">
       
       {/* HEADER & INPUT SECTION */}
       <div className="print:hidden">
         <header className="mb-8 flex items-center gap-3">
-            <div className={`p-3 rounded-full border border-white/10 ${chefMode === 'patisserie' ? 'bg-pink-500/10' : 'bg-chef-green/10'}`}>
+            <div className={`p-3 rounded-2xl shadow-sm border ${chefMode === 'patisserie' ? 'bg-pink-50 border-pink-100' : 'bg-green-50 border-green-100'}`}>
                 {chefMode === 'patisserie' ? <PremiumCake size={28}/> : <PremiumChefHat size={32} />}
             </div>
             <div>
-            <h2 className={`text-3xl font-serif leading-none text-white`}>
+            <h2 className={`text-3xl font-display leading-none text-chef-dark`}>
                 {chefMode === 'patisserie' ? 'Atelier Pâtisserie' : 'Atelier du Chef'}
             </h2>
-            <p className="text-gray-500 text-xs font-bold tracking-widest uppercase">
+            <p className="text-gray-400 text-xs font-bold tracking-widest uppercase mt-1">
                 {chefMode === 'patisserie' ? 'Précision & Gourmandise' : 'Cuisine & Improvisation'}
             </p>
             </div>
@@ -428,16 +428,16 @@ const RecipeCreator: React.FC = () => {
 
         {/* DOUBLE CERVEAU SWITCH */}
         {!recipe && (
-            <div className="bg-[#161816] p-1 rounded-2xl flex mb-6 mx-auto max-w-lg border border-white/10">
+            <div className="bg-gray-100 p-1 rounded-2xl flex mb-6 mx-auto max-w-lg border border-gray-200">
                 <button
                     onClick={() => setChefMode('cuisine')}
-                    className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'cuisine' ? 'bg-chef-green text-black' : 'text-gray-500 hover:text-white'}`}
+                    className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'cuisine' ? 'bg-chef-green text-white shadow-md' : 'text-gray-500 hover:text-chef-dark'}`}
                 >
                     <PremiumChefHat size={18} /> Cuisinier
                 </button>
                 <button
                     onClick={() => setChefMode('patisserie')}
-                    className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'patisserie' ? 'bg-pink-500 text-white' : 'text-gray-500 hover:text-white'}`}
+                    className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${chefMode === 'patisserie' ? 'bg-pink-500 text-white shadow-md' : 'text-gray-500 hover:text-chef-dark'}`}
                 >
                     <div className="flex items-center gap-2">
                          <PremiumCroissant size={16} /> Pâtissier
@@ -448,11 +448,11 @@ const RecipeCreator: React.FC = () => {
 
         {/* Mode Switcher */}
         {!recipe && (
-        <div className="bg-[#161816]/50 p-1 rounded-xl flex mb-6 mx-auto max-w-md border border-white/5">
+        <div className="bg-gray-50 p-1 rounded-xl flex mb-6 mx-auto max-w-md border border-gray-200 shadow-inner">
             <button
             onClick={() => { setMode('create'); setRecipe(''); setMetrics(null); setUtensils([]); setGeneratedImage(null); }}
             className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
-                mode === 'create' ? `bg-white/10 text-white` : 'text-gray-500 hover:text-gray-300'
+                mode === 'create' ? `bg-white text-chef-dark shadow-sm border border-gray-200` : 'text-gray-400 hover:text-gray-600'
             }`}
             >
             <PremiumSparkles size={14} /> Créer
@@ -460,7 +460,7 @@ const RecipeCreator: React.FC = () => {
             <button
             onClick={() => { setMode('search'); setRecipe(''); setMetrics(null); setUtensils([]); setGeneratedImage(null); }}
             className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
-                mode === 'search' ? `bg-white/10 text-white` : 'text-gray-500 hover:text-gray-300'
+                mode === 'search' ? `bg-white text-chef-dark shadow-sm border border-gray-200` : 'text-gray-400 hover:text-gray-600'
             }`}
             >
             <PremiumSearch size={14} /> Rechercher
@@ -473,27 +473,27 @@ const RecipeCreator: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-6 animate-fade-in">
             {/* Configuration */}
             <div className="md:col-span-1 space-y-4">
-                <div className="bg-[#161816] p-5 rounded-3xl border border-white/10">
-                    <h3 className="font-bold text-gray-500 text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2">
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-gray-400 text-[10px] uppercase tracking-widest mb-5 flex items-center gap-2">
                         <PremiumUsers size={12} /> Configuration
                     </h3>
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">{chefMode === 'patisserie' ? 'Gourmands' : 'Convives'}</label>
+                        <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">{chefMode === 'patisserie' ? 'Gourmands' : 'Convives'}</label>
                         <div className="flex items-center gap-3">
-                            <button onClick={() => setPeople(Math.max(1, people - 1))} className="w-10 h-10 bg-white/5 rounded-xl font-bold text-gray-400 hover:bg-white/10 transition-colors flex items-center justify-center border border-white/5">-</button>
-                            <span className="font-serif text-2xl text-white w-8 text-center">{people}</span>
-                            <button onClick={() => setPeople(Math.min(12, people + 1))} className="w-10 h-10 bg-white/5 rounded-xl font-bold text-gray-400 hover:bg-white/10 transition-colors flex items-center justify-center border border-white/5">+</button>
+                            <button onClick={() => setPeople(Math.max(1, people - 1))} className="w-10 h-10 bg-gray-50 rounded-xl font-bold text-gray-400 hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200">-</button>
+                            <span className="font-display text-2xl text-chef-dark w-8 text-center">{people}</span>
+                            <button onClick={() => setPeople(Math.min(12, people + 1))} className="w-10 h-10 bg-gray-50 rounded-xl font-bold text-gray-400 hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200">+</button>
                         </div>
                         </div>
                         {mode === 'create' && (
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-1">Diététique</label>
+                                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Diététique</label>
                                 <div className="relative">
-                                    <PremiumLeaf size={16} className="absolute top-3 left-3 pointer-events-none" />
+                                    <PremiumLeaf size={16} className="absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none opacity-40" />
                                     <select 
-                                        className="w-full pl-9 pr-10 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer outline-none font-medium text-gray-300"
+                                        className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer outline-none font-bold text-chef-dark focus:bg-white focus:ring-2 focus:ring-green-50 transition-all"
                                         value={dietary}
                                         onChange={(e) => setDietary(e.target.value)}
                                     >
@@ -508,17 +508,17 @@ const RecipeCreator: React.FC = () => {
                                         <option value="Casher">Casher</option>
                                         <option value="Sans Porc">Sans Porc</option>
                                         <option value="Faible en Glucides">Faible en Glucides</option>
-                                        <option value="Hypocalorique">Hypocalorique (Régime)</option>
+                                        <option value="Hypocalorique">Hypocalorique</option>
                                     </select>
-                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                 </div>
                             </div>
                             
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-1 flex items-center gap-2"><PremiumGlobe size={12}/> Voyage / Style</label>
+                                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide flex items-center gap-2"><PremiumGlobe size={12}/> Voyage / Style</label>
                                 <div className="relative">
                                     <select 
-                                        className="w-full px-3 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer pr-10 outline-none font-medium text-gray-300"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer pr-10 outline-none font-bold text-chef-dark focus:bg-white focus:ring-2 focus:ring-green-50 transition-all"
                                         value={cuisineStyle}
                                         onChange={(e) => setCuisineStyle(e.target.value)}
                                     >
@@ -532,16 +532,16 @@ const RecipeCreator: React.FC = () => {
                                         <option value="Indien (Ayurvédique)">🇮🇳 Indien (Ayurvédique)</option>
                                         <option value="Mexicain (Cantina)">🇲🇽 Mexicain (Cantina)</option>
                                     </select>
-                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-1">Moment</label>
+                                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Moment</label>
                                 <div className="relative">
-                                    <PremiumTimer size={16} className="absolute top-3 left-3 pointer-events-none" />
+                                    <PremiumTimer size={16} className="absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none opacity-40" />
                                     <select 
-                                        className="w-full pl-9 pr-10 py-2.5 bg-[#0a0c0a] border border-white/10 rounded-xl text-sm appearance-none cursor-pointer outline-none font-medium text-gray-300"
+                                        className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer outline-none font-bold text-chef-dark focus:bg-white focus:ring-2 focus:ring-green-50 transition-all"
                                         value={mealTime} 
                                         onChange={(e) => setMealTime(e.target.value)}
                                     >
@@ -554,19 +554,19 @@ const RecipeCreator: React.FC = () => {
                                         <option value="Dîner">Dîner</option>
                                         <option value="Encas">Encas</option>
                                     </select>
-                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                                 </div>
                             </div>
 
                             {chefMode === 'cuisine' && (
                                 <div 
                                     onClick={() => setIsBatchCooking(!isBatchCooking)}
-                                    className={`p-3 rounded-xl cursor-pointer border transition-all flex items-center gap-3 ${isBatchCooking ? 'border-chef-green/50 bg-chef-green/10' : 'border-white/10 bg-[#0a0c0a] hover:bg-white/5'}`}
+                                    className={`p-4 rounded-xl cursor-pointer border transition-all flex items-center gap-3 ${isBatchCooking ? 'border-chef-green bg-green-50' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'}`}
                                 >
-                                    <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isBatchCooking ? 'bg-chef-green' : 'bg-gray-700'}`}>
+                                    <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isBatchCooking ? 'bg-chef-green' : 'bg-gray-300'}`}>
                                         <Check size={14} className="text-white" />
                                     </div>
-                                    <span className={`text-xs font-bold ${isBatchCooking ? 'text-chef-green' : 'text-gray-500'}`}><PremiumLayers size={12} className="inline mr-1"/> Batch Cooking</span>
+                                    <span className={`text-xs font-bold ${isBatchCooking ? 'text-chef-green' : 'text-gray-400'}`}><PremiumLayers size={12} className="inline mr-1"/> Batch Cooking</span>
                                 </div>
                             )}
                         </div>
@@ -577,23 +577,27 @@ const RecipeCreator: React.FC = () => {
 
             {/* Inputs */}
             <div className="md:col-span-2 space-y-6">
-                <div className="bg-[#161816] p-6 rounded-[2rem] border border-white/10 relative">
+                <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                        {chefMode === 'patisserie' ? <PremiumCake size={120} /> : <PremiumChefHat size={120} />}
+                    </div>
+                    
                     {mode === 'create' ? (
-                        <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <label className={`block text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2`}>
+                        <div className="relative z-10">
+                        <div className="flex justify-between items-center mb-4">
+                            <label className={`block text-xs font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-2`}>
                                 {chefMode === 'patisserie' ? <PremiumWheat size={14}/> : <PremiumUtensils size={14}/>} 
                                 Ingrédients & Envies
                             </label>
                             
                             <div className="flex items-center gap-2">
-                                {isListening && listeningTarget === 'ingredients' && <span className="text-xs text-red-500 font-bold animate-pulse">En écoute...</span>}
+                                {isListening && listeningTarget === 'ingredients' && <span className="text-[10px] text-red-500 font-black animate-pulse uppercase tracking-wider">En écoute...</span>}
                                 <button 
                                     onClick={() => startListening('ingredients')}
-                                    className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold ${
+                                    className={`px-3 py-2 rounded-xl transition-all flex items-center gap-2 text-xs font-bold border ${
                                         isListening && listeningTarget === 'ingredients' 
-                                        ? 'bg-red-500/20 text-red-500' 
-                                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                        ? 'bg-red-50 border-red-200 text-red-500' 
+                                        : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-chef-dark'
                                     }`}
                                 >
                                     {isListening && listeningTarget === 'ingredients' ? <><PremiumMicOff size={14} /> Stop</> : <><PremiumMic size={14} /> Dicter</>}
@@ -602,7 +606,7 @@ const RecipeCreator: React.FC = () => {
                         </div>
                         <div className="relative">
                             <textarea 
-                                className="w-full p-4 bg-[#0a0c0a] border border-white/10 rounded-2xl outline-none resize-none font-body text-white min-h-[140px] text-lg transition-all" 
+                                className="w-full p-6 bg-gray-50 border border-gray-200 rounded-3xl outline-none resize-none font-body text-chef-dark min-h-[180px] text-xl transition-all focus:bg-white focus:ring-4 focus:ring-green-50 shadow-inner" 
                                 placeholder={chefMode === 'patisserie' ? "Ex: J'ai de la farine et des pommes, je voudrais un gâteau moelleux..." : "Ex: J'ai du poulet, du riz, et j'aimerais un plat épicé..."} 
                                 value={ingredients} 
                                 onChange={(e) => setIngredients(e.target.value)} 
@@ -610,26 +614,26 @@ const RecipeCreator: React.FC = () => {
                         </div>
                         </div>
                     ) : (
-                        <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <label className={`block text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2`}><PremiumSearch size={14} /> Nom de la recette</label>
+                        <div className="relative z-10">
+                        <div className="flex justify-between items-center mb-4">
+                            <label className={`block text-xs font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-2`}><PremiumSearch size={14} /> Nom de la recette</label>
                             <div className="flex items-center gap-2">
                                 <button 
                                     onClick={() => startListening('search')}
-                                    className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-xs font-bold ${
+                                    className={`px-3 py-2 rounded-xl transition-all flex items-center gap-2 text-xs font-bold border ${
                                         isListening && listeningTarget === 'search' 
-                                        ? 'bg-red-500/20 text-red-500' 
-                                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                        ? 'bg-red-50 border-red-200 text-red-500' 
+                                        : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-chef-dark'
                                     }`}
                                 >
                                     {isListening && listeningTarget === 'search' ? <><PremiumMicOff size={14} /> Stop</> : <><PremiumMic size={14} /> Dicter</>}
                                 </button>
                             </div>
                         </div>
-                        <div className="relative mb-3">
+                        <div className="relative mb-4">
                             <input 
                                 type="text" 
-                                className="w-full p-4 bg-[#0a0c0a] border border-white/10 rounded-2xl outline-none font-body text-white text-lg font-bold transition-all" 
+                                className="w-full p-6 bg-gray-50 border border-gray-200 rounded-3xl outline-none font-body text-chef-dark text-xl font-bold transition-all focus:bg-white focus:ring-4 focus:ring-green-50 shadow-inner" 
                                 placeholder="Ex: Blanquette de veau..." 
                                 value={searchQuery} 
                                 onChange={(e) => setSearchQuery(e.target.value)} 
@@ -638,32 +642,32 @@ const RecipeCreator: React.FC = () => {
                         </div>
 
                         {/* AUTHENTIC VS ECONOMICAL TOGGLE */}
-                        <div className="flex gap-2 p-1 bg-[#0a0c0a] rounded-xl border border-white/10">
+                        <div className="flex gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-200">
                              <button
                                 onClick={() => setSearchType('authentic')}
-                                className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+                                className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                                     searchType === 'authentic' 
-                                    ? 'bg-[#161816] text-yellow-500 shadow-sm border border-white/10' 
-                                    : 'text-gray-500 hover:text-gray-300'
+                                    ? 'bg-white text-yellow-600 shadow-md border border-gray-200' 
+                                    : 'text-gray-400 hover:text-gray-600'
                                 }`}
                              >
-                                 <PremiumMedal size={14} /> Authentique
+                                 <PremiumMedal size={16} /> Authentique
                              </button>
                              <button
                                 onClick={() => setSearchType('economical')}
-                                className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+                                className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                                     searchType === 'economical' 
-                                    ? 'bg-[#161816] text-chef-green shadow-sm border border-white/10' 
-                                    : 'text-gray-500 hover:text-gray-300'
+                                    ? 'bg-white text-chef-green shadow-md border border-gray-200' 
+                                    : 'text-gray-400 hover:text-gray-600'
                                 }`}
                              >
-                                 <PremiumEuro size={14} /> Économique
+                                 <PremiumEuro size={16} /> Économique
                              </button>
                         </div>
                         </div>
                     )}
-                    <button onClick={handleGenerate} disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)} className="w-full mt-6 bg-white text-black font-display text-xl py-4 rounded-2xl shadow-glow hover:bg-gray-200 hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 disabled:opacity-50 disabled:translate-y-0">
-                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <PremiumSparkles size={20}/> : <PremiumSearch size={20}/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Trouver la Recette'}</>)}
+                    <button onClick={handleGenerate} disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)} className={`w-full mt-8 py-5 rounded-2xl shadow-xl transition-all flex justify-center items-center gap-3 font-display text-2xl disabled:opacity-50 active:scale-95 ${chefMode === 'patisserie' ? 'bg-pink-500 text-white shadow-pink-100 hover:bg-pink-600' : 'bg-chef-green text-white shadow-green-100 hover:bg-green-600'}`}>
+                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <PremiumSparkles size={24}/> : <PremiumSearch size={24}/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Lancer la recherche'}</>)}
                     </button>
                 </div>
             </div>
@@ -672,8 +676,8 @@ const RecipeCreator: React.FC = () => {
       </div>
 
       {status === 'error' && (
-        <div className="mt-6 p-4 bg-red-900/20 border border-red-500/50 text-red-400 rounded-2xl text-center font-bold">
-          Une erreur est survenue. Veuillez réessayer.
+        <div className="mt-8 p-6 bg-red-50 border border-red-100 text-red-600 rounded-3xl text-center font-bold shadow-sm animate-fade-in">
+          Une erreur est survenue lors de la création de la recette. Veuillez réessayer.
         </div>
       )}
 
@@ -682,45 +686,45 @@ const RecipeCreator: React.FC = () => {
         <div id="recipe-pdf-container" className="animate-fade-in mt-2 pb-10">
           
           {/* 1. HERO SECTION */}
-          <div className="bg-[#161816] rounded-[2.5rem] shadow-card border border-white/10 overflow-hidden mb-6 relative group">
-            <div className="w-full h-64 md:h-96 bg-[#0a0c0a] relative overflow-hidden">
+          <div className="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden mb-8 relative group">
+            <div className="w-full h-64 md:h-96 bg-gray-100 relative overflow-hidden">
                 {imageStatus === 'loading' && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0c0a] text-gray-500">
-                        <Loader2 size={40} className={`animate-spin mb-3`} />
-                        <span className="font-display text-lg">Préparation de la photo...</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 text-gray-400">
+                        <Loader2 size={40} className={`animate-spin mb-3 text-chef-green`} />
+                        <span className="font-display text-xl text-gray-500">Préparation de la photo...</span>
                     </div>
                 )}
                 {generatedImage ? (
                     <>
-                        <img src={generatedImage} alt="Plat final" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute bottom-4 right-4 z-10">
-                             <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><PremiumSparkles size={12} /> MiamChef IA {currentYear}</div>
+                        <img src={generatedImage} alt="Plat final" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                        <div className="absolute bottom-6 right-6 z-10">
+                             <div className="bg-black/40 backdrop-blur-xl text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 border border-white/20"><PremiumSparkles size={14} /> MiamChef IA Excellence {currentYear}</div>
                         </div>
                     </>
                 ) : imageStatus !== 'loading' && (
-                     <div className="w-full h-full flex items-center justify-center bg-[#0a0c0a]">
-                        <ImageIcon size={48} className="text-gray-700" />
+                     <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                        <ImageIcon size={64} className="text-gray-200" />
                      </div>
                 )}
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-6 md:p-10 pointer-events-none">
-                    <h1 className="text-3xl md:text-5xl font-serif text-white mb-2 leading-tight drop-shadow-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 md:p-12 pointer-events-none">
+                    <h1 className="text-4xl md:text-6xl font-display text-white mb-2 leading-none drop-shadow-lg">
                         {recipe.match(/^#\s+(.+)$/m)?.[1] || "Recette du Chef"}
                     </h1>
                 </div>
             </div>
 
-            <div className="px-6 py-4 flex flex-wrap justify-between items-center gap-4 bg-[#161816] border-t border-white/5">
-                <button onClick={() => { setRecipe(''); setGeneratedImage(null); }} className="p-2 hover:bg-white/5 rounded-full text-gray-500 transition-colors"><ChevronLeft size={24}/></button>
-                <div className="flex gap-3">
-                     <button onClick={startImmersiveMode} className="bg-chef-green text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-green-400 transition-colors shadow-glow">
-                        <PremiumPlay size={16} className="text-black" /> <span className="hidden sm:inline">Cuisiner</span>
+            <div className="px-8 py-6 flex flex-wrap justify-between items-center gap-4 bg-white border-t border-gray-50">
+                <button onClick={() => { setRecipe(''); setGeneratedImage(null); }} className="p-3 hover:bg-gray-50 rounded-full text-gray-400 transition-colors border border-transparent hover:border-gray-100"><ChevronLeft size={28}/></button>
+                <div className="flex gap-4">
+                     <button onClick={startImmersiveMode} className="bg-chef-green text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-3 hover:bg-green-600 transition-all shadow-lg shadow-green-100 active:scale-95">
+                        <PremiumPlay size={20} className="text-white" /> <span className="font-display text-xl">Cuisiner</span>
                      </button>
-                     <button onClick={handleSaveToBook} disabled={isSaved} className={`px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-sm border transition-colors ${isSaved ? 'bg-green-900/20 text-green-400 border-green-500/30' : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'}`}>
-                        {isSaved ? <Check size={18} /> : <GourmetBook size={18} />} {isSaved ? 'Enregistré' : 'Sauvegarder'}
+                     <button onClick={handleSaveToBook} disabled={isSaved} className={`px-5 py-3 rounded-2xl font-bold flex items-center gap-3 text-sm border transition-all ${isSaved ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:border-chef-green hover:text-chef-green hover:shadow-md'}`}>
+                        {isSaved ? <Check size={20} /> : <GourmetBook size={20} />} {isSaved ? 'Enregistré' : 'Sauvegarder'}
                      </button>
-                     <button onClick={handleDownloadPDF} className="p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-                        <PremiumDownload size={20} />
+                     <button onClick={handleDownloadPDF} className="p-3 text-gray-400 hover:text-chef-dark hover:bg-gray-50 rounded-2xl transition-colors border border-transparent hover:border-gray-100">
+                        <PremiumDownload size={24} />
                      </button>
                 </div>
             </div>
@@ -728,13 +732,13 @@ const RecipeCreator: React.FC = () => {
 
           {/* 2. MACRO DASHBOARD */}
           {metrics && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-[#161816] p-5 rounded-3xl border border-white/10 flex flex-col justify-center items-center text-center md:col-span-1">
-                      <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Calories</div>
-                      <div className="text-3xl font-serif text-white">{metrics.caloriesPerPerson}</div>
-                      <div className="text-xs text-gray-500">Kcal / personne</div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                  <div className="bg-white p-6 rounded-[2rem] border border-gray-100 flex flex-col justify-center items-center text-center shadow-sm">
+                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Apport Calorique</div>
+                      <div className="text-4xl font-display text-chef-dark">{metrics.caloriesPerPerson}</div>
+                      <div className="text-xs font-bold text-gray-400 mt-1">Kcal par convive</div>
                   </div>
-                  <div className="bg-[#161816] p-5 rounded-3xl border border-white/10 md:col-span-3 grid grid-cols-3 items-center justify-items-center">
+                  <div className="bg-white p-6 rounded-[2rem] border border-gray-100 md:col-span-3 grid grid-cols-3 items-center justify-items-center shadow-sm">
                        <MacroDonut value={metrics.proteins} label="Protéines" color="#3b82f6" total={metrics.proteins + metrics.carbohydrates + metrics.fats} />
                        <MacroDonut value={metrics.carbohydrates} label="Glucides" color="#eab308" total={metrics.proteins + metrics.carbohydrates + metrics.fats} />
                        <MacroDonut value={metrics.fats} label="Lipides" color="#ef4444" total={metrics.proteins + metrics.carbohydrates + metrics.fats} />
@@ -743,46 +747,46 @@ const RecipeCreator: React.FC = () => {
           )}
 
           {/* 3. SMART TWISTS */}
-          <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide px-1">
-              <div className="flex gap-3">
-                  <div className="flex items-center gap-2 px-4 py-3 bg-white/5 rounded-xl text-gray-400 font-bold text-xs uppercase tracking-wide whitespace-nowrap border border-white/5"><Wand2 size={14}/> Adapter :</div>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Végétarienne")} className="px-4 py-3 bg-[#161816] border border-green-500/30 text-green-400 rounded-xl text-xs font-bold hover:bg-green-900/10 transition-colors whitespace-nowrap uppercase tracking-wider">Vegan</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Très Épicée")} className="px-4 py-3 bg-[#161816] border border-red-500/30 text-red-400 rounded-xl text-xs font-bold hover:bg-red-900/10 transition-colors whitespace-nowrap uppercase tracking-wider">Épicé</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version adaptée aux Enfants")} className="px-4 py-3 bg-[#161816] border border-blue-500/30 text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-900/10 transition-colors whitespace-nowrap uppercase tracking-wider">Enfant</button>
-                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Express (-15 min)")} className="px-4 py-3 bg-[#161816] border border-yellow-500/30 text-yellow-400 rounded-xl text-xs font-bold hover:bg-yellow-900/10 transition-colors whitespace-nowrap uppercase tracking-wider">Express</button>
+          <div className="mb-10 overflow-x-auto pb-4 scrollbar-hide px-2">
+              <div className="flex gap-4">
+                  <div className="flex items-center gap-3 px-6 py-4 bg-gray-100 rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest whitespace-nowrap border border-gray-200"><Wand2 size={16}/> Twist instantané :</div>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Végétarienne")} className="px-6 py-4 bg-white border border-green-200 text-green-600 rounded-2xl text-xs font-black hover:bg-green-50 transition-all whitespace-nowrap uppercase tracking-widest shadow-sm">Vegan</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Très Épicée")} className="px-6 py-4 bg-white border border-red-200 text-red-600 rounded-2xl text-xs font-black hover:bg-red-50 transition-all whitespace-nowrap uppercase tracking-widest shadow-sm">Épicé</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version adaptée aux Enfants")} className="px-6 py-4 bg-white border border-blue-200 text-blue-600 rounded-2xl text-xs font-black hover:bg-blue-50 transition-all whitespace-nowrap uppercase tracking-widest shadow-sm">Enfant</button>
+                  <button disabled={status === 'loading'} onClick={() => handleSmartTwist("Version Express (-15 min)")} className="px-6 py-4 bg-white border border-yellow-200 text-yellow-700 rounded-2xl text-xs font-black hover:bg-yellow-50 transition-all whitespace-nowrap uppercase tracking-widest shadow-sm">Express</button>
               </div>
           </div>
 
           <div className="grid md:grid-cols-12 gap-8">
-              {/* 4. INGREDIENTS LIST & UTENSILS */}
-              <div className="md:col-span-4 space-y-6">
-                 <div className="bg-[#161816] p-6 rounded-[2rem] border border-white/10 relative">
-                     <h3 className="font-serif text-2xl text-white mb-4 border-b border-white/10 pb-2 flex justify-between items-center">
-                         Ingrédients
+              {/* 4. INGREDIENTS LIST */}
+              <div className="md:col-span-4 space-y-8">
+                 <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative">
+                     <h3 className="font-display text-3xl text-chef-dark mb-6 border-b border-gray-50 pb-4 flex justify-between items-center">
+                         Marché
                          {checkedIngredients.size > 0 && (
-                            <span className={`text-xs bg-chef-green text-black px-2 py-1 rounded-full font-bold`}>{checkedIngredients.size}</span>
+                            <span className={`text-xs bg-chef-green text-white px-3 py-1 rounded-full font-bold shadow-md`}>{checkedIngredients.size}</span>
                          )}
                      </h3>
                      
-                     <ul className="space-y-3">
+                     <ul className="space-y-4">
                         {ingredientsList.map((line, idx) => {
                             const isChecked = checkedIngredients.has(idx);
                             const cleanText = line.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
                             const isServingLine = cleanText.toLowerCase().startsWith('pour ') && (cleanText.toLowerCase().includes('personne') || cleanText.toLowerCase().includes('convive'));
                             
-                            if (isServingLine) return <li key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-white/5"><PremiumUsers size={14} /><span className="text-sm font-bold text-gray-300">{cleanText}</span></li>;
+                            if (isServingLine) return <li key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100"><PremiumUsers size={16} /><span className="text-sm font-black text-gray-500 uppercase tracking-widest">{cleanText}</span></li>;
 
                             return (
                                 <li 
                                     key={idx} 
-                                    className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer group ${isChecked ? 'bg-white/5 opacity-50' : 'hover:bg-white/5'}`}
+                                    className={`flex items-start gap-4 p-4 rounded-2xl transition-all cursor-pointer group border ${isChecked ? 'bg-gray-50 border-gray-100 opacity-60' : 'bg-white border-transparent hover:border-gray-200 hover:shadow-md'}`}
                                     onClick={() => toggleIngredientCheck(idx)}
                                 >
-                                    <div className={`mt-0.5 relative flex-shrink-0 w-5 h-5 rounded border transition-all flex items-center justify-center ${isChecked ? 'bg-chef-green border-chef-green' : 'border-gray-600 bg-transparent'}`}>
-                                        {isChecked && <Check size={12} className="text-black" strokeWidth={3} />}
+                                    <div className={`mt-0.5 relative flex-shrink-0 w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${isChecked ? 'bg-chef-green border-chef-green shadow-sm' : 'border-gray-200 bg-white'}`}>
+                                        {isChecked && <Check size={16} className="text-white" strokeWidth={4} />}
                                     </div>
-                                    <span className={`text-base leading-tight transition-all select-none flex-1 ${isChecked ? 'text-gray-500 line-through' : 'text-gray-200'}`}>{cleanText}</span>
-                                    <button onClick={(e) => { e.stopPropagation(); handleOpenDriveModal(cleanText); }} className="p-2 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/20 transition-colors opacity-0 group-hover:opacity-100"><PremiumShoppingCart size={16} /></button>
+                                    <span className={`text-lg leading-tight transition-all select-none flex-1 font-medium ${isChecked ? 'text-gray-400 line-through' : 'text-chef-dark'}`}>{cleanText}</span>
+                                    <button onClick={(e) => { e.stopPropagation(); handleOpenDriveModal(cleanText); }} className="p-2 rounded-xl text-gray-300 hover:text-blue-500 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100"><PremiumShoppingCart size={18} /></button>
                                 </li>
                             );
                         })}
@@ -791,27 +795,27 @@ const RecipeCreator: React.FC = () => {
                      <button
                         onClick={handleAddSelectedToShoppingList}
                         disabled={checkedIngredients.size === 0 || addedToList}
-                        className={`w-full mt-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${addedToList ? 'bg-green-900/20 text-green-400 border border-green-500/20' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                        className={`w-full mt-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all text-lg shadow-lg ${addedToList ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-chef-dark text-white hover:bg-black shadow-gray-100 active:scale-95'}`}
                      >
-                        {addedToList ? <><Check size={18} /> Ajouté !</> : <><PremiumPlus size={18} /> Ajouter à ma liste</>}
+                        {addedToList ? <><Check size={20} strokeWidth={3} /> Liste à jour !</> : <><PremiumPlus size={20} /> Ajouter à ma liste</>}
                      </button>
                  </div>
               </div>
 
               {/* 5. PREPARATION STEPS */}
-              <div className="md:col-span-8 space-y-6">
-                 <div className="bg-[#161816] p-8 rounded-[2rem] border border-white/10">
-                     <h3 className="font-serif text-2xl text-white mb-6 border-b border-white/10 pb-2">Préparation</h3>
-                     <div className="space-y-8">
+              <div className="md:col-span-8 space-y-8">
+                 <div className="bg-white p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-sm">
+                     <h3 className="font-display text-4xl text-chef-dark mb-10 border-b border-gray-50 pb-6">Méthode & Dressage</h3>
+                     <div className="space-y-12">
                          {instructionsList.map((step, idx) => {
                              const cleanStep = step.replace(/^\d+\.\s*/, '').replace(/[*_]/g, '');
                              return (
-                                 <div key={idx} className="flex gap-4">
-                                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-chef-green text-black font-serif text-lg font-bold flex items-center justify-center mt-1 shadow-glow">
+                                 <div key={idx} className="flex gap-6 group">
+                                     <div className="flex-shrink-0 w-10 h-10 rounded-2xl bg-gray-50 text-chef-dark font-display text-2xl font-bold flex items-center justify-center mt-1 border border-gray-100 transition-all group-hover:bg-chef-green group-hover:text-white group-hover:border-chef-green group-hover:shadow-lg group-hover:shadow-green-100">
                                          {idx + 1}
                                      </div>
                                      <div className="pt-1">
-                                         <p className="text-gray-300 leading-relaxed text-lg">{cleanStep}</p>
+                                         <p className="text-gray-600 leading-relaxed text-xl font-medium">{cleanStep}</p>
                                      </div>
                                  </div>
                              )
@@ -825,50 +829,50 @@ const RecipeCreator: React.FC = () => {
 
       {/* IMMERSIVE MODE OVERLAY */}
       {immersiveMode && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md text-white flex flex-col immersive-enter">
-            <div className="p-6 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <div className="p-2 bg-white/10 rounded-lg"><PremiumChefHat size={24} /></div>
-                    <span className="font-display text-xl">Mode Cuisine</span>
+        <div className="fixed inset-0 z-[100] bg-white text-chef-dark flex flex-col immersive-enter">
+            <div className="p-6 flex justify-between items-center border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                    <div className="p-3 bg-green-50 rounded-2xl"><PremiumChefHat size={28} /></div>
+                    <span className="font-display text-2xl text-chef-dark">Pas à Pas Gourmand</span>
                 </div>
-                <button onClick={() => setImmersiveMode(false)} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><PremiumX size={24}/></button>
+                <button onClick={() => setImmersiveMode(false)} className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors border border-gray-200 shadow-sm"><PremiumX size={24}/></button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
-                <p className="text-gray-400 font-bold text-sm uppercase tracking-widest mb-4">Étape {currentStep + 1} / {parsedSteps.length}</p>
-                <div className="w-full max-w-2xl mb-6 aspect-video bg-[#1a1c1a] rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 relative shadow-2xl">
+            <div className="flex-1 overflow-y-auto p-6 md:p-12 flex flex-col items-center">
+                <p className="text-gray-400 font-black text-sm uppercase tracking-[0.2em] mb-6">Étape {currentStep + 1} sur {parsedSteps.length}</p>
+                <div className="w-full max-w-3xl mb-10 aspect-video bg-gray-50 rounded-[2.5rem] flex items-center justify-center overflow-hidden border border-gray-100 relative shadow-2xl">
                     {videoLoading ? (
                         <div className="flex flex-col items-center">
-                            <Loader2 className="animate-spin text-white mb-2" size={40} />
-                            <span className="text-sm font-bold animate-pulse">Génération vidéo...</span>
+                            <Loader2 className="animate-spin text-chef-green mb-4" size={48} />
+                            <span className="text-lg font-bold text-gray-500 animate-pulse">L'IA prépare votre visuel...</span>
                         </div>
                     ) : stepVideo ? (
                         <video src={stepVideo} controls autoPlay loop className="w-full h-full object-cover" />
                     ) : (
-                        <div className="text-center">
+                        <div className="text-center p-8">
                             <button 
                                 onClick={handleGenerateVideo}
-                                className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-bold flex items-center justify-center gap-2 mx-auto transition-all border border-white/20 mb-4"
+                                className="bg-white hover:bg-gray-50 text-chef-dark px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 mx-auto transition-all border border-gray-200 mb-8 shadow-lg hover:-translate-y-1"
                             >
-                                <PremiumVideo size={20} /> 
-                                <span>Voir l'étape (IA)</span>
+                                <PremiumVideo size={24} /> 
+                                <span className="font-display text-xl">Visualiser l'étape (IA)</span>
                             </button>
-                            <div className="font-display text-2xl md:text-3xl leading-tight px-4 line-clamp-4">
-                                {parsedSteps[currentStep]}
+                            <div className="font-display text-2xl md:text-4xl text-gray-400 leading-tight px-6 line-clamp-3 italic">
+                                "{parsedSteps[currentStep]}"
                             </div>
                         </div>
                     )}
                 </div>
-                 <div className="font-display text-xl md:text-2xl leading-tight mb-20 px-4 text-center max-w-3xl">
+                 <div className="font-medium text-2xl md:text-4xl leading-tight mb-24 px-8 text-center max-w-4xl text-chef-dark">
                      {parsedSteps[currentStep]}
                 </div>
             </div>
 
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-lg px-4">
-                 <div className="bg-[#1a1c1a] border border-white/10 rounded-2xl p-2 flex items-center justify-between shadow-2xl">
-                    <button onClick={() => setCurrentStep(Math.max(0, currentStep - 1))} disabled={currentStep === 0} className="p-4 rounded-xl hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronLeft size={28} /></button>
-                    <button onClick={() => speakStep(parsedSteps[currentStep])} className="p-4 bg-chef-green text-black rounded-xl shadow-lg hover:scale-105 transition-transform"><PremiumVolume size={28}/></button>
-                    <button onClick={() => setCurrentStep(Math.min(parsedSteps.length - 1, currentStep + 1))} disabled={currentStep === parsedSteps.length - 1} className="p-4 rounded-xl hover:bg-white/10 disabled:opacity-30 transition-colors"><ChevronRight size={28} /></button>
+            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-6">
+                 <div className="bg-white border border-gray-100 rounded-[2rem] p-3 flex items-center justify-between shadow-2xl">
+                    <button onClick={() => setCurrentStep(Math.max(0, currentStep - 1))} disabled={currentStep === 0} className="p-6 rounded-2xl hover:bg-gray-50 disabled:opacity-20 transition-all border border-transparent hover:border-gray-100"><ChevronLeft size={36} /></button>
+                    <button onClick={() => speakStep(parsedSteps[currentStep])} className="p-8 bg-chef-dark text-white rounded-3xl shadow-xl hover:scale-110 transition-transform active:scale-95"><PremiumVolume size={40}/></button>
+                    <button onClick={() => setCurrentStep(Math.min(parsedSteps.length - 1, currentStep + 1))} disabled={currentStep === parsedSteps.length - 1} className="p-6 rounded-2xl hover:bg-gray-50 disabled:opacity-20 transition-all border border-transparent hover:border-gray-100"><ChevronRight size={36} /></button>
                  </div>
             </div>
         </div>
@@ -876,18 +880,21 @@ const RecipeCreator: React.FC = () => {
 
       {/* DRIVE LOCATOR MODAL */}
       {showDriveModal && (
-          <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-[#161816] rounded-[2rem] w-full max-w-md p-6 shadow-2xl relative animate-fade-in border border-white/20">
-                  <button onClick={() => setShowDriveModal(false)} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"><PremiumX size={20} className="text-gray-500 hover:text-white"/></button>
-                  <h3 className="font-serif text-2xl text-white mb-1">Trouver un Drive</h3>
-                  <p className="text-sm text-gray-400 mb-6">Pour acheter : <strong className="text-white">{selectedIngredientForDrive}</strong></p>
-                  <div className="mb-6">
-                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1"><PremiumMapPin size={12} /> Votre Ville</label>
-                      <input type="text" value={userCity} onChange={handleCityChange} placeholder="Ex: Lyon, Paris 15..." className="w-full p-3 bg-[#0a0c0a] border border-white/10 rounded-xl outline-none font-bold text-white"/>
+          <div className="fixed inset-0 z-[80] bg-chef-dark/60 backdrop-blur-xl flex items-center justify-center p-4">
+              <div className="bg-white rounded-[3rem] w-full max-w-md p-8 shadow-2xl relative animate-fade-in border border-white">
+                  <button onClick={() => setShowDriveModal(false)} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors border border-transparent hover:border-gray-200"><PremiumX size={20} className="text-gray-400"/></button>
+                  <h3 className="font-display text-3xl text-chef-dark mb-2">Choisir un Drive</h3>
+                  <p className="text-sm text-gray-400 mb-8 font-medium">Pour commander : <strong className="text-chef-dark">{selectedIngredientForDrive}</strong></p>
+                  <div className="mb-8">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2"><PremiumMapPin size={12} /> Localisation</label>
+                      <input type="text" value={userCity} onChange={handleCityChange} placeholder="Ex: Lyon, Paris 15..." className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none font-bold text-chef-dark focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all"/>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                       {supermarketBrands.map((brand) => (
-                          <button key={brand.name} onClick={() => findDrive(brand.name)} className={`p-3 rounded-xl text-white font-bold text-sm shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 ${brand.color}`}><PremiumStore size={16} /> {brand.name}</button>
+                          <button key={brand.name} onClick={() => findDrive(brand.name)} className={`p-4 rounded-2xl text-white font-bold text-sm shadow-lg hover:scale-105 transition-all flex flex-col items-center justify-center gap-2 ${brand.color}`}>
+                              <PremiumStore size={24} /> 
+                              <span className="text-[10px] uppercase tracking-widest">{brand.name}</span>
+                          </button>
                       ))}
                   </div>
               </div>
