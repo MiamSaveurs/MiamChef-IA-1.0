@@ -15,11 +15,11 @@ import {
     PremiumWheat 
 } from './Icons';
 
-// Explicitly type the preset to allow JSX usage of the 'icon' property
+// Updated TimerPreset to allow passing the style prop to icons.
 interface TimerPreset {
     label: string;
     time: number;
-    icon: React.ComponentType<{ size?: number; className?: string }>;
+    icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
     color: string;
 }
 

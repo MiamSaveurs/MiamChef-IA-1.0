@@ -47,6 +47,15 @@ const RecipeCreator: React.FC = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
+  // Thème dynamique
+  const isPatissier = chefMode === 'patisserie';
+  const themeColor = isPatissier ? '#ec4899' : '#509f2a';
+  const themeBg = isPatissier ? 'bg-[#ec4899]' : 'bg-[#509f2a]';
+  const themeBorder = isPatissier ? 'border-[#ec4899]' : 'border-[#509f2a]';
+  const themeText = isPatissier ? 'text-[#ec4899]' : 'text-[#509f2a]';
+  const themeShadow = isPatissier ? 'shadow-[#ec4899]/20' : 'shadow-[#509f2a]/20';
+  const themeSelection = isPatissier ? 'selection:bg-[#ec4899]' : 'selection:bg-[#509f2a]';
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (status === 'loading') {
@@ -82,7 +91,6 @@ const RecipeCreator: React.FC = () => {
       setUtensils(result.utensils || []);
       setStatus('success');
       
-      // Generation d'image en arrière-plan
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : 'Plat';
       const img = await generateRecipeImage(title, ingredients || searchQuery);
@@ -111,17 +119,23 @@ const RecipeCreator: React.FC = () => {
   };
 
   return (
-    <div className="pb-32 px-4 pt-6 max-w-4xl mx-auto min-h-screen bg-[#050505] text-white selection:bg-[#509f2a] selection:text-white">
+    <div className={`pb-32 px-4 pt-6 max-w-4xl mx-auto min-h-screen bg-[#050505] text-white ${themeSelection} transition-colors duration-500`}>
       
       {/* Header */}
       <header className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-              <div className="p-3 bg-[#509f2a]/10 rounded-2xl border border-[#509f2a]/20">
-                  <PremiumChefHat size={32} className="text-[#509f2a]" />
+              <div className={`p-3 rounded-2xl border transition-all duration-500`} style={{ backgroundColor: `${themeColor}10`, borderColor: `${themeColor}20` }}>
+                  {isPatissier ? (
+                    <PremiumCake size={32} style={{ color: themeColor }} />
+                  ) : (
+                    <PremiumChefHat size={32} style={{ color: themeColor }} />
+                  )}
               </div>
               <div>
                 <h2 className="text-3xl font-display text-white leading-none">Atelier du Chef</h2>
-                <p className="text-[#509f2a] text-[10px] font-bold tracking-widest uppercase mt-1">Excellence Culinaire</p>
+                <p className={`text-[10px] font-bold tracking-widest uppercase mt-1 transition-colors duration-500`} style={{ color: themeColor }}>
+                  {isPatissier ? 'Magie de la Pâtisserie' : 'Excellence Culinaire'}
+                </p>
               </div>
           </div>
           
@@ -139,13 +153,13 @@ const RecipeCreator: React.FC = () => {
           <div className="bg-white/5 p-1.5 rounded-2xl flex gap-1 border border-white/5">
               <button 
                 onClick={() => setMode('create')}
-                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'create' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
+                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'create' ? themeBg + ' text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
                   <PremiumSparkles size={18} className={mode === 'create' ? 'text-white' : 'text-white/40'} /> Créer
               </button>
               <button 
                 onClick={() => setMode('search')}
-                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'search' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
+                className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${mode === 'search' ? themeBg + ' text-white shadow-lg' : 'text-white/40 hover:bg-white/5'}`}
               >
                   <PremiumSearch size={18} className={mode === 'search' ? 'text-white' : 'text-white/40'} /> Rechercher
               </button>
@@ -156,16 +170,16 @@ const RecipeCreator: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setChefMode('cuisine')}
-                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'cuisine' ? 'border-[#509f2a] bg-[#509f2a]/10 shadow-[0_0_20px_rgba(80,159,42,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
+                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all duration-500 ${chefMode === 'cuisine' ? 'border-[#509f2a] bg-[#509f2a]/10 shadow-[0_0_20px_rgba(80,159,42,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
                       <PremiumUtensils size={32} className={chefMode === 'cuisine' ? 'text-[#509f2a]' : 'text-white'} />
                       <span className="font-display text-lg">Cuisinier</span>
                   </button>
                   <button 
                     onClick={() => setChefMode('patisserie')}
-                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all ${chefMode === 'patisserie' ? 'border-[#509f2a] bg-[#509f2a]/10 shadow-[0_0_20px_rgba(80,159,42,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
+                    className={`p-4 rounded-3xl border-2 flex flex-col items-center gap-2 transition-all duration-500 ${chefMode === 'patisserie' ? 'border-[#ec4899] bg-[#ec4899]/10 shadow-[0_0_20px_rgba(236,72,153,0.1)]' : 'border-white/5 bg-white/5 opacity-40'}`}
                   >
-                      <PremiumCake size={32} className={chefMode === 'patisserie' ? 'text-[#509f2a]' : 'text-white'} />
+                      <PremiumCake size={32} className={chefMode === 'patisserie' ? 'text-[#ec4899]' : 'text-white'} />
                       <span className="font-display text-lg">Pâtissier</span>
                   </button>
               </div>
@@ -173,12 +187,13 @@ const RecipeCreator: React.FC = () => {
 
           {/* Input Area */}
           <div className="bg-white/5 p-6 rounded-[2.5rem] border border-white/10">
-              <label className="block text-xs font-bold text-[#509f2a] uppercase tracking-widest mb-3">
-                  {mode === 'create' ? 'Quels ingrédients avez-vous ?' : 'Quel plat recherchez-vous ?'}
+              <label className={`block text-xs font-bold uppercase tracking-widest mb-3 transition-colors duration-500`} style={{ color: themeColor }}>
+                  {mode === 'create' ? 'Quels ingrédients avez-vous ?' : 'Quel dessert recherchez-vous ?'}
               </label>
               <textarea 
-                className="w-full p-4 bg-black/40 border border-white/10 rounded-2xl outline-none resize-none min-h-[120px] text-lg text-white focus:border-[#509f2a]/50 transition-all placeholder:text-white/20"
-                placeholder={mode === 'create' ? "Ex: 2 escalopes de poulet, crème, champignons..." : "Ex: Tarte tatin, Blanquette de veau..."}
+                className={`w-full p-4 bg-black/40 border border-white/10 rounded-2xl outline-none resize-none min-h-[120px] text-lg text-white transition-all placeholder:text-white/20`}
+                style={{ borderColor: status === 'loading' ? themeColor : '' }}
+                placeholder={mode === 'create' ? (isPatissier ? "Ex: Farine, oeufs, chocolat noir, beurre..." : "Ex: 2 escalopes de poulet, crème, champignons...") : (isPatissier ? "Ex: Tarte tatin, Soufflé au chocolat..." : "Ex: Blanquette de veau...")}
                 value={mode === 'create' ? ingredients : searchQuery}
                 onChange={(e) => mode === 'create' ? setIngredients(e.target.value) : setSearchQuery(e.target.value)}
               />
@@ -187,13 +202,13 @@ const RecipeCreator: React.FC = () => {
           {/* Complexity Signature Switch */}
           {mode === 'create' && (
               <div className="space-y-3">
-                  <label className="block text-xs font-bold text-[#509f2a] uppercase tracking-widest px-1">Signature Culinaire</ts-label>
+                  <label className={`block text-xs font-bold uppercase tracking-widest px-1 transition-colors duration-500`} style={{ color: themeColor }}>Signature Culinaire</label>
                   <div className="grid grid-cols-2 gap-4">
                       <button 
                         onClick={() => setComplexity('authentic')}
-                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${complexity === 'authentic' ? 'border-[#509f2a] bg-[#509f2a]/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
+                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all duration-500 ${complexity === 'authentic' ? themeBorder + ' bg-white/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
                       >
-                          <PremiumMedal size={20} className={complexity === 'authentic' ? 'text-[#509f2a]' : ''} />
+                          <PremiumMedal size={20} style={{ color: complexity === 'authentic' ? themeColor : 'inherit' }} />
                           <div className="text-left">
                               <span className="block font-display text-lg leading-none">Authentique</span>
                               <span className="text-[10px] font-bold uppercase opacity-60">Tradition & Précision</span>
@@ -201,9 +216,9 @@ const RecipeCreator: React.FC = () => {
                       </button>
                       <button 
                         onClick={() => setComplexity('fast')}
-                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${complexity === 'fast' ? 'border-[#509f2a] bg-[#509f2a]/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
+                        className={`p-4 rounded-2xl border flex items-center gap-3 transition-all duration-500 ${complexity === 'fast' ? themeBorder + ' bg-white/5 text-white' : 'border-white/5 bg-white/5 text-white/40'}`}
                       >
-                          <PremiumTimer size={20} className={complexity === 'fast' ? 'text-[#509f2a]' : ''} />
+                          <PremiumTimer size={20} style={{ color: complexity === 'fast' ? themeColor : 'inherit' }} />
                           <div className="text-left">
                               <span className="block font-display text-lg leading-none">Rapide</span>
                               <span className="text-[10px] font-bold uppercase opacity-60">Efficacité & Goût</span>
@@ -237,16 +252,12 @@ const RecipeCreator: React.FC = () => {
                       <select 
                         value={dietary} 
                         onChange={(e) => setDietary(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none focus:border-[#509f2a]/30"
+                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
                       >
                           <option value="Équilibré">Équilibré (Standard)</option>
-                          <option value="Halal">Halal</option>
-                          <option value="Cacher">Cacher</option>
                           <option value="Végétarien">Végétarien</option>
-                          <option value="Vegan">Vegan</option>
                           <option value="Sans Gluten">Sans Gluten</option>
-                          <option value="Keto">Keto</option>
-                          <option value="Régime Méditerranéen">Méditerranéen</option>
+                          <option value="Sans Lactose">Sans Lactose</option>
                       </select>
                   </div>
               </div>
@@ -260,14 +271,11 @@ const RecipeCreator: React.FC = () => {
                       <select 
                         value={cuisineStyle} 
                         onChange={(e) => setCuisineStyle(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none focus:border-[#509f2a]/30"
+                        className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
                       >
-                          <option value="Cuisine Française">Cuisine Française</option>
-                          <option value="Italien">Italien</option>
-                          <option value="Asiatique">Asiatique</option>
-                          <option value="Méditerranéen">Méditerranéen</option>
-                          <option value="Mexicain">Mexicain</option>
+                          <option value="Classique Français">Classique Français</option>
                           <option value="Moderne / Créatif">Moderne & Créatif</option>
+                          <option value="Gastronomique">Gastronomique</option>
                       </select>
                   </div>
 
@@ -278,7 +286,7 @@ const RecipeCreator: React.FC = () => {
                       </div>
                       <button 
                         onClick={() => setIsBatchCooking(!isBatchCooking)}
-                        className={`w-12 h-6 rounded-full transition-all relative ${isBatchCooking ? 'bg-[#509f2a]' : 'bg-white/10'}`}
+                        className={`w-12 h-6 rounded-full transition-all relative ${isBatchCooking ? themeBg : 'bg-white/10'}`}
                       >
                           <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isBatchCooking ? 'left-7 shadow-sm' : 'left-1'}`}></div>
                       </button>
@@ -290,7 +298,7 @@ const RecipeCreator: React.FC = () => {
           <button 
             onClick={handleGenerate}
             disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)}
-            className="w-full py-5 bg-[#509f2a] text-white rounded-[2rem] font-display text-2xl shadow-xl shadow-[#509f2a]/20 hover:bg-green-600 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            className={`w-full py-5 text-white rounded-[2rem] font-display text-2xl shadow-xl transition-all duration-500 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] ${themeBg} ${themeShadow} hover:brightness-110`}
           >
               {status === 'loading' ? (
                   <>
@@ -312,9 +320,9 @@ const RecipeCreator: React.FC = () => {
                 <button 
                     onClick={handleSaveToBook} 
                     disabled={isSaved}
-                    className={`flex-1 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${isSaved ? 'bg-white/10 text-[#509f2a] border border-[#509f2a]/30' : 'bg-[#509f2a] text-white shadow-lg'}`}
+                    className={`flex-1 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${isSaved ? 'bg-white/10 text-white/60 border border-white/10' : themeBg + ' text-white shadow-lg'}`}
                 >
-                    {isSaved ? <PremiumCheck size={20} /> : <GourmetBook size={20} />}
+                    {isSaved ? <PremiumCheck size={20} className={themeText} /> : <GourmetBook size={20} />}
                     {isSaved ? 'Enregistré' : 'Enregistrer au carnet'}
                 </button>
             </div>
@@ -340,7 +348,7 @@ const RecipeCreator: React.FC = () => {
                     {metrics && (
                         <div className="grid grid-cols-4 gap-4 mb-10 pb-8 border-b border-white/5 text-center">
                             <div>
-                                <p className="text-[#509f2a] font-display text-2xl">{metrics.nutriScore}</p>
+                                <p className={`font-display text-2xl transition-colors duration-500`} style={{ color: themeColor }}>{metrics.nutriScore}</p>
                                 <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest">Nutri</p>
                             </div>
                             <div>
@@ -358,14 +366,21 @@ const RecipeCreator: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="markdown-prose prose-invert">
-                        <ReactMarkdown>{recipe}</ReactMarkdown>
+                    <div className={`markdown-prose prose-invert`}>
+                        <ReactMarkdown 
+                          components={{
+                            h1: ({node, ...props}) => <h1 style={{color: themeColor}} {...props} />,
+                            strong: ({node, ...props}) => <strong style={{color: themeColor}} {...props} />,
+                          }}
+                        >
+                          {recipe}
+                        </ReactMarkdown>
                     </div>
 
                     {/* Utensils */}
                     {utensils.length > 0 && (
                         <div className="mt-12 pt-8 border-t border-white/5">
-                            <h4 className="font-display text-xl text-[#509f2a] mb-4 flex items-center gap-2">
+                            <h4 className={`font-display text-xl mb-4 flex items-center gap-2 transition-colors duration-500`} style={{ color: themeColor }}>
                                 <PremiumFlame size={18} /> Matériel nécessaire
                             </h4>
                             <div className="flex flex-wrap gap-2">
