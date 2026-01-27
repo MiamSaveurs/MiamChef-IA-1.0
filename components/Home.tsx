@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, ShoppingCart, Briefcase, Calendar } from 'lucide-react';
+import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, Briefcase, Calendar } from 'lucide-react';
+import { WickerBasket } from './Icons';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -90,8 +91,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   onClick={() => setView(AppView.SHOPPING_LIST)}
                   className="bg-[#1a1a1a] p-3.5 rounded-xl flex items-center gap-3 hover:bg-[#222] transition-colors border border-[#252525]"
               >
-                  <div className="w-9 h-9 rounded-lg bg-[#3b82f6] flex items-center justify-center text-white shrink-0">
-                      <ShoppingCart size={18} />
+                  <div className="w-9 h-9 rounded-lg bg-[#3b82f6] flex items-center justify-center text-white shrink-0 overflow-hidden">
+                      <WickerBasket size={24} />
                   </div>
                   <div className="text-left">
                       <span className="block text-white font-bold text-[10px] uppercase tracking-wide">Ma Liste</span>

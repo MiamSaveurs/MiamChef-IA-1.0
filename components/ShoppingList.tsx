@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { ShoppingCart, Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, Fish } from 'lucide-react';
+import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy } from 'lucide-react';
+import { WickerBasket } from './Icons';
 
 const CATEGORIES = {
   FRESH_PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-600', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau', 'clementine', 'mandarine', 'raisin', 'brocoli'] },
@@ -152,7 +153,9 @@ const ShoppingList: React.FC = () => {
        <header className="mb-8">
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-50 rounded-2xl"><ShoppingCart className="text-blue-500" size={28} /></div>
+                <div className="p-3 bg-amber-50 rounded-2xl">
+                  <WickerBasket size={32} />
+                </div>
                 <div>
                     <h2 className="text-3xl font-display text-chef-dark leading-none">Liste de Courses</h2>
                     <p className="text-gray-500 text-sm font-bold tracking-wide">Rayon par Rayon</p>
@@ -207,7 +210,7 @@ const ShoppingList: React.FC = () => {
         <div className="flex justify-center py-20"><div className="animate-spin text-chef-green"><Store /></div></div>
       ) : items.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-             <Leaf size={48} className="mx-auto text-gray-300 mb-4" />
+             <WickerBasket size={48} className="mx-auto grayscale opacity-20 mb-4" />
              <p className="text-gray-400 font-display text-xl">Votre liste est vide.</p>
           </div>
       ) : (
