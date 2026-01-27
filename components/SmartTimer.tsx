@@ -75,7 +75,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                     <PremiumTimer size={32} />
                 </div>
                 <div>
-                    <h2 className="text-3xl font-display text-chef-dark leading-none">Chrono Chef</h2>
+                    <h2 className="text-3xl font-display text-chef-dark leading-none">Chrono Cuisine</h2>
                     <p className="text-gray-500 text-sm font-bold tracking-wide">Minuteur Tactile</p>
                 </div>
             </header>

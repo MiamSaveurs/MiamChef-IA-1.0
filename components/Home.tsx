@@ -136,7 +136,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                           </div>
                           <div>
                             <h3 className="font-display text-3xl text-white leading-none">Nouvelle Recette</h3>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#509f2a] mt-1">Cuisiner ou Pâtisser</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#509f2a] mt-1">Cuisiner pour ma famille</p>
                           </div>
                       </div>
                       <p className="text-gray-400 text-sm leading-snug">

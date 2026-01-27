@@ -33,7 +33,7 @@ const RecipeCreator: React.FC = () => {
   const [ingredients, setIngredients] = useState('');
   const [dietary, setDietary] = useState('Équilibré');
   const [mealTime, setMealTime] = useState('Dîner');
-  const [cuisineStyle, setCuisineStyle] = useState('Cuisine Française'); 
+  const [cuisineStyle, setCuisineStyle] = useState('Cuisine Familiale'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
@@ -59,7 +59,7 @@ const RecipeCreator: React.FC = () => {
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (status === 'loading') {
-      const steps = ["Mise en place...", "Analyse des saveurs...", "Dressage virtuel...", "Calcul nutritionnel...", "Finalisation..."];
+      const steps = ["Préparation...", "Mélange des saveurs...", "Mise en plat...", "Finalisation..."];
       let i = 0;
       setLoadingStep(steps[0]);
       interval = setInterval(() => {
@@ -134,7 +134,7 @@ const RecipeCreator: React.FC = () => {
               <div>
                 <h2 className="text-3xl font-display text-white leading-none">La Cuisine du Chef</h2>
                 <p className={`text-[10px] font-bold tracking-widest uppercase mt-1 transition-colors duration-500`} style={{ color: themeColor }}>
-                  {isPatissier ? "Pâtisser avec Passion" : "Cuisiner Simple & Pro"}
+                  {isPatissier ? "Pâtisser avec plaisir" : "Bons petits plats maison"}
                 </p>
               </div>
           </div>
@@ -202,7 +202,7 @@ const RecipeCreator: React.FC = () => {
           {/* Complexity Signature Switch */}
           {mode === 'create' && (
               <div className="space-y-3">
-                  <label className={`block text-xs font-bold uppercase tracking-widest px-1 transition-colors duration-500`} style={{ color: themeColor }}>Signature Culinaire</label>
+                  <label className={`block text-xs font-bold uppercase tracking-widest px-1 transition-colors duration-500`} style={{ color: themeColor }}>Signature du Chef</label>
                   <div className="grid grid-cols-2 gap-4">
                       <button 
                         onClick={() => setComplexity('authentic')}
@@ -211,7 +211,7 @@ const RecipeCreator: React.FC = () => {
                           <PremiumMedal size={20} style={{ color: complexity === 'authentic' ? themeColor : 'inherit' }} />
                           <div className="text-left">
                               <span className="block font-display text-lg leading-none">Authentique</span>
-                              <span className="text-[10px] font-bold uppercase opacity-60">Tradition & Précision</span>
+                              <span className="text-[10px] font-bold uppercase opacity-60">Fait-Maison Tradition</span>
                           </div>
                       </button>
                       <button 
@@ -221,7 +221,7 @@ const RecipeCreator: React.FC = () => {
                           <PremiumTimer size={20} style={{ color: complexity === 'fast' ? themeColor : 'inherit' }} />
                           <div className="text-left">
                               <span className="block font-display text-lg leading-none">Rapide</span>
-                              <span className="text-[10px] font-bold uppercase opacity-60">Efficacité & Goût</span>
+                              <span className="text-[10px] font-bold uppercase opacity-60">Prêt en un clin d'œil</span>
                           </div>
                       </button>
                   </div>
@@ -274,8 +274,8 @@ const RecipeCreator: React.FC = () => {
                         className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-sm outline-none appearance-none"
                       >
                           <option value="Classique Français">Classique Français</option>
+                          <option value="Cuisine Familiale">Cuisine Familiale</option>
                           <option value="Moderne / Créatif">Moderne & Créatif</option>
-                          <option value="Gastronomique">Gastronomique</option>
                       </select>
                   </div>
 
