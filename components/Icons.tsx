@@ -54,11 +54,11 @@ export const PremiumCamera = ({ size = 24, className = "" }: { size?: number, cl
 
 export const PremiumWine = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M35 20C35 20 35 55 50 55C65 55 65 20 65 20" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+    <path d="M35 20C35 20 35 55 50 55C65 55 65 20 65 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
     <path d="M37 35C37 35 37 53 50 53C63 53 63 35 63 35H37Z" fill="url(#wineGradient)" />
-    <path d="M50 55V85" stroke="white" strokeWidth="2" opacity="0.4" />
-    <path d="M35 85H65" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-    <path d="M42 38L58 38" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.2" />
+    <path d="M50 55V85" stroke="currentColor" strokeWidth="2" opacity="0.4" />
+    <path d="M35 85H65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+    <path d="M42 38L58 38" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.2" />
     <defs>
       <linearGradient id="wineGradient" x1="50" y1="35" x2="50" y2="53" gradientUnits="userSpaceOnUse">
         <stop offset="0" stopColor="#991b1b" />
@@ -134,5 +134,42 @@ export const PremiumCrown = ({ size = 24, className = "" }: { size?: number, cla
     <circle cx="70" cy="40" r="4" fill="#facc15" />
     <rect x="20" y="70" width="60" height="8" rx="2" fill="#ca8a04" />
     <circle cx="50" cy="74" r="2" fill="#ef4444" />
+  </svg>
+);
+
+export const PremiumGlobe = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <circle cx="50" cy="50" r="40" fill="#3b82f6" />
+    <path d="M50 10V90" stroke="white" strokeWidth="2" opacity="0.3" />
+    <path d="M10 50H90" stroke="white" strokeWidth="2" opacity="0.3" />
+    <ellipse cx="50" cy="50" rx="15" ry="40" stroke="white" strokeWidth="2" opacity="0.3" />
+    <path d="M15 30C30 35 70 35 85 30" stroke="white" strokeWidth="2" opacity="0.3" />
+    <path d="M15 70C30 65 70 65 85 70" stroke="white" strokeWidth="2" opacity="0.3" />
+    <path d="M50 10C65 10 75 30 75 50C75 70 65 90 50 90" stroke="white" strokeWidth="4" strokeLinecap="round" opacity="0.6" />
+  </svg>
+);
+
+export const PremiumLayers = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M20 40L50 25L80 40L50 55L20 40Z" fill="#509f2a" />
+    <path d="M20 55L50 70L80 55" stroke="#509f2a" strokeWidth="6" strokeLinecap="round" strokeJoin="round" opacity="0.6" />
+    <path d="M20 70L50 85L80 70" stroke="#509f2a" strokeWidth="6" strokeLinecap="round" strokeJoin="round" opacity="0.3" />
+  </svg>
+);
+
+export const PremiumBriefcase = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="15" y="30" width="70" height="50" rx="4" fill="#795548" />
+    <path d="M40 30V20C40 17.2386 42.2386 15 45 15H55C57.7614 15 60 17.2386 60 20V30" stroke="#5D4037" strokeWidth="6" strokeLinecap="round" />
+    <rect x="42" y="50" width="16" height="10" rx="2" fill="#D4AF37" />
+    <line x1="15" y1="45" x2="85" y2="45" stroke="#5D4037" strokeWidth="2" />
+  </svg>
+);
+
+export const PremiumShield = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M50 15L85 25V55C85 75 50 85 50 85C50 85 15 75 15 55V25L50 15Z" fill="#607D8B" />
+    <path d="M35 50L45 60L65 40" stroke="white" strokeWidth="8" strokeLinecap="round" strokeJoin="round" />
+    <path d="M50 18L82 27V55C82 72 50 82 50 82V18Z" fill="white" opacity="0.1" />
   </svg>
 );

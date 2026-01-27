@@ -1,6 +1,18 @@
 
 import React from 'react';
-import { X, Fingerprint, HeartPulse, Euro, ArrowRight, ChefHat, ShieldCheck, Star, Briefcase, Globe2, Layers, Clock, Wine, ShoppingCart } from 'lucide-react';
+import { X, ArrowRight, Star, Clock } from 'lucide-react';
+import { 
+  PremiumChefHat, 
+  PremiumFingerprint, 
+  PremiumGlobe, 
+  PremiumWine, 
+  PremiumLayers, 
+  PremiumEuro, 
+  WickerBasket, 
+  PremiumHeart, 
+  PremiumBriefcase, 
+  PremiumShield 
+} from './Icons';
 
 interface ValuePropositionProps {
   onClose: () => void;
@@ -13,7 +25,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
       {/* Header with Close */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md z-10 px-6 py-4 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <ChefHat className="text-chef-green" size={24} />
+            <PremiumChefHat size={24} />
             <span className="font-display text-xl text-chef-dark">Pourquoi MiamChef IA ?</span>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -42,8 +54,8 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-green-100 rounded-full -translate-y-1/2 translate-x-1/3 opacity-50"></div>
             
             <div className="relative z-10">
-                <div className="w-14 h-14 bg-white text-chef-green rounded-2xl flex items-center justify-center shadow-md mb-6">
-                    <Fingerprint size={32} />
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md mb-6 border border-green-50">
+                    <PremiumFingerprint size={36} />
                 </div>
                 <h2 className="text-3xl font-display text-chef-dark mb-4">L'Exclusivité Culinaire</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -57,7 +69,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                     {/* ARGUMENT UNIVERSEL / CULTUREL */}
                     <div className="mt-6 bg-white border border-green-200 rounded-xl p-4 shadow-sm">
                         <div className="flex items-center gap-2 mb-2 text-chef-green font-bold uppercase text-xs tracking-wider">
-                            <Globe2 size={16} /> Passeport Universel
+                            <PremiumGlobe size={18} /> Passeport Universel
                         </div>
                         <p className="text-sm text-gray-700">
                             <strong>Une IA sans frontières.</strong> MiamChef IA maîtrise les codes de toutes les cultures. Envie d'un twist Japonais, Libanais ou Créole ? L'application adapte n'importe quel ingrédient à la culture de votre choix avec une authenticité bluffante.
@@ -67,7 +79,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                     {/* ARGUMENT SOMMELIER B2B */}
                     <div className="mt-2 bg-white border border-green-200 rounded-xl p-4 shadow-sm">
                          <div className="flex items-center gap-2 mb-2 text-red-600 font-bold uppercase text-xs tracking-wider">
-                            <Wine size={16} /> Solutions Business
+                            <PremiumWine size={18} className="text-red-600" /> Solutions Business
                         </div>
                         <p className="text-sm text-gray-700">
                             <strong>Sommeliers, Restaurateurs, Cavistes :</strong> Créez des cartes de vins parfaites et conseillez vos clients avec une expertise IA mondiale instantanée.
@@ -77,7 +89,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                     {/* ARGUMENT BATCH COOKING */}
                     <div className="mt-2 bg-white border border-green-200 rounded-xl p-4 shadow-sm">
                         <div className="flex items-center gap-2 mb-2 text-chef-green font-bold uppercase text-xs tracking-wider">
-                            <Layers size={16} /> Batch Cooking Intelligent
+                            <PremiumLayers size={18} /> Batch Cooking Intelligent
                         </div>
                         <p className="text-sm text-gray-700">
                              Cuisinez une fois, mangez toute la semaine. L'IA organise vos préparations pour vous libérer du temps.
@@ -100,8 +112,8 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full -translate-y-1/2 translate-x-1/3 opacity-50"></div>
             
             <div className="relative z-10">
-                <div className="w-14 h-14 bg-white text-blue-500 rounded-2xl flex items-center justify-center shadow-md mb-6">
-                    <Euro size={32} />
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md mb-6 border border-blue-50">
+                    <PremiumEuro size={36} />
                 </div>
                 <h2 className="text-3xl font-display text-chef-dark mb-4">Le Pouvoir d'Achat</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -122,7 +134,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                     {/* GAIN DE TEMPS DRIVE */}
                     <div className="mt-4 flex gap-4 bg-white p-4 rounded-xl border border-blue-100 shadow-sm items-start">
                         <div className="bg-blue-100 p-2 rounded-lg text-blue-600 mt-1">
-                            <ShoppingCart size={20} />
+                            <WickerBasket size={24} />
                         </div>
                         <div>
                             <p className="font-bold text-chef-dark text-sm">Finie la corvée des courses</p>
@@ -140,8 +152,8 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
              <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-full -translate-y-1/2 translate-x-1/3 opacity-50"></div>
             
             <div className="relative z-10">
-                <div className="w-14 h-14 bg-white text-red-500 rounded-2xl flex items-center justify-center shadow-md mb-6">
-                    <HeartPulse size={32} />
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md mb-6 border border-red-50">
+                    <PremiumHeart size={36} />
                 </div>
                 <h2 className="text-3xl font-display text-chef-dark mb-4">Votre Santé, Votre Capital</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -156,7 +168,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                     <div className="mt-6 bg-red-600 text-white p-5 rounded-2xl shadow-lg relative overflow-hidden">
                         <div className="absolute -right-4 -top-4 bg-yellow-400 w-16 h-16 rounded-full opacity-20"></div>
                         <div className="flex items-center gap-2 mb-2">
-                             <Briefcase size={20} className="text-yellow-300" />
+                             <PremiumBriefcase size={22} />
                              <span className="font-bold uppercase text-xs tracking-wider text-yellow-300">L'outil Secret des Pros</span>
                         </div>
                         <p className="font-display text-lg mb-2">Coachs, Naturopathes, Diététiciens ?</p>
@@ -165,8 +177,8 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2 mt-4 text-red-600 bg-red-50 px-4 py-2 rounded-full w-fit">
-                        <ShieldCheck size={18} />
+                    <div className="flex items-center gap-2 mt-4 text-red-600 bg-red-50 px-4 py-2 rounded-full w-fit border border-red-100">
+                        <PremiumShield size={20} />
                         <span className="text-xs font-bold uppercase">Données Scientifiques Certifiées</span>
                     </div>
                 </div>
