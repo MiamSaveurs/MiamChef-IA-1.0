@@ -455,7 +455,7 @@ const RecipeCreator: React.FC = () => {
                 mode === 'create' ? `bg-white text-emerald-900 shadow-sm border border-green-100` : 'text-emerald-700/40 hover:text-emerald-700/60'
             }`}
             >
-            <PremiumSparkles size={14} /> Créer
+            <PremiumChefHat size={14} /> Créer
             </button>
             <button
             onClick={() => { setMode('search'); setRecipe(''); setMetrics(null); setUtensils([]); setGeneratedImage(null); }}
@@ -667,7 +667,7 @@ const RecipeCreator: React.FC = () => {
                         </div>
                     )}
                     <button onClick={handleGenerate} disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)} className={`w-full mt-8 py-5 rounded-2xl shadow-xl transition-all flex justify-center items-center gap-3 font-display text-2xl disabled:opacity-50 active:scale-95 ${chefMode === 'patisserie' ? 'bg-pink-500 text-white shadow-pink-100 hover:bg-pink-600' : 'bg-chef-green text-white shadow-green-100 hover:bg-green-600'}`}>
-                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <PremiumSparkles size={24}/> : <PremiumSearch size={24}/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Lancer la recherche'}</>)}
+                        {status === 'loading' ? (<><Loader2 className="animate-spin" /> {loadingStep || 'Réflexion...'}</>) : (<>{mode === 'create' ? <PremiumChefHat size={24}/> : <PremiumSearch size={24}/>} {mode === 'create' ? (chefMode === 'patisserie' ? 'Créer le Dessert' : 'Créer le Plat') : 'Lancer la recherche'}</>)}
                     </button>
                 </div>
             </div>
