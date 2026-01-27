@@ -134,7 +134,7 @@ const RecipeCreator: React.FC = () => {
               <div>
                 <h2 className="text-3xl font-display text-white leading-none">La Cuisine du Chef</h2>
                 <p className={`text-[10px] font-bold tracking-widest uppercase mt-1 transition-colors duration-500`} style={{ color: themeColor }}>
-                  {isPatissier ? 'Magie de la Pâtisserie' : 'Excellence Culinaire'}
+                  {isPatissier ? "Pâtisser avec Passion" : "Cuisiner Simple & Pro"}
                 </p>
               </div>
           </div>

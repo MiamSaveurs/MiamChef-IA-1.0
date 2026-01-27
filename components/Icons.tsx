@@ -1,8 +1,8 @@
 
 import React from 'react';
 
-// Icons updated to accept style prop and use currentColor for primary accents.
-// Redesigned PremiumChefHat to be a majestic "Toque de Chef".
+// Icons updated to match the minimalist premium line-art style.
+// Redesigned PremiumChefHat to be a structured, tall professional toque.
 
 export const WickerBasket = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
@@ -27,17 +27,13 @@ export const GourmetBook = ({ size = 24, className = "", style = {} }: { size?: 
 
 export const PremiumChefHat = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    {/* Base of the toque */}
-    <rect x="28" y="65" width="44" height="15" rx="2" fill="white" stroke="#E0E0E0" strokeWidth="1" />
-    {/* Tall voluminous top */}
-    <path d="M25 55C25 35 35 20 50 20C65 20 75 35 75 55V65H25V55Z" fill="white" />
-    <path d="M25 55C25 35 35 20 50 20C65 20 75 35 75 55" stroke="#E0E0E0" strokeWidth="1" />
-    {/* Pleats/Lines accents */}
-    <path d="M38 25V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.15" />
-    <path d="M50 22V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.3" />
-    <path d="M62 25V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.15" />
-    {/* Decorative band */}
-    <path d="M28 72H72" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+    {/* High structured top with minimalist lines */}
+    <path d="M30 65V45C30 35 35 25 50 25C65 25 70 35 70 45V65" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeJoin="round"/>
+    <path d="M40 28V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
+    <path d="M50 25V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
+    <path d="M60 28V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
+    {/* Professional Band */}
+    <rect x="25" y="65" width="50" height="12" rx="2" fill="white" stroke="currentColor" strokeWidth="4"/>
   </svg>
 );
 
