@@ -3,21 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, modifyChefRecipe, generateStepVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
 import { LoadingState, GroundingChunk, RecipeMetrics } from '../types';
-import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, ExternalLink, Download, Clock, Info, Euro, Activity, Droplet, Wheat, Dumbbell, Book, Check, Image as ImageIcon, Wand2, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Baby, Vegan, Soup, Hammer, Scissors, Video, Square, CheckSquare, BarChart, ShoppingCart, ShoppingBag, Plus, Globe2, Layers, ShieldAlert, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, IceCream, Medal, PiggyBank, MessageCircle } from 'lucide-react';
+import { ChefHat, Utensils, Users, Leaf, Loader2, Sparkles, Search, Download, Clock, Euro, Play, X, ChevronRight, ChevronLeft, Volume2, Flame, Wheat, Video, Check, Image as ImageIcon, Wand2, Plus, Globe2, Layers, ChevronDown, MapPin, Store, Mic, MicOff, Cake, Croissant, Medal, ShoppingCart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-
-const AMAZON_TAG = 'miamsaveurs-21';
-
-const supermarketBrands = [
-  { name: 'E.Leclerc Drive', color: 'bg-blue-600' },
-  { name: 'Carrefour Drive', color: 'bg-blue-500' },
-  { name: 'Intermarché Drive', color: 'bg-red-600' },
-  { name: 'Auchan Drive', color: 'bg-red-500' },
-  { name: 'Courses U', color: 'bg-blue-400' },
-  { name: 'Chronodrive', color: 'bg-green-600' },
-  { name: 'Casino Drive', color: 'bg-green-700' },
-  { name: 'Lidl', color: 'bg-yellow-500' }
-];
+import { GourmetBook } from './Icons';
 
 const MacroDonut = ({ value, label, color, total }: { value: number, label: string, color: string, total: number }) => {
   const percentage = total > 0 ? (value / total) * 100 : 0;
@@ -77,8 +65,6 @@ const RecipeCreator: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [listeningTarget, setListeningTarget] = useState<'ingredients' | 'search' | null>(null);
 
-  const primaryColor = chefMode === 'patisserie' ? 'text-pink-400' : 'text-chef-green';
-  
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (status === 'loading') {
@@ -377,11 +363,22 @@ const RecipeCreator: React.FC = () => {
                   });
               } else { setSearchQuery(transcript); }
           };
-          recognition.onerror = (event: any) => { setIsListening(false); setListeningTarget(null); };
+          recognition.onerror = () => { setIsListening(false); setListeningTarget(null); };
           recognition.onend = () => { setIsListening(false); setListeningTarget(null); };
           recognition.start();
       } catch (e) { alert("Impossible de démarrer le micro."); }
   };
+
+  const supermarketBrands = [
+    { name: 'E.Leclerc Drive', color: 'bg-blue-600' },
+    { name: 'Carrefour Drive', color: 'bg-blue-500' },
+    { name: 'Intermarché Drive', color: 'bg-red-600' },
+    { name: 'Auchan Drive', color: 'bg-red-500' },
+    { name: 'Courses U', color: 'bg-blue-400' },
+    { name: 'Chronodrive', color: 'bg-green-600' },
+    { name: 'Casino Drive', color: 'bg-green-700' },
+    { name: 'Lidl', color: 'bg-yellow-500' }
+  ];
 
   return (
     <div className="pb-32 px-4 pt-6 max-w-5xl mx-auto min-h-screen font-body text-white">
@@ -693,7 +690,7 @@ const RecipeCreator: React.FC = () => {
                         <Play size={16} fill="currentColor" /> <span className="hidden sm:inline">Cuisiner</span>
                      </button>
                      <button onClick={handleSaveToBook} disabled={isSaved} className={`px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-sm border transition-colors ${isSaved ? 'bg-green-900/20 text-green-400 border-green-500/30' : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'}`}>
-                        {isSaved ? <Check size={18} /> : <Book size={18} />} {isSaved ? 'Enregistré' : 'Sauvegarder'}
+                        {isSaved ? <Check size={18} /> : <GourmetBook size={18} />} {isSaved ? 'Enregistré' : 'Sauvegarder'}
                      </button>
                      <button onClick={handleDownloadPDF} className="p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
                         <Download size={20} />

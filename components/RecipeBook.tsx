@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Book, Trash2, ChevronLeft, Calendar, ChefHat, Euro, Activity, Sparkles, Clock, Soup, Hammer, BarChart } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { GourmetBook } from './Icons';
 
 const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
@@ -115,7 +117,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="pb-32 px-4 pt-6 max-w-6xl mx-auto min-h-screen">
       <header className="mb-8 flex items-center gap-3">
         <div className="p-3 bg-yellow-50 rounded-2xl">
-          <Book className="text-yellow-600" size={28} />
+          <GourmetBook size={32} />
         </div>
         <div>
            <h2 className="text-3xl font-display text-chef-dark leading-none">Mon Carnet</h2>

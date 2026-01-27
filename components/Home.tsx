@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { ChefHat, Camera, Wine, ArrowRight, Book, Crown, Fingerprint, Euro, HeartPulse, Briefcase, Calendar } from 'lucide-react';
-import { WickerBasket } from './Icons';
+import { ChefHat, Camera, Wine, ArrowRight, Crown, Fingerprint, Euro, HeartPulse, Briefcase, Calendar } from 'lucide-react';
+import { WickerBasket, GourmetBook } from './Icons';
 
 interface HomeProps {
   setView: (view: AppView) => void;
@@ -79,7 +79,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   className="bg-[#1a1a1a] p-3.5 rounded-xl flex items-center gap-3 hover:bg-[#222] transition-colors border border-[#252525]"
               >
                   <div className="w-9 h-9 rounded-lg bg-[#f0b12b] flex items-center justify-center text-white shrink-0">
-                      <Book size={18} />
+                      <GourmetBook size={24} />
                   </div>
                   <div className="text-left">
                       <span className="block text-white font-bold text-[10px] uppercase tracking-wide">Mon Carnet</span>
