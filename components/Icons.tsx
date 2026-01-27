@@ -1,8 +1,8 @@
 
 import React from 'react';
 
-// Added style?: React.CSSProperties to prop types for all icons to fix type errors when passing style prop.
-// Also updated some icons to use currentColor to respect the passed style.color.
+// Icons updated to accept style prop and use currentColor for primary accents.
+// Redesigned PremiumChefHat to be a majestic "Toque de Chef".
 
 export const WickerBasket = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
@@ -27,11 +27,17 @@ export const GourmetBook = ({ size = 24, className = "", style = {} }: { size?: 
 
 export const PremiumChefHat = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M25 55C25 40 35 30 50 30C65 30 75 40 75 55V65H25V55Z" fill="white" />
-    <path d="M25 55C25 40 35 30 50 30C65 30 75 40 75 55" stroke="#E0E0E0" strokeWidth="1" />
-    <rect x="25" y="65" width="50" height="15" rx="2" fill="#F5F5F5" />
-    <rect x="25" y="65" width="50" height="15" rx="2" stroke="#E0E0E0" strokeWidth="1" />
-    <path d="M35 72H65" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+    {/* Base of the toque */}
+    <rect x="28" y="65" width="44" height="15" rx="2" fill="white" stroke="#E0E0E0" strokeWidth="1" />
+    {/* Tall voluminous top */}
+    <path d="M25 55C25 35 35 20 50 20C65 20 75 35 75 55V65H25V55Z" fill="white" />
+    <path d="M25 55C25 35 35 20 50 20C65 20 75 35 75 55" stroke="#E0E0E0" strokeWidth="1" />
+    {/* Pleats/Lines accents */}
+    <path d="M38 25V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.15" />
+    <path d="M50 22V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.3" />
+    <path d="M62 25V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.15" />
+    {/* Decorative band */}
+    <path d="M28 72H72" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
   </svg>
 );
 
