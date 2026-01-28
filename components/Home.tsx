@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppView } from '../types';
 import { ArrowRight } from 'lucide-react';
@@ -98,7 +97,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#509f2a]/10 to-transparent pointer-events-none" />
 
       {/* HEADER */}
-      <header className="px-6 pt-5 pb-2 flex items-center justify-between relative z-20">
+      <header className="px-6 pt-10 pb-2 flex items-center justify-between relative z-20">
           <div>
               <h1 className="text-3xl font-display text-white leading-none mb-2">MiamChef</h1>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">

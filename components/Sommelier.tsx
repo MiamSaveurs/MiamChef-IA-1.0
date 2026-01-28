@@ -43,7 +43,7 @@ const Sommelier: React.FC = () => {
          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a0505]/80 to-black fixed"></div>
       </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto px-6 pt-4">
+      <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
         
         {/* Header */}
         <div className="text-center mb-10">
@@ -54,7 +54,7 @@ const Sommelier: React.FC = () => {
                 Sommelier
             </h1>
             <p className="text-rose-200/60 text-sm font-light tracking-widest uppercase">
-                L'Art de l'Accord Parfait
+                Vins & Accords Sans Alcool
             </p>
         </div>
 
@@ -85,7 +85,7 @@ const Sommelier: React.FC = () => {
                     disabled={status === 'loading' || !query}
                     className="w-full py-4 rounded-xl bg-gradient-to-r from-rose-700 to-[#4a0404] text-white font-bold text-sm tracking-widest uppercase shadow-lg shadow-rose-900/40 hover:shadow-rose-700/60 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none"
                  >
-                    {status === 'loading' ? <Loader2 className="animate-spin" /> : <>Trouver le Vin Idéal <ChevronRight size={16}/></>}
+                    {status === 'loading' ? <Loader2 className="animate-spin" /> : <>Trouver l'Accord Parfait <ChevronRight size={16}/></>}
                  </button>
             </div>
         </div>

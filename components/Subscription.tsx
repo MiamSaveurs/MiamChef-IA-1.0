@@ -50,7 +50,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
           </button>
       )}
 
-      <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-20 pb-12 px-4">
+      <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-12 px-4">
           
           <div className="w-full max-w-lg bg-[#1a1c1a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-fade-in">
               

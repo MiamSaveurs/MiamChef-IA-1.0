@@ -39,6 +39,7 @@ export interface GeneratedContent {
   metrics?: RecipeMetrics;
   utensils?: string[];
   ingredients?: string[]; // Liste brute des produits (Ex: "Carottes", "Riz") SANS quantité
+  storageAdvice?: string; // NOUVEAU : Conseil de conservation
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -52,6 +53,7 @@ export interface SavedRecipe {
   image?: string; // Base64 image data
   utensils?: string[];
   ingredients?: string[]; // Liste brute des produits
+  storageAdvice?: string; // NOUVEAU
   seoTitle?: string;
   seoDescription?: string;
 }

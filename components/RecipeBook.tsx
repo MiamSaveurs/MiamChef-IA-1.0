@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
 
@@ -67,7 +67,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a0f05]/80 to-black fixed"></div>
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-4">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
             
             {/* Header / Navigation */}
             <div className="mb-8">
@@ -133,6 +133,19 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         </div>
 
                         <div className="p-8 relative">
+                             {/* Storage Advice (NEW) */}
+                             {selectedRecipe.storageAdvice && (
+                                <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 flex items-start gap-3">
+                                    <div className="bg-blue-500/20 p-2 rounded-full text-blue-300">
+                                        <Snowflake size={18} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Conservation</h3>
+                                        <p className="text-sm text-blue-100/90 leading-relaxed">{selectedRecipe.storageAdvice}</p>
+                                    </div>
+                                </div>
+                             )}
+
                              {/* Ustensiles (UPDATED DESIGN) */}
                              {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
                                 <div className="mb-8 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm relative overflow-hidden">

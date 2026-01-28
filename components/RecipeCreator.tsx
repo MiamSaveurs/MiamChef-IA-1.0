@@ -27,7 +27,8 @@ import {
   Square,
   CheckSquare,
   ArrowRight,
-  XCircle
+  XCircle,
+  Snowflake
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -50,6 +51,7 @@ interface RecipeCreatorProps {
         utensils: string[];
         ingredients: string[];
         image: string | null;
+        storageAdvice?: string;
     } | null;
     setPersistentState: (data: any) => void;
 }
@@ -88,6 +90,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const ingredientsList = persistentState?.ingredients || [];
   const utensilsList = persistentState?.utensils || [];
   const generatedImage = persistentState?.image || null;
+  const storageAdvice = persistentState?.storageAdvice || '';
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -144,6 +147,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           metrics: result.metrics || null,
           utensils: result.utensils || [],
           ingredients: result.ingredients || [],
+          storageAdvice: result.storageAdvice || '',
           image: img
       });
 
@@ -172,7 +176,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       metrics: metrics || undefined,
       image: generatedImage || undefined,
       utensils: persistentState?.utensils,
-      ingredients: ingredientsList 
+      ingredients: ingredientsList,
+      storageAdvice: storageAdvice
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
@@ -244,7 +249,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#0a150a]/80 to-black fixed"></div>
             </div>
 
-            <div className="relative z-10 max-w-2xl mx-auto px-6 pt-4">
+            <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
                 <div className="animate-fade-in flex flex-col items-center">
                     
                     {/* Header */}
@@ -574,7 +579,20 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                         {/* RIGHT COLUMN: INSTRUCTIONS */}
                         <div className="order-1 md:order-2">
                             
-                            {/* USTENSILES BLOCK (NEW) */}
+                            {/* STORAGE ADVICE BLOCK (NEW) */}
+                            {storageAdvice && (
+                                <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 flex items-start gap-3">
+                                    <div className="bg-blue-500/20 p-2 rounded-full text-blue-300">
+                                        <Snowflake size={18} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Conservation</h3>
+                                        <p className="text-sm text-blue-100/90 leading-relaxed">{storageAdvice}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* USTENSILES BLOCK */}
                             {utensilsList && utensilsList.length > 0 && (
                                 <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
                                     <h3 className="font-display text-lg text-white mb-3 flex items-center gap-2" style={{ color: themeColor }}>

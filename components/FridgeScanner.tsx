@@ -95,7 +95,7 @@ const FridgeScanner: React.FC = () => {
          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#051020]/80 to-black fixed"></div>
       </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto px-6 pt-4">
+      <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
         
         {/* Header */}
         <div className="text-center mb-10">

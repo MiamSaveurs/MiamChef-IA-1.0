@@ -41,11 +41,6 @@ const App: React.FC = () => {
   // CORRECTION AUDIO : On garde le contexte en référence pour le réutiliser
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  // SCROLL TO TOP ON VIEW CHANGE
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentView]);
-
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);

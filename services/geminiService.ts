@@ -89,10 +89,14 @@ const recipeSchema = {
         items: { type: Type.STRING },
         description: "LISTE PANIER : Liste STRICTE des NOMS d'ingrédients SEULS. INTERDICTION FORMELLE de mettre des quantités ou des unités. Exemple CORRECT : ['Carottes', 'Oignons', 'Riz']. Exemple INCORRECT : ['300g de Carottes', '2 Oignons']." 
     },
+    storageAdvice: { 
+        type: Type.STRING, 
+        description: "Conseil de conservation précis (Durée + Mode + Contenant). Ex: '3 jours au réfrigérateur dans une boîte hermétique' ou 'Se congèle très bien avant cuisson'." 
+    },
     seoTitle: { type: Type.STRING },
     seoDescription: { type: Type.STRING },
   },
-  required: ['markdownContent', 'metrics', 'ingredients'],
+  required: ['markdownContent', 'metrics', 'ingredients', 'storageAdvice'],
 };
 
 // Schema for weekly plan generation
@@ -348,6 +352,7 @@ export const generateChefRecipe = async (
         },
         "utensils": ["Liste", "Des", "Ustensiles"],
         "ingredients": ["Carottes", "Oignons", "Boeuf"] (ATTENTION: Noms des produits SEULEMENT pour la liste de courses. PAS de quantité ici.),
+        "storageAdvice": "Conseil précis (Durée + Mode) pour la conservation.",
         "seoTitle": "Titre court et accrocheur pour le référencement",
         "seoDescription": "Description courte (meta description) qui donne faim."
       }
@@ -371,6 +376,7 @@ export const generateChefRecipe = async (
       metrics: data.metrics,
       utensils: data.utensils,
       ingredients: data.ingredients,
+      storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
       seoDescription: sanitizeText(data.seoDescription) 
     };
@@ -407,7 +413,8 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     text: sanitizeText(data.markdownContent) || "Erreur de recherche.",
     metrics: data.metrics,
     utensils: data.utensils,
-    ingredients: data.ingredients, // Liste nettoyée (noms seuls)
+    ingredients: data.ingredients, 
+    storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription)
   };
@@ -528,8 +535,15 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
 // Gets sommelier advice with search grounding
 export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): Promise<{ text: string, groundingChunks?: GroundingChunk[] }> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  const prompt = `Vous êtes un Sommelier Expert. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
-  Demande : "${query}". Utilisez vos connaissances et Google Search pour des recommandations à jour.
+  const prompt = `Vous êtes un Sommelier Expert Moderne. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
+  
+  MISSION : Proposez des accords mets-boissons d'excellence pour la demande : "${query}".
+
+  VOTRE RÉPONSE DOIT CONTENIR DEUX SECTIONS DISTINCTES :
+  1. 🍷 ACCORDS VINS (TRADITION) : Recommandez des appellations précises, millésimes ou cépages.
+  2. 🍃 ACCORDS SANS ALCOOL (SOBRIÉTÉ HEUREUSE) : Proposez des alternatives sophistiquées (Thés grands crus, Jus de dégustation, Kombuchas, Eaux aromatisées, Mocktails complexes). Traitez le sans-alcool avec le même vocabulaire et la même exigence que le vin.
+  
+  Utilisez Google Search pour vérifier les disponibilités ou tendances actuelles si nécessaire.
   
   ${GDPR_COMPLIANCE_PROTOCOL}`;
 
