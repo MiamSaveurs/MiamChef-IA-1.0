@@ -67,7 +67,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a0f05]/80 to-black fixed"></div>
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-4">
             
             {/* Header / Navigation */}
             <div className="mb-8">

@@ -244,7 +244,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#0a150a]/80 to-black fixed"></div>
             </div>
 
-            <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
+            <div className="relative z-10 max-w-2xl mx-auto px-6 pt-4">
                 <div className="animate-fade-in flex flex-col items-center">
                     
                     {/* Header */}
