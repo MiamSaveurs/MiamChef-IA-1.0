@@ -38,8 +38,9 @@ export interface GeneratedContent {
   image?: string;
   metrics?: RecipeMetrics;
   utensils?: string[];
-  ingredients?: string[]; // Liste brute des produits (Ex: "Carottes", "Riz") SANS quantité
-  storageAdvice?: string; // NOUVEAU : Conseil de conservation
+  ingredients?: string[]; // Liste brute des produits (Ex: "Carottes", "Riz") SANS quantité (POUR SHOPPING)
+  ingredientsWithQuantities?: string[]; // NOUVEAU : Liste complète avec quantités (Ex: "300g de Carottes") (POUR CUISINE)
+  storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -53,7 +54,8 @@ export interface SavedRecipe {
   image?: string; // Base64 image data
   utensils?: string[];
   ingredients?: string[]; // Liste brute des produits
-  storageAdvice?: string; // NOUVEAU
+  ingredientsWithQuantities?: string[]; // NOUVEAU
+  storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
 }

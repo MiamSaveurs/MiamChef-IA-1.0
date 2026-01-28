@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
 
@@ -146,7 +146,24 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                              )}
 
-                             {/* Ustensiles (UPDATED DESIGN) */}
+                             {/* INGREDIENTS WITH QUANTITIES BLOCK (NEW FOR SAVED RECIPES) */}
+                             {selectedRecipe.ingredientsWithQuantities && selectedRecipe.ingredientsWithQuantities.length > 0 && (
+                                <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
+                                     <h3 className="font-display text-lg text-amber-500 mb-4 flex items-center gap-2">
+                                        <Leaf size={18} /> Ingrédients & Dosages
+                                    </h3>
+                                    <ul className="space-y-2">
+                                        {selectedRecipe.ingredientsWithQuantities.map((ing, idx) => (
+                                            <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
+                                                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span>
+                                                <span>{ing}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                             {/* Ustensiles */}
                              {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
                                 <div className="mb-8 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm relative overflow-hidden">
                                     <h3 className="font-display text-lg text-amber-500 mb-3 flex items-center gap-2">

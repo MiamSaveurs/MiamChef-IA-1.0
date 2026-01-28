@@ -89,6 +89,11 @@ const recipeSchema = {
         items: { type: Type.STRING },
         description: "LISTE PANIER : Liste STRICTE des NOMS d'ingrédients SEULS. INTERDICTION FORMELLE de mettre des quantités ou des unités. Exemple CORRECT : ['Carottes', 'Oignons', 'Riz']. Exemple INCORRECT : ['300g de Carottes', '2 Oignons']." 
     },
+    ingredientsWithQuantities: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING },
+        description: "LISTE CUISINE : Liste détaillée des ingrédients AVEC les quantités précises et les unités. Exemple : ['300g de Carottes', '2 Oignons rouges', '150ml de lait de coco']."
+    },
     storageAdvice: { 
         type: Type.STRING, 
         description: "Conseil de conservation précis (Durée + Mode + Contenant). Ex: '3 jours au réfrigérateur dans une boîte hermétique' ou 'Se congèle très bien avant cuisson'." 
@@ -96,7 +101,7 @@ const recipeSchema = {
     seoTitle: { type: Type.STRING },
     seoDescription: { type: Type.STRING },
   },
-  required: ['markdownContent', 'metrics', 'ingredients', 'storageAdvice'],
+  required: ['markdownContent', 'metrics', 'ingredients', 'ingredientsWithQuantities', 'storageAdvice'],
 };
 
 // Schema for weekly plan generation
@@ -352,6 +357,7 @@ export const generateChefRecipe = async (
         },
         "utensils": ["Liste", "Des", "Ustensiles"],
         "ingredients": ["Carottes", "Oignons", "Boeuf"] (ATTENTION: Noms des produits SEULEMENT pour la liste de courses. PAS de quantité ici.),
+        "ingredientsWithQuantities": ["300g de Carottes", "2 Oignons", "500g de Boeuf"] (ATTENTION: Liste complète AVEC quantités pour la cuisine),
         "storageAdvice": "Conseil précis (Durée + Mode) pour la conservation.",
         "seoTitle": "Titre court et accrocheur pour le référencement",
         "seoDescription": "Description courte (meta description) qui donne faim."
@@ -376,6 +382,7 @@ export const generateChefRecipe = async (
       metrics: data.metrics,
       utensils: data.utensils,
       ingredients: data.ingredients,
+      ingredientsWithQuantities: data.ingredientsWithQuantities, // NOUVEAU
       storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
       seoDescription: sanitizeText(data.seoDescription) 
@@ -394,9 +401,9 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT POUR LA LISTE D'INGRÉDIENTS (CHAMP 'ingredients') :
-  - Fournissez UNIQUEMENT les noms des produits pour une recherche Drive.
-  - PAS de quantités, PAS de poids. (Ex: "Tomates", "Riz", "Boeuf").`;
+  IMPORTANT POUR LA LISTE D'INGRÉDIENTS :
+  - 'ingredients': Fournissez UNIQUEMENT les noms des produits pour une recherche Drive.
+  - 'ingredientsWithQuantities': Fournissez la liste complète AVEC quantités et unités pour cuisiner.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -414,6 +421,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     metrics: data.metrics,
     utensils: data.utensils,
     ingredients: data.ingredients, 
+    ingredientsWithQuantities: data.ingredientsWithQuantities, // NOUVEAU
     storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription)

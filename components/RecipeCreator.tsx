@@ -50,6 +50,7 @@ interface RecipeCreatorProps {
         metrics: RecipeMetrics | null;
         utensils: string[];
         ingredients: string[];
+        ingredientsWithQuantities?: string[];
         image: string | null;
         storageAdvice?: string;
     } | null;
@@ -88,6 +89,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const recipe = persistentState?.text || '';
   const metrics = persistentState?.metrics || null;
   const ingredientsList = persistentState?.ingredients || [];
+  const ingredientsWithQuantities = persistentState?.ingredientsWithQuantities || [];
   const utensilsList = persistentState?.utensils || [];
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
@@ -147,6 +149,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           metrics: result.metrics || null,
           utensils: result.utensils || [],
           ingredients: result.ingredients || [],
+          ingredientsWithQuantities: result.ingredientsWithQuantities || [],
           storageAdvice: result.storageAdvice || '',
           image: img
       });
@@ -177,6 +180,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       image: generatedImage || undefined,
       utensils: persistentState?.utensils,
       ingredients: ingredientsList,
+      ingredientsWithQuantities: ingredientsWithQuantities,
       storageAdvice: storageAdvice
     });
     setIsSaved(true);
@@ -531,6 +535,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                             <ShoppingCart size={18} className="text-white/60" />
                                             Panier Express
                                         </h3>
+                                        <p className="text-[10px] text-gray-500 mt-1">Cochez pour ajouter à votre liste de courses.</p>
                                     </div>
                                     
                                     <div className="p-4 space-y-1">
@@ -589,6 +594,23 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Conservation</h3>
                                         <p className="text-sm text-blue-100/90 leading-relaxed">{storageAdvice}</p>
                                     </div>
+                                </div>
+                            )}
+
+                            {/* INGREDIENTS WITH QUANTITIES BLOCK (NEW FOR COOKING) */}
+                            {ingredientsWithQuantities && ingredientsWithQuantities.length > 0 && (
+                                <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
+                                     <h3 className="font-display text-lg text-white mb-4 flex items-center gap-2" style={{ color: themeColor }}>
+                                        <Leaf size={18} /> Ingrédients & Dosages
+                                    </h3>
+                                    <ul className="space-y-2">
+                                        {ingredientsWithQuantities.map((ing, idx) => (
+                                            <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
+                                                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
+                                                <span>{ing}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             )}
 
