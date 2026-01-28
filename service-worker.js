@@ -1,10 +1,10 @@
 
 /*
  * Service Worker pour MiamChef IA
- * Permet l'accès hors-ligne au Carnet de Recettes et à la Liste de Courses.
+ * Version : v2 - Mise à jour forcée pour GitHub
  */
 
-const CACHE_NAME = 'miamchef-v1';
+const CACHE_NAME = 'miamchef-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -13,51 +13,58 @@ const ASSETS_TO_CACHE = [
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
 
-// Installation : Mise en cache des ressources statiques (App Shell)
+// Installation : Mise en cache des ressources statiques
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Mise en cache de l\'application');
+      console.log('[Service Worker] Installation v2 : Mise en cache de l\'application');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
   self.skipWaiting();
 });
 
-// Activation : Nettoyage des anciens caches si mise à jour
+// Activation : Nettoyage des anciens caches v1
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(keyList.map((key) => {
         if (key !== CACHE_NAME) {
+          console.log('[Service Worker] Suppression de l\'ancien cache :', key);
           return caches.delete(key);
         }
       }));
     })
   );
-  self.clients.claim();
+  return self.clients.claim();
 });
 
 // Interception des requêtes
 self.addEventListener('fetch', (event) => {
-  // Stratégie : Cache First, falling back to Network
-  // Pour l'API Google, on laisse passer (Network Only)
+  // 1. Ne pas intercepter l'API Google
   if (event.request.url.includes('generativelanguage.googleapis.com')) {
     return;
   }
 
+  // 2. Stratégie Network First pour le HTML (garantit la mise à jour GitHub)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, response.clone());
+            return response;
+          });
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // 3. Cache First pour les autres ressources statiques
   event.respondWith(
     caches.match(event.request).then((response) => {
-      // Si trouvé dans le cache, on le retourne
-      if (response) {
-        return response;
-      }
-      // Sinon, on va chercher sur le réseau
-      return fetch(event.request).catch(() => {
-        // Si réseau échoue (offline) et que ce n'est pas dans le cache
-        // On pourrait retourner une page "Offline" générique ici si nécessaire
-        // Mais pour une SPA, index.html est déjà en cache.
-      });
+      return response || fetch(event.request);
     })
   );
 });

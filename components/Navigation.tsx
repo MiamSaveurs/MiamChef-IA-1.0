@@ -6,7 +6,6 @@ import {
   WickerBasket, 
   PremiumChefHat, 
   PremiumCamera, 
-  PremiumWine, 
   PremiumCalendar, 
   PremiumTimer, 
   PremiumHome 
@@ -16,86 +15,75 @@ interface NavigationProps {
   currentView: AppView;
   setView: (view: AppView) => void;
   isOnline?: boolean;
-  hasActiveTimer?: boolean;
+  isTimerActive?: boolean; 
+  timerTimeLeft?: number; // Nouveau prop pour le temps
 }
 
-const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isOnline = true, hasActiveTimer = false }) => {
+const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerActive, timerTimeLeft = 0 }) => {
   const [shoppingCount, setShoppingCount] = useState(0);
 
-  const updateCount = async () => {
-      try {
-          const items = await getShoppingList();
-          const count = items.filter(i => !i.checked).length;
-          setShoppingCount(count);
-      } catch (e) {
-          console.error("Error updating cart count", e);
-      }
-  };
-
   useEffect(() => {
-      updateCount();
-      const handleUpdate = () => updateCount();
-      window.addEventListener('shopping-list-updated', handleUpdate);
-      const interval = setInterval(updateCount, 2000);
-      return () => {
-          window.removeEventListener('shopping-list-updated', handleUpdate);
-          clearInterval(interval);
+      const update = async () => {
+          const items = await getShoppingList();
+          setShoppingCount(items.filter(i => !i.checked).length);
       };
+      update();
+      const interval = setInterval(update, 3000);
+      return () => clearInterval(interval);
   }, []);
 
-  const navItems = [
-    { view: AppView.HOME, label: 'Studio', icon: PremiumHome, requiresOnline: false },
-    { view: AppView.PLANNING, label: 'Semaine', icon: PremiumCalendar, requiresOnline: true },
-    { view: AppView.RECIPE_CREATOR, label: 'Chef', icon: PremiumChefHat, requiresOnline: true },
-    { view: AppView.TIMER, label: 'Chrono', icon: PremiumTimer, requiresOnline: false, isTimer: true },
-    { view: AppView.SCAN_FRIDGE, label: 'Scan', icon: PremiumCamera, requiresOnline: true },
-    { view: AppView.SHOPPING_LIST, label: 'Courses', icon: WickerBasket, requiresOnline: false, badge: shoppingCount },
-  ];
-
-  const handleNavClick = (item: any) => {
-      if (item.requiresOnline && !isOnline) return;
-      setView(item.view);
+  const formatTimerBadge = (seconds: number) => {
+      if (seconds <= 0) return null;
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      // Format compact : si moins d'une minute "45s", sinon "3:45"
+      if (m === 0) return `${s}s`;
+      return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const navItems = [
+    { view: AppView.HOME, icon: PremiumHome, activeColor: 'text-[#509f2a]' },
+    { view: AppView.PLANNING, icon: PremiumCalendar, activeColor: 'text-gray-400' },
+    { view: AppView.RECIPE_CREATOR, icon: PremiumChefHat, activeColor: 'text-gray-400' },
+    { view: AppView.TIMER, icon: PremiumTimer, activeColor: 'text-gray-400' },
+    { view: AppView.SCAN_FRIDGE, icon: PremiumCamera, activeColor: 'text-gray-400' },
+    { view: AppView.SHOPPING_LIST, icon: WickerBasket, activeColor: 'text-gray-400', badge: shoppingCount },
+  ];
+
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 pointer-events-none pb-6">
-      <nav className="bg-white/90 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-full pointer-events-auto max-w-lg mx-auto mx-4 mb-2 p-2">
-        <div className="flex justify-between items-center px-4">
-          {navItems.map((item) => {
+    <div className="fixed bottom-6 left-0 w-full z-50 px-6 flex justify-center">
+      <nav className="bg-white rounded-full w-full max-w-md h-20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex justify-between items-center px-4 border border-gray-100">
+          {navItems.map((item, idx) => {
             const Icon = item.icon;
             const isActive = currentView === item.view;
-            const isDisabled = item.requiresOnline && !isOnline;
 
             return (
               <button
-                key={item.view}
-                onClick={() => handleNavClick(item)}
-                disabled={isDisabled}
-                className={`relative group flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all duration-200 
-                    ${isActive 
-                        ? 'text-chef-green bg-green-50' 
-                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'} 
-                    ${isDisabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
+                key={idx}
+                onClick={() => setView(item.view)}
+                className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all ${isActive ? 'bg-green-50' : ''}`}
               >
-                
                 <Icon 
-                  size={26} 
-                  className={`relative z-10 transition-transform duration-200 ${isActive ? 'scale-110' : 'grayscale opacity-60'}`} 
+                  size={24} 
+                  className={`${isActive ? 'text-[#509f2a]' : 'text-gray-300'}`} 
                 />
                 
+                {/* Badge Shopping List (Rouge, rond) */}
                 {item.view === AppView.SHOPPING_LIST && shoppingCount > 0 && (
-                    <div className="absolute top-2 right-2 z-20 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 border border-white">
-                        <span className="text-white text-[9px] font-bold">{shoppingCount > 9 ? '9+' : shoppingCount}</span>
+                    <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow-sm">
+                        <span className="text-white text-[9px] font-black">{shoppingCount > 9 ? '9+' : shoppingCount}</span>
                     </div>
                 )}
 
-                {item.isTimer && hasActiveTimer && (
-                     <div className="absolute top-2 right-2 z-20 h-2 w-2 rounded-full bg-orange-500 animate-pulse"></div>
+                {/* Badge Timer (Rouge, Pilule avec décompte) */}
+                {item.view === AppView.TIMER && isTimerActive && timerTimeLeft > 0 && (
+                    <div className="absolute -top-2 -right-3 bg-red-500 border-2 border-white shadow-sm text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full min-w-[24px] text-center animate-pulse z-10">
+                        {formatTimerBadge(timerTimeLeft)}
+                    </div>
                 )}
               </button>
             );
           })}
-        </div>
       </nav>
     </div>
   );

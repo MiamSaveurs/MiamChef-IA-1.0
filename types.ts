@@ -1,5 +1,4 @@
 
-
 export enum AppView {
   HOME = 'HOME',
   RECIPE_CREATOR = 'RECIPE_CREATOR',
@@ -30,7 +29,7 @@ export interface RecipeMetrics {
   carbohydrates: number; // g
   proteins: number; // g
   fats: number; // g
-  difficulty: 'Facile' | 'Moyen' | 'Chef';
+  difficulty: 'Facile' | 'Moyen' | 'Expert';
 }
 
 export interface GeneratedContent {
@@ -39,6 +38,7 @@ export interface GeneratedContent {
   image?: string;
   metrics?: RecipeMetrics;
   utensils?: string[];
+  ingredients?: string[]; // Liste brute des produits (Ex: "Carottes", "Riz") SANS quantité
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -51,6 +51,7 @@ export interface SavedRecipe {
   metrics?: RecipeMetrics;
   image?: string; // Base64 image data
   utensils?: string[];
+  ingredients?: string[]; // Liste brute des produits
   seoTitle?: string;
   seoDescription?: string;
 }

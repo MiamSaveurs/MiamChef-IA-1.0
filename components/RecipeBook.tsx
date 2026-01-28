@@ -2,14 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { GourmetBook } from './Icons';
+import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
 
 const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<SavedRecipe | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Thème Orange/Ambre
+  const themeColor = '#f59e0b';
+  const themeGradient = 'from-amber-700 to-amber-900';
+  const themeShadow = 'shadow-amber-900/40';
 
   useEffect(() => {
     const load = async () => {
@@ -38,148 +44,207 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const colors = { 'A': '#008148', 'B': '#8ac53e', 'C': '#fecb02', 'D': '#ee8100', 'E': '#e63e11' };
     const color = colors[score as keyof typeof colors] || '#ccc';
     return (
-      <span className="font-bold text-white text-[10px] px-1.5 py-0.5 rounded shadow-sm" style={{ backgroundColor: color }}>
+      <span className="font-bold text-white text-[10px] px-2 py-0.5 rounded shadow-sm border border-white/20" style={{ backgroundColor: color }}>
         {score}
       </span>
     );
   };
 
-  if (selectedRecipe) {
-    return (
-      <div className="pb-32 px-4 pt-6 max-w-4xl mx-auto min-h-screen">
-        <button 
-          onClick={() => setSelectedRecipe(null)}
-          className="mb-4 flex items-center gap-2 text-gray-500 hover:text-chef-green transition-colors font-bold text-sm bg-white px-4 py-2 rounded-full shadow-sm"
-        >
-          <ChevronLeft size={16} /> Retour au carnet
-        </button>
-
-        <div className="bg-white rounded-[2.5rem] shadow-card border border-gray-100 overflow-hidden animate-fade-in">
-           
-           {/* Detail View Header Image */}
-           <div className="w-full h-64 md:h-80 relative bg-gray-100">
-               {selectedRecipe.image ? (
-                   <img src={selectedRecipe.image} alt={selectedRecipe.title} className="w-full h-full object-cover" />
-               ) : (
-                   <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-300">
-                       <ChefHat size={64} />
-                   </div>
-               )}
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                   <h1 className="text-3xl md:text-4xl font-display text-white mb-2">{selectedRecipe.title}</h1>
-                   <div className="flex items-center gap-4 text-white/80 text-sm">
-                        <span className="flex items-center gap-1"><Calendar size={14}/> {selectedRecipe.date}</span>
-                        {selectedRecipe.metrics && (
-                            <>
-                                <span className="flex items-center gap-1"><Activity size={14}/> {selectedRecipe.metrics.caloriesPerPerson} Kcal</span>
-                                <NutriBadge score={selectedRecipe.metrics.nutriScore} />
-                                <span className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm"><BarChart size={12}/> {selectedRecipe.metrics.difficulty}</span>
-                            </>
-                        )}
-                   </div>
-               </div>
-               <button 
-                    onClick={(e) => handleDelete(e, selectedRecipe.id)}
-                    className="absolute top-4 right-4 p-3 bg-white/20 backdrop-blur-md text-white hover:bg-red-500 transition-colors rounded-full shadow-lg"
-                >
-                    <Trash2 size={20} />
-                </button>
-           </div>
-           
-           {/* Utensils Section in Saved View */}
-           {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
-                <div className="px-8 pt-8">
-                    <div className="bg-orange-50 p-6 rounded-[2rem] border border-orange-100 shadow-sm">
-                         <h3 className="font-display text-xl text-orange-800 mb-4 flex items-center gap-2">
-                             <Soup size={20}/> Ustensiles
-                         </h3>
-                         <div className="flex flex-wrap gap-2">
-                             {selectedRecipe.utensils.map((utensil, idx) => (
-                                 <div key={idx} className="bg-white text-orange-700 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm flex items-center gap-2 border border-orange-100">
-                                     <Hammer size={12} className="opacity-50" />
-                                     {utensil}
-                                 </div>
-                             ))}
-                         </div>
-                    </div>
-                </div>
-           )}
-
-           <div className="p-8 md:p-10 markdown-prose font-body text-chef-dark">
-             <ReactMarkdown>{selectedRecipe.markdownContent}</ReactMarkdown>
-           </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredRecipes = recipes.filter(r => 
+      r.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="pb-32 px-4 pt-6 max-w-6xl mx-auto min-h-screen">
-      <header className="mb-8 flex items-center gap-3">
-        <div className="p-3 bg-yellow-50 rounded-2xl">
-          <GourmetBook size={32} />
+    <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
+        
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 z-0">
+            <img 
+                src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=1974&auto=format&fit=crop" 
+                className="w-full h-full object-cover opacity-30 fixed"
+                alt="Book Background"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a0f05]/80 to-black fixed"></div>
         </div>
-        <div>
-           <h2 className="text-3xl font-display text-chef-dark leading-none">Mon Carnet</h2>
-           <p className="text-gray-500 text-sm font-body">Mes recettes sauvegardées</p>
-        </div>
-      </header>
 
-      {loading ? (
-          <div className="flex justify-center py-20"><div className="animate-spin text-chef-green"><Sparkles /></div></div>
-      ) : recipes.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-           <ChefHat size={48} className="mx-auto text-gray-200 mb-4" />
-           <p className="text-gray-400 font-display text-xl">Votre carnet est vide.</p>
-           <p className="text-gray-400 text-sm mt-2">Créez des recettes pour les ajouter ici !</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe) => (
-            <div 
-              key={recipe.id}
-              onClick={() => setSelectedRecipe(recipe)}
-              className="bg-white rounded-3xl shadow-card border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group relative overflow-hidden flex flex-col h-full"
-            >
-              {/* Card Image */}
-              <div className="h-48 bg-gray-100 relative overflow-hidden">
-                  {recipe.image ? (
-                      <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-200">
-                          <ChefHat size={32} />
-                      </div>
-                  )}
-                  <div className="absolute top-3 right-3 flex gap-2">
-                       {recipe.metrics && <NutriBadge score={recipe.metrics.nutriScore} />}
-                  </div>
-                  <button 
-                    onClick={(e) => handleDelete(e, recipe.id)}
-                    className="absolute top-3 left-3 p-2 bg-white/80 hover:bg-red-500 hover:text-white text-gray-500 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
-                  >
-                      <Trash2 size={16} />
-                  </button>
-              </div>
-
-              <div className="p-5 flex-1 flex flex-col">
-                <h3 className="font-display text-xl text-chef-dark mb-2 group-hover:text-chef-green transition-colors line-clamp-2 leading-tight">
-                    {recipe.title}
-                </h3>
-                
-                <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center text-xs text-gray-500">
-                     <span className="flex items-center gap-1"><Calendar size={12} /> {recipe.date}</span>
-                     {recipe.metrics && (
-                         <div className="flex gap-2">
-                             <span className="flex items-center gap-1 font-bold text-orange-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
-                             <span className="flex items-center gap-1 font-bold text-purple-500"><BarChart size={12}/> {recipe.metrics.difficulty}</span>
-                         </div>
-                     )}
-                </div>
-              </div>
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
+            
+            {/* Header / Navigation */}
+            <div className="mb-8">
+                {selectedRecipe ? (
+                     <button 
+                        onClick={() => setSelectedRecipe(null)}
+                        className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md mb-6"
+                    >
+                        <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Retour</span>
+                    </button>
+                ) : (
+                    <div className="text-center mb-10">
+                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${themeGradient} shadow-[0_0_30px_rgba(245,158,11,0.3)] mb-4 border border-amber-500/30`}>
+                            <GourmetBook size={32} className="text-amber-100" />
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-display text-amber-500 mb-2 drop-shadow-md">
+                            Mon Carnet
+                        </h1>
+                        <p className="text-amber-200/60 text-sm font-light tracking-widest uppercase">
+                            Mes recettes sauvegardées
+                        </p>
+                    </div>
+                )}
             </div>
-          ))}
+
+            {selectedRecipe ? (
+                /* VUE DÉTAILLÉE */
+                <div className="animate-fade-in space-y-6 pb-20">
+                    <div className="relative bg-[#121212] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl">
+                        
+                        {/* Image Header */}
+                        <div className="h-64 md:h-80 relative group">
+                            {selectedRecipe.image ? (
+                                <img src={selectedRecipe.image} className="w-full h-full object-cover" alt={selectedRecipe.title} />
+                            ) : (
+                                <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                                    <PremiumChefHat size={48} className="opacity-20 text-white" />
+                                </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                            
+                            <div className="absolute bottom-0 left-0 p-8 w-full">
+                                <h2 className="text-3xl md:text-4xl font-display text-white mb-2 leading-tight drop-shadow-md">{selectedRecipe.title}</h2>
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+                                    <span className="flex items-center gap-1.5"><Calendar size={14} className="text-amber-500"/> {selectedRecipe.date}</span>
+                                    {selectedRecipe.metrics && (
+                                        <>
+                                            <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+                                            <span className="flex items-center gap-1.5 font-bold"><Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal</span>
+                                            <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+                                            <NutriBadge score={selectedRecipe.metrics.nutriScore} />
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={(e) => handleDelete(e, selectedRecipe.id)}
+                                className="absolute top-4 right-4 p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
+                            >
+                                <Trash2 size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-8 relative">
+                             {/* Ustensiles (UPDATED DESIGN) */}
+                             {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
+                                <div className="mb-8 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm relative overflow-hidden">
+                                    <h3 className="font-display text-lg text-amber-500 mb-3 flex items-center gap-2">
+                                        <PremiumUtensils size={18}/> Matériel Requis
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedRecipe.utensils.map((utensil, idx) => (
+                                            <div key={idx} className="bg-[#1a1a1a] text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium border border-white/10 flex items-center gap-2 shadow-sm">
+                                                <Hammer size={10} className="opacity-50" />
+                                                {utensil}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Markdown Content */}
+                            <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
+                                <ReactMarkdown 
+                                components={{
+                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
+                                    h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
+                                    strong: ({node, ...props}) => <strong className="text-amber-400" {...props} />,
+                                    li: ({node, ...props}) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>
+                                }}
+                                >
+                                {selectedRecipe.markdownContent}
+                                </ReactMarkdown>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                /* VUE LISTE (GRILLE) */
+                <>
+                    {/* Search Bar */}
+                    <div className="max-w-md mx-auto mb-8 relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Search size={16} className="text-gray-500" />
+                        </div>
+                        <input 
+                            type="text"
+                            placeholder="Rechercher une recette..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-[#151515] text-white pl-10 pr-4 py-3 rounded-xl border border-white/10 focus:border-amber-500/50 focus:ring-0 outline-none transition-colors text-sm placeholder:text-gray-600"
+                        />
+                    </div>
+
+                    {loading ? (
+                        <div className="flex justify-center py-20"><div className="animate-spin text-amber-500"><Sparkles size={32} /></div></div>
+                    ) : filteredRecipes.length === 0 ? (
+                        <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10 backdrop-blur-md">
+                            <GourmetBook size={48} className="mx-auto text-white/20 mb-4" />
+                            <p className="text-gray-400 font-display text-xl">Aucune recette trouvée.</p>
+                            <p className="text-gray-600 text-sm mt-2">C'est le moment de créer quelque chose de délicieux !</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                            {filteredRecipes.map((recipe) => (
+                                <div 
+                                    key={recipe.id}
+                                    onClick={() => setSelectedRecipe(recipe)}
+                                    className="bg-[#121212] rounded-3xl shadow-lg border border-white/10 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all cursor-pointer group relative overflow-hidden flex flex-col h-full"
+                                >
+                                    {/* Card Image */}
+                                    <div className="h-48 relative overflow-hidden bg-gray-900">
+                                        {recipe.image ? (
+                                            <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-gray-700">
+                                                <PremiumChefHat size={32} />
+                                            </div>
+                                        )}
+                                        
+                                        {/* Overlay Gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent opacity-80"></div>
+
+                                        <div className="absolute top-3 right-3 flex gap-2">
+                                            {recipe.metrics && <NutriBadge score={recipe.metrics.nutriScore} />}
+                                        </div>
+                                        <button 
+                                            onClick={(e) => handleDelete(e, recipe.id)}
+                                            className="absolute top-3 left-3 p-2 bg-black/60 text-gray-400 hover:text-red-400 rounded-full backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100 border border-white/10"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+
+                                    <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10">
+                                        <h3 className="font-display text-xl text-gray-100 mb-2 group-hover:text-amber-500 transition-colors line-clamp-2 leading-tight drop-shadow-sm">
+                                            {recipe.title}
+                                        </h3>
+                                        
+                                        <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-xs text-gray-500">
+                                            <span className="flex items-center gap-1.5"><Calendar size={12} /> {recipe.date}</span>
+                                            {recipe.metrics && (
+                                                <div className="flex gap-3">
+                                                    <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
+                                                    <span className="flex items-center gap-1 font-bold text-gray-400"><BarChart size={12}/> {recipe.metrics.difficulty}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
-      )}
     </div>
   );
 };

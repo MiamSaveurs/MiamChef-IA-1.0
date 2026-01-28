@@ -4,39 +4,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#111111" />
+    <meta name="theme-color" content="#000000" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>MiamChef IA - Cuisine & Nutrition</title>
+    <title>MiamChef IA</title>
     <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-      // Configuration Tailwind - Couleurs exactes de la capture d'écran
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               display: ['"Boogaloo"', 'cursive'],
               body: ['"Lato"', 'sans-serif'],
-              sans: ['"Lato"', 'sans-serif'],
             },
             colors: {
               chef: {
-                green: '#509f2a', // Le vert vibrant original
-                dark: '#111111', // Fond noir de la capture
-                card: '#1e1e1e', // Gris foncé pour les boutons
-                gray: '#9ca3af',
-              }
-            },
-            animation: {
-              'fade-in': 'fadeIn 0.5s ease-out forwards',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
+                green: '#509f2a',
+                dark: '#1a1a1a',
               }
             }
           }
@@ -45,49 +31,27 @@
     </script>
     <style>
       body {
-        background-color: #111111;
+        background-color: #000000;
         color: #ffffff;
         font-family: 'Lato', sans-serif;
+        margin: 0;
+        padding: 0;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
       }
-      
-      html.large-text { font-size: 115%; }
-      
-      .scrollbar-hide::-webkit-scrollbar { display: none; }
-      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-      /* Ajustement global des inputs pour le mode sombre */
-      input, select, textarea {
-        background-color: #1e1e1e !important;
-        color: white !important;
-        border-color: #333 !important;
-      }
-
-      /* Markdown Styles */
-      .markdown-prose h1 { font-family: 'Boogaloo', cursive; font-size: 1.75rem; color: #509f2a; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-      .markdown-prose h2 { font-family: 'Boogaloo', cursive; font-size: 1.5rem; color: #ffffff; margin-top: 1.25rem; margin-bottom: 0.5rem; }
-      .markdown-prose p { margin-bottom: 0.75rem; line-height: 1.6; color: #d1d5db; }
-      .markdown-prose strong { color: #fff; }
-      
-      .pdf-layout { background: white !important; color: black !important; width: 1200px !important; max-width: none !important; }
-      .pdf-layout * { color: black !important; border-color: #ccc !important; }
-      .pdf-layout button { display: none !important; }
-      
-      .immersive-enter { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-      @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .font-display { font-family: 'Boogaloo', cursive; }
+      ::-webkit-scrollbar { display: none; }
     </style>
   <script type="importmap">
 {
   "imports": {
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "vite": "https://aistudiocdn.com/vite@^7.2.6",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "react": "https://aistudiocdn.com/react@^19.2.1"
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4"
   }
 }
 </script>

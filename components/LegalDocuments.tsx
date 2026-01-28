@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Scale, FileText, Shield, AlertCircle } from 'lucide-react';
+import { X, Scale, FileText, Shield, AlertCircle, Lock } from 'lucide-react';
 
 /* 
  * NOTE SYSTÈME POUR L'IA (MÉMOIRE FUTURE) :
@@ -14,7 +14,7 @@ interface LegalDocumentsProps {
 }
 
 const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState<'mentions' | 'cgu' | 'cgv'>('mentions');
+  const [activeTab, setActiveTab] = useState<'mentions' | 'cgu' | 'cgv' | 'rgpd'>('mentions');
 
   return (
     <div className="fixed inset-0 z-[80] bg-white overflow-y-auto animate-fade-in font-body text-chef-dark">
@@ -38,6 +38,12 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'mentions' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
                   Mentions Légales
+              </button>
+              <button 
+                onClick={() => setActiveTab('rgpd')}
+                className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'rgpd' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              >
+                  RGPD & Confidentialité
               </button>
               <button 
                 onClick={() => setActiveTab('cgu')}
@@ -90,11 +96,60 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                         Site web : [Site de l'hébergeur]
                     </p>
                 </section>
+            </div>
+        )}
+
+        {activeTab === 'rgpd' && (
+            <div className="space-y-6 animate-fade-in">
+                <div className="bg-green-50 p-6 rounded-2xl border border-green-100 flex items-start gap-4 mb-6">
+                    <div className="p-3 bg-white rounded-full text-green-600 shadow-sm">
+                        <Lock size={24} />
+                    </div>
+                    <div>
+                        <h2 className="font-bold text-lg text-green-900 mb-2">Engagement Confidentialité Totale</h2>
+                        <p className="text-sm text-green-800 leading-relaxed">
+                            Chez MiamChef IA, nous appliquons le principe de <strong>"Privacy by Design"</strong>. 
+                            Vos données sont votre propriété exclusive.
+                        </p>
+                    </div>
+                </div>
+
+                <h1 className="text-3xl font-display mb-6">Politique de Confidentialité (RGPD)</h1>
+                
+                <section>
+                    <h2 className="font-bold text-lg mb-2">1. Collecte des Données (Principe de Minimisation)</h2>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                        Nous ne collectons <strong>AUCUNE donnée personnelle identifiante</strong> (nom, email, adresse) pour l'utilisation basique de l'application.<br/>
+                        Les seules données traitées sont :<br/>
+                        - Vos préférences alimentaires (Régimes, Allergies).<br/>
+                        - Les ingrédients que vous saisissez ou photographiez.<br/>
+                        Ces données sont utilisées <strong>exclusivement</strong> pour générer vos recettes et ne sont pas revendues à des tiers.
+                    </p>
+                </section>
 
                 <section>
-                    <h2 className="font-bold text-lg mb-2">3. Propriété Intellectuelle</h2>
+                    <h2 className="font-bold text-lg mb-2">2. Photos et Analyse d'Images (Scan Frigo)</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        L'ensemble de l'application MiamChef IA (code, design, textes, logos, algorithmes) est la propriété exclusive de l'éditeur. Toute reproduction ou représentation, totale ou partielle, est interdite sans autorisation expresse.
+                        Lorsque vous utilisez la fonction "Scan Frigo", votre photo est envoyée temporairement à notre partenaire IA (Google Gemini) pour analyse.<br/><br/>
+                        <strong>Garantie de sécurité :</strong><br/>
+                        - La photo est traitée de manière éphémère (en mémoire vive).<br/>
+                        - Elle n'est <strong>pas stockée</strong> sur nos serveurs après l'analyse.<br/>
+                        - L'IA a pour instruction stricte d'ignorer les visages ou documents personnels visibles sur la photo.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 className="font-bold text-lg mb-2">3. Stockage Local (Local Storage)</h2>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                        Pour votre confort, vos recettes sauvegardées, vos listes de courses et vos préférences sont stockées <strong>localement sur votre appareil</strong> (via IndexedDB et LocalStorage).<br/>
+                        Cela signifie que vous seul avez accès à ces données. Si vous effacez les données de votre navigateur, ces informations seront perdues.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 className="font-bold text-lg mb-2">4. Vos Droits</h2>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                        Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Puisque nous ne stockons pas de compte utilisateur centralisé, la suppression de l'application ou le nettoyage du cache de votre navigateur suffit à effacer toutes vos traces.
                     </p>
                 </section>
             </div>
