@@ -15,7 +15,7 @@ const FridgeScanner: React.FC = () => {
   const [status, setStatus] = useState<LoadingState>('idle');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
-  const [dietary, setDietary] = useState('Classique (Aucun)');
+  const [dietary, setDietary] = useState(t('diet_classic')); // Set default using translation
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +49,7 @@ const FridgeScanner: React.FC = () => {
       const titleMatch = response.match(/^#\s+(.+)$/m);
       if (titleMatch) {
           try {
-              const img = await generateRecipeImage(titleMatch[1], `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
+              const img = await generateRecipeImage(titleMatch[1], `Recette anti-gaspillage gourmet ${dietary !== t('diet_classic') ? dietary : ''}`);
               setGeneratedImage(img);
           } catch(e) {
               console.error("Failed to generate scan image");
@@ -79,7 +79,17 @@ const FridgeScanner: React.FC = () => {
     setTimeout(() => setIsSaved(false), 3000);
   };
 
-  const dietOptions = ["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"];
+  const dietOptions = [
+      t('diet_classic'),
+      t('diet_veg'),
+      t('diet_vegan'),
+      t('diet_halal'),
+      t('diet_kosher'),
+      t('diet_gluten'),
+      t('diet_lactose'),
+      t('diet_keto'),
+      t('diet_sport')
+  ];
 
   return (
     <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">

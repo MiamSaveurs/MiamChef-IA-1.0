@@ -25,8 +25,23 @@ const Profile: React.FC = () => {
         }, 3000);
     };
 
-    const dietOptions = ["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"];
-    const levelOptions = ["Débutant", "Intermédiaire", "Expert"];
+    const dietOptions = [
+        t('diet_classic'),
+        t('diet_veg'),
+        t('diet_vegan'),
+        t('diet_halal'),
+        t('diet_kosher'),
+        t('diet_gluten'),
+        t('diet_lactose'),
+        t('diet_keto'),
+        t('diet_sport')
+    ];
+
+    const levelOptions = [
+        t('level_beginner'),
+        t('level_intermediate'),
+        t('level_expert')
+    ];
 
     return (
         <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
