@@ -30,7 +30,9 @@ import {
   XCircle,
   Snowflake,
   Play,
-  ArrowLeft
+  ArrowLeft,
+  Volume2,
+  StopCircle
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -82,6 +84,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [loadingStep, setLoadingStep] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // --- STATE POUR LE MODE CUISINE ---
   const [isCookingMode, setIsCookingMode] = useState(false);
@@ -102,6 +105,13 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
   const persistentSteps = persistentState?.steps || []; // Récupération des étapes IA
+
+  // Arret de la synthèse vocale quand on quitte le composant
+  useEffect(() => {
+    return () => {
+        window.speechSynthesis.cancel();
+    };
+  }, []);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -129,6 +139,34 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         .replace(/^#+\s/g, '') // Enlève les titres #
         .replace(/^Étape \d+\s*:\s*/i, '') // Enlève "Étape X :" si déjà présent
         .trim();
+  };
+
+  // --- LOGIQUE SYNTHÈSE VOCALE ---
+  const speak = (text: string) => {
+      window.speechSynthesis.cancel(); // Stop any current speech
+      const utterance = new SpeechSynthesisUtterance(cleanMarkdown(text));
+      utterance.lang = 'fr-FR';
+      utterance.rate = 1.0;
+      utterance.pitch = isPatissier ? 1.1 : 1.0; // Légère variation de ton selon le persona
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+  };
+
+  const handleToggleSpeech = (textToRead: string) => {
+      if (isSpeaking) {
+          stopSpeaking();
+      } else {
+          speak(textToRead);
+      }
   };
 
   // Parsing des étapes quand une recette est chargée
@@ -246,6 +284,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       setIngredients('');
       setSearchQuery('');
       setIsCookingMode(false);
+      stopSpeaking();
   };
 
   const handleSaveToBook = async () => {
@@ -291,6 +330,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   };
 
   const startCooking = () => {
+      stopSpeaking();
       setCurrentStepIndex(0);
       setIsCookingMode(true);
       // Remonter en haut de page pour mobile
@@ -337,7 +377,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               {/* Header Immersif */}
               <div className="px-6 py-6 flex items-center justify-between bg-black/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-10">
                   <button 
-                    onClick={() => setIsCookingMode(false)}
+                    onClick={() => { stopSpeaking(); setIsCookingMode(false); }}
                     className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
                   >
                       <XCircle size={24} />
@@ -346,7 +386,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Mode Cuisine</span>
                       <span className="font-display text-xl leading-none mt-1">Étape {currentStepIndex + 1} <span className="text-gray-600 font-sans text-sm">/ {cookingSteps.length}</span></span>
                   </div>
-                  <div className="w-10"></div> {/* Spacer pour centrer */}
+                  <button 
+                    onClick={() => handleToggleSpeech(currentStepText)}
+                    className={`p-3 rounded-full transition-all ${isSpeaking ? 'bg-white text-black animate-pulse' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                  >
+                      {isSpeaking ? <StopCircle size={24} /> : <Volume2 size={24} />}
+                  </button>
               </div>
 
               {/* Barre de progression */}
@@ -370,7 +415,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               <div className="p-6 pb-12 bg-black/90 backdrop-blur-lg border-t border-white/10 safe-pb">
                   <div className="flex gap-4 max-w-md mx-auto">
                       <button 
-                        onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
+                        onClick={() => { stopSpeaking(); setCurrentStepIndex(Math.max(0, currentStepIndex - 1)); }}
                         disabled={currentStepIndex === 0}
                         className="flex-1 py-6 rounded-2xl bg-[#1a1a1a] border border-white/10 text-white font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#252525] active:scale-95 transition-all flex items-center justify-center gap-2"
                       >
@@ -379,7 +424,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                       {!isLastStep ? (
                           <button 
-                            onClick={() => setCurrentStepIndex(currentStepIndex + 1)}
+                            onClick={() => { stopSpeaking(); setCurrentStepIndex(currentStepIndex + 1); }}
                             className="flex-[2] py-6 rounded-2xl text-white font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg"
                             style={{ backgroundColor: themeColor, boxShadow: `0 10px 30px -10px ${themeColor}66` }}
                           >
@@ -387,7 +432,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                           </button>
                       ) : (
                           <button 
-                            onClick={() => setIsCookingMode(false)}
+                            onClick={() => { stopSpeaking(); setIsCookingMode(false); }}
                             className="flex-[2] py-6 rounded-2xl bg-white text-black font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg hover:bg-gray-200"
                           >
                               <Check size={24} /> Terminer
@@ -722,15 +767,23 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             </div>
 
                              {/* BOUTON DÉMARRER LA CUISINE - DÉPLACÉ APRÈS LE TEXTE POUR LOGIQUE DE LECTURE */}
-                            <div className="mt-8 mb-8 flex justify-center">
+                            <div className="mt-8 mb-8 flex gap-3 justify-center items-center">
                                 <button 
                                     onClick={startCooking}
                                     disabled={cookingSteps.length === 0}
-                                    className="w-full group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
+                                    className="flex-1 group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
                                 >
                                     <Play size={20} fill="black" />
                                     Lancer le Mode Cuisine
                                     <div className="absolute inset-0 rounded-full ring-2 ring-white/50 animate-pulse group-hover:ring-white"></div>
+                                </button>
+                                
+                                <button 
+                                    onClick={() => handleToggleSpeech(recipe)}
+                                    className={`w-14 h-14 rounded-full flex items-center justify-center border border-white/10 shadow-lg transition-all active:scale-95 ${isSpeaking ? 'bg-red-500 text-white animate-pulse' : 'bg-[#222] text-white hover:bg-[#333]'}`}
+                                    title="Écouter la recette"
+                                >
+                                    {isSpeaking ? <StopCircle size={24} /> : <Volume2 size={24} />}
                                 </button>
                             </div>
 
