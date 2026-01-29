@@ -3,21 +3,21 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
 
-// Instructions for the AI to avoid certain words
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux' ou 'incroyable'. Laissez la technique parler d'elle-même.";
+// Instructions for MiamChef to avoid certain words
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux' ou 'incroyable'. Laissez la technique parler d'elle-même. NE DITES JAMAIS QUE VOUS ÊTES UNE IA. Dites 'Je suis MiamChef'.";
 
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
 === PROTOCOLE RGPD & SÉCURITÉ DES DONNÉES (NIVEAU CRITIQUE) ===
 1. MINIMISATION DES DONNÉES : Ne demandez JAMAIS d'informations identifiantes.
 2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies comme strictement confidentielles.
-3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement que vous êtes une IA culinaire.
+3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement que vous êtes MiamChef, un expert culinaire virtuel.
 `;
 
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
-    // On garde la structure pour l'IA, mais le nom est juste "Contexte Utilisateur"
+    // On garde la structure pour le modèle, mais le nom est juste "Contexte Utilisateur"
     let context = `=== CONTEXTE / PRÉFÉRENCES DE L'UTILISATEUR ===\n`;
     context += `NOM : ${profile.name}\n`;
     context += `NIVEAU CUISINE : ${profile.cookingLevel}\n`;
@@ -533,7 +533,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
 
   // Prompt amélioré pour forcer l'identification visuelle explicite
   const textPart = {
-    text: `ROLE : Tu es un Chef Cuisinier expert en vision par ordinateur.
+    text: `ROLE : Tu es MiamChef, expert en vision par ordinateur et cuisine.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
@@ -586,7 +586,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
 
-  const prompt = `Vous êtes un Sommelier Expert Moderne. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
+  const prompt = `Vous êtes MiamChef Sommelier. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
   
   ${userProfileContext}
 

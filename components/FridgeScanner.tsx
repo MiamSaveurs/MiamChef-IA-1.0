@@ -218,7 +218,7 @@ const FridgeScanner: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                 <div className="absolute bottom-3 left-3 flex items-center gap-2">
                                     <div className="bg-blue-500/20 backdrop-blur-md border border-blue-500/30 px-2 py-1 rounded text-[9px] text-blue-100 uppercase font-bold">
-                                        Suggestion IA
+                                        Suggestion MiamChef
                                     </div>
                                     {dietary !== 'Classique (Aucun)' && (
                                         <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-1 rounded text-[9px] text-green-100 uppercase font-bold">
@@ -252,7 +252,7 @@ const FridgeScanner: React.FC = () => {
                   <Lock size={10} /> Confidentialité Totale
             </div>
             <p className="text-[11px] uppercase tracking-widest text-white max-w-sm leading-relaxed font-medium">
-                Conformément au RGPD, cette photo est analysée instantanément par l'IA puis immédiatement supprimée. Aucune donnée n'est conservée.
+                Conformément au RGPD, cette photo est analysée instantanément par MiamChef puis immédiatement supprimée. Aucune donnée n'est conservée.
             </p>
         </div>
 

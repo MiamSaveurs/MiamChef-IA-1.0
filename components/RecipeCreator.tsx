@@ -173,7 +173,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const handleShareRecipe = async () => {
     const titleMatch = recipe.match(/^#\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1] : 'Une recette incroyable';
-    const text = `🍽️ Regarde cette recette générée par MiamChef IA : ${title} !\n\nEssayez l'app gratuitement !`;
+    const text = `🍽️ Regarde cette recette générée par MiamChef : ${title} !\n\nEssayez l'app gratuitement !`;
     
     if (navigator.share) {
         try {
@@ -194,7 +194,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   // Parsing des étapes quand une recette est chargée
   useEffect(() => {
     if (persistentSteps && persistentSteps.length > 0) {
-        // CAS 1 (IDÉAL) : L'IA a renvoyé un tableau propre d'étapes
+        // CAS 1 (IDÉAL) : Le modèle a renvoyé un tableau propre d'étapes
         setCookingSteps(persistentSteps.map(cleanMarkdown));
     } else if (recipe) {
         // CAS 2 (FALLBACK) : Ancienne recette sans étapes ou erreur API -> Parsing manuel

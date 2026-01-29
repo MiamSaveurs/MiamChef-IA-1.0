@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { editDishPhoto, fileToGenerativePart } from '../services/geminiService';
 import { LoadingState } from '../types';
@@ -87,7 +88,7 @@ const DishEditor: React.FC = () => {
                 {status === 'loading' ? (
                     <div className="text-center">
                        <Loader2 className="animate-spin text-purple-500 mx-auto mb-2" size={32} />
-                       <span className="text-xs text-purple-500 font-bold animate-pulse">L'IA travaille...</span>
+                       <span className="text-xs text-purple-500 font-bold animate-pulse">MiamChef travaille...</span>
                     </div>
                 ) : editedImage ? (
                     <>

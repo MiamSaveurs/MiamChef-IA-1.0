@@ -28,7 +28,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
       <div className="sticky top-0 bg-white/80 backdrop-blur-md z-10 px-6 py-4 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-2">
             <PremiumChefHat size={24} />
-            <span className="font-display text-xl text-chef-dark">Pourquoi MiamChef IA ?</span>
+            <span className="font-display text-xl text-chef-dark">Pourquoi MiamChef ?</span>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X size={24} className="text-gray-500" />
@@ -47,7 +47,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                 <span className="text-chef-green">3 révolutions.</span>
             </h1>
             <p className="text-gray-500 text-lg leading-relaxed max-w-md mx-auto">
-                Essayez <strong className="text-chef-dark">MiamChef IA gratuitement pendant 7 jours</strong>. Découvrez la puissance de l'IA culinaire avant de vous engager.
+                Essayez <strong className="text-chef-dark">MiamChef gratuitement pendant 7 jours</strong>. Découvrez la puissance de l'Intelligence Culinaire avant de vous engager.
             </p>
         </div>
 
@@ -65,7 +65,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                         <strong className="text-chef-dark">Le Problème :</strong> Vous en avez assez de scroller pendant 20 minutes sur Marmiton pour trouver une recette qui correspond à ce que vous avez, pour finir par faire des pâtes ?
                     </p>
                     <p>
-                        <strong className="text-chef-dark">La Solution MiamChef IA :</strong> Fini la recherche. Vous dites "J'ai du poulet et du curry", l'IA <span className="underline decoration-chef-green/50 decoration-2">crée</span> la recette parfaite pour vous, à la seconde, <span className="font-bold text-chef-green">et déclinable à l'infini</span>.
+                        <strong className="text-chef-dark">La Solution MiamChef :</strong> Fini la recherche. Vous dites "J'ai du poulet et du curry", l'application <span className="underline decoration-chef-green/50 decoration-2">crée</span> la recette parfaite pour vous, à la seconde, <span className="font-bold text-chef-green">et déclinable à l'infini</span>.
                     </p>
                     
                     {/* ARGUMENT UNIVERSEL / CULTUREL */}
@@ -74,7 +74,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                             <PremiumGlobe size={18} /> Passeport Universel
                         </div>
                         <p className="text-sm text-gray-700">
-                            <strong>Une IA sans frontières.</strong> MiamChef IA maîtrise les codes de toutes les cultures. Envie d'un twist Japonais, Libanais ou Créole ? L'application adapte n'importe quel ingrédient à la culture de votre choix avec une authenticité bluffante.
+                            <strong>Une expertise sans frontières.</strong> MiamChef maîtrise les codes de toutes les cultures. Envie d'un twist Japonais, Libanais ou Créole ? L'application adapte n'importe quel ingrédient à la culture de votre choix avec une authenticité bluffante.
                         </p>
                     </div>
 
@@ -84,7 +84,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                             <PremiumWine size={18} className="text-red-600" /> Solutions Business
                         </div>
                         <p className="text-sm text-gray-700">
-                            <strong>Sommeliers, Restaurateurs, Cavistes :</strong> Créez des cartes de vins parfaites et conseillez vos clients avec une expertise IA mondiale instantanée.
+                            <strong>Sommeliers, Restaurateurs, Cavistes :</strong> Créez des cartes de vins parfaites et conseillez vos clients avec une expertise MiamChef mondiale instantanée.
                         </p>
                     </div>
                     
@@ -94,7 +94,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                             <PremiumLayers size={18} /> Batch Cooking Intelligent
                         </div>
                         <p className="text-sm text-gray-700">
-                             Cuisinez une fois, mangez toute la semaine. L'IA organise vos préparations pour vous libérer du temps.
+                             Cuisinez une fois, mangez toute la semaine. Le système organise vos préparations pour vous libérer du temps.
                         </p>
                     </div>
 
@@ -123,7 +123,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                         <strong className="text-chef-dark">Le Constat :</strong> Chaque année, un foyer français jette en moyenne <span className="text-red-500 font-bold">400€</span> de nourriture.
                     </p>
                     <p>
-                        <strong className="text-chef-dark">MiamChef IA :</strong> Avec la fonction <span className="font-bold text-blue-600">Scan Anti-Gaspi</span>, un simple clic transforme les restes du frigo, placards ou garde-manger en un plat savoureux.
+                        <strong className="text-chef-dark">MiamChef :</strong> Avec la fonction <span className="font-bold text-blue-600">Scan Anti-Gaspi</span>, un simple clic transforme les restes du frigo, placards ou garde-manger en un plat savoureux.
                     </p>
 
                     <div className="bg-white p-4 rounded-xl border border-blue-100 shadow-sm mt-4 text-center">
@@ -160,7 +160,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                 <h2 className="text-3xl font-display text-chef-dark mb-4">Votre Santé, Votre Capital</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
                     <p>
-                        <strong className="text-chef-dark">L'Expertise :</strong> MiamChef IA intègre une <strong className="text-chef-dark">Intelligence Artificielle Nutritionniste</strong>. Contrairement aux blogs amateurs, nous garantissons <span className="bg-red-100 text-red-800 px-1 font-bold rounded">95% de précision technique*</span>. Nous calculons le VRAI Nutri-Score et les macronutriments exacts selon les standards scientifiques.
+                        <strong className="text-chef-dark">L'Expertise :</strong> MiamChef intègre une <strong className="text-chef-dark">Intelligence Nutritionnelle Avancée</strong>. Contrairement aux blogs amateurs, nous garantissons <span className="bg-red-100 text-red-800 px-1 font-bold rounded">95% de précision technique*</span>. Nous calculons le VRAI Nutri-Score et les macronutriments exacts selon les standards scientifiques.
                     </p>
                     <p>
                         Que vous soyez sportif, diabétique ou simplement soucieux de votre ligne, l'application veille sur chaque calorie sans sacrifier le goût.
