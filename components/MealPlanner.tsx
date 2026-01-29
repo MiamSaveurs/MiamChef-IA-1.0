@@ -328,7 +328,7 @@ const MealPlanner: React.FC = () => {
                             <button 
                                 onClick={handleExportToShoppingList} 
                                 disabled={addedToList} 
-                                className={`w-full py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10 backdrop-blur-xl ${addedToList ? 'bg-green-600/90 text-white' : 'bg-[#1a1a1a]/90 text-white hover:bg-purple-900/90'}`}
+                                className={`w-full py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10 backdrop-blur-xl ${addedToList ? 'bg-gray-900 text-gray-400' : 'bg-green-600 hover:bg-green-500 text-white shadow-green-900/50 shadow-lg'}`}
                             >
                                 {addedToList ? <><Check size={18} /> Liste générée</> : <><ShoppingCart size={18} /> Ajouter à ma liste</>}
                             </button>
