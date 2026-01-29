@@ -64,23 +64,8 @@ const FridgeScanner: React.FC = () => {
 
   const handleSaveToBook = async () => {
     if (!result) return;
-    
-    // LOGIQUE DE DÉTECTION DU TITRE AMÉLIORÉE
-    let title = "Recette Anti-Gaspi";
-    const h1Match = result.match(/^#\s+(.+)$/m);
-    const h2Match = result.match(/^##\s+(.+)$/m);
-
-    if (h1Match) {
-        title = h1Match[1].replace(/\*\*/g, '').trim();
-    } else if (h2Match) {
-        title = h2Match[1].replace(/\*\*/g, '').trim();
-    } else {
-        // Fallback ultime : première ligne significative
-        const cleanLines = result.split('\n').map(l => l.trim()).filter(l => l.length > 5 && !l.startsWith('!') && !l.includes('Ingrédient') && !l.includes('identifié'));
-        if (cleanLines.length > 0) {
-            title = cleanLines[0].replace(/^[#*-\s]+/, '');
-        }
-    }
+    const titleMatch = result.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1] : "Recette Anti-Gaspi";
 
     await saveRecipeToBook({
       id: Date.now().toString(),

@@ -30,10 +30,7 @@ import {
   XCircle,
   Snowflake,
   Play,
-  ArrowLeft,
-  Volume2,
-  StopCircle,
-  Trash2
+  ArrowLeft
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -45,7 +42,7 @@ import {
   PremiumTimer, 
   PremiumSparkles, 
   PremiumEuro, 
-  PremiumMedal, 
+  PremiumMedal,
   PremiumUtensils 
 } from './Icons';
 
@@ -90,7 +87,6 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [isCookingMode, setIsCookingMode] = useState(false);
   const [cookingSteps, setCookingSteps] = useState<string[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isSpeaking, setIsSpeaking] = useState(false); // État pour la synthèse vocale
 
   const isPatissier = chefMode === 'patisserie';
   const themeColor = isPatissier ? '#ec4899' : '#509f2a'; 
@@ -123,28 +119,62 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     return () => clearInterval(interval);
   }, [status, isPatissier]);
 
+  // Fonction utilitaire pour nettoyer le markdown
+  const cleanMarkdown = (text: string) => {
+    if (!text) return "";
+    return text
+        .replace(/\*\*/g, '') // Enlève le gras **
+        .replace(/\*/g, '')   // Enlève l'italique *
+        .replace(/__/g, '')   // Enlève le souligné __
+        .replace(/^#+\s/g, '') // Enlève les titres #
+        .replace(/^Étape \d+\s*:\s*/i, '') // Enlève "Étape X :" si déjà présent
+        .trim();
+  };
+
   // Parsing des étapes quand une recette est chargée
   useEffect(() => {
-    // ... (Code parsing inchangé)
     if (persistentSteps && persistentSteps.length > 0) {
+        // CAS 1 (IDÉAL) : L'IA a renvoyé un tableau propre d'étapes
         setCookingSteps(persistentSteps.map(cleanMarkdown));
     } else if (recipe) {
-        // Fallback parsing (inchangé)
+        // CAS 2 (FALLBACK) : Ancienne recette sans étapes ou erreur API -> Parsing manuel
         const lines = recipe.split('\n');
         let extractedSteps: string[] = [];
         let inInstructions = false;
+
         lines.forEach(line => {
             const trimmed = line.trim();
-            if (trimmed.match(/^##\s*(Instruction|Préparation|Étapes|Recette)/i)) { inInstructions = true; return; }
-            if (inInstructions && trimmed.startsWith('## ') && !trimmed.match(/étape/i)) { inInstructions = false; return; }
+            
+            // Détection début instructions
+            if (trimmed.match(/^##\s*(Instruction|Préparation|Étapes|Recette)/i)) {
+                inInstructions = true;
+                return;
+            }
+            // Si on rencontre un nouveau titre H2 (ex: ## Astuces), on arrête
+            if (inInstructions && trimmed.startsWith('## ') && !trimmed.match(/étape/i)) {
+                inInstructions = false;
+                return;
+            }
+            
+            // Capture des étapes numérotées ou à puces
             if ((inInstructions || extractedSteps.length > 0) && (trimmed.match(/^\d+\./) || trimmed.startsWith('- ') || trimmed.startsWith('* '))) {
                 const cleanStep = trimmed.replace(/^(\d+\.|-|\*)\s*/, '');
-                if (cleanStep.length > 10) { extractedSteps.push(cleanMarkdown(cleanStep)); }
+                if (cleanStep.length > 10) { 
+                    extractedSteps.push(cleanMarkdown(cleanStep));
+                }
             }
         });
+
+        // FALLBACK ROBUSTE : Si le parsing intelligent a échoué (0 étape ou 1 seule grosse étape)
         if (extractedSteps.length <= 1) {
+            // On essaie de découper par double saut de ligne dans la section instructions
+            // Ou on prend tout le texte après "Instructions"
             const instructionPart = recipe.split(/##\s*(Instruction|Préparation|Étapes|Recette)/i)[2] || recipe;
+            
+            // On nettoie les lignes vides et on découpe par paragraphes
             const rawSteps = instructionPart.split(/\n\n+/).map(s => s.trim()).filter(s => s.length > 10 && !s.startsWith('#') && !s.includes('Ingrédients'));
+            
+            // Si toujours rien, on découpe par phrases si c'est un gros bloc
             if (rawSteps.length <= 1 && rawSteps[0]) {
                  const sentences = rawSteps[0].split('. ').filter(s => s.length > 10).map(s => s.trim() + '.');
                  extractedSteps = sentences.map(cleanMarkdown);
@@ -152,35 +182,18 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                  extractedSteps = rawSteps.map(cleanMarkdown);
             }
         }
+
+        // Dernier nettoyage pour éviter les étapes vides
         setCookingSteps(extractedSteps.filter(s => s && s.length > 5));
     }
   }, [recipe, persistentSteps]);
-
-  // Cleanup speech on unmount
-  useEffect(() => {
-      return () => {
-          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      };
-  }, []);
-
-  // Fonction utilitaire pour nettoyer le markdown
-  const cleanMarkdown = (text: string) => {
-    if (!text) return "";
-    return text
-        .replace(/\*\*/g, '')
-        .replace(/\*/g, '')
-        .replace(/__/g, '')
-        .replace(/^#+\s/g, '')
-        .replace(/^Étape \d+\s*:\s*/i, '')
-        .trim();
-  };
 
   const handleGenerate = async () => {
     if (mode === 'create' && !ingredients.trim()) return;
     if (mode === 'search' && !searchQuery.trim()) return;
     
     setStatus('loading');
-    setPersistentState(null);
+    setPersistentState(null); // Reset previous recipe
     setIsAddedToCart(false);
     
     try {
@@ -203,16 +216,19 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : 'Création du Chef';
+      
+      // PASSAGE DU CONTEXTE COMPLET À L'IMAGE GENERATOR
       const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}. Ingredients: ${mode === 'create' ? ingredients : searchQuery}`;
       const img = await generateRecipeImage(title, contextString);
       
+      // Save full result to persistent state
       setPersistentState({
           text: result.text,
           metrics: result.metrics || null,
           utensils: result.utensils || [],
           ingredients: result.ingredients || [],
           ingredientsWithQuantities: result.ingredientsWithQuantities || [],
-          steps: result.steps || [],
+          steps: result.steps || [], // Sauvegarde des étapes structurées
           storageAdvice: result.storageAdvice || '',
           image: img
       });
@@ -226,38 +242,18 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   };
 
   const handleClearRecipe = () => {
-      if (confirm("Voulez-vous vraiment effacer cette recette et recommencer ?")) {
-          setPersistentState(null);
-          setIngredients('');
-          setSearchQuery('');
-          setIsCookingMode(false);
-          window.speechSynthesis.cancel();
-      }
+      setPersistentState(null);
+      setIngredients('');
+      setSearchQuery('');
+      setIsCookingMode(false);
   };
 
   const handleSaveToBook = async () => {
     if (!recipe) return;
-    
-    // LOGIQUE DE DÉTECTION DU TITRE AMÉLIORÉE
-    let title = "Recette du Chef";
-    const h1Match = recipe.match(/^#\s+(.+)$/m);
-    const h2Match = recipe.match(/^##\s+(.+)$/m);
-
-    if (h1Match) {
-        title = h1Match[1].replace(/\*\*/g, '').trim();
-    } else if (h2Match) {
-        title = h2Match[1].replace(/\*\*/g, '').trim();
-    } else {
-        // Fallback ultime : première ligne non vide qui n'est pas une instruction technique
-        const cleanLines = recipe.split('\n').map(l => l.trim()).filter(l => l.length > 5 && !l.startsWith('!') && !l.includes('Ingrédient'));
-        if (cleanLines.length > 0) {
-            title = cleanLines[0].replace(/^[#*-\s]+/, '');
-        }
-    }
-
+    const titleMatch = recipe.match(/^#\s+(.+)$/m);
     await saveRecipeToBook({
       id: Date.now().toString(),
-      title: title,
+      title: titleMatch ? titleMatch[1] : "Nouvelle Recette",
       markdownContent: recipe,
       date: new Date().toLocaleDateString('fr-FR'),
       metrics: metrics || undefined,
@@ -265,7 +261,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       utensils: persistentState?.utensils,
       ingredients: ingredientsList,
       ingredientsWithQuantities: ingredientsWithQuantities,
-      steps: persistentSteps,
+      steps: persistentSteps, // Sauvegarde des étapes
       storageAdvice: storageAdvice
     });
     setIsSaved(true);
@@ -297,40 +293,21 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const startCooking = () => {
       setCurrentStepIndex(0);
       setIsCookingMode(true);
+      // Remonter en haut de page pour mobile
       window.scrollTo(0, 0);
   };
 
-  // Gestion de la voix
-  const speakStep = (text: string) => {
-      if (!('speechSynthesis' in window)) return;
-      
-      // Si ça parle déjà, on arrête
-      if (isSpeaking) {
-          window.speechSynthesis.cancel();
-          setIsSpeaking(false);
-          return;
-      }
-
-      window.speechSynthesis.cancel(); // Safety clear
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 1.0; 
-      utterance.pitch = 1.0;
-      
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      
-      window.speechSynthesis.speak(utterance);
-  };
-
-  const changeStep = (newIndex: number) => {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setCurrentStepIndex(newIndex);
-  };
-
-  const CustomSelect = ({ icon: Icon, value, onChange, options }: any) => (
+  const CustomSelect = ({ 
+    icon: Icon, 
+    value, 
+    onChange, 
+    options 
+  }: { 
+    icon: any, 
+    value: string, 
+    onChange: (val: string) => void, 
+    options: string[] 
+  }) => (
     <div className="relative group">
       <div className="flex items-center justify-between bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-4 rounded-xl border border-white/10 focus-within:border-white/30 transition-colors">
         <div className="flex items-center gap-3">
@@ -344,7 +321,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         onChange={(e) => onChange(e.target.value)}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
       >
-        {options.map((opt: string) => <option key={opt} value={opt} className="bg-[#1a1a1a] text-white">{opt}</option>)}
+        {options.map(opt => <option key={opt} value={opt} className="bg-[#1a1a1a] text-white">{opt}</option>)}
       </select>
     </div>
   );
@@ -360,11 +337,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               {/* Header Immersif */}
               <div className="px-6 py-6 flex items-center justify-between bg-black/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-10">
                   <button 
-                    onClick={() => {
-                        window.speechSynthesis.cancel();
-                        setIsSpeaking(false);
-                        setIsCookingMode(false);
-                    }}
+                    onClick={() => setIsCookingMode(false)}
                     className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
                   >
                       <XCircle size={24} />
@@ -385,22 +358,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               </div>
 
               {/* Contenu de l'étape (Centré et Gros) */}
-              <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto relative">
-                  <div className="max-w-2xl w-full animate-slide-up text-center">
-                      <p className="text-2xl md:text-4xl font-sans font-medium leading-normal text-gray-100 drop-shadow-lg mb-10">
+              <div className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
+                  <div className="max-w-2xl w-full animate-slide-up">
+                      <p className="text-2xl md:text-4xl font-sans font-medium leading-normal text-center text-gray-100 drop-shadow-lg">
                         {currentStepText}
                       </p>
-
-                      {/* TTS Button */}
-                      <button 
-                        onClick={() => speakStep(currentStepText)}
-                        className={`mx-auto flex items-center gap-3 px-6 py-3 rounded-full border transition-all duration-300 ${isSpeaking ? 'bg-white text-black border-white animate-pulse shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'bg-white/10 text-white border-white/20 hover:bg-white/20'}`}
-                      >
-                          {isSpeaking ? <StopCircle size={24} className="fill-current" /> : <Volume2 size={24} />}
-                          <span className="text-sm font-bold uppercase tracking-widest">
-                             {isSpeaking ? 'Arrêter' : 'Écouter'}
-                          </span>
-                      </button>
                   </div>
               </div>
 
@@ -408,7 +370,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               <div className="p-6 pb-12 bg-black/90 backdrop-blur-lg border-t border-white/10 safe-pb">
                   <div className="flex gap-4 max-w-md mx-auto">
                       <button 
-                        onClick={() => changeStep(Math.max(0, currentStepIndex - 1))}
+                        onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
                         disabled={currentStepIndex === 0}
                         className="flex-1 py-6 rounded-2xl bg-[#1a1a1a] border border-white/10 text-white font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#252525] active:scale-95 transition-all flex items-center justify-center gap-2"
                       >
@@ -417,7 +379,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                       {!isLastStep ? (
                           <button 
-                            onClick={() => changeStep(currentStepIndex + 1)}
+                            onClick={() => setCurrentStepIndex(currentStepIndex + 1)}
                             className="flex-[2] py-6 rounded-2xl text-white font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg"
                             style={{ backgroundColor: themeColor, boxShadow: `0 10px 30px -10px ${themeColor}66` }}
                           >
@@ -425,11 +387,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                           </button>
                       ) : (
                           <button 
-                            onClick={() => {
-                                window.speechSynthesis.cancel();
-                                setIsSpeaking(false);
-                                setIsCookingMode(false);
-                            }}
+                            onClick={() => setIsCookingMode(false)}
                             className="flex-[2] py-6 rounded-2xl bg-white text-black font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg hover:bg-gray-200"
                           >
                               <Check size={24} /> Terminer
@@ -473,7 +431,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             )}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-display mb-2 drop-shadow-md transition-colors duration-500" style={{ color: themeColor }}>
-                            {isPatissier ? "Recette Sucrée" : "Recette Salée"}
+                            {isPatissier ? "L'Atelier Sucré" : "L'Atelier Salé"}
                         </h1>
                         <p className="text-gray-400 text-sm font-light tracking-widest uppercase">
                             Cuisine & Improvisation
@@ -543,18 +501,18 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                                 <div className="grid grid-cols-2 gap-3 mb-2">
                                     <button
-                                        onClick={() => setRecipeCost('budget')}
-                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'budget' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
-                                    >
-                                        <PremiumEuro size={20} className="mb-1" />
-                                        <span className="text-[10px] font-bold uppercase">Économique</span>
-                                    </button>
-                                    <button
                                         onClick={() => setRecipeCost('authentic')}
                                         className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'authentic' ? 'bg-[#509f2a]/10 border-[#509f2a] text-[#509f2a]' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
                                     >
                                         <PremiumMedal size={20} className="mb-1" />
                                         <span className="text-[10px] font-bold uppercase">De Qualité</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setRecipeCost('budget')}
+                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'budget' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
+                                    >
+                                        <PremiumEuro size={20} className="mb-1" />
+                                        <span className="text-[10px] font-bold uppercase">Économique</span>
                                     </button>
                                 </div>
 
@@ -624,220 +582,228 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 >
                                     <div className="flex items-center gap-3">
                                         <Layers size={18} className={isBatchCooking ? 'text-white' : 'text-gray-500'} />
-                                        <span className={`text-sm font-medium ${isBatchCooking ? 'text-white' : 'text-gray-400'}`}>Mode Batch Cooking</span>
+                                        <span className={`text-sm font-medium ${isBatchCooking ? 'text-white' : 'text-gray-400'}`}>Cuisiner pour la semaine (Batch Cooking)</span>
                                     </div>
-                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isBatchCooking ? 'bg-[#509f2a] border-[#509f2a]' : 'border-gray-600'}`}>
-                                        {isBatchCooking && <Check size={14} className="text-white" />}
+                                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isBatchCooking ? 'bg-white border-white' : 'border-gray-600 bg-transparent'}`}>
+                                        {isBatchCooking && <Check size={12} className="text-black" />}
                                     </div>
                                 </div>
                             </div>
 
                             <button 
                                 onClick={handleGenerate}
-                                disabled={status === 'loading'}
-                                className="w-full py-5 rounded-xl text-white font-bold text-sm tracking-widest uppercase shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none"
-                                style={{
-                                    background: `linear-gradient(to right, ${isPatissier ? '#db2777' : '#15803d'}, ${isPatissier ? '#831843' : '#14532d'})`,
-                                    boxShadow: `0 10px 30px -10px ${isPatissier ? '#db277780' : '#15803d80'}`
-                                }}
+                                disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)}
+                                className={`w-full py-5 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-bold text-sm tracking-widest uppercase ${themeShadow} hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none shadow-lg`}
                             >
                                 {status === 'loading' ? (
-                                    <>
-                                        <Target className="animate-spin" /> {loadingStep}
-                                    </>
+                                    <div className="flex flex-col items-center">
+                                        <span className="animate-pulse">{loadingStep}</span>
+                                    </div>
                                 ) : (
                                     <>
-                                        <Zap size={18} /> Lancer le Chef
+                                    {mode === 'create' ? <Zap size={16} fill="white" /> : <Search size={16} />}
+                                    {mode === 'create' ? 'Lancer la Recette' : 'Lancer la Recherche'}
                                     </>
                                 )}
                             </button>
+
                         </div>
                     </div>
-
-                    <div className="mt-8 text-center pb-8 opacity-60">
-                         <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500">
-                             Propulsé par Google Gemini Pro 1.5
-                         </p>
-                    </div>
-
                 </div>
             </div>
         </>
       ) : (
-        /* VUE RECETTE GÉNÉRÉE */
-        <div className="animate-fade-in pb-20">
-             
-             {/* Header Image Fullscreen with Overlay */}
-             <div className="relative h-[50vh] w-full">
+        /* VUE RECETTE GENEREE (DESIGN ORIGINAL RESTAURÉ) */
+        <div className="animate-fade-in relative bg-[#0a0a0a]">
+            
+            {/* HERO HEADER IMAGE */}
+            <div className="w-full h-[50vh] relative">
                 {generatedImage ? (
-                    <img src={generatedImage} className="w-full h-full object-cover" alt="Plat généré" />
+                    <img src={generatedImage} className="w-full h-full object-cover" alt="Plat" />
                 ) : (
                     <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center">
-                        <PremiumChefHat size={64} className="opacity-10 text-white" />
+                        <PremiumChefHat size={64} className="opacity-20 text-white" />
                     </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60"></div>
+                {/* Gradient overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0a0a]"></div>
                 
-                {/* Navbar flottante */}
-                <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center">
-                    <button 
-                        onClick={handleClearRecipe} 
-                        className="bg-red-500/80 backdrop-blur-md px-4 py-2 rounded-full text-white hover:bg-red-600 transition-all border border-red-400/50 flex items-center gap-2 shadow-lg"
-                    >
-                        <Trash2 size={18} /> <span className="text-xs font-bold uppercase tracking-wide">Effacer</span>
-                    </button>
-                    <div className="flex gap-3">
-                         <button onClick={handleSaveToBook} disabled={isSaved} className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all border border-white/10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
-                            {isSaved ? <Check size={16} /> : <Book size={16} />} {isSaved ? 'Sauvegardé' : 'Sauvegarder'}
-                         </button>
-                    </div>
-                </div>
+                {/* Back / Clear Button */}
+                <button 
+                    onClick={handleClearRecipe} 
+                    className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 bg-red-600/80 hover:bg-red-600 rounded-full text-white border border-white/10 backdrop-blur-md transition-all shadow-lg"
+                >
+                      <XCircle size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Fermer / Supprimer</span>
+                </button>
+            </div>
 
-                {/* Title & Metrics Overlay */}
-                <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black via-black/80 to-transparent pt-32">
-                     <div className="max-w-4xl mx-auto">
-                        <h1 className="text-3xl md:text-5xl font-display text-white mb-4 leading-tight drop-shadow-lg">
-                            {recipe.match(/^#\s+(.+)$/m)?.[1] || "Recette du Chef"}
-                        </h1>
-                        
-                        {metrics && (
-                            <div className="flex flex-wrap gap-4 items-center">
-                                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                                    <Clock size={14} className="text-gray-300" />
-                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                        {metrics.difficulty}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                                    <Target size={14} className="text-gray-300" />
-                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                        {metrics.caloriesPerPerson} Kcal
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                                    <PremiumEuro size={14} className="text-gray-300" />
-                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                        ~{metrics.pricePerPerson}€ / pers
-                                    </span>
-                                </div>
-                                <div className={`px-2 py-0.5 rounded text-[10px] font-bold border border-white/20 ${metrics.nutriScore === 'A' ? 'bg-[#008148]' : metrics.nutriScore === 'B' ? 'bg-[#8ac53e]' : metrics.nutriScore === 'C' ? 'bg-[#fecb02]' : metrics.nutriScore === 'D' ? 'bg-[#ee8100]' : 'bg-[#e63e11]'}`}>
-                                    NUTRI-SCORE {metrics.nutriScore}
-                                </div>
+            {/* CONTENT CARD (FLOATING UP) */}
+            <div className="relative z-10 -mt-24 px-4 pb-20 max-w-4xl mx-auto">
+                
+                {/* Main Recipe Info */}
+                <div className="bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
+                    
+                    {/* Badge Badges */}
+                    <div className="flex justify-center gap-3 mb-6">
+                        <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 flex items-center gap-2" style={{ backgroundColor: themeColor }}>
+                            {isPatissier ? <PremiumCake size={12}/> : <PremiumChefHat size={12}/>}
+                            {isPatissier ? 'Sucré' : 'Salé'}
+                        </div>
+                        {recipeCost === 'budget' && (
+                            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-blue-600">
+                                <PremiumEuro size={12}/> Eco
                             </div>
                         )}
-                     </div>
-                </div>
-             </div>
-
-             <div className="max-w-4xl mx-auto px-6 -mt-6 relative z-10 space-y-8">
-                
-                {/* ACTIONS RAPIDES (MODE CUISINE) */}
-                <div className="flex gap-4">
-                     <button 
-                        onClick={startCooking}
-                        className="flex-1 py-4 bg-[#509f2a] hover:bg-[#408020] text-white rounded-2xl shadow-lg shadow-green-900/40 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-transform active:scale-95"
-                    >
-                        <Play size={18} fill="currentColor" /> Lancer le Mode Cuisine
-                     </button>
-                </div>
-
-                {/* STORAGE ADVICE CARD (NEW) */}
-                {storageAdvice && (
-                    <div className="bg-[#121212] border border-blue-900/30 rounded-2xl p-6 shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                            <Snowflake size={64} />
-                        </div>
-                        <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest mb-2 flex items-center gap-2">
-                            <Snowflake size={14} /> Conservation & Anti-Gaspi
-                        </h3>
-                        <p className="text-gray-300 text-sm leading-relaxed">
-                            {storageAdvice}
-                        </p>
-                    </div>
-                )}
-
-                {/* INGREDIENTS CHECKLIST (SHOPPING MODE) */}
-                <div className="bg-[#121212] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-display text-2xl text-white flex items-center gap-3">
-                            <Leaf size={24} className="text-green-500" /> Ingrédients
-                        </h3>
-                        <div className="flex gap-2">
-                             <button onClick={toggleAllIngredients} className="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase">
-                                 Tout cocher
-                             </button>
+                        <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-[#222]">
+                            {metrics?.difficulty || "Moyen"}
                         </div>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                        {ingredientsWithQuantities.map((ing, idx) => {
-                            // On essaye de matcher avec la liste "panier" pour savoir quoi ajouter
-                            // Note: c'est une approximation car ingredientsWithQuantities est plus détaillé
-                            const simpleIng = ingredientsList[idx] || ing; 
-                            const isSelected = selectedIngredients.has(simpleIng);
-                            
-                            return (
-                                <div 
-                                    key={idx} 
-                                    onClick={() => toggleIngredient(simpleIng)}
-                                    className={`p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${isSelected ? 'bg-green-900/20 border-green-500/50' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
-                                >
-                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${isSelected ? 'bg-green-500 border-green-500' : 'border-gray-600'}`}>
-                                        {isSelected && <Check size={14} className="text-white" />}
+
+                    {/* Title */}
+                    <h1 className="text-4xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
+                        {recipe.match(/^#\s+(.+)$/m)?.[1] || 'Recette du Chef'}
+                    </h1>
+
+                    {/* Metrics Bar */}
+                    {metrics && (
+                        <div className="grid grid-cols-4 gap-4 mb-10 py-6 border-y border-white/5">
+                             <div className="text-center border-r border-white/10 last:border-0">
+                                <div className="text-2xl font-display text-white">{metrics.nutriScore}</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Nutri</div>
+                             </div>
+                             <div className="text-center border-r border-white/10 last:border-0">
+                                <div className="text-2xl font-display text-white">{metrics.caloriesPerPerson}</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Kcal</div>
+                             </div>
+                             <div className="text-center border-r border-white/10 last:border-0">
+                                <div className="text-2xl font-display text-white">{metrics.proteins}g</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Prot.</div>
+                             </div>
+                             <div className="text-center">
+                                <div className="text-2xl font-display text-white">{people}</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Pers.</div>
+                             </div>
+                        </div>
+                    )}
+
+                    {/* BOUTON DÉMARRER LA CUISINE */}
+                    <div className="mb-10 flex justify-center">
+                        <button 
+                            onClick={startCooking}
+                            disabled={cookingSteps.length === 0}
+                            className="group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3"
+                        >
+                            <Play size={20} fill="black" />
+                            Lancer le Mode Cuisine
+                            <div className="absolute inset-0 rounded-full ring-2 ring-white/50 animate-pulse group-hover:ring-white"></div>
+                        </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-[1fr_2fr] gap-8">
+                        
+                        {/* LEFT COLUMN: SHOPPING LIST WIDGET */}
+                        <div className="order-2 md:order-1">
+                            {ingredientsList && ingredientsList.length > 0 && (
+                                <div className="bg-[#1a1a1a] rounded-2xl border-l-4 overflow-hidden shadow-lg sticky top-6" style={{ borderLeftColor: themeColor }}>
+                                    <div className="p-5 border-b border-white/5 bg-white/5">
+                                        <h3 className="font-display text-lg text-white flex items-center gap-2">
+                                            <ShoppingCart size={18} className="text-white/60" />
+                                            Panier Express
+                                        </h3>
+                                        <p className="text-[10px] text-gray-500 mt-1">Cochez pour ajouter à votre liste de courses.</p>
                                     </div>
-                                    <span className={`text-sm ${isSelected ? 'text-green-100' : 'text-gray-300'}`}>{ing}</span>
+                                    
+                                    <div className="p-4 space-y-1">
+                                        <div className="flex justify-end mb-2">
+                                            <button 
+                                                onClick={toggleAllIngredients}
+                                                className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-white transition-colors"
+                                            >
+                                                {selectedIngredients.size === ingredientsList.length ? 'Tout décocher' : 'Tout cocher'}
+                                            </button>
+                                        </div>
+
+                                        <div className="max-h-[300px] overflow-y-auto custom-scrollbar pr-2 space-y-2">
+                                            {ingredientsList.map((ing, idx) => (
+                                                <button 
+                                                    key={idx}
+                                                    onClick={() => toggleIngredient(ing)}
+                                                    className={`w-full text-left text-sm px-3 py-2.5 rounded-lg transition-all flex items-start gap-3 group ${selectedIngredients.has(ing) ? 'bg-[#509f2a]/20 text-white' : 'hover:bg-white/5 text-gray-400'}`}
+                                                >
+                                                    <div className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedIngredients.has(ing) ? 'bg-[#509f2a] border-[#509f2a]' : 'border-gray-600 group-hover:border-gray-400'}`}>
+                                                        {selectedIngredients.has(ing) && <Check size={10} className="text-white" />}
+                                                    </div>
+                                                    <span className={`leading-tight text-xs font-medium ${selectedIngredients.has(ing) ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}`}>{ing}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4 bg-white/5 border-t border-white/5">
+                                        <button
+                                            onClick={handleAddIngredientsToCart}
+                                            disabled={selectedIngredients.size === 0 || isAddedToCart}
+                                            className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isAddedToCart ? 'bg-white text-black' : 'bg-[#333] hover:bg-[#444] text-white disabled:opacity-50'}`}
+                                        >
+                                            {isAddedToCart ? (
+                                                <><Check size={14} /> Ajouté !</>
+                                            ) : (
+                                                <><ShoppingCart size={14} /> Ajouter ({selectedIngredients.size})</>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
-                            );
-                        })}
-                    </div>
-
-                    <button 
-                        onClick={handleAddIngredientsToCart}
-                        disabled={selectedIngredients.size === 0 || isAddedToCart}
-                        className={`w-full py-3 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all ${isAddedToCart ? 'bg-gray-800 text-gray-400' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'}`}
-                    >
-                        {isAddedToCart ? <><CheckSquare size={16}/> Ajouté à la liste</> : <><ShoppingCart size={16}/> Ajouter la sélection à ma liste</>}
-                    </button>
-                </div>
-
-                {/* USTENSILS */}
-                {utensilsList.length > 0 && (
-                     <div className="bg-[#121212] border border-white/10 rounded-2xl p-6">
-                        <h3 className="font-display text-xl text-white mb-4 flex items-center gap-2">
-                            <PremiumUtensils size={20} className="text-gray-400" /> Matériel
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            {utensilsList.map((u, i) => (
-                                <span key={i} className="px-3 py-1 bg-white/5 rounded-lg text-sm text-gray-300 border border-white/5">
-                                    {u}
-                                </span>
-                            ))}
+                            )}
                         </div>
-                     </div>
-                )}
 
-                {/* STEPS PREVIEW (READ ONLY) */}
-                <div className="bg-[#121212] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
-                     <h3 className="font-display text-2xl text-white mb-6 flex items-center gap-3">
-                        <PremiumChefHat size={24} className="text-orange-500" /> Préparation
-                    </h3>
-                    
-                    {/* On affiche le markdown complet pour la lecture */}
-                    <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
-                         <ReactMarkdown 
-                            components={{
-                                h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1
-                                h2: ({node, ...props}) => <h2 className="text-xl font-bold text-white mb-4 mt-8 border-b border-white/10 pb-2 flex items-center gap-2" {...props} />,
-                                strong: ({node, ...props}) => <strong className="text-orange-400 font-bold" {...props} />,
-                                li: ({node, ...props}) => <li className="flex items-start gap-3 mb-3" {...props}><span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-orange-500"></span><span className="flex-1">{props.children}</span></li>
-                            }}
-                         >
-                            {recipe}
-                        </ReactMarkdown>
+                        {/* RIGHT COLUMN: INSTRUCTIONS (PRESENTATION ORIGINALE RESTAUREE) */}
+                        <div className="order-1 md:order-2">
+                            
+                            {/* NOTE: Les blocs "Ingrédients avec Quantités" et "Ustensiles" ont été masqués
+                                ici pour respecter la demande de ne PAS changer la présentation.
+                                Le texte Markdown généré par l'IA doit contenir ces infos. */}
+
+                            <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
+                                <ReactMarkdown 
+                                components={{
+                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
+                                    h2: ({node, ...props}) => (
+                                        <div className="flex items-center gap-3 mt-8 mb-4">
+                                            <div className="h-[1px] flex-1 bg-white/10"></div>
+                                            <h2 className="text-lg font-bold text-white uppercase tracking-widest" {...props} />
+                                            <div className="h-[1px] flex-1 bg-white/10"></div>
+                                        </div>
+                                    ),
+                                    strong: ({node, ...props}) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
+                                    ul: ({node, ...props}) => <ul className="space-y-4 my-6" {...props} />,
+                                    li: ({node, ...props}) => (
+                                        <li className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
+                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
+                                            <span className="flex-1 text-gray-300">{props.children}</span>
+                                        </li>
+                                    ),
+                                    p: ({node, ...props}) => <p className="mb-4 text-gray-400 font-light" {...props} />
+                                }}
+                                >
+                                {recipe}
+                                </ReactMarkdown>
+                            </div>
+
+                             {/* Save Button */}
+                            <button 
+                                onClick={handleSaveToBook} 
+                                disabled={isSaved}
+                                className="w-full mt-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 shadow-xl text-white uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-100"
+                                style={{ backgroundColor: isSaved ? '#333' : themeColor }}
+                            >
+                                {isSaved ? <Check size={18} /> : <Book size={18} />}
+                                {isSaved ? 'Enregistré dans le carnet' : 'Sauvegarder cette recette'}
+                            </button>
+                        </div>
+
                     </div>
                 </div>
-
-             </div>
+            </div>
         </div>
       )}
     </div>

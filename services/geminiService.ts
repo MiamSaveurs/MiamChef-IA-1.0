@@ -52,45 +52,6 @@ const getCurrentSeason = (date: Date): string => {
   return "Hiver";
 };
 
-// Helper to get strict seasonality rules based on current date
-const getSeasonalityRules = (date: Date): string => {
-    const month = date.getMonth(); // 0-11
-    
-    if (month === 11 || month <= 1) { // HIVER (Déc, Jan, Fév)
-        return `
-        === PROTOCOLE STRICT DE SAISONNALITÉ : HIVER ===
-        CRITIQUE : Nous sommes en HIVER. C'est inadmissible de proposer des légumes d'été frais.
-        ⛔ INTERDIT ABSOLU (Hors Saison) : Tomates fraîches, Courgettes, Aubergines, Poivrons, Concombres, Haricots verts frais, Fraises, Framboises, Melons, Pêches, Nectarines.
-        ✅ AUTORISÉ : Poireaux, Choux (fleur, rouge, vert, Bruxelles), Endives, Épinards, Courges (Butternut, Potimarron), Céleri, Carottes, Panais, Betteraves, Navets, Salsifis, Topinambours.
-        ✅ FRUITS : Agrumes (Oranges, Clémentines, Citrons), Kiwis, Pommes, Poires, Bananes.
-        EXCEPTION : Les tomates en conserve/coulis sont autorisées pour les plats mijotés, mais DOIVENT être spécifiées comme "en conserve".
-        `;
-    }
-    if (month >= 2 && month <= 4) { // PRINTEMPS (Mars, Avr, Mai)
-        return `
-        === PROTOCOLE STRICT DE SAISONNALITÉ : PRINTEMPS ===
-        CRITIQUE : C'est le début des beaux jours, mais pas encore l'été.
-        ⛔ INTERDIT (Trop tôt) : Tomates (avant fin Mai), Aubergines, Poivrons, Melons, Pastèques, Pêches.
-        ✅ AUTORISÉ : Asperges, Artichauts, Radis, Fèves, Petits pois, Épinards, Blettes, Carottes nouvelles, Navets nouveaux.
-        ✅ FRUITS : Fraises (dès Avril), Rhubarbe, Cerises (fin printemps).
-        `;
-    }
-    if (month >= 5 && month <= 7) { // ÉTÉ (Juin, Juil, Août)
-        return `
-        === PROTOCOLE STRICT DE SAISONNALITÉ : ÉTÉ ===
-        ✅ C'EST LA SAISON : Tomates, Courgettes, Aubergines, Poivrons, Concombres, Haricots verts, Maïs, Melons, Pastèques, Pêches, Abricots, Nectarines, Fruits rouges, Figues (fin été).
-        ⛔ INTERDIT : Courges d'hiver, Endives, Choux d'hiver, Agrumes d'hiver.
-        `;
-    }
-    // AUTOMNE (Sep, Oct, Nov)
-    return `
-    === PROTOCOLE STRICT DE SAISONNALITÉ : AUTOMNE ===
-    ✅ AUTORISÉ : Champignons, Courges (Potimarron, Butternut), Choux, Poireaux, Fenouil, Blettes.
-    ✅ FRUITS : Raisins, Figues, Noix, Châtaignes, Pommes, Poires, Coings, Kakis.
-    ⛔ INTERDIT (Fin de saison) : Tomates, Courgettes, Aubergines (sauf tout début septembre), Fruits d'été (Pêches, Melons).
-    `;
-};
-
 // Helper to translate diet selection into strict AI instructions
 const getDietaryConstraints = (diet: string): string => {
   switch (diet) {
@@ -138,7 +99,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE. ATTENTION : Doit OBLIGATOIREMENT commencer par un Titre H1 (# Nom de la Recette). Ne mettez PAS de texte avant le titre."
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur. Il doit être beau et complet."
     },
     metrics: {
       type: Type.OBJECT,
@@ -265,9 +226,6 @@ export const generateChefRecipe = async (
     
     // Inject User Profile (Mes Préférences)
     const userProfileContext = getUserProfileContext();
-
-    // Inject Strict Seasonality Rules
-    const seasonalityRules = getSeasonalityRules(today);
 
     // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
     let personaPrompt = "";
@@ -403,7 +361,6 @@ export const generateChefRecipe = async (
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
       ${userProfileContext}
-      ${seasonalityRules}
 
       === VOTRE PERSONA ===
       ${personaPrompt}
@@ -426,7 +383,7 @@ export const generateChefRecipe = async (
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Vous devez répondre UNIQUEMENT en JSON valide respectant ce schéma :
       {
-        "markdownContent": "LA RECETTE COMPLÈTE. FORMATAGE MARKDOWN. IMPORTANT : DOIT OBLIGATOIREMENT COMMENCER PAR UN TITRE H1 (# Nom de la Recette). Incluez l'intro, les ingrédients avec quantités, les instructions et la conclusion.",
+        "markdownContent": "LE TEXTE DE LA RECETTE. Il doit être complet, rédigé avec passion et parfaitement formaté en Markdown (Titres ##, Gras **, Listes -). Il doit inclure l'introduction, la liste des ingrédients, les instructions de préparation et la conclusion.",
         "metrics": {
           "nutriScore": "A/B/C/D/E",
           "caloriesPerPerson": Nombre entier,
@@ -481,17 +438,14 @@ export const generateChefRecipe = async (
 export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const today = new Date();
-  const seasonalityRules = getSeasonalityRules(today);
   
   const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique et gastronomique' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
   
   ${userProfileContext}
-  ${seasonalityRules}
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT : Dans "markdownContent", commencez OBLIGATOIREMENT par un TITRE H1 (# Nom de la Recette) explicite.`;
+  IMPORTANT : Fournissez un contenu Markdown riche ("markdownContent") pour l'affichage principal, et une liste d'étapes claire ("steps") pour le mode pas-à-pas.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -572,8 +526,6 @@ export const generateRecipeImage = async (title: string, context: string): Promi
 export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const today = new Date();
-  const seasonalityRules = getSeasonalityRules(today);
   
   const imagePart = {
     inlineData: {
@@ -590,7 +542,6 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
-    ${seasonalityRules}
 
     ETAPE 1 : IDENTIFICATION
     Analyse visuellement cette photo avec une extrême précision. Liste TOUS les ingrédients comestibles que tu vois.
@@ -605,9 +556,9 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ETAPE 3 : CRÉATION
     En utilisant PRINCIPALEMENT les ingrédients identifiés, crée une recette gastronomique et anti-gaspillage.
     
-    FORMAT DE RÉPONSE OBLIGATOIRE (Markdown) :
+    FORMAT DE RÉPONSE (Markdown) :
     1. Commence par : "**Ingrédients identifiés :** [Liste des ingrédients vus]"
-    2. Titre H1 : # Nom de la Recette (IMPÉRATIF POUR LE TITRE DU DOCUMENT)
+    2. Titre de la recette (avec #)
     3. Ingrédients complets (avec quantités estimées)
     4. Instructions étape par étape.
     
@@ -710,11 +661,9 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const today = new Date();
   
   // Récupération des contraintes strictes pour le semainier
   const strictDietaryRules = getDietaryConstraints(dietary);
-  const seasonalityRules = getSeasonalityRules(today);
 
   let ingredientsPrompt = "";
   if (ingredients.trim()) {
@@ -728,7 +677,6 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   const prompt = `Créez un planning de repas hebdomadaire complet (Petit-déj, Midi, Collation, Soir) pour ${people} personnes.
   
   ${userProfileContext}
-  ${seasonalityRules}
 
   CONTRAINTES ALIMENTAIRES STRICTES À RESPECTER : 
   ${strictDietaryRules}
@@ -745,10 +693,11 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3-pro-preview",
     contents: prompt,
     config: {
-      thinkingConfig: { thinkingBudget: 0 },
+      // Pour le menu hebdo (plus complexe), 4096 est un bon compromis Vitesse/Qualité.
+      thinkingConfig: { thinkingBudget: 4096 },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
     },

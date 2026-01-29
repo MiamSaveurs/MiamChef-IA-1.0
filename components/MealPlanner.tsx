@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
-import { Loader2, Users, Leaf, ChevronDown, Trash2, Calendar, ShoppingCart, Check, Carrot } from 'lucide-react';
+import { Loader2, Users, Leaf, ChevronDown, Download, Trash2, Calendar, ShoppingCart, Check, Carrot } from 'lucide-react';
 import { 
     PremiumCalendar, 
     PremiumChefHat, 
@@ -42,6 +42,7 @@ const MealPlanner: React.FC = () => {
         setErrorMessage('');
         setAddedToList(false);
         try {
+            // Ajout des ingrédients en 3ème argument
             const newPlan = await generateWeeklyMenu(dietary, people, ingredients);
             if (!newPlan) throw new Error("L'IA n'a pas renvoyé de planning valide.");
             if (!newPlan.id) newPlan.id = 'current';
@@ -81,6 +82,38 @@ const MealPlanner: React.FC = () => {
 
         await addToShoppingList(Array.from(new Set(cleanedIngredients)));
         setAddedToList(true);
+    };
+
+    const handleDownloadPDF = () => {
+        const element = document.getElementById('meal-plan-container');
+        if (!element) return;
+        // Création d'une version imprimable temporaire avec fond blanc pour le PDF
+        const elementToPrint = element.cloneNode(true) as HTMLElement;
+        elementToPrint.style.color = 'black';
+        elementToPrint.style.backgroundColor = 'white';
+        elementToPrint.style.padding = '20px';
+        const cards = elementToPrint.querySelectorAll('.meal-card');
+        cards.forEach((card: any) => {
+            card.style.backgroundColor = '#f3f4f6';
+            card.style.border = '1px solid #ddd';
+            card.style.color = 'black';
+        });
+
+        document.body.appendChild(elementToPrint);
+        const opt = {
+          margin: 5,
+          filename: `miamchef-planning-${new Date().toISOString().slice(0, 10)}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+        // @ts-ignore
+        if (window.html2pdf) {
+          // @ts-ignore
+          window.html2pdf().set(opt).from(elementToPrint).save().then(() => {
+              document.body.removeChild(elementToPrint);
+          });
+        }
     };
 
     const calculateStats = () => {
@@ -149,8 +182,11 @@ const MealPlanner: React.FC = () => {
                     </p>
 
                     {plan && (
-                        <div className="flex gap-3 animate-fade-in flex-wrap justify-center">
-                            <button onClick={handleDeletePlan} className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 px-6 py-3 rounded-full backdrop-blur-md border border-red-500/30 transition-all text-xs font-bold uppercase tracking-wide">
+                        <div className="flex gap-3 animate-fade-in">
+                            <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full backdrop-blur-md border border-white/10 transition-all text-xs font-bold uppercase tracking-wide">
+                                <Download size={14} /> PDF
+                            </button>
+                            <button onClick={handleDeletePlan} className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 px-4 py-2 rounded-full backdrop-blur-md border border-red-500/30 transition-all text-xs font-bold uppercase tracking-wide">
                                 <Trash2 size={14} /> Effacer
                             </button>
                         </div>
@@ -166,7 +202,7 @@ const MealPlanner: React.FC = () => {
                                 <div className="text-center mb-8">
                                     <PremiumSparkles size={40} className="text-purple-400 mx-auto mb-4" />
                                     <h3 className="font-display text-2xl text-white mb-2">Générer votre Menu</h3>
-                                    <p className="text-gray-400 text-sm">MiamChef organise vos repas, vos courses et votre batch cooking.</p>
+                                    <p className="text-gray-400 text-sm">L'IA organise vos repas, vos courses et votre batch cooking.</p>
                                 </div>
 
                                 <div className="space-y-6">
@@ -328,7 +364,7 @@ const MealPlanner: React.FC = () => {
                             <button 
                                 onClick={handleExportToShoppingList} 
                                 disabled={addedToList} 
-                                className={`w-full py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10 backdrop-blur-xl ${addedToList ? 'bg-gray-900 text-gray-400' : 'bg-green-600 hover:bg-green-500 text-white shadow-green-900/50 shadow-lg'}`}
+                                className={`w-full py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10 backdrop-blur-xl ${addedToList ? 'bg-green-600/90 text-white' : 'bg-[#1a1a1a]/90 text-white hover:bg-purple-900/90'}`}
                             >
                                 {addedToList ? <><Check size={18} /> Liste générée</> : <><ShoppingCart size={18} /> Ajouter à ma liste</>}
                             </button>

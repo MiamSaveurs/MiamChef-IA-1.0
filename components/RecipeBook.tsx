@@ -124,23 +124,8 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                     <PremiumChefHat size={48} className="opacity-20 text-white" />
                                 </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
                             
-                            <div className="absolute bottom-0 left-0 p-8 w-full">
-                                <h2 className="text-3xl md:text-4xl font-display text-white mb-2 leading-tight drop-shadow-md">{selectedRecipe.title}</h2>
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
-                                    <span className="flex items-center gap-1.5"><Calendar size={14} className="text-amber-500"/> {selectedRecipe.date}</span>
-                                    {selectedRecipe.metrics && (
-                                        <>
-                                            <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-                                            <span className="flex items-center gap-1.5 font-bold"><Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal</span>
-                                            <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-                                            <NutriBadge score={selectedRecipe.metrics.nutriScore} />
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-
+                            {/* Bouton Supprimer */}
                             <button 
                                 onClick={(e) => handleDelete(e, selectedRecipe.id)}
                                 className="absolute top-4 right-4 p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
@@ -150,7 +135,28 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         </div>
 
                         <div className="p-8 relative">
-                             {/* Storage Advice (NEW) */}
+                             
+                             {/* Informations Recette (Sous la photo) */}
+                             <div className="mb-8 border-b border-white/10 pb-6">
+                                <h2 className="text-3xl md:text-4xl font-display text-white mb-4 leading-tight">{selectedRecipe.title}</h2>
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+                                    <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                        <Calendar size={14} className="text-amber-500"/> {selectedRecipe.date}
+                                    </span>
+                                    {selectedRecipe.metrics && (
+                                        <>
+                                            <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal
+                                            </span>
+                                            <div className="scale-110">
+                                                <NutriBadge score={selectedRecipe.metrics.nutriScore} />
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                             </div>
+
+                             {/* Storage Advice */}
                              {selectedRecipe.storageAdvice && (
                                 <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 flex items-start gap-3">
                                     <div className="bg-blue-500/20 p-2 rounded-full text-blue-300">
@@ -163,7 +169,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                              )}
 
-                             {/* INGREDIENTS WITH QUANTITIES BLOCK (NEW FOR SAVED RECIPES) */}
+                             {/* INGREDIENTS WITH QUANTITIES BLOCK */}
                              {selectedRecipe.ingredientsWithQuantities && selectedRecipe.ingredientsWithQuantities.length > 0 && (
                                 <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
                                      <h3 className="font-display text-lg text-amber-500 mb-4 flex items-center gap-2">
@@ -216,7 +222,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             ) : (
                 /* VUE LISTE (GRILLE) */
                 <>
-                    {/* Search Bar - ACTIVE ET FONCTIONNELLE */}
+                    {/* Search Bar */}
                     <div className="max-w-md mx-auto mb-8 relative flex items-center">
                         <input 
                             type="text"
@@ -224,7 +230,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyDown={(e) => {
-                                // Valider sur Entrée (ferme le clavier mobile)
                                 if (e.key === 'Enter') {
                                     (e.target as HTMLInputElement).blur();
                                 }
@@ -232,7 +237,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             className="w-full bg-[#151515] text-white pl-5 pr-14 py-4 rounded-xl border border-white/10 focus:border-amber-500/50 focus:ring-0 outline-none transition-colors text-sm placeholder:text-gray-600 shadow-md"
                         />
                         
-                        {/* Boutons d'action à droite dans l'input */}
                         <div className="absolute right-2 flex items-center gap-1">
                             {searchTerm && (
                                 <button 
@@ -245,7 +249,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             <button 
                                 className="p-2.5 bg-amber-500/20 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all shadow-sm active:scale-95"
                                 onClick={() => {
-                                    // Simulation "Envoyer" (Focus out pour voir les résultats)
                                     const input = document.querySelector('input[type="text"]') as HTMLInputElement;
                                     input?.blur();
                                 }}
