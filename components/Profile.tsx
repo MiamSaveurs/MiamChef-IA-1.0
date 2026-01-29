@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { UserProfile } from '../types';
 import { getUserProfile, saveUserProfile } from '../services/storageService';
-import { Save, User, Leaf, AlertTriangle, ThumbsDown, PenTool, Users, ChefHat, Check, Settings } from 'lucide-react';
-import { PremiumFingerprint } from './Icons';
+import { Save, User, Leaf, AlertTriangle, ThumbsDown, PenTool, Users, ChefHat, Check, Settings, Wifi, Zap } from 'lucide-react';
+import { PremiumFingerprint, PremiumStore } from './Icons';
 
 const Profile: React.FC = () => {
     const defaultProfile: UserProfile = {
@@ -18,11 +18,20 @@ const Profile: React.FC = () => {
 
     const [profile, setProfile] = useState<UserProfile>(getUserProfile());
     const [isSaved, setIsSaved] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
 
     const handleSave = () => {
         saveUserProfile(profile);
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
+    };
+
+    const handleIoTScan = () => {
+        setIsScanning(true);
+        setTimeout(() => {
+            setIsScanning(false);
+            alert("Aucun appareil compatible détecté à proximité. (Simulation Bêta)");
+        }, 3000);
     };
 
     const dietOptions = ["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"];
@@ -130,6 +139,26 @@ const Profile: React.FC = () => {
                             className="w-full bg-[#1a1a1a] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-blue-500/30 outline-none transition-colors h-20 resize-none text-sm"
                             placeholder="Ex: J'ai un Thermomix, un Airfryer, mais pas de four..."
                         />
+                    </div>
+
+                    {/* IOT SECTION - B2B HOOK */}
+                    <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-4 rounded-xl border border-blue-500/30">
+                        <label className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-widest mb-3">
+                            <Wifi size={14} /> Maison Connectée (Bêta)
+                        </label>
+                        <div className="flex items-center justify-between">
+                            <p className="text-xs text-blue-200/70 max-w-[200px]">
+                                Connectez vos appareils (Fours, Robots, Frigos) pour envoyer les instructions de cuisson directement.
+                            </p>
+                            <button 
+                                onClick={handleIoTScan}
+                                disabled={isScanning}
+                                className="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-wider"
+                            >
+                                {isScanning ? <Zap size={14} className="animate-pulse" /> : <Wifi size={14} />}
+                                {isScanning ? "Recherche..." : "Scanner"}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

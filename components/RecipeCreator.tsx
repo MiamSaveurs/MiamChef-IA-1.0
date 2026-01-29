@@ -32,7 +32,8 @@ import {
   Play,
   ArrowLeft,
   Volume2,
-  StopCircle
+  StopCircle,
+  Share2
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -167,6 +168,27 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       } else {
           speak(textToRead);
       }
+  };
+
+  const handleShareRecipe = async () => {
+    const titleMatch = recipe.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1] : 'Une recette incroyable';
+    const text = `🍽️ Regarde cette recette générée par MiamChef IA : ${title} !\n\nEssayez l'app gratuitement !`;
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Ma Recette MiamChef',
+                text: text,
+                url: window.location.href // En production, mettre le lien du store
+            });
+        } catch (err) {
+            console.log('Share canceled');
+        }
+    } else {
+        navigator.clipboard.writeText(text);
+        alert('Lien copié dans le presse-papier !');
+    }
   };
 
   // Parsing des étapes quand une recette est chargée
@@ -680,6 +702,14 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 bg-red-600/80 hover:bg-red-600 rounded-full text-white border border-white/10 backdrop-blur-md transition-all shadow-lg"
                 >
                       <XCircle size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Fermer</span>
+                </button>
+
+                {/* Viral Share Button (NOUVEAU) */}
+                <button 
+                    onClick={handleShareRecipe}
+                    className="absolute top-6 right-6 z-20 flex items-center gap-2 px-4 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-full text-white border border-white/10 backdrop-blur-md transition-all shadow-lg"
+                >
+                      <Share2 size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Partager</span>
                 </button>
             </div>
 
