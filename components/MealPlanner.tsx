@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
+import { t } from '../services/translationService'; // Import translation
 import { WeeklyPlan, LoadingState } from '../types';
 import { Loader2, Users, Leaf, ChevronDown, Download, Trash2, Calendar, ShoppingCart, Check, Carrot } from 'lucide-react';
 import { 
@@ -31,7 +32,7 @@ const MealPlanner: React.FC = () => {
             const saved = await getWeeklyPlan();
             if (saved) setPlan(saved);
         } catch (e) {
-            console.error("Erreur chargement sauvegarde", e);
+            console.error("Error", e);
         } finally {
             setIsInitializing(false);
         }
@@ -42,21 +43,20 @@ const MealPlanner: React.FC = () => {
         setErrorMessage('');
         setAddedToList(false);
         try {
-            // Ajout des ingrédients en 3ème argument
             const newPlan = await generateWeeklyMenu(dietary, people, ingredients);
-            if (!newPlan) throw new Error("MiamChef n'a pas pu créer votre planning. Veuillez réessayer.");
+            if (!newPlan) throw new Error(t('error'));
             if (!newPlan.id) newPlan.id = 'current';
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');
         } catch (e: any) {
             setStatus('error');
-            setErrorMessage(e.message || "Erreur de connexion à MiamChef.");
+            setErrorMessage(e.message || t('error'));
         }
     };
 
     const handleDeletePlan = async (e: React.MouseEvent) => {
-        if (!confirm("Voulez-vous vraiment effacer cette semaine et recommencer ?")) return;
+        if (!confirm(t('delete') + " ?")) return;
         e.preventDefault();
         e.stopPropagation();
         setPlan(null); 
@@ -87,7 +87,6 @@ const MealPlanner: React.FC = () => {
     const handleDownloadPDF = () => {
         const element = document.getElementById('meal-plan-container');
         if (!element) return;
-        // Création d'une version imprimable temporaire avec fond blanc pour le PDF
         const elementToPrint = element.cloneNode(true) as HTMLElement;
         elementToPrint.style.color = 'black';
         elementToPrint.style.backgroundColor = 'white';
@@ -149,7 +148,7 @@ const MealPlanner: React.FC = () => {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-black">
                 <Loader2 className="animate-spin text-purple-500 mb-3" size={40} />
-                <p className="text-purple-200 font-display text-lg animate-pulse">Synchronisation...</p>
+                <p className="text-purple-200 font-display text-lg animate-pulse">{t('loading')}</p>
             </div>
         );
     }
@@ -157,7 +156,6 @@ const MealPlanner: React.FC = () => {
     return (
         <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
              
-             {/* Background Image & Overlay */}
              <div className="absolute inset-0 z-0">
                 <img 
                   src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=2068&auto=format&fit=crop" 
@@ -169,47 +167,44 @@ const MealPlanner: React.FC = () => {
 
              <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
                 
-                {/* Header */}
                 <div className="text-center mb-10 flex flex-col items-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-900 to-purple-600 shadow-[0_0_30px_rgba(147,51,234,0.3)] mb-4 border border-purple-500/30">
                         <PremiumCalendar size={32} className="text-purple-100" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-display text-purple-500 mb-2 drop-shadow-md">
-                        Semainier
+                        {t('mp_title')}
                     </h1>
                     <p className="text-purple-200/60 text-sm font-light tracking-widest uppercase mb-6">
-                        Planifiez votre semaine en un clic
+                        {t('mp_sub')}
                     </p>
 
                     {plan && (
                         <div className="flex gap-3 animate-fade-in">
                             <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full backdrop-blur-md border border-white/10 transition-all text-xs font-bold uppercase tracking-wide">
-                                <Download size={14} /> PDF
+                                <Download size={14} /> {t('mp_btn_pdf')}
                             </button>
                             <button onClick={handleDeletePlan} className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 px-4 py-2 rounded-full backdrop-blur-md border border-red-500/30 transition-all text-xs font-bold uppercase tracking-wide">
-                                <Trash2 size={14} /> Effacer
+                                <Trash2 size={14} /> {t('mp_btn_clear')}
                             </button>
                         </div>
                     )}
                 </div>
 
                 {!plan ? (
-                    /* ETAT 1 : CONFIGURATION (STYLE SCAN - MAUVE) */
                     <div className="max-w-2xl mx-auto animate-fade-in">
                         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-1.5 shadow-2xl mb-10">
                             <div className="bg-black/40 rounded-[1.7rem] p-8 border border-white/5">
                                 
                                 <div className="text-center mb-8">
                                     <PremiumSparkles size={40} className="text-purple-400 mx-auto mb-4" />
-                                    <h3 className="font-display text-2xl text-white mb-2">Générer votre Menu</h3>
-                                    <p className="text-gray-400 text-sm">MiamChef organise vos repas, vos courses et votre batch cooking.</p>
+                                    <h3 className="font-display text-2xl text-white mb-2">{t('mp_config_title')}</h3>
+                                    <p className="text-gray-400 text-sm">{t('mp_config_desc')}</p>
                                 </div>
 
                                 <div className="space-y-6">
-                                    {/* Selecteurs Style Sombre */}
                                     <div>
                                         <label className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-3">
-                                            <Leaf size={12} /> Régime Alimentaire
+                                            <Leaf size={12} /> {t('mp_diet')}
                                         </label>
                                         <div className="relative group">
                                             <div className="flex items-center justify-between bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-4 rounded-xl border border-white/10 focus-within:border-purple-500/50 transition-colors">
@@ -230,11 +225,11 @@ const MealPlanner: React.FC = () => {
 
                                     <div>
                                         <label className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-3">
-                                            <Users size={12} /> Convives
+                                            <Users size={12} /> {t('mp_guests')}
                                         </label>
                                         <div className="relative group">
                                             <div className="flex items-center justify-between bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-4 rounded-xl border border-white/10 focus-within:border-purple-500/50 transition-colors">
-                                                <span className="font-medium text-sm text-gray-200">{people} personne{people > 1 ? 's' : ''}</span>
+                                                <span className="font-medium text-sm text-gray-200">{people}</span>
                                                 <ChevronDown size={16} className="text-gray-500" />
                                             </div>
                                             <select 
@@ -243,34 +238,32 @@ const MealPlanner: React.FC = () => {
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                             >
                                                 {[1,2,3,4,5,6,7,8].map(n => 
-                                                    <option key={n} value={n} className="bg-[#1a1a1a] text-white">{n} personne{n > 1 ? 's' : ''}</option>
+                                                    <option key={n} value={n} className="bg-[#1a1a1a] text-white">{n}</option>
                                                 )}
                                             </select>
                                         </div>
                                     </div>
 
-                                    {/* CHAMP INGREDIENTS AJOUTÉ */}
                                     <div>
                                         <label className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-3">
-                                            <Carrot size={12} /> Vos ingrédients (Optionnel)
+                                            <Carrot size={12} /> {t('mp_ingredients')}
                                         </label>
                                         <div className="relative">
                                             <textarea
                                                 value={ingredients}
                                                 onChange={(e) => setIngredients(e.target.value)}
-                                                placeholder="Ex: J'ai 3 courgettes, des oeufs et du riz à utiliser..."
+                                                placeholder={t('mp_ingredients_ph')}
                                                 className="w-full h-24 bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-purple-500/50 focus:ring-0 outline-none transition-colors resize-none placeholder:text-gray-600 text-sm"
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Action Button */}
                                     <button 
                                         onClick={handleGenerate}
                                         disabled={status === 'loading'}
                                         className="w-full mt-4 py-5 rounded-xl bg-gradient-to-r from-purple-700 to-[#2e1065] text-white font-bold text-sm tracking-widest uppercase shadow-lg shadow-purple-900/40 hover:shadow-purple-700/60 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none"
                                     >
-                                        {status === 'loading' ? <Loader2 className="animate-spin" /> : <>Générer la Semaine <Calendar size={16}/></>}
+                                        {status === 'loading' ? <Loader2 className="animate-spin" /> : <>{t('mp_btn_generate')} <Calendar size={16}/></>}
                                     </button>
 
                                     {errorMessage && (
@@ -281,17 +274,12 @@ const MealPlanner: React.FC = () => {
                         </div>
                     </div>
                 ) : (
-                    /* ETAT 2 : RESULTAT (PLANNING) */
                     <div className="animate-fade-in space-y-8 pb-20" id="meal-plan-container">
                         
-                        {/* Batch Cooking Card */}
                         <div className="bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/20 p-8 rounded-[2rem] relative overflow-hidden shadow-2xl backdrop-blur-sm">
-                            <div className="absolute top-0 right-0 bg-purple-600/20 text-purple-200 text-[10px] px-4 py-2 rounded-bl-2xl font-bold uppercase tracking-wider border-l border-b border-purple-500/20">
-                                Étape 1 : Dimanche
-                            </div>
                             <h4 className="font-display text-2xl text-purple-200 mb-6 flex items-center gap-3">
                                 <PremiumUtensils size={28} /> 
-                                Préparation (Batch Cooking)
+                                {t('mp_batch_title')}
                             </h4>
                             {plan.batchCookingTips && plan.batchCookingTips.length > 0 ? (
                                 <ul className="grid md:grid-cols-2 gap-4">
@@ -305,27 +293,25 @@ const MealPlanner: React.FC = () => {
                             ) : null}
                         </div>
 
-                        {/* Stats Row */}
                         <div className="grid grid-cols-4 gap-4 bg-white/5 rounded-2xl p-4 border border-white/5 backdrop-blur-md">
                             <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-xl font-display text-white">{stats.calories}</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Kcal/j</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">{t('mp_stats_kcal')}</div>
                             </div>
                             <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-xl font-display text-blue-400">{stats.proteins}g</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Protéines</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">{t('mp_stats_prot')}</div>
                             </div>
                             <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-xl font-display text-yellow-400">{stats.carbs}g</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Glucides</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">{t('mp_stats_carb')}</div>
                             </div>
                             <div className="text-center">
                                 <div className="text-xl font-display text-red-400">{stats.fats}g</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Lipides</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">{t('mp_stats_fat')}</div>
                             </div>
                         </div>
 
-                        {/* Grid Days */}
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                             {plan.days.map((day, idx) => (
                                 <div key={idx} className="meal-card bg-[#121212] p-5 rounded-3xl shadow-lg border border-white/10 flex flex-col hover:border-purple-500/30 transition-colors group">
@@ -335,18 +321,18 @@ const MealPlanner: React.FC = () => {
                                     <div className="space-y-3 flex-1">
                                         {day.breakfast && (
                                             <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                                <span className="text-[9px] font-bold text-yellow-500/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumCoffee size={10}/> Petit-Déj</span>
+                                                <span className="text-[9px] font-bold text-yellow-500/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumCoffee size={10}/></span>
                                                 <p className="font-bold text-gray-200 line-clamp-2 leading-tight text-xs">{day.breakfast.name}</p>
                                                 <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.breakfast.ingredients)}</p>
                                             </div>
                                         )}
                                         <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                            <span className="text-[9px] font-bold text-blue-400/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumChefHat size={12}/> Midi</span>
+                                            <span className="text-[9px] font-bold text-blue-400/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumChefHat size={12}/></span>
                                             <p className="font-bold text-gray-200 line-clamp-3 leading-tight text-sm">{day.lunch.name}</p>
                                             <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.lunch.ingredients)}</p>
                                         </div>
                                         <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                            <span className="text-[9px] font-bold text-purple-400/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumSoup size={10}/> Soir</span>
+                                            <span className="text-[9px] font-bold text-purple-400/80 uppercase tracking-wide mb-1 block flex items-center gap-1"><PremiumSoup size={10}/></span>
                                             <p className="font-bold text-gray-200 line-clamp-3 leading-tight text-sm">{day.dinner.name}</p>
                                             <p className="text-[10px] text-gray-500 mt-1 leading-snug">{renderIngredients(day.dinner.ingredients)}</p>
                                         </div>
@@ -357,7 +343,6 @@ const MealPlanner: React.FC = () => {
                     </div>
                 )}
 
-                {/* Floating Action Button (Only in Plan View) */}
                 {plan && (
                     <div className="fixed bottom-24 left-0 w-full px-6 md:px-0 z-40 pointer-events-none print:hidden flex justify-center">
                          <div className="max-w-md w-full pointer-events-auto">
@@ -366,7 +351,7 @@ const MealPlanner: React.FC = () => {
                                 disabled={addedToList} 
                                 className={`w-full py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all border border-white/10 backdrop-blur-xl ${addedToList ? 'bg-green-600/90 text-white' : 'bg-[#1a1a1a]/90 text-white hover:bg-purple-900/90'}`}
                             >
-                                {addedToList ? <><Check size={18} /> Liste générée</> : <><ShoppingCart size={18} /> Ajouter à ma liste</>}
+                                {addedToList ? <><Check size={18} /> {t('mp_list_added')}</> : <><ShoppingCart size={18} /> {t('mp_btn_add_list')}</>}
                             </button>
                          </div>
                     </div>

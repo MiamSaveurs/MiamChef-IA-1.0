@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppView } from '../types';
 import { getShoppingList } from '../services/storageService';
+import { t } from '../services/translationService'; // Import translation
 import { 
   WickerBasket, 
   PremiumChefHat, 
@@ -17,7 +18,7 @@ interface NavigationProps {
   setView: (view: AppView) => void;
   isOnline?: boolean;
   isTimerActive?: boolean; 
-  timerTimeLeft?: number; // Nouveau prop pour le temps
+  timerTimeLeft?: number; 
 }
 
 const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerActive, timerTimeLeft = 0 }) => {
@@ -37,19 +38,18 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerAc
       if (seconds <= 0) return null;
       const m = Math.floor(seconds / 60);
       const s = seconds % 60;
-      // Format compact : si moins d'une minute "45s", sinon "3:45"
       if (m === 0) return `${s}s`;
       return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
   const navItems = [
-    { view: AppView.HOME, icon: PremiumHome, activeColor: 'text-[#509f2a]' },
-    { view: AppView.PLANNING, icon: PremiumCalendar, activeColor: 'text-gray-400' },
-    { view: AppView.RECIPE_CREATOR, icon: PremiumChefHat, activeColor: 'text-gray-400' },
-    { view: AppView.TIMER, icon: PremiumTimer, activeColor: 'text-gray-400' },
-    { view: AppView.SCAN_FRIDGE, icon: PremiumCamera, activeColor: 'text-gray-400' },
-    { view: AppView.SHOPPING_LIST, icon: WickerBasket, activeColor: 'text-gray-400', badge: shoppingCount },
-    { view: AppView.PROFILE, icon: PremiumFingerprint, activeColor: 'text-white' }
+    { view: AppView.HOME, icon: PremiumHome, activeColor: 'text-[#509f2a]', label: t('nav_home') },
+    { view: AppView.PLANNING, icon: PremiumCalendar, activeColor: 'text-gray-400', label: t('nav_planning') },
+    { view: AppView.RECIPE_CREATOR, icon: PremiumChefHat, activeColor: 'text-gray-400', label: t('nav_creator') },
+    { view: AppView.TIMER, icon: PremiumTimer, activeColor: 'text-gray-400', label: t('nav_timer') },
+    { view: AppView.SCAN_FRIDGE, icon: PremiumCamera, activeColor: 'text-gray-400', label: t('nav_scan') },
+    { view: AppView.SHOPPING_LIST, icon: WickerBasket, activeColor: 'text-gray-400', badge: shoppingCount, label: t('nav_list') },
+    { view: AppView.PROFILE, icon: PremiumFingerprint, activeColor: 'text-white', label: t('nav_profile') }
   ];
 
   return (
@@ -64,20 +64,19 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerAc
                 key={idx}
                 onClick={() => setView(item.view)}
                 className={`relative flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full transition-all ${isActive ? 'bg-green-50' : ''}`}
+                title={item.label} // Added tooltip
               >
                 <Icon 
                   size={24} 
                   className={`${isActive ? 'text-[#509f2a]' : 'text-gray-300'}`} 
                 />
                 
-                {/* Badge Shopping List (Rouge, rond) */}
                 {item.view === AppView.SHOPPING_LIST && shoppingCount > 0 && (
                     <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow-sm">
                         <span className="text-white text-[9px] font-black">{shoppingCount > 9 ? '9+' : shoppingCount}</span>
                     </div>
                 )}
 
-                {/* Badge Timer (Rouge, Pilule avec décompte) */}
                 {item.view === AppView.TIMER && isTimerActive && timerTimeLeft > 0 && (
                     <div className="absolute -top-2 -right-3 bg-red-500 border-2 border-white shadow-sm text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full min-w-[24px] text-center animate-pulse z-10">
                         {formatTimerBadge(timerTimeLeft)}

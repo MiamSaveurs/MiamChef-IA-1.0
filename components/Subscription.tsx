@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Check, X, ShieldCheck, Lock, Eye, Circle, Star } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
+import { t } from '../services/translationService'; // Import translation
 import { AppView } from '../types';
 
 interface SubscriptionProps {
@@ -21,7 +22,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       setTimeout(() => {
           setProcessing(false);
           startSubscription(selectedPlan);
-          alert("Félicitations ! Votre abonnement MiamChef Premium est activé.");
+          alert(t('success'));
           window.location.reload(); 
       }, 1500);
   };
@@ -44,29 +45,23 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
         </button>
       )}
 
-      {toggleLargeText && (
-          <button onClick={toggleLargeText} className="fixed top-6 left-6 z-[70] text-white/30 hover:text-white transition-colors flex gap-2 items-center text-xs uppercase tracking-widest bg-black/20 backdrop-blur-md px-3 py-1 rounded-full">
-              <Eye size={16} /> {largeText ? 'Texte Normal' : 'Texte Agrandir'}
-          </button>
-      )}
-
       <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-12 px-4">
           
           <div className="w-full max-w-lg bg-[#1a1c1a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-fade-in">
               
               <div className="pt-10 pb-6 px-8 text-center">
                   <h1 className="font-display text-4xl md:text-5xl mb-4 text-white drop-shadow-sm font-normal">
-                      MiamChef <span className="text-[#509f2a] italic">Premium</span>
+                      {t('sub_title')}
                   </h1>
                   <p className="text-gray-300 text-sm md:text-base font-light leading-relaxed max-w-sm mx-auto">
-                      Débloquez tout le potentiel de votre assistant culinaire. Création illimitée et outils exclusifs.
+                      {t('sub_desc')}
                   </p>
               </div>
 
               <div className="px-6 pb-10 space-y-8">
                   
                   <div>
-                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">1. Choisissez votre offre</h2>
+                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">{t('sub_step1')}</h2>
                       
                       <div className="space-y-4">
                           
@@ -76,16 +71,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           >
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1">4,99 € <span className="text-sm font-sans font-normal opacity-80">/ mois</span></div>
-                                      <div className="text-xs font-medium opacity-90">Sans engagement.</div>
+                                      <div className="text-2xl font-display mb-1">{t('sub_monthly')}</div>
+                                      <div className="text-xs font-medium opacity-90">{t('sub_monthly_detail')}</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Accès illimité</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo Anti-Gaspi</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> {t('sub_feat_unlimited')}</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> {t('sub_feat_scan')}</div>
                               </div>
                           </div>
 
@@ -95,22 +90,21 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           >
                               {selectedPlan === 'annual' && (
                                 <div className="absolute -top-3 right-4 bg-[#509f2a] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
-                                    Meilleure Offre
+                                    {t('sub_annual_best')}
                                 </div>
                               )}
                               
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
+                                      <div className="text-2xl font-display mb-1">{t('sub_annual')}</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Création Illimitée</div>
-                                  {/* MODIFICATION ICI : Sommelier IA -> Sommelier Expert */}
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier Expert Inclus</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> {t('sub_feat_create')}</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> {t('sub_feat_sommelier')}</div>
                               </div>
                           </div>
 
@@ -120,16 +114,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           >
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1 text-[#509f2a]">149,99 € <span className="text-sm font-sans font-normal opacity-80 text-white">À Vie</span></div>
-                                      <div className="text-xs font-medium opacity-90">Accès illimité pour toujours.</div>
+                                      <div className="text-2xl font-display mb-1 text-[#509f2a]">{t('sub_lifetime')}</div>
+                                      <div className="text-xs font-medium opacity-90">{t('sub_lifetime_detail')}</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Toutes les futures mises à jour</div>
-                                  <div className="flex items-center gap-2 text-[#509f2a] font-bold"><Star size={12} fill="currentColor" /> Pack Premium Intégral</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> {t('sub_feat_updates')}</div>
+                                  <div className="flex items-center gap-2 text-[#509f2a] font-bold"><Star size={12} fill="currentColor" /> {t('sub_feat_pack')}</div>
                               </div>
                           </div>
 
@@ -137,7 +131,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                   </div>
 
                   <div>
-                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">2. Règlement sécurisé</h2>
+                      <h2 className="text-xl font-serif italic mb-4 opacity-90 text-center md:text-left">{t('sub_step2')}</h2>
                       <div className="space-y-3">
                           <button 
                             onClick={handleProcessPayment}
@@ -157,7 +151,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                   </div>
 
                   <p className="text-[10px] text-center text-gray-400 leading-relaxed px-4">
-                      En vous abonnant, vous acceptez nos <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white">CGV</button>.
+                      {t('sub_terms')}
                   </p>
 
               </div>

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
+import { t } from '../services/translationService'; // Import translation
 import { SavedRecipe } from '../types';
 import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -12,7 +13,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Thème Orange/Ambre
   const themeColor = '#f59e0b';
   const themeGradient = 'from-amber-700 to-amber-900';
   const themeShadow = 'shadow-amber-900/40';
@@ -28,25 +28,24 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('Voulez-vous vraiment supprimer cette recette ?')) {
+    if (confirm(t('delete') + ' ?')) {
       try {
         await deleteRecipeFromBook(id);
         setRecipes(prev => prev.filter(r => r.id !== id));
         if (selectedRecipe?.id === id) setSelectedRecipe(null);
       } catch (err) {
-        console.error("Erreur lors de la suppression:", err);
-        alert("Impossible de supprimer la recette.");
+        console.error("Error", err);
       }
     }
   };
 
   const NutriBadge = ({ score }: { score: string }) => {
     const colors = { 
-        'A': '#008148', // Vert foncé
-        'B': '#8ac53e', // Vert clair
-        'C': '#fecb02', // Jaune
-        'D': '#ee8100', // Orange
-        'E': '#e63e11'  // Rouge
+        'A': '#008148', 
+        'B': '#8ac53e', 
+        'C': '#fecb02', 
+        'D': '#ee8100', 
+        'E': '#e63e11'  
     };
     const color = colors[score as keyof typeof colors] || '#ccc';
     return (
@@ -56,31 +55,21 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     );
   };
 
-  // Fonction pour ignorer les accents et la casse (Ex: "bœuf" == "boeuf")
   const normalizeText = (text: string) => 
     text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
   const filteredRecipes = recipes.filter(r => {
       if (!searchTerm.trim()) return true;
-      
       const term = normalizeText(searchTerm);
-      
-      // Recherche dans le titre
       const matchesTitle = normalizeText(r.title).includes(term);
-      
-      // Recherche dans les ingrédients (Panier)
       const matchesIngredients = r.ingredients?.some(i => normalizeText(i).includes(term)) || false;
-      
-      // Recherche dans les ingrédients détaillés (Cuisine)
       const matchesQtyIngredients = r.ingredientsWithQuantities?.some(i => normalizeText(i).includes(term)) || false;
-      
       return matchesTitle || matchesIngredients || matchesQtyIngredients;
   });
 
   return (
     <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
         
-        {/* Background Image & Overlay */}
         <div className="absolute inset-0 z-0">
             <img 
                 src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=1974&auto=format&fit=crop" 
@@ -92,14 +81,13 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
             
-            {/* Header / Navigation */}
             <div className="mb-8">
                 {selectedRecipe ? (
                      <button 
                         onClick={() => setSelectedRecipe(null)}
                         className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md mb-6"
                     >
-                        <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Retour</span>
+                        <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">{t('back')}</span>
                     </button>
                 ) : (
                     <div className="text-center mb-10">
@@ -107,21 +95,19 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             <GourmetBook size={32} className="text-amber-100" />
                         </div>
                         <h1 className="text-4xl md:text-5xl font-display text-amber-500 mb-2 drop-shadow-md">
-                            Mon Carnet
+                            {t('rb_title')}
                         </h1>
                         <p className="text-amber-200/60 text-sm font-light tracking-widest uppercase">
-                            Mes recettes sauvegardées
+                            {t('rb_sub')}
                         </p>
                     </div>
                 )}
             </div>
 
             {selectedRecipe ? (
-                /* VUE DÉTAILLÉE */
                 <div className="animate-fade-in space-y-6 pb-20">
                     <div className="relative bg-[#121212] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl">
                         
-                        {/* Image Header */}
                         <div className="h-64 md:h-80 relative group">
                             {selectedRecipe.image ? (
                                 <img src={selectedRecipe.image} className="w-full h-full object-cover" alt={selectedRecipe.title} />
@@ -131,7 +117,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                             )}
                             
-                            {/* Bouton Supprimer */}
                             <button 
                                 onClick={(e) => handleDelete(e, selectedRecipe.id)}
                                 className="absolute top-4 right-4 p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
@@ -142,7 +127,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
                         <div className="p-8 relative">
                              
-                             {/* Informations Recette (Sous la photo) */}
                              <div className="mb-8 border-b border-white/10 pb-6">
                                 <h2 className="text-3xl md:text-4xl font-display text-white mb-4 leading-tight">{selectedRecipe.title}</h2>
                                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
@@ -162,24 +146,22 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                              </div>
 
-                             {/* Storage Advice */}
                              {selectedRecipe.storageAdvice && (
                                 <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 flex items-start gap-3">
                                     <div className="bg-blue-500/20 p-2 rounded-full text-blue-300">
                                         <Snowflake size={18} />
                                     </div>
                                     <div>
-                                        <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Conservation</h3>
+                                        <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">{t('rb_storage')}</h3>
                                         <p className="text-sm text-blue-100/90 leading-relaxed">{selectedRecipe.storageAdvice}</p>
                                     </div>
                                 </div>
                              )}
 
-                             {/* INGREDIENTS WITH QUANTITIES BLOCK */}
                              {selectedRecipe.ingredientsWithQuantities && selectedRecipe.ingredientsWithQuantities.length > 0 && (
                                 <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
                                      <h3 className="font-display text-lg text-amber-500 mb-4 flex items-center gap-2">
-                                        <Leaf size={18} /> Ingrédients & Dosages
+                                        <Leaf size={18} /> {t('rb_ingredients')}
                                     </h3>
                                     <ul className="space-y-2">
                                         {selectedRecipe.ingredientsWithQuantities.map((ing, idx) => (
@@ -192,11 +174,10 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                             )}
 
-                             {/* Ustensiles */}
                              {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
                                 <div className="mb-8 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm relative overflow-hidden">
                                     <h3 className="font-display text-lg text-amber-500 mb-3 flex items-center gap-2">
-                                        <PremiumUtensils size={18}/> Matériel Requis
+                                        <PremiumUtensils size={18}/> {t('rb_utensils')}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {selectedRecipe.utensils.map((utensil, idx) => (
@@ -209,11 +190,10 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                 </div>
                             )}
 
-                            {/* Markdown Content */}
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                                 <ReactMarkdown 
                                 components={{
-                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
+                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, 
                                     h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
                                     strong: ({node, ...props}) => <strong className="text-amber-400" {...props} />,
                                     li: ({node, ...props}) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>
@@ -226,13 +206,11 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     </div>
                 </div>
             ) : (
-                /* VUE LISTE (GRILLE) */
                 <>
-                    {/* Search Bar */}
                     <div className="max-w-md mx-auto mb-8 relative flex items-center">
                         <input 
                             type="text"
-                            placeholder="Rechercher (Titre ou Ingrédient)..."
+                            placeholder={t('rb_search_placeholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyDown={(e) => {
@@ -270,10 +248,10 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10 backdrop-blur-md animate-fade-in">
                             <GourmetBook size={48} className="mx-auto text-white/20 mb-4" />
                             <p className="text-gray-400 font-display text-xl">
-                                {searchTerm ? "Aucun résultat pour cette recherche." : "Votre carnet est vide."}
+                                {searchTerm ? t('rb_no_result') : t('rb_empty')}
                             </p>
                             <p className="text-gray-600 text-sm mt-2">
-                                {searchTerm ? "Essayez un autre mot clé." : "Commencez par créer une recette !"}
+                                {searchTerm ? "" : t('rb_empty_sub')}
                             </p>
                         </div>
                     ) : (
@@ -284,7 +262,6 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                     onClick={() => setSelectedRecipe(recipe)}
                                     className="bg-[#121212] rounded-3xl shadow-lg border border-white/10 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all cursor-pointer group relative overflow-hidden flex flex-col h-full"
                                 >
-                                    {/* Card Image */}
                                     <div className="h-48 relative overflow-hidden bg-gray-900">
                                         {recipe.image ? (
                                             <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -294,10 +271,8 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                             </div>
                                         )}
                                         
-                                        {/* Overlay Gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent opacity-80"></div>
                                         
-                                        {/* Bouton Supprimer - Sur l'image (discret) */}
                                         <button 
                                             onClick={(e) => handleDelete(e, recipe.id)}
                                             className="absolute top-3 left-3 p-2 bg-black/60 text-gray-400 hover:text-red-400 rounded-full backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100 border border-white/10"
