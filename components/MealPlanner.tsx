@@ -146,7 +146,7 @@ const MealPlanner: React.FC = () => {
                 <div style="font-family: Arial, sans-serif; color: #000000; background-color: #ffffff;">
                     <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #509f2a; padding-bottom: 15px;">
                         <h1 style="color: #509f2a; margin: 0; font-size: 26px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Menu de la Semaine</h1>
-                        <p style="color: #444444; font-size: 12px; margin-top: 5px;">Généré par MiamChef IA le ${today} • Pour ${people} personnes</p>
+                        <p style="color: #444444; font-size: 12px; margin-top: 5px;">Généré par MiamChef le ${today} • Pour ${people} personnes</p>
                         
                         <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
                             <span style="background:#f3f4f6; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">🔥 ${stats.calories} Kcal/j</span>
@@ -292,7 +292,7 @@ const MealPlanner: React.FC = () => {
                                 <div className="text-center mb-8">
                                     <PremiumSparkles size={40} className="text-purple-400 mx-auto mb-4" />
                                     <h3 className="font-display text-2xl text-white mb-2">Générer votre Menu</h3>
-                                    <p className="text-gray-400 text-sm">L'IA organise vos repas, vos courses et votre batch cooking.</p>
+                                    <p className="text-gray-400 text-sm">MiamChef organise vos repas, vos courses et votre batch cooking.</p>
                                 </div>
 
                                 <div className="space-y-6">
