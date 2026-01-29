@@ -313,7 +313,7 @@ const ShoppingList: React.FC = () => {
                         
                         <div className="mb-6 text-center">
                             <h3 className="font-display text-2xl text-white mb-1">{driveStep === 'retailers' ? t('sl_drive_title') : t('sl_drive_express')}</h3>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">Connect</p>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('sl_connect')}</p>
                         </div>
                         
                         {driveStep === 'retailers' ? (
@@ -332,7 +332,7 @@ const ShoppingList: React.FC = () => {
                                         <ClipboardList size={16}/> {t('sl_copy_all')}
                                      </button>
                                 </div>
-                                <p className="text-xs text-center text-gray-500 mb-2">Click to open Drive</p>
+                                <p className="text-xs text-center text-gray-500 mb-2">{t('sl_click_drive')}</p>
                                 {items.filter(i => !i.checked).map((item) => (
                                     <button key={item.id} onClick={() => handleDirectSearch(item.text)} className="text-left px-4 py-4 bg-[#252525] rounded-xl hover:bg-[#333] border border-white/5 flex justify-between group transition-all items-center">
                                         <span className="font-medium text-gray-200 text-sm">{cleanSearchTerm(item.text)}</span>

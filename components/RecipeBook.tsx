@@ -136,7 +136,7 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                     {selectedRecipe.metrics && (
                                         <>
                                             <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-                                                <Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal
+                                                <Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} {t('label_kcal')}
                                             </span>
                                             <div className="scale-110">
                                                 <NutriBadge score={selectedRecipe.metrics.nutriScore} />

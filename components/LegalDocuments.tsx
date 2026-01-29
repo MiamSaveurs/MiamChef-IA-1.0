@@ -1,13 +1,7 @@
 
 import React, { useState } from 'react';
 import { X, Scale, FileText, Shield, AlertCircle, Lock } from 'lucide-react';
-
-/* 
- * NOTE SYSTÈME POUR LE DÉVELOPPEUR (MÉMOIRE FUTURE) :
- * Si de nouvelles fonctionnalités payantes ou impliquant des données utilisateur sont ajoutées à l'application MiamChef,
- * VOUS DEVEZ IMPÉRATIVEMENT mettre à jour les sections 2 (Fonctionnalités) et 3 (Données) des CGU/CGV ci-dessous.
- * Ces documents doivent évoluer de manière synchrone avec le code.
- */
+import { t } from '../services/translationService';
 
 interface LegalDocumentsProps {
   onClose: () => void;
@@ -24,7 +18,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
           <div className="px-6 py-4 flex justify-between items-center max-w-4xl mx-auto">
             <div className="flex items-center gap-2">
                 <Scale className="text-chef-green" size={24} />
-                <span className="font-display text-xl">Informations Légales</span>
+                <span className="font-display text-xl">{t('legal_title')}</span>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <X size={24} className="text-gray-500" />
@@ -37,25 +31,25 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 onClick={() => setActiveTab('mentions')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'mentions' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  Mentions Légales
+                  {t('legal_tab_mentions')}
               </button>
               <button 
                 onClick={() => setActiveTab('rgpd')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'rgpd' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  RGPD & Confidentialité
+                  {t('legal_tab_rgpd')}
               </button>
               <button 
                 onClick={() => setActiveTab('cgu')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'cgu' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  CGU (Utilisation)
+                  {t('legal_tab_cgu')}
               </button>
               <button 
                 onClick={() => setActiveTab('cgv')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'cgv' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  CGV (Vente)
+                  {t('legal_tab_cgv')}
               </button>
           </div>
       </div>
@@ -66,7 +60,8 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex gap-3 text-sm text-yellow-800">
             <AlertCircle className="shrink-0" size={20} />
             <p>
-                <strong>Note au propriétaire :</strong> Les mentions entre crochets <strong>[COMME CECI]</strong> doivent être remplacées par vos informations réelles (Nom, Adresse, SIRET) avant la mise en ligne officielle.
+                <strong>Note :</strong> Les documents légaux ci-dessous sont fournis en Français (langue du siège social).<br/>
+                The legal documents below are provided in French (language of headquarters).
             </p>
         </div>
 

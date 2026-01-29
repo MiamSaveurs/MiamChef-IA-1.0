@@ -20,7 +20,7 @@ const MealPlanner: React.FC = () => {
     const [status, setStatus] = useState<LoadingState>('idle');
     const [isInitializing, setIsInitializing] = useState(true); 
     const [errorMessage, setErrorMessage] = useState('');
-    const [dietary, setDietary] = useState('Classique (Aucun)');
+    const [dietary, setDietary] = useState(t('diet_classic'));
     const [people, setPeople] = useState(2);
     const [ingredients, setIngredients] = useState('');
     const [addedToList, setAddedToList] = useState(false);
@@ -144,6 +144,18 @@ const MealPlanner: React.FC = () => {
         return cleaned.slice(0, 4).join(', ') + (cleaned.length > 4 ? '...' : '');
     };
 
+    const dietOptions = [
+        t('diet_classic'),
+        t('diet_veg'),
+        t('diet_vegan'),
+        t('diet_halal'),
+        t('diet_kosher'),
+        t('diet_gluten'),
+        t('diet_lactose'),
+        t('diet_keto'),
+        t('diet_sport')
+    ];
+
     if (isInitializing) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-black">
@@ -216,7 +228,7 @@ const MealPlanner: React.FC = () => {
                                                 onChange={(e) => setDietary(e.target.value)}
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                             >
-                                                {["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"].map(opt => 
+                                                {dietOptions.map(opt => 
                                                     <option key={opt} value={opt} className="bg-[#1a1a1a] text-white">{opt}</option>
                                                 )}
                                             </select>

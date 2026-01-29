@@ -17,6 +17,13 @@ const TRANSLATIONS = {
     copied: "Copié !",
     close_btn: "Fermer",
     
+    // LABELS & UNITS
+    default_recipe_title: "Recette",
+    label_nutri: "Nutri",
+    label_kcal: "Kcal",
+    label_prot: "Prot.",
+    label_pers: "Pers.",
+    
     // NAVIGATION
     nav_home: "Accueil",
     nav_planning: "Planning",
@@ -175,6 +182,8 @@ const TRANSLATIONS = {
     sl_cat_drinks: "Boissons",
     sl_cat_home: "Hygiène & Maison",
     sl_cat_other: "Divers",
+    sl_connect: "Connexion",
+    sl_click_drive: "Cliquer pour ouvrir le Drive",
 
     // MEAL PLANNER
     mp_title: "Semainier",
@@ -233,6 +242,7 @@ const TRANSLATIONS = {
     pr_household: "Foyer (Par défaut)",
     pr_level: "Mon Niveau",
     pr_btn_save: "Sauvegarder",
+    alert_beta_iot: "Aucun appareil compatible détecté à proximité. (Simulation Bêta)",
 
     // SUBSCRIPTION
     sub_title: "MiamChef Premium",
@@ -252,8 +262,9 @@ const TRANSLATIONS = {
     sub_feat_updates: "Toutes les futures mises à jour",
     sub_feat_pack: "Pack Premium Intégral",
     sub_terms: "En vous abonnant, vous acceptez nos CGV.",
+    payment_stripe: "Carte Bancaire (Stripe)",
 
-    // VALUE PROPOSITION
+    // LEGAL & VALUE PROP
     vp_title: "Pourquoi MiamChef ?",
     vp_hero_title: "Une application.",
     vp_hero_sub: "3 révolutions.",
@@ -279,7 +290,12 @@ const TRANSLATIONS = {
     vp_p3_desc: "Intelligence Nutritionnelle Avancée. VRAI Nutri-Score.",
     vp_pros: "L'outil Secret des Pros",
     vp_cta_title: "7 jours pour tout changer",
-    vp_cta_btn: "Profiter de mon essai gratuit"
+    vp_cta_btn: "Profiter de mon essai gratuit",
+    legal_title: "Informations Légales",
+    legal_tab_mentions: "Mentions Légales",
+    legal_tab_rgpd: "RGPD & Confidentialité",
+    legal_tab_cgu: "CGU (Utilisation)",
+    legal_tab_cgv: "CGV (Vente)"
   },
   en: {
     loading: "MiamChef is working...",
@@ -294,6 +310,11 @@ const TRANSLATIONS = {
     copy: "Copy",
     copied: "Copied!",
     close_btn: "Close",
+    default_recipe_title: "Recipe",
+    label_nutri: "Nutri",
+    label_kcal: "Kcal",
+    label_prot: "Prot",
+    label_pers: "Guests",
     nav_home: "Home",
     nav_planning: "Plan",
     nav_creator: "Create",
@@ -433,6 +454,8 @@ const TRANSLATIONS = {
     sl_cat_drinks: "Drinks",
     sl_cat_home: "Home & Hygiene",
     sl_cat_other: "Misc",
+    sl_connect: "Connect",
+    sl_click_drive: "Click to open Drive",
     mp_title: "Weekly Planner",
     mp_sub: "Plan your week in one click",
     mp_btn_pdf: "PDF",
@@ -484,6 +507,7 @@ const TRANSLATIONS = {
     pr_household: "Household",
     pr_level: "My Level",
     pr_btn_save: "Save",
+    alert_beta_iot: "No compatible device found. (Beta Simulation)",
     sub_title: "MiamChef Premium",
     sub_desc: "Unlock full potential. Unlimited creation and exclusive tools.",
     sub_step1: "1. Choose your plan",
@@ -501,6 +525,7 @@ const TRANSLATIONS = {
     sub_feat_updates: "All future updates",
     sub_feat_pack: "Full Premium Pack",
     sub_terms: "By subscribing, you agree to our T&Cs.",
+    payment_stripe: "Credit Card (Stripe)",
     vp_title: "Why MiamChef?",
     vp_hero_title: "One app.",
     vp_hero_sub: "3 revolutions.",
@@ -526,7 +551,12 @@ const TRANSLATIONS = {
     vp_p3_desc: "Advanced Nutritional Intelligence. REAL Nutri-Score.",
     vp_pros: "The Pro's Secret Tool",
     vp_cta_title: "7 days to change everything",
-    vp_cta_btn: "Start free trial"
+    vp_cta_btn: "Start free trial",
+    legal_title: "Legal Information",
+    legal_tab_mentions: "Legal Notice",
+    legal_tab_rgpd: "GDPR & Privacy",
+    legal_tab_cgu: "ToS (Usage)",
+    legal_tab_cgv: "ToS (Sales)"
   },
   es: {
     loading: "MiamChef está trabajando...",
@@ -541,6 +571,11 @@ const TRANSLATIONS = {
     copy: "Copiar",
     copied: "¡Copiado!",
     close_btn: "Cerrar",
+    default_recipe_title: "Receta",
+    label_nutri: "Nutri",
+    label_kcal: "Kcal",
+    label_prot: "Prot",
+    label_pers: "Pers.",
     nav_home: "Inicio",
     nav_planning: "Plan",
     nav_creator: "Crear",
@@ -680,6 +715,8 @@ const TRANSLATIONS = {
     sl_cat_drinks: "Bebidas",
     sl_cat_home: "Hogar",
     sl_cat_other: "Varios",
+    sl_connect: "Conexión",
+    sl_click_drive: "Clic para abrir Drive",
     mp_title: "Planificador",
     mp_sub: "Planifica tu semana",
     mp_btn_pdf: "PDF",
@@ -731,6 +768,7 @@ const TRANSLATIONS = {
     pr_household: "Hogar",
     pr_level: "Mi Nivel",
     pr_btn_save: "Guardar",
+    alert_beta_iot: "Ningún dispositivo compatible detectado. (Simulación Beta)",
     sub_title: "MiamChef Premium",
     sub_desc: "Desbloquea todo el potencial.",
     sub_step1: "1. Elige tu plan",
@@ -748,6 +786,7 @@ const TRANSLATIONS = {
     sub_feat_updates: "Actualizaciones futuras",
     sub_feat_pack: "Pack Premium",
     sub_terms: "Aceptas las CGV.",
+    payment_stripe: "Tarjeta de Crédito (Stripe)",
     vp_title: "¿Por qué MiamChef?",
     vp_hero_title: "Una aplicación.",
     vp_hero_sub: "3 revoluciones.",
@@ -773,7 +812,12 @@ const TRANSLATIONS = {
     vp_p3_desc: "Inteligencia Nutricional Avanzada.",
     vp_pros: "Herramienta Secreta Pro",
     vp_cta_title: "7 días para cambiar",
-    vp_cta_btn: "Empezar prueba gratis"
+    vp_cta_btn: "Empezar prueba gratis",
+    legal_title: "Información Legal",
+    legal_tab_mentions: "Aviso Legal",
+    legal_tab_rgpd: "RGPD y Privacidad",
+    legal_tab_cgu: "Términos de Uso",
+    legal_tab_cgv: "Condiciones de Venta"
   },
   it: {
     loading: "MiamChef sta lavorando...",
@@ -788,6 +832,11 @@ const TRANSLATIONS = {
     copy: "Copia",
     copied: "Copiato!",
     close_btn: "Chiudi",
+    default_recipe_title: "Ricetta",
+    label_nutri: "Nutri",
+    label_kcal: "Kcal",
+    label_prot: "Prot",
+    label_pers: "Pers.",
     nav_home: "Home",
     nav_planning: "Piano",
     nav_creator: "Creatore",
@@ -927,6 +976,8 @@ const TRANSLATIONS = {
     sl_cat_drinks: "Bevande",
     sl_cat_home: "Casa",
     sl_cat_other: "Varie",
+    sl_connect: "Connessione",
+    sl_click_drive: "Clicca per aprire Drive",
     mp_title: "Pianificatore",
     mp_sub: "Pianifica la tua settimana",
     mp_btn_pdf: "PDF",
@@ -978,6 +1029,7 @@ const TRANSLATIONS = {
     pr_household: "Famiglia",
     pr_level: "Mio Livello",
     pr_btn_save: "Salva",
+    alert_beta_iot: "Nessun dispositivo compatibile rilevato. (Simulazione Beta)",
     sub_title: "MiamChef Premium",
     sub_desc: "Sblocca tutto il potenziale.",
     sub_step1: "1. Scegli il tuo piano",
@@ -995,6 +1047,7 @@ const TRANSLATIONS = {
     sub_feat_updates: "Aggiornamenti futuri",
     sub_feat_pack: "Pacchetto Premium",
     sub_terms: "Accetti i T&C.",
+    payment_stripe: "Carta di Credito (Stripe)",
     vp_title: "Perché MiamChef?",
     vp_hero_title: "Un'app.",
     vp_hero_sub: "3 rivoluzioni.",
@@ -1020,7 +1073,12 @@ const TRANSLATIONS = {
     vp_p3_desc: "Intelligenza Nutrizionale Avanzata.",
     vp_pros: "Strumento Segreto Pro",
     vp_cta_title: "7 giorni per cambiare",
-    vp_cta_btn: "Inizia prova gratis"
+    vp_cta_btn: "Inizia prova gratis",
+    legal_title: "Informazioni Legali",
+    legal_tab_mentions: "Note Legali",
+    legal_tab_rgpd: "GDPR & Privacy",
+    legal_tab_cgu: "Termini d'Uso",
+    legal_tab_cgv: "Condizioni di Vendita"
   },
   de: {
     loading: "MiamChef arbeitet...",
@@ -1035,6 +1093,11 @@ const TRANSLATIONS = {
     copy: "Kopieren",
     copied: "Kopiert!",
     close_btn: "Schließen",
+    default_recipe_title: "Rezept",
+    label_nutri: "Nutri",
+    label_kcal: "Kcal",
+    label_prot: "Prot",
+    label_pers: "Pers.",
     nav_home: "Home",
     nav_planning: "Planer",
     nav_creator: "Creator",
@@ -1174,6 +1237,8 @@ const TRANSLATIONS = {
     sl_cat_drinks: "Getränke",
     sl_cat_home: "Haushalt",
     sl_cat_other: "Sonstiges",
+    sl_connect: "Verbinden",
+    sl_click_drive: "Klicken zum Öffnen",
     mp_title: "Planer",
     mp_sub: "Plane deine Woche",
     mp_btn_pdf: "PDF",
@@ -1225,6 +1290,7 @@ const TRANSLATIONS = {
     pr_household: "Haushalt",
     pr_level: "Mein Niveau",
     pr_btn_save: "Speichern",
+    alert_beta_iot: "Kein kompatibles Gerät gefunden. (Beta-Simulation)",
     sub_title: "MiamChef Premium",
     sub_desc: "Schalte das volle Potenzial frei.",
     sub_step1: "1. Wähle deinen Plan",
@@ -1242,6 +1308,7 @@ const TRANSLATIONS = {
     sub_feat_updates: "Zukünftige Updates",
     sub_feat_pack: "Premium-Paket",
     sub_terms: "Du akzeptierst die AGB.",
+    payment_stripe: "Kreditkarte (Stripe)",
     vp_title: "Warum MiamChef?",
     vp_hero_title: "Eine App.",
     vp_hero_sub: "3 Revolutionen.",
@@ -1267,7 +1334,12 @@ const TRANSLATIONS = {
     vp_p3_desc: "Erweiterte Ernährungsintelligenz.",
     vp_pros: "Das Geheimwerkzeug der Profis",
     vp_cta_title: "7 Tage, um alles zu ändern",
-    vp_cta_btn: "Kostenlos testen"
+    vp_cta_btn: "Kostenlos testen",
+    legal_title: "Rechtliche Hinweise",
+    legal_tab_mentions: "Impressum",
+    legal_tab_rgpd: "DSGVO & Datenschutz",
+    legal_tab_cgu: "Nutzungsbedingungen",
+    legal_tab_cgv: "Verkaufsbedingungen"
   }
 };
 

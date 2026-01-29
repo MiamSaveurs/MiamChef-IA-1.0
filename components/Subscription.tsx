@@ -145,7 +145,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                             onClick={handleProcessPayment}
                             className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg"
                           >
-                              <span className="opacity-80 font-normal text-sm">Carte Bancaire (Stripe)</span>
+                              <span className="opacity-80 font-normal text-sm">{t('payment_stripe')}</span>
                           </button>
                       </div>
                   </div>

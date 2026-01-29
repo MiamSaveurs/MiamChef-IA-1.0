@@ -72,10 +72,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'expert' | null>(null); 
   
   const [ingredients, setIngredients] = useState('');
-  // Default values need to map to translation keys
   const [dietary, setDietary] = useState(t('diet_classic'));
   const [cuisineStyle, setCuisineStyle] = useState(t('style_french')); 
-  const [mealTime, setMealTime] = useState('Déjeuner / Dîner'); // kept as string for now or translate if needed
+  const [mealTime, setMealTime] = useState('Déjeuner / Dîner'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
@@ -159,7 +158,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
   const handleShareRecipe = async () => {
     const titleMatch = recipe.match(/^#\s+(.+)$/m);
-    const title = titleMatch ? titleMatch[1] : 'Recette';
+    const title = titleMatch ? titleMatch[1] : t('default_recipe_title');
     const text = `🍽️ ${title} - MiamChef App`;
     
     if (navigator.share) {
@@ -279,7 +278,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     const titleMatch = recipe.match(/^#\s+(.+)$/m);
     await saveRecipeToBook({
       id: Date.now().toString(),
-      title: titleMatch ? titleMatch[1] : "Nouvelle Recette",
+      title: titleMatch ? titleMatch[1] : t('default_recipe_title'),
       markdownContent: recipe,
       date: new Date().toLocaleDateString('fr-FR'),
       metrics: metrics || undefined,
@@ -696,26 +695,26 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     </div>
 
                     <h1 className="text-3xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
-                        {recipe.match(/^#\s+(.+)$/m)?.[1] || 'Recette'}
+                        {recipe.match(/^#\s+(.+)$/m)?.[1] || t('default_recipe_title')}
                     </h1>
 
                     {metrics && (
                         <div className="grid grid-cols-4 gap-4 mb-10 py-6 border-y border-white/5">
                              <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-2xl font-display text-white">{metrics.nutriScore}</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Nutri</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">{t('label_nutri')}</div>
                              </div>
                              <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-2xl font-display text-white">{metrics.caloriesPerPerson}</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Kcal</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">{t('label_kcal')}</div>
                              </div>
                              <div className="text-center border-r border-white/10 last:border-0">
                                 <div className="text-2xl font-display text-white">{metrics.proteins}g</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Prot.</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">{t('label_prot')}</div>
                              </div>
                              <div className="text-center">
                                 <div className="text-2xl font-display text-white">{people}</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Pers.</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">{t('label_pers')}</div>
                              </div>
                         </div>
                     )}
