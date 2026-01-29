@@ -693,11 +693,10 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
-      // Pour le menu hebdo (plus complexe), 4096 est un bon compromis Vitesse/Qualité.
-      thinkingConfig: { thinkingBudget: 4096 },
+      thinkingConfig: { thinkingBudget: 0 },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
     },
