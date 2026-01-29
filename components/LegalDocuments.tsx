@@ -179,7 +179,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 <section>
                     <h2 className="font-bold text-lg mb-2">3. Technologie</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        Les recettes et images sont générées par la technologie MiamChef (basée sur l'intelligence artificielle générative). Bien que nous visons une haute qualité, le système peut occasionnellement générer des résultats inattendus ou inexacts. L'utilisateur est invité à faire preuve de bon sens lors de la réalisation des recettes (notamment concernant la cuisson et l'hygiène).
+                        Les recettes et images sont générées par la technologie exclusive MiamChef (basée sur l'analyse générative avancée). Bien que nous visons une haute qualité, le système peut occasionnellement générer des résultats inattendus ou inexacts. L'utilisateur est invité à faire preuve de bon sens lors de la réalisation des recettes (notamment concernant la cuisson et l'hygiène).
                     </p>
                 </section>
             </div>

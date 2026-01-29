@@ -94,7 +94,8 @@ const ShoppingList: React.FC = () => {
   };
 
   const handleShare = async () => {
-    const text = `📝 Ma liste de courses MiamChef IA :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
+    // MODIFICATION ICI : Suppression de "IA"
+    const text = `📝 Ma liste de courses MiamChef :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
     if (navigator.share) {
         try { await navigator.share({ title: 'Ma liste', text: text }); } catch (err) {}
     } else {

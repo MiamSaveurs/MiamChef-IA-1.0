@@ -47,7 +47,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                 <span className="text-chef-green">3 révolutions.</span>
             </h1>
             <p className="text-gray-500 text-lg leading-relaxed max-w-md mx-auto">
-                Essayez <strong className="text-chef-dark">MiamChef gratuitement pendant 7 jours</strong>. Découvrez la puissance de l'Intelligence Culinaire avant de vous engager.
+                Essayez <strong className="text-chef-dark">MiamChef gratuitement pendant 7 jours</strong>. Découvrez la puissance de la Technologie MiamChef avant de vous engager.
             </p>
         </div>
 
@@ -160,7 +160,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscrib
                 <h2 className="text-3xl font-display text-chef-dark mb-4">Votre Santé, Votre Capital</h2>
                 <div className="space-y-4 text-gray-600 leading-relaxed">
                     <p>
-                        <strong className="text-chef-dark">L'Expertise :</strong> MiamChef intègre une <strong className="text-chef-dark">Intelligence Nutritionnelle Avancée</strong>. Contrairement aux blogs amateurs, nous garantissons <span className="bg-red-100 text-red-800 px-1 font-bold rounded">95% de précision technique*</span>. Nous calculons le VRAI Nutri-Score et les macronutriments exacts selon les standards scientifiques.
+                        <strong className="text-chef-dark">L'Expertise :</strong> MiamChef intègre une <strong className="text-chef-dark">Expertise Nutritionnelle Avancée</strong>. Contrairement aux blogs amateurs, nous garantissons <span className="bg-red-100 text-red-800 px-1 font-bold rounded">95% de précision technique*</span>. Nous calculons le VRAI Nutri-Score et les macronutriments exacts selon les standards scientifiques.
                     </p>
                     <p>
                         Que vous soyez sportif, diabétique ou simplement soucieux de votre ligne, l'application veille sur chaque calorie sans sacrifier le goût.
