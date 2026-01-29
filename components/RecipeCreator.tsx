@@ -613,11 +613,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             </div>
         </>
       ) : (
-        /* VUE RECETTE GENEREE (DESIGN ORIGINAL RESTAURÉ) */
+        /* VUE RECETTE GENEREE (DESIGN MODIFIÉ POUR LECTURE EN HAUT) */
         <div className="animate-fade-in relative bg-[#0a0a0a]">
             
             {/* HERO HEADER IMAGE */}
-            <div className="w-full h-[50vh] relative">
+            <div className="w-full h-[35vh] md:h-[50vh] relative">
                 {generatedImage ? (
                     <img src={generatedImage} className="w-full h-full object-cover" alt="Plat" />
                 ) : (
@@ -633,12 +633,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     onClick={handleClearRecipe} 
                     className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 bg-red-600/80 hover:bg-red-600 rounded-full text-white border border-white/10 backdrop-blur-md transition-all shadow-lg"
                 >
-                      <XCircle size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Fermer / Supprimer</span>
+                      <XCircle size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Fermer</span>
                 </button>
             </div>
 
             {/* CONTENT CARD (FLOATING UP) */}
-            <div className="relative z-10 -mt-24 px-4 pb-20 max-w-4xl mx-auto">
+            <div className="relative z-10 -mt-16 md:-mt-24 px-4 pb-20 max-w-4xl mx-auto">
                 
                 {/* Main Recipe Info */}
                 <div className="bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
@@ -660,7 +660,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-4xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
+                    <h1 className="text-3xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
                         {recipe.match(/^#\s+(.+)$/m)?.[1] || 'Recette du Chef'}
                     </h1>
 
@@ -686,22 +686,67 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                         </div>
                     )}
 
-                    {/* BOUTON DÉMARRER LA CUISINE */}
-                    <div className="mb-10 flex justify-center">
-                        <button 
-                            onClick={startCooking}
-                            disabled={cookingSteps.length === 0}
-                            className="group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3"
-                        >
-                            <Play size={20} fill="black" />
-                            Lancer le Mode Cuisine
-                            <div className="absolute inset-0 rounded-full ring-2 ring-white/50 animate-pulse group-hover:ring-white"></div>
-                        </button>
-                    </div>
-
                     <div className="grid md:grid-cols-[1fr_2fr] gap-8">
                         
-                        {/* LEFT COLUMN: SHOPPING LIST WIDGET */}
+                        {/* RIGHT COLUMN (Desktop): INSTRUCTIONS - AFFICHÉ EN PREMIER DANS LE FLUX DE LECTURE */}
+                        <div className="order-1 md:order-2">
+                            
+                            {/* NOTE: Les blocs "Ingrédients avec Quantités" et "Ustensiles" ont été masqués
+                                ici pour respecter la demande de ne PAS changer la présentation.
+                                Le texte Markdown généré par l'IA doit contenir ces infos. */}
+
+                            <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
+                                <ReactMarkdown 
+                                components={{
+                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
+                                    h2: ({node, ...props}) => (
+                                        <div className="flex items-center gap-3 mt-8 mb-4">
+                                            <div className="h-[1px] flex-1 bg-white/10"></div>
+                                            <h2 className="text-lg font-bold text-white uppercase tracking-widest" {...props} />
+                                            <div className="h-[1px] flex-1 bg-white/10"></div>
+                                        </div>
+                                    ),
+                                    strong: ({node, ...props}) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
+                                    ul: ({node, ...props}) => <ul className="space-y-4 my-6" {...props} />,
+                                    li: ({node, ...props}) => (
+                                        <li className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
+                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
+                                            <span className="flex-1 text-gray-300">{props.children}</span>
+                                        </li>
+                                    ),
+                                    p: ({node, ...props}) => <p className="mb-4 text-gray-400 font-light" {...props} />
+                                }}
+                                >
+                                {recipe}
+                                </ReactMarkdown>
+                            </div>
+
+                             {/* BOUTON DÉMARRER LA CUISINE - DÉPLACÉ APRÈS LE TEXTE POUR LOGIQUE DE LECTURE */}
+                            <div className="mt-8 mb-8 flex justify-center">
+                                <button 
+                                    onClick={startCooking}
+                                    disabled={cookingSteps.length === 0}
+                                    className="w-full group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
+                                >
+                                    <Play size={20} fill="black" />
+                                    Lancer le Mode Cuisine
+                                    <div className="absolute inset-0 rounded-full ring-2 ring-white/50 animate-pulse group-hover:ring-white"></div>
+                                </button>
+                            </div>
+
+                             {/* Save Button */}
+                            <button 
+                                onClick={handleSaveToBook} 
+                                disabled={isSaved}
+                                className="w-full mt-4 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 shadow-xl text-white uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-100"
+                                style={{ backgroundColor: isSaved ? '#333' : themeColor }}
+                            >
+                                {isSaved ? <Check size={18} /> : <Book size={18} />}
+                                {isSaved ? 'Enregistré dans le carnet' : 'Sauvegarder cette recette'}
+                            </button>
+                        </div>
+
+                        {/* LEFT COLUMN (Desktop): SHOPPING LIST WIDGET */}
                         <div className="order-2 md:order-1">
                             {ingredientsList && ingredientsList.length > 0 && (
                                 <div className="bg-[#1a1a1a] rounded-2xl border-l-4 overflow-hidden shadow-lg sticky top-6" style={{ borderLeftColor: themeColor }}>
@@ -754,51 +799,6 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     </div>
                                 </div>
                             )}
-                        </div>
-
-                        {/* RIGHT COLUMN: INSTRUCTIONS (PRESENTATION ORIGINALE RESTAUREE) */}
-                        <div className="order-1 md:order-2">
-                            
-                            {/* NOTE: Les blocs "Ingrédients avec Quantités" et "Ustensiles" ont été masqués
-                                ici pour respecter la demande de ne PAS changer la présentation.
-                                Le texte Markdown généré par l'IA doit contenir ces infos. */}
-
-                            <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
-                                <ReactMarkdown 
-                                components={{
-                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
-                                    h2: ({node, ...props}) => (
-                                        <div className="flex items-center gap-3 mt-8 mb-4">
-                                            <div className="h-[1px] flex-1 bg-white/10"></div>
-                                            <h2 className="text-lg font-bold text-white uppercase tracking-widest" {...props} />
-                                            <div className="h-[1px] flex-1 bg-white/10"></div>
-                                        </div>
-                                    ),
-                                    strong: ({node, ...props}) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
-                                    ul: ({node, ...props}) => <ul className="space-y-4 my-6" {...props} />,
-                                    li: ({node, ...props}) => (
-                                        <li className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
-                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
-                                            <span className="flex-1 text-gray-300">{props.children}</span>
-                                        </li>
-                                    ),
-                                    p: ({node, ...props}) => <p className="mb-4 text-gray-400 font-light" {...props} />
-                                }}
-                                >
-                                {recipe}
-                                </ReactMarkdown>
-                            </div>
-
-                             {/* Save Button */}
-                            <button 
-                                onClick={handleSaveToBook} 
-                                disabled={isSaved}
-                                className="w-full mt-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 shadow-xl text-white uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-100"
-                                style={{ backgroundColor: isSaved ? '#333' : themeColor }}
-                            >
-                                {isSaved ? <Check size={18} /> : <Book size={18} />}
-                                {isSaved ? 'Enregistré dans le carnet' : 'Sauvegarder cette recette'}
-                            </button>
                         </div>
 
                     </div>

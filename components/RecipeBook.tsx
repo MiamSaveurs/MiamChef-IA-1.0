@@ -41,7 +41,13 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   const NutriBadge = ({ score }: { score: string }) => {
-    const colors = { 'A': '#008148', 'B': '#8ac53e', 'C': '#fecb02', 'D': '#ee8100', 'E': '#e63e11' };
+    const colors = { 
+        'A': '#008148', // Vert foncé
+        'B': '#8ac53e', // Vert clair
+        'C': '#fecb02', // Jaune
+        'D': '#ee8100', // Orange
+        'E': '#e63e11'  // Rouge
+    };
     const color = colors[score as keyof typeof colors] || '#ccc';
     return (
       <span className="font-bold text-white text-[10px] px-2 py-0.5 rounded shadow-sm border border-white/20" style={{ backgroundColor: color }}>
@@ -290,10 +296,8 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                         
                                         {/* Overlay Gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent opacity-80"></div>
-
-                                        <div className="absolute top-3 right-3 flex gap-2">
-                                            {recipe.metrics && <NutriBadge score={recipe.metrics.nutriScore} />}
-                                        </div>
+                                        
+                                        {/* Bouton Supprimer - Sur l'image (discret) */}
                                         <button 
                                             onClick={(e) => handleDelete(e, recipe.id)}
                                             className="absolute top-3 left-3 p-2 bg-black/60 text-gray-400 hover:text-red-400 rounded-full backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100 border border-white/10"
@@ -307,12 +311,12 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                             {recipe.title}
                                         </h3>
                                         
-                                        <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-xs text-gray-500">
+                                        <div className="mt-auto pt-4 border-t border-white/5 flex flex-wrap justify-between items-center text-xs text-gray-500 gap-y-2">
                                             <span className="flex items-center gap-1.5"><Calendar size={12} /> {recipe.date}</span>
                                             {recipe.metrics && (
-                                                <div className="flex gap-3">
+                                                <div className="flex items-center gap-3">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
-                                                    <span className="flex items-center gap-1 font-bold text-gray-400"><BarChart size={12}/> {recipe.metrics.difficulty}</span>
+                                                    <NutriBadge score={recipe.metrics.nutriScore} />
                                                 </div>
                                             )}
                                         </div>
