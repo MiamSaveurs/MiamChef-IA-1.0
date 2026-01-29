@@ -52,6 +52,45 @@ const getCurrentSeason = (date: Date): string => {
   return "Hiver";
 };
 
+// Helper to get strict seasonality rules based on current date
+const getSeasonalityRules = (date: Date): string => {
+    const month = date.getMonth(); // 0-11
+    
+    if (month === 11 || month <= 1) { // HIVER (Déc, Jan, Fév)
+        return `
+        === PROTOCOLE STRICT DE SAISONNALITÉ : HIVER ===
+        CRITIQUE : Nous sommes en HIVER. C'est inadmissible de proposer des légumes d'été frais.
+        ⛔ INTERDIT ABSOLU (Hors Saison) : Tomates fraîches, Courgettes, Aubergines, Poivrons, Concombres, Haricots verts frais, Fraises, Framboises, Melons, Pêches, Nectarines.
+        ✅ AUTORISÉ : Poireaux, Choux (fleur, rouge, vert, Bruxelles), Endives, Épinards, Courges (Butternut, Potimarron), Céleri, Carottes, Panais, Betteraves, Navets, Salsifis, Topinambours.
+        ✅ FRUITS : Agrumes (Oranges, Clémentines, Citrons), Kiwis, Pommes, Poires, Bananes.
+        EXCEPTION : Les tomates en conserve/coulis sont autorisées pour les plats mijotés, mais DOIVENT être spécifiées comme "en conserve".
+        `;
+    }
+    if (month >= 2 && month <= 4) { // PRINTEMPS (Mars, Avr, Mai)
+        return `
+        === PROTOCOLE STRICT DE SAISONNALITÉ : PRINTEMPS ===
+        CRITIQUE : C'est le début des beaux jours, mais pas encore l'été.
+        ⛔ INTERDIT (Trop tôt) : Tomates (avant fin Mai), Aubergines, Poivrons, Melons, Pastèques, Pêches.
+        ✅ AUTORISÉ : Asperges, Artichauts, Radis, Fèves, Petits pois, Épinards, Blettes, Carottes nouvelles, Navets nouveaux.
+        ✅ FRUITS : Fraises (dès Avril), Rhubarbe, Cerises (fin printemps).
+        `;
+    }
+    if (month >= 5 && month <= 7) { // ÉTÉ (Juin, Juil, Août)
+        return `
+        === PROTOCOLE STRICT DE SAISONNALITÉ : ÉTÉ ===
+        ✅ C'EST LA SAISON : Tomates, Courgettes, Aubergines, Poivrons, Concombres, Haricots verts, Maïs, Melons, Pastèques, Pêches, Abricots, Nectarines, Fruits rouges, Figues (fin été).
+        ⛔ INTERDIT : Courges d'hiver, Endives, Choux d'hiver, Agrumes d'hiver.
+        `;
+    }
+    // AUTOMNE (Sep, Oct, Nov)
+    return `
+    === PROTOCOLE STRICT DE SAISONNALITÉ : AUTOMNE ===
+    ✅ AUTORISÉ : Champignons, Courges (Potimarron, Butternut), Choux, Poireaux, Fenouil, Blettes.
+    ✅ FRUITS : Raisins, Figues, Noix, Châtaignes, Pommes, Poires, Coings, Kakis.
+    ⛔ INTERDIT (Fin de saison) : Tomates, Courgettes, Aubergines (sauf tout début septembre), Fruits d'été (Pêches, Melons).
+    `;
+};
+
 // Helper to translate diet selection into strict AI instructions
 const getDietaryConstraints = (diet: string): string => {
   switch (diet) {
@@ -227,6 +266,9 @@ export const generateChefRecipe = async (
     // Inject User Profile (Mes Préférences)
     const userProfileContext = getUserProfileContext();
 
+    // Inject Strict Seasonality Rules
+    const seasonalityRules = getSeasonalityRules(today);
+
     // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
     let personaPrompt = "";
     
@@ -361,6 +403,7 @@ export const generateChefRecipe = async (
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
       ${userProfileContext}
+      ${seasonalityRules}
 
       === VOTRE PERSONA ===
       ${personaPrompt}
@@ -438,10 +481,13 @@ export const generateChefRecipe = async (
 export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
+  const today = new Date();
+  const seasonalityRules = getSeasonalityRules(today);
   
   const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique et gastronomique' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
   
   ${userProfileContext}
+  ${seasonalityRules}
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
@@ -526,6 +572,8 @@ export const generateRecipeImage = async (title: string, context: string): Promi
 export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
+  const today = new Date();
+  const seasonalityRules = getSeasonalityRules(today);
   
   const imagePart = {
     inlineData: {
@@ -542,6 +590,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
+    ${seasonalityRules}
 
     ETAPE 1 : IDENTIFICATION
     Analyse visuellement cette photo avec une extrême précision. Liste TOUS les ingrédients comestibles que tu vois.
@@ -661,9 +710,11 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
+  const today = new Date();
   
   // Récupération des contraintes strictes pour le semainier
   const strictDietaryRules = getDietaryConstraints(dietary);
+  const seasonalityRules = getSeasonalityRules(today);
 
   let ingredientsPrompt = "";
   if (ingredients.trim()) {
@@ -677,6 +728,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   const prompt = `Créez un planning de repas hebdomadaire complet (Petit-déj, Midi, Collation, Soir) pour ${people} personnes.
   
   ${userProfileContext}
+  ${seasonalityRules}
 
   CONTRAINTES ALIMENTAIRES STRICTES À RESPECTER : 
   ${strictDietaryRules}
