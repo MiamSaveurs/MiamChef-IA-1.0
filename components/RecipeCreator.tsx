@@ -234,10 +234,27 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
   const handleSaveToBook = async () => {
     if (!recipe) return;
-    const titleMatch = recipe.match(/^#\s+(.+)$/m);
+    
+    // LOGIQUE DE DÉTECTION DU TITRE AMÉLIORÉE
+    let title = "Recette du Chef";
+    const h1Match = recipe.match(/^#\s+(.+)$/m);
+    const h2Match = recipe.match(/^##\s+(.+)$/m);
+
+    if (h1Match) {
+        title = h1Match[1].replace(/\*\*/g, '').trim();
+    } else if (h2Match) {
+        title = h2Match[1].replace(/\*\*/g, '').trim();
+    } else {
+        // Fallback ultime : première ligne non vide qui n'est pas une instruction technique
+        const cleanLines = recipe.split('\n').map(l => l.trim()).filter(l => l.length > 5 && !l.startsWith('!') && !l.includes('Ingrédient'));
+        if (cleanLines.length > 0) {
+            title = cleanLines[0].replace(/^[#*-\s]+/, '');
+        }
+    }
+
     await saveRecipeToBook({
       id: Date.now().toString(),
-      title: titleMatch ? titleMatch[1] : "Nouvelle Recette",
+      title: title,
       markdownContent: recipe,
       date: new Date().toLocaleDateString('fr-FR'),
       metrics: metrics || undefined,

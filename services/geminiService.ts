@@ -138,7 +138,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur. Il doit être beau et complet."
+        description: "LA RECETTE COMPLÈTE. ATTENTION : Doit OBLIGATOIREMENT commencer par un Titre H1 (# Nom de la Recette). Ne mettez PAS de texte avant le titre."
     },
     metrics: {
       type: Type.OBJECT,
@@ -426,7 +426,7 @@ export const generateChefRecipe = async (
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Vous devez répondre UNIQUEMENT en JSON valide respectant ce schéma :
       {
-        "markdownContent": "LE TEXTE DE LA RECETTE. Il doit être complet, rédigé avec passion et parfaitement formaté en Markdown (Titres ##, Gras **, Listes -). Il doit inclure l'introduction, la liste des ingrédients, les instructions de préparation et la conclusion.",
+        "markdownContent": "LA RECETTE COMPLÈTE. FORMATAGE MARKDOWN. IMPORTANT : DOIT OBLIGATOIREMENT COMMENCER PAR UN TITRE H1 (# Nom de la Recette). Incluez l'intro, les ingrédients avec quantités, les instructions et la conclusion.",
         "metrics": {
           "nutriScore": "A/B/C/D/E",
           "caloriesPerPerson": Nombre entier,
@@ -491,7 +491,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT : Fournissez un contenu Markdown riche ("markdownContent") pour l'affichage principal, et une liste d'étapes claire ("steps") pour le mode pas-à-pas.`;
+  IMPORTANT : Dans "markdownContent", commencez OBLIGATOIREMENT par un TITRE H1 (# Nom de la Recette) explicite.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -605,9 +605,9 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ETAPE 3 : CRÉATION
     En utilisant PRINCIPALEMENT les ingrédients identifiés, crée une recette gastronomique et anti-gaspillage.
     
-    FORMAT DE RÉPONSE (Markdown) :
+    FORMAT DE RÉPONSE OBLIGATOIRE (Markdown) :
     1. Commence par : "**Ingrédients identifiés :** [Liste des ingrédients vus]"
-    2. Titre de la recette (avec #)
+    2. Titre H1 : # Nom de la Recette (IMPÉRATIF POUR LE TITRE DU DOCUMENT)
     3. Ingrédients complets (avec quantités estimées)
     4. Instructions étape par étape.
     
