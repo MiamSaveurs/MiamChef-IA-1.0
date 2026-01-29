@@ -4,6 +4,8 @@ import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
 import { Loader2, Users, Leaf, ChevronDown, Download, Trash2, Calendar, ShoppingCart, Check, Carrot } from 'lucide-react';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 import { 
     PremiumCalendar, 
     PremiumChefHat, 
@@ -84,38 +86,6 @@ const MealPlanner: React.FC = () => {
         setAddedToList(true);
     };
 
-    const handleDownloadPDF = () => {
-        const element = document.getElementById('meal-plan-container');
-        if (!element) return;
-        // Création d'une version imprimable temporaire avec fond blanc pour le PDF
-        const elementToPrint = element.cloneNode(true) as HTMLElement;
-        elementToPrint.style.color = 'black';
-        elementToPrint.style.backgroundColor = 'white';
-        elementToPrint.style.padding = '20px';
-        const cards = elementToPrint.querySelectorAll('.meal-card');
-        cards.forEach((card: any) => {
-            card.style.backgroundColor = '#f3f4f6';
-            card.style.border = '1px solid #ddd';
-            card.style.color = 'black';
-        });
-
-        document.body.appendChild(elementToPrint);
-        const opt = {
-          margin: 5,
-          filename: `miamchef-planning-${new Date().toISOString().slice(0, 10)}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
-        // @ts-ignore
-        if (window.html2pdf) {
-          // @ts-ignore
-          window.html2pdf().set(opt).from(elementToPrint).save().then(() => {
-              document.body.removeChild(elementToPrint);
-          });
-        }
-    };
-
     const calculateStats = () => {
         if (!plan) return { calories: 0, proteins: 0, carbs: 0, fats: 0 };
         let totalCals = 0, totalP = 0, totalC = 0, totalF = 0;
@@ -143,6 +113,107 @@ const MealPlanner: React.FC = () => {
              return clean.charAt(0).toUpperCase() + clean.slice(1);
         });
         return cleaned.slice(0, 4).join(', ') + (cleaned.length > 4 ? '...' : '');
+    };
+
+    const handleDownloadPDF = () => {
+        if (!plan) return;
+
+        // Création d'un élément temporaire pour le PDF avec un design "Papier" (A4 Portrait)
+        const container = document.createElement('div');
+        container.style.width = '210mm';
+        container.style.minHeight = '297mm'; // A4 height
+        container.style.padding = '15mm';
+        container.style.backgroundColor = '#ffffff';
+        container.style.color = '#1f2937';
+        container.style.fontFamily = '"Helvetica", "Arial", sans-serif';
+        container.style.position = 'absolute';
+        container.style.top = '-9999px';
+        container.style.left = '-9999px';
+
+        // Construction du contenu HTML pour le PDF
+        const today = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+        
+        let htmlContent = `
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #509f2a; padding-bottom: 15px;">
+                <h1 style="color: #509f2a; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">Menu de la Semaine</h1>
+                <p style="color: #6b7280; font-size: 12px; margin-top: 5px;">Généré par MiamChef IA le ${today} • Pour ${people} personnes</p>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-size: 11px; font-weight: bold; color: #374151;">
+                    <span>🔥 ${stats.calories} Kcal/j</span>
+                    <span>🥩 ${stats.proteins}g Prot.</span>
+                    <span>🥖 ${stats.carbs}g Glu.</span>
+                    <span>🥑 ${stats.fats}g Lip.</span>
+                </div>
+            </div>
+        `;
+
+        if (plan.batchCookingTips && plan.batchCookingTips.length > 0) {
+            htmlContent += `
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #166534; font-size: 14px; margin: 0 0 5px 0; font-weight: bold; text-transform: uppercase;">🥘 Batch Cooking (Dimanche)</h3>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 11px; color: #14532d;">
+                        ${plan.batchCookingTips.slice(0, 4).map(tip => `<li style="margin-bottom: 2px;">${tip}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Grille des jours (2 colonnes)
+        htmlContent += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">`;
+
+        plan.days.forEach(day => {
+            htmlContent += `
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; background-color: #f9fafb;">
+                    <h4 style="color: #509f2a; font-size: 14px; font-weight: bold; margin: 0 0 8px 0; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; text-transform: uppercase;">${day.day}</h4>
+                    
+                    ${day.breakfast ? `
+                        <div style="margin-bottom: 8px;">
+                            <div style="font-size: 10px; color: #d97706; font-weight: bold; text-transform: uppercase;">Petit-Déjeuner</div>
+                            <div style="font-size: 11px; font-weight: bold; color: #111;">${day.breakfast.name}</div>
+                        </div>
+                    ` : ''}
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; color: #2563eb; font-weight: bold; text-transform: uppercase;">Déjeuner (Midi)</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #111;">${day.lunch.name}</div>
+                        <div style="font-size: 9px; color: #6b7280; font-style: italic;">${renderIngredients(day.lunch.ingredients)}</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 10px; color: #7c3aed; font-weight: bold; text-transform: uppercase;">Dîner (Soir)</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #111;">${day.dinner.name}</div>
+                        <div style="font-size: 9px; color: #6b7280; font-style: italic;">${renderIngredients(day.dinner.ingredients)}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        htmlContent += `</div>`;
+        
+        // Footer
+        htmlContent += `
+            <div style="text-align: center; margin-top: 20px; font-size: 9px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 10px;">
+                MiamChef IA - Votre assistant culinaire intelligent.
+            </div>
+        `;
+
+        container.innerHTML = htmlContent;
+        document.body.appendChild(container);
+
+        const opt = {
+            margin: 0,
+            filename: `menu-semaine-miamchef.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(container).save().then(() => {
+            document.body.removeChild(container);
+        }).catch((err: any) => {
+            console.error(err);
+            alert("Erreur lors de la génération du PDF.");
+            document.body.removeChild(container);
+        });
     };
 
     if (isInitializing) {
@@ -184,7 +255,7 @@ const MealPlanner: React.FC = () => {
                     {plan && (
                         <div className="flex gap-3 animate-fade-in">
                             <button onClick={handleDownloadPDF} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full backdrop-blur-md border border-white/10 transition-all text-xs font-bold uppercase tracking-wide">
-                                <Download size={14} /> PDF
+                                <Download size={14} /> PDF Frigo (A4)
                             </button>
                             <button onClick={handleDeletePlan} className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 px-4 py-2 rounded-full backdrop-blur-md border border-red-500/30 transition-all text-xs font-bold uppercase tracking-wide">
                                 <Trash2 size={14} /> Effacer
