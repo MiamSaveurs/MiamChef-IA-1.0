@@ -32,7 +32,8 @@ import {
   Play,
   ArrowLeft,
   Volume2,
-  StopCircle
+  StopCircle,
+  Trash2
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -44,7 +45,7 @@ import {
   PremiumTimer, 
   PremiumSparkles, 
   PremiumEuro, 
-  PremiumMedal,
+  PremiumMedal, 
   PremiumUtensils 
 } from './Icons';
 
@@ -225,11 +226,13 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   };
 
   const handleClearRecipe = () => {
-      setPersistentState(null);
-      setIngredients('');
-      setSearchQuery('');
-      setIsCookingMode(false);
-      window.speechSynthesis.cancel();
+      if (confirm("Voulez-vous vraiment effacer cette recette et recommencer ?")) {
+          setPersistentState(null);
+          setIngredients('');
+          setSearchQuery('');
+          setIsCookingMode(false);
+          window.speechSynthesis.cancel();
+      }
   };
 
   const handleSaveToBook = async () => {
@@ -677,8 +680,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 
                 {/* Navbar flottante */}
                 <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center">
-                    <button onClick={handleClearRecipe} className="bg-black/40 backdrop-blur-md p-3 rounded-full text-white hover:bg-white/20 transition-all border border-white/10">
-                        <ChevronLeft size={24} />
+                    <button 
+                        onClick={handleClearRecipe} 
+                        className="bg-red-500/80 backdrop-blur-md px-4 py-2 rounded-full text-white hover:bg-red-600 transition-all border border-red-400/50 flex items-center gap-2 shadow-lg"
+                    >
+                        <Trash2 size={18} /> <span className="text-xs font-bold uppercase tracking-wide">Effacer</span>
                     </button>
                     <div className="flex gap-3">
                          <button onClick={handleSaveToBook} disabled={isSaved} className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-white hover:bg-white/20 transition-all border border-white/10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
