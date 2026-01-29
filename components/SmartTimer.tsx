@@ -25,15 +25,15 @@ interface SmartTimerProps {
     onAdd: (seconds: number) => void;
 }
 
-const PRESETS = [
-    { label: "Oeuf à la coque", time: 180, icon: PremiumEgg, color: "text-yellow-400" },
-    { label: "Oeuf Mollet", time: 360, icon: PremiumEgg, color: "text-orange-400" },
-    { label: "Oeuf Dur", time: 540, icon: PremiumEgg, color: "text-red-400" },
-    { label: "Pâtes Al Dente", time: 480, icon: PremiumWheat, color: "text-amber-200" },
-    { label: "Riz Blanc", time: 660, icon: PremiumWheat, color: "text-gray-300" },
-    { label: "Légumes Vapeur", time: 900, icon: PremiumDroplet, color: "text-blue-400" },
-    { label: "Steak Saignant", time: 150, icon: PremiumBeef, color: "text-red-500" },
-    { label: "Steak À point", time: 240, icon: PremiumBeef, color: "text-amber-600" },
+const getPresets = () => [
+    { label: t('timer_egg_soft'), time: 180, icon: PremiumEgg, color: "text-yellow-400" },
+    { label: t('timer_egg_mollet'), time: 360, icon: PremiumEgg, color: "text-orange-400" },
+    { label: t('timer_egg_hard'), time: 540, icon: PremiumEgg, color: "text-red-400" },
+    { label: t('timer_pasta'), time: 480, icon: PremiumWheat, color: "text-amber-200" },
+    { label: t('timer_rice'), time: 660, icon: PremiumWheat, color: "text-gray-300" },
+    { label: t('timer_veg'), time: 900, icon: PremiumDroplet, color: "text-blue-400" },
+    { label: t('timer_steak_rare'), time: 150, icon: PremiumBeef, color: "text-red-500" },
+    { label: t('timer_steak_medium'), time: 240, icon: PremiumBeef, color: "text-amber-600" },
 ];
 
 const SmartTimer: React.FC<SmartTimerProps> = ({ 
@@ -46,6 +46,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
     onAdd 
 }) => {
     const [customMinutes, setCustomMinutes] = useState(1);
+    const presets = getPresets();
 
     const themeColor = '#ef4444'; 
     const themeGradient = 'from-red-600 to-red-900';
@@ -189,7 +190,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                         </div>
                         
                         <div className="grid grid-cols-2 gap-3">
-                            {PRESETS.map((preset, idx) => {
+                            {presets.map((preset, idx) => {
                                 const Icon = preset.icon;
                                 return (
                                     <button

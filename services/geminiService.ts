@@ -66,27 +66,43 @@ const getCurrentSeason = (date: Date): string => {
 };
 
 // Helper to translate diet selection into strict AI instructions
+// Updated to handle inputs from all languages by detecting keywords
 const getDietaryConstraints = (diet: string): string => {
-  switch (diet) {
-    case 'Végétarien': 
-        return "RÉGIME STRICTEMENT VÉGÉTARIEN : Aucune viande, aucun poisson, aucun fruit de mer. Oeufs, miel et produits laitiers sont autorisés.";
-    case 'Vegan': 
-        return "RÉGIME STRICTEMENT VEGAN (VÉGÉTALIEN) : Aucun produit d'origine animale. Ni viande, ni poisson, ni oeuf, ni produit laitier, ni miel. Utilisez des alternatives végétales.";
-    case 'Halal': 
-        return "RÉGIME HALAL : Interdiction ABSOLUE de porc (et dérivés : lardons, gélatine de porc, saindoux). Interdiction ABSOLUE d'alcool (même cuit, pas de vin/bière dans les sauces). La viande doit être certifiée Halal.";
-    case 'Casher': 
-        return "RÉGIME CASHER : Interdiction ABSOLUE de porc, lapin, cheval. Pas de fruits de mer ni crustacés (seuls les poissons à écailles/nageoires sont ok). INTERDICTION FORMELLE DE MÉLANGER VIANDE ET PRODUITS LAITIERS dans la même recette ou le même menu (Respecter les temps de pause).";
-    case 'Sans Gluten': 
-        return "RÉGIME SANS GLUTEN (Cœliaque) : Interdiction stricte de blé, orge, seigle, avoine, épeautre. Utilisez : Farine de riz, maïs, sarrasin, fécule, pois chiche. Attention aux sauces soja classiques (tamari ok).";
-    case 'Sans Lactose': 
-        return "RÉGIME SANS LACTOSE : Pas de lait de vache, crème, beurre ou fromages frais contenant du lactose. Privilégiez les produits délactosés ou les alternatives végétales (soja, amande).";
-    case 'Régime Crétois': 
-        return "RÉGIME CRÉTOIS (MÉDITERRANÉEN STRICT) : La base de TOUS les repas doit être végétale (légumes, légumineuses, noix, céréales complètes). Huile d'olive comme source de graisse principale. VIANDE ROUGE : Maximum 1 à 2 fois par MOIS. VOLAILLE/OEUFS : Modéré (1-2 fois par semaine). POISSON : Modéré (2 fois par semaine). Les autres jours doivent être SANS protéine animale (protéines végétales uniquement).";
-    case 'Sportif (Protéiné)': 
-        return "NUTRITION SPORTIVE : Riche en protéines (20-30g min/repas). Glucides complexes à indice glycémique bas/moyen. Bonnes graisses (oméga-3). Focus sur la récupération et l'énergie.";
-    default: 
-        return "Régime classique équilibré (Omnivore).";
+  const lowerDiet = diet.toLowerCase();
+  
+  if (lowerDiet.includes('végétarien') || lowerDiet.includes('vegetarian') || lowerDiet.includes('vegetariano') || lowerDiet.includes('vegetarisch')) {
+      return "RÉGIME STRICTEMENT VÉGÉTARIEN : Aucune viande, aucun poisson, aucun fruit de mer. Oeufs, miel et produits laitiers sont autorisés.";
   }
+  
+  if (lowerDiet.includes('vegan') || lowerDiet.includes('végétalien') || lowerDiet.includes('vegano')) {
+      return "RÉGIME STRICTEMENT VEGAN (VÉGÉTALIEN) : Aucun produit d'origine animale. Ni viande, ni poisson, ni oeuf, ni produit laitier, ni miel. Utilisez des alternatives végétales.";
+  }
+  
+  if (lowerDiet.includes('halal')) {
+      return "RÉGIME HALAL : Interdiction ABSOLUE de porc (et dérivés : lardons, gélatine de porc, saindoux). Interdiction ABSOLUE d'alcool (même cuit, pas de vin/bière dans les sauces). La viande doit être certifiée Halal.";
+  }
+  
+  if (lowerDiet.includes('casher') || lowerDiet.includes('kosher') || lowerDiet.includes('koscher')) {
+      return "RÉGIME CASHER : Interdiction ABSOLUE de porc, lapin, cheval. Pas de fruits de mer ni crustacés (seuls les poissons à écailles/nageoires sont ok). INTERDICTION FORMELLE DE MÉLANGER VIANDE ET PRODUITS LAITIERS dans la même recette ou le même menu (Respecter les temps de pause).";
+  }
+  
+  if (lowerDiet.includes('gluten')) {
+      return "RÉGIME SANS GLUTEN (Cœliaque) : Interdiction stricte de blé, orge, seigle, avoine, épeautre. Utilisez : Farine de riz, maïs, sarrasin, fécule, pois chiche. Attention aux sauces soja classiques (tamari ok).";
+  }
+  
+  if (lowerDiet.includes('lactose') || lowerDiet.includes('lattosio') || lowerDiet.includes('lactosa') || lowerDiet.includes('laktose')) {
+      return "RÉGIME SANS LACTOSE : Pas de lait de vache, crème, beurre ou fromages frais contenant du lactose. Privilégiez les produits délactosés ou les alternatives végétales (soja, amande).";
+  }
+  
+  if (lowerDiet.includes('crétois') || lowerDiet.includes('keto') || lowerDiet.includes('cretan') || lowerDiet.includes('creto') || lowerDiet.includes('kreta')) {
+      return "RÉGIME CRÉTOIS (MÉDITERRANÉEN STRICT) : La base de TOUS les repas doit être végétale (légumes, légumineuses, noix, céréales complètes). Huile d'olive comme source de graisse principale. VIANDE ROUGE : Maximum 1 à 2 fois par MOIS. VOLAILLE/OEUFS : Modéré (1-2 fois par semaine). POISSON : Modéré (2 fois par semaine). Les autres jours doivent être SANS protéine animale (protéines végétales uniquement).";
+  }
+  
+  if (lowerDiet.includes('sport') || lowerDiet.includes('prot')) {
+      return "NUTRITION SPORTIVE : Riche en protéines (20-30g min/repas). Glucides complexes à indice glycémique bas/moyen. Bonnes graisses (oméga-3). Focus sur la récupération et l'énergie.";
+  }
+
+  return "Régime classique équilibré (Omnivore).";
 };
 
 // Helper to clean and parse JSON strings returned by the model

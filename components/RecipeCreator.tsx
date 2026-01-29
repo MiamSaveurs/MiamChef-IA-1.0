@@ -72,9 +72,10 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'expert' | null>(null); 
   
   const [ingredients, setIngredients] = useState('');
-  const [dietary, setDietary] = useState('Classique (Aucun)');
-  const [mealTime, setMealTime] = useState('Déjeuner / Dîner');
-  const [cuisineStyle, setCuisineStyle] = useState('Tradition Française'); 
+  // Default values need to map to translation keys
+  const [dietary, setDietary] = useState(t('diet_classic'));
+  const [cuisineStyle, setCuisineStyle] = useState(t('style_french')); 
+  const [mealTime, setMealTime] = useState('Déjeuner / Dîner'); // kept as string for now or translate if needed
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
@@ -137,13 +138,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const speak = (text: string) => {
       window.speechSynthesis.cancel(); 
       const utterance = new SpeechSynthesisUtterance(cleanMarkdown(text));
-      // Detect lang if possible or default to French but really we should use app lang
-      // For now default to French/System
-      
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
-
       window.speechSynthesis.speak(utterance);
   };
 
@@ -586,14 +583,33 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     icon={Leaf}
                                     value={dietary}
                                     onChange={setDietary}
-                                    options={["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"]}
+                                    options={[
+                                        t('diet_classic'),
+                                        t('diet_veg'),
+                                        t('diet_vegan'),
+                                        t('diet_halal'),
+                                        t('diet_kosher'),
+                                        t('diet_gluten'),
+                                        t('diet_lactose'),
+                                        t('diet_keto'),
+                                        t('diet_sport')
+                                    ]}
                                 />
 
                                 <CustomSelect 
                                     icon={Globe}
                                     value={cuisineStyle}
                                     onChange={setCuisineStyle}
-                                    options={["Tradition Française", "Italie / Pâtes", "Saveurs Asiatiques", "Mexicain / Épicé", "Oriental / Méditerranéen", "Plat du Jour (Bistrot)", "Repas d'Exception", "Street Food / Rapide"]}
+                                    options={[
+                                        t('style_french'),
+                                        t('style_italian'),
+                                        t('style_asian'),
+                                        t('style_mexican'),
+                                        t('style_mediterranean'),
+                                        t('style_bistro'),
+                                        t('style_gourmet'),
+                                        t('style_street')
+                                    ]}
                                 />
 
                                 <div 
