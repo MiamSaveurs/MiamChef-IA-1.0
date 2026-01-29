@@ -544,7 +544,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     <span className="text-[10px] font-bold uppercase tracking-widest">Configuration</span>
                                 </div>
 
-                                {/* SECTION CORRIGÉE : INVERSION DES BOUTONS */}
+                                {/* SECTION CORRIGÉE : BOUTON ECONOMIQUE AVANT DE QUALITE */}
                                 <div className="grid grid-cols-2 gap-3 mb-2">
                                     <button
                                         onClick={() => setRecipeCost('budget')}
