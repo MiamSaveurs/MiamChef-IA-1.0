@@ -431,7 +431,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             )}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-display mb-2 drop-shadow-md transition-colors duration-500" style={{ color: themeColor }}>
-                            {isPatissier ? "L'Atelier Sucré" : "L'Atelier Salé"}
+                            {isPatissier ? "Recette Sucrée" : "Recette Salée"}
                         </h1>
                         <p className="text-gray-400 text-sm font-light tracking-widest uppercase">
                             Cuisine & Improvisation
@@ -501,18 +501,18 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                                 <div className="grid grid-cols-2 gap-3 mb-2">
                                     <button
-                                        onClick={() => setRecipeCost('authentic')}
-                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'authentic' ? 'bg-[#509f2a]/10 border-[#509f2a] text-[#509f2a]' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
-                                    >
-                                        <PremiumMedal size={20} className="mb-1" />
-                                        <span className="text-[10px] font-bold uppercase">De Qualité</span>
-                                    </button>
-                                    <button
                                         onClick={() => setRecipeCost('budget')}
                                         className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'budget' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
                                     >
                                         <PremiumEuro size={20} className="mb-1" />
                                         <span className="text-[10px] font-bold uppercase">Économique</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setRecipeCost('authentic')}
+                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'authentic' ? 'bg-[#509f2a]/10 border-[#509f2a] text-[#509f2a]' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
+                                    >
+                                        <PremiumMedal size={20} className="mb-1" />
+                                        <span className="text-[10px] font-bold uppercase">De Qualité</span>
                                     </button>
                                 </div>
 
