@@ -1,5 +1,4 @@
 
-
 export enum AppView {
   HOME = 'HOME',
   RECIPE_CREATOR = 'RECIPE_CREATOR',
@@ -15,6 +14,8 @@ export enum AppView {
   TIMER = 'TIMER',
   PROFILE = 'PROFILE'
 }
+
+export type Language = 'fr' | 'en' | 'es' | 'it' | 'de';
 
 export interface GroundingChunk {
   web?: {
