@@ -1,4 +1,5 @@
 
+
 export enum AppView {
   HOME = 'HOME',
   RECIPE_CREATOR = 'RECIPE_CREATOR',
@@ -11,7 +12,8 @@ export enum AppView {
   VALUE_PROPOSITION = 'VALUE_PROPOSITION',
   LEGAL = 'LEGAL',
   PLANNING = 'PLANNING',
-  TIMER = 'TIMER'
+  TIMER = 'TIMER',
+  PROFILE = 'PROFILE'
 }
 
 export interface GroundingChunk {
@@ -39,7 +41,8 @@ export interface GeneratedContent {
   metrics?: RecipeMetrics;
   utensils?: string[];
   ingredients?: string[]; // Liste brute des produits (Ex: "Carottes", "Riz") SANS quantité (POUR SHOPPING)
-  ingredientsWithQuantities?: string[]; // NOUVEAU : Liste complète avec quantités (Ex: "300g de Carottes") (POUR CUISINE)
+  ingredientsWithQuantities?: string[]; // Liste complète avec quantités (Ex: "300g de Carottes") (POUR CUISINE)
+  steps?: string[]; // NOUVEAU : Étapes structurées pour le mode cuisine
   storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -54,7 +57,8 @@ export interface SavedRecipe {
   image?: string; // Base64 image data
   utensils?: string[];
   ingredients?: string[]; // Liste brute des produits
-  ingredientsWithQuantities?: string[]; // NOUVEAU
+  ingredientsWithQuantities?: string[];
+  steps?: string[]; // NOUVEAU
   storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -93,3 +97,13 @@ export interface WeeklyPlan {
 }
 
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+
+export interface UserProfile {
+  name: string;
+  diet: string;
+  allergies: string;
+  dislikes: string;
+  equipment: string;
+  householdSize: number;
+  cookingLevel: string;
+}

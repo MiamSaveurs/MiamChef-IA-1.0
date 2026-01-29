@@ -13,9 +13,10 @@ import ValueProposition from './components/ValueProposition';
 import LegalDocuments from './components/LegalDocuments';
 import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
+import Profile from './components/Profile';
 import { getTrialStatus } from './services/storageService';
 import { AppView, RecipeMetrics } from './types';
-import { WifiOff, X } from 'lucide-react';
+import { WifiOff } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -29,6 +30,8 @@ const App: React.FC = () => {
     metrics: RecipeMetrics | null;
     utensils: string[];
     ingredients: string[];
+    ingredientsWithQuantities?: string[];
+    storageAdvice?: string;
     image: string | null;
   } | null>(null);
 
@@ -200,9 +203,10 @@ const App: React.FC = () => {
       case AppView.RECIPE_BOOK: return <RecipeBook onBack={() => setCurrentView(AppView.HOME)} />;
       case AppView.SUBSCRIPTION: return <Subscription onClose={() => !isTrialExpired && setCurrentView(AppView.HOME)} isTrialExpired={isTrialExpired} setView={setCurrentView} />;
       case AppView.SHOPPING_LIST: return <ShoppingList />;
-      case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} />;
+      case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} onSubscribe={() => setCurrentView(AppView.SUBSCRIPTION)} />;
       case AppView.LEGAL: return <LegalDocuments onClose={() => setCurrentView(AppView.HOME)} />;
       case AppView.PLANNING: return <MealPlanner />;
+      case AppView.PROFILE: return <Profile />;
       case AppView.TIMER: return (
         <SmartTimer 
             timeLeft={timerTimeLeft} 

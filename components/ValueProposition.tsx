@@ -11,14 +11,16 @@ import {
   WickerBasket, 
   PremiumHeart, 
   PremiumBriefcase, 
-  PremiumShield 
+  PremiumShield,
+  PremiumPaperPlane
 } from './Icons';
 
 interface ValuePropositionProps {
   onClose: () => void;
+  onSubscribe: () => void;
 }
 
-const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
+const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose, onSubscribe }) => {
   return (
     <div className="fixed inset-0 z-[60] bg-white overflow-y-auto animate-fade-in font-body">
       
@@ -189,10 +191,10 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ onClose }) => {
         <div className="text-center pt-8">
             <h3 className="font-display text-2xl text-chef-dark mb-6">7 jours pour tout changer</h3>
             <button 
-                onClick={onClose}
-                className="w-full bg-chef-green text-white font-display text-xl py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
+                onClick={onSubscribe}
+                className="w-full bg-chef-green text-white font-display text-xl py-4 rounded-full shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
             >
-                Profiter de mon essai gratuit <ArrowRight size={24} />
+                Profiter de mon essai gratuit <PremiumPaperPlane size={24} />
             </button>
             <p className="text-xs text-gray-400 mt-4 max-w-xs mx-auto">
                 <Clock size={12} className="inline mr-1"/>

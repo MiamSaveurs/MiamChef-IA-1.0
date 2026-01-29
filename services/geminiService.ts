@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
+import { getUserProfile } from "./storageService";
 
 // Instructions for the AI to avoid certain words
 const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux' ou 'incroyable'. Laissez la technique parler d'elle-même.";
@@ -8,11 +9,39 @@ const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délici
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
 === PROTOCOLE RGPD & SÉCURITÉ DES DONNÉES (NIVEAU CRITIQUE) ===
-1. MINIMISATION DES DONNÉES : Vous n'avez besoin QUE des préférences culinaires. Ne demandez JAMAIS d'informations identifiantes (Nom, Email, Adresse, Localisation précise).
-2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies (ingrédients, photos du frigo) comme strictement confidentielles et transitoires.
-3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement que vous êtes une IA culinaire et non un médecin, tout en adaptant la recette (ex: sans sucre pour diabétique).
-4. PAS DE STOCKAGE : N'invitez jamais l'utilisateur à enregistrer des données personnelles dans le prompt.
+1. MINIMISATION DES DONNÉES : Ne demandez JAMAIS d'informations identifiantes.
+2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies comme strictement confidentielles.
+3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement que vous êtes une IA culinaire.
 `;
+
+// Helper to retrieve and format User Profile for Prompts
+const getUserProfileContext = (): string => {
+    const profile = getUserProfile();
+    // On garde la structure pour l'IA, mais le nom est juste "Contexte Utilisateur"
+    let context = `=== CONTEXTE / PRÉFÉRENCES DE L'UTILISATEUR ===\n`;
+    context += `NOM : ${profile.name}\n`;
+    context += `NIVEAU CUISINE : ${profile.cookingLevel}\n`;
+    
+    // Allergies are CRITICAL
+    if (profile.allergies.trim()) {
+        context += `⚠️ EXCLUSIONS STRICTES (ALLERGIES) : ${profile.allergies} (Ne JAMAIS proposer ces ingrédients).\n`;
+    }
+    
+    // Dislikes
+    if (profile.dislikes.trim()) {
+        context += `⛔ À ÉVITER : ${profile.dislikes}.\n`;
+    }
+    
+    // Equipment
+    if (profile.equipment.trim()) {
+        context += `🛠️ MATÉRIEL DISPONIBLE : ${profile.equipment} (Adapter la recette à ce matériel).\n`;
+    }
+
+    // Global Diet (Combined with input diet usually, but good to have as fallback)
+    context += `RÉGIME GLOBAL : ${profile.diet}\n`;
+    
+    return context;
+};
 
 // Helper to get the current season based on the date
 const getCurrentSeason = (date: Date): string => {
@@ -68,7 +97,10 @@ const sanitizeText = (text?: string) => text?.trim() || "";
 const recipeSchema = {
   type: Type.OBJECT,
   properties: {
-    markdownContent: { type: Type.STRING },
+    markdownContent: { 
+        type: Type.STRING,
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur. Il doit être beau et complet."
+    },
     metrics: {
       type: Type.OBJECT,
       properties: {
@@ -87,21 +119,23 @@ const recipeSchema = {
     ingredients: { 
         type: Type.ARRAY, 
         items: { type: Type.STRING },
-        description: "LISTE PANIER : Liste STRICTE des NOMS d'ingrédients SEULS. INTERDICTION FORMELLE de mettre des quantités ou des unités. Exemple CORRECT : ['Carottes', 'Oignons', 'Riz']. Exemple INCORRECT : ['300g de Carottes', '2 Oignons']." 
+        description: "LISTE PANIER : Noms des produits SEULS pour la liste de courses (ex: 'Riz')." 
     },
     ingredientsWithQuantities: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "LISTE CUISINE : Liste détaillée des ingrédients AVEC les quantités précises et les unités. Exemple : ['300g de Carottes', '2 Oignons rouges', '150ml de lait de coco']."
+        description: "LISTE CUISINE : Ingrédients détaillés avec quantités (ex: '300g de Riz')."
     },
-    storageAdvice: { 
-        type: Type.STRING, 
-        description: "Conseil de conservation précis (Durée + Mode + Contenant). Ex: '3 jours au réfrigérateur dans une boîte hermétique' ou 'Se congèle très bien avant cuisson'." 
+    steps: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING },
+        description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. PAS de Markdown ici (*, #). Juste du texte brut pour être lu à haute voix ou affiché en gros."
     },
+    storageAdvice: { type: Type.STRING },
     seoTitle: { type: Type.STRING },
     seoDescription: { type: Type.STRING },
   },
-  required: ['markdownContent', 'metrics', 'ingredients', 'ingredientsWithQuantities', 'storageAdvice'],
+  required: ['markdownContent', 'metrics', 'ingredients', 'ingredientsWithQuantities', 'steps', 'storageAdvice'],
 };
 
 // Schema for weekly plan generation
@@ -190,6 +224,9 @@ export const generateChefRecipe = async (
     const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const currentSeason = getCurrentSeason(today);
     
+    // Inject User Profile (Mes Préférences)
+    const userProfileContext = getUserProfileContext();
+
     // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
     let personaPrompt = "";
     
@@ -323,6 +360,8 @@ export const generateChefRecipe = async (
     const prompt = `
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
+      ${userProfileContext}
+
       === VOTRE PERSONA ===
       ${personaPrompt}
 
@@ -344,7 +383,7 @@ export const generateChefRecipe = async (
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Vous devez répondre UNIQUEMENT en JSON valide respectant ce schéma :
       {
-        "markdownContent": "La recette complète formatée en Markdown élégant. Utilisez des titres, du gras pour les ingrédients clés.",
+        "markdownContent": "LE TEXTE DE LA RECETTE. Il doit être complet, rédigé avec passion et parfaitement formaté en Markdown (Titres ##, Gras **, Listes -). Il doit inclure l'introduction, la liste des ingrédients, les instructions de préparation et la conclusion.",
         "metrics": {
           "nutriScore": "A/B/C/D/E",
           "caloriesPerPerson": Nombre entier,
@@ -356,11 +395,12 @@ export const generateChefRecipe = async (
           "difficulty": "Facile/Moyen/Expert" (Doit correspondre au niveau demandé)
         },
         "utensils": ["Liste", "Des", "Ustensiles"],
-        "ingredients": ["Carottes", "Oignons", "Boeuf"] (ATTENTION: Noms des produits SEULEMENT pour la liste de courses. PAS de quantité ici.),
-        "ingredientsWithQuantities": ["300g de Carottes", "2 Oignons", "500g de Boeuf"] (ATTENTION: Liste complète AVEC quantités pour la cuisine),
+        "ingredients": ["Carottes", "Oignons", "Boeuf"] (Liste pour les courses, SANS quantités),
+        "ingredientsWithQuantities": ["300g de Carottes", "2 Oignons", "500g de Boeuf"] (Liste technique pour cuisiner),
+        "steps": ["Étape 1: Préchauffer...", "Étape 2: Couper...", "Étape 3: Cuire..."] (Liste TEXTE BRUT étape par étape pour le mode interactif. Pas de markdown ici.),
         "storageAdvice": "Conseil précis (Durée + Mode) pour la conservation.",
-        "seoTitle": "Titre court et accrocheur pour le référencement",
-        "seoDescription": "Description courte (meta description) qui donne faim."
+        "seoTitle": "Titre court et accrocheur",
+        "seoDescription": "Description courte qui donne faim."
       }
       
       ${BANNED_WORDS_INSTRUCTION}
@@ -382,7 +422,8 @@ export const generateChefRecipe = async (
       metrics: data.metrics,
       utensils: data.utensils,
       ingredients: data.ingredients,
-      ingredientsWithQuantities: data.ingredientsWithQuantities, // NOUVEAU
+      ingredientsWithQuantities: data.ingredientsWithQuantities, 
+      steps: data.steps, 
       storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
       seoDescription: sanitizeText(data.seoDescription) 
@@ -396,14 +437,15 @@ export const generateChefRecipe = async (
 // Searches for a chef's recipe based on query
 export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const userProfileContext = getUserProfileContext();
+  
   const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique et gastronomique' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
-  Répondez au format JSON selon le schéma.
+  
+  ${userProfileContext}
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT POUR LA LISTE D'INGRÉDIENTS :
-  - 'ingredients': Fournissez UNIQUEMENT les noms des produits pour une recherche Drive.
-  - 'ingredientsWithQuantities': Fournissez la liste complète AVEC quantités et unités pour cuisiner.`;
+  IMPORTANT : Fournissez un contenu Markdown riche ("markdownContent") pour l'affichage principal, et une liste d'étapes claire ("steps") pour le mode pas-à-pas.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -421,7 +463,8 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     metrics: data.metrics,
     utensils: data.utensils,
     ingredients: data.ingredients, 
-    ingredientsWithQuantities: data.ingredientsWithQuantities, // NOUVEAU
+    ingredientsWithQuantities: data.ingredientsWithQuantities,
+    steps: data.steps, 
     storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription)
@@ -482,6 +525,8 @@ export const generateRecipeImage = async (title: string, context: string): Promi
 // Scans fridge image and suggests a recipe
 export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const userProfileContext = getUserProfileContext();
+  
   const imagePart = {
     inlineData: {
       mimeType: 'image/jpeg',
@@ -496,6 +541,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     text: `ROLE : Tu es un Chef Cuisinier expert en vision par ordinateur.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
+    ${userProfileContext}
 
     ETAPE 1 : IDENTIFICATION
     Analyse visuellement cette photo avec une extrême précision. Liste TOUS les ingrédients comestibles que tu vois.
@@ -505,7 +551,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     REGIME IMPOSÉ PAR L'UTILISATEUR : ${dietary}
     RÈGLES STRICTES : ${dietRules}
     
-    Si tu as identifié des ingrédients sur la photo qui sont INTERDITS par ce régime, TU DOIS LES IGNORER TOTALEMENT pour la recette.
+    Si tu as identifié des ingrédients sur la photo qui sont INTERDITS par ce régime ou par les préférences de l'utilisateur, TU DOIS LES IGNORER TOTALEMENT pour la recette.
     
     ETAPE 3 : CRÉATION
     En utilisant PRINCIPALEMENT les ingrédients identifiés, crée une recette gastronomique et anti-gaspillage.
@@ -543,8 +589,12 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
 // Gets sommelier advice with search grounding
 export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): Promise<{ text: string, groundingChunks?: GroundingChunk[] }> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const userProfileContext = getUserProfileContext();
+
   const prompt = `Vous êtes un Sommelier Expert Moderne. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
   
+  ${userProfileContext}
+
   MISSION : Proposez des accords mets-boissons d'excellence pour la demande : "${query}".
 
   VOTRE RÉPONSE DOIT CONTENIR DEUX SECTIONS DISTINCTES :
@@ -610,6 +660,7 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
 // Generates a full weekly menu
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const userProfileContext = getUserProfileContext();
   
   // Récupération des contraintes strictes pour le semainier
   const strictDietaryRules = getDietaryConstraints(dietary);
@@ -625,6 +676,8 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
 
   const prompt = `Créez un planning de repas hebdomadaire complet (Petit-déj, Midi, Collation, Soir) pour ${people} personnes.
   
+  ${userProfileContext}
+
   CONTRAINTES ALIMENTAIRES STRICTES À RESPECTER : 
   ${strictDietaryRules}
 

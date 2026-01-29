@@ -1,10 +1,10 @@
 
 /*
  * Service Worker pour MiamChef IA
- * Version : v2 - Mise à jour forcée pour GitHub
+ * Version : v3 - Retour à Boogaloo
  */
 
-const CACHE_NAME = 'miamchef-v2';
+const CACHE_NAME = 'miamchef-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -17,14 +17,14 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Installation v2 : Mise en cache de l\'application');
+      console.log('[Service Worker] Installation v3 : Mise en cache de l\'application');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
   self.skipWaiting();
 });
 
-// Activation : Nettoyage des anciens caches v1
+// Activation : Nettoyage des anciens caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keyList) => {

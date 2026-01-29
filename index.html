@@ -10,19 +10,34 @@
     <title>MiamChef IA</title>
     <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- RETOUR A LA POLICE BOOGALOO -->
     <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              display: ['"Boogaloo"', 'cursive'],
+              display: ['"Boogaloo"', 'cursive'], // Retour à Boogaloo
               body: ['"Lato"', 'sans-serif'],
             },
             colors: {
               chef: {
                 green: '#509f2a',
                 dark: '#1a1a1a',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
               }
             }
           }
@@ -40,6 +55,9 @@
       }
       .font-display { font-family: 'Boogaloo', cursive; }
       ::-webkit-scrollbar { display: none; }
+      
+      /* Utilitaires pour le mode cuisine */
+      .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
     </style>
   <script type="importmap">
 {

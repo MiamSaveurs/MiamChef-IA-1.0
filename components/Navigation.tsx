@@ -8,7 +8,8 @@ import {
   PremiumCamera, 
   PremiumCalendar, 
   PremiumTimer, 
-  PremiumHome 
+  PremiumHome,
+  PremiumFingerprint
 } from './Icons';
 
 interface NavigationProps {
@@ -48,11 +49,12 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerAc
     { view: AppView.TIMER, icon: PremiumTimer, activeColor: 'text-gray-400' },
     { view: AppView.SCAN_FRIDGE, icon: PremiumCamera, activeColor: 'text-gray-400' },
     { view: AppView.SHOPPING_LIST, icon: WickerBasket, activeColor: 'text-gray-400', badge: shoppingCount },
+    { view: AppView.PROFILE, icon: PremiumFingerprint, activeColor: 'text-white' }
   ];
 
   return (
-    <div className="fixed bottom-6 left-0 w-full z-50 px-6 flex justify-center">
-      <nav className="bg-white rounded-full w-full max-w-md h-20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex justify-between items-center px-4 border border-gray-100">
+    <div className="fixed bottom-6 left-0 w-full z-50 px-2 flex justify-center">
+      <nav className="bg-white rounded-full w-full max-w-lg h-20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex justify-between items-center px-2 md:px-6 border border-gray-100 overflow-x-auto">
           {navItems.map((item, idx) => {
             const Icon = item.icon;
             const isActive = currentView === item.view;
@@ -61,7 +63,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, isTimerAc
               <button
                 key={idx}
                 onClick={() => setView(item.view)}
-                className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all ${isActive ? 'bg-green-50' : ''}`}
+                className={`relative flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full transition-all ${isActive ? 'bg-green-50' : ''}`}
               >
                 <Icon 
                   size={24} 

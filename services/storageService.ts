@@ -1,11 +1,13 @@
 
-import { SavedRecipe, ShoppingItem, WeeklyPlan } from '../types';
+
+import { SavedRecipe, ShoppingItem, WeeklyPlan, UserProfile } from '../types';
 
 const DB_NAME = 'MiamChefDB';
 const DB_VERSION = 3; // Version stable. NE PAS CHANGER sans stratégie de migration.
 const RECIPE_STORE = 'recipes';
 const SHOPPING_STORE = 'shoppingList';
 const PLANNING_STORE = 'planning';
+const PROFILE_KEY = 'miamchef_user_profile';
 
 /*
  * 🛡️ PROTOCOLE DE SÉCURITÉ DES DONNÉES UTILISATEUR 🛡️
@@ -38,6 +40,31 @@ export const getTrialStatus = (): { startDate: number, isSubscribed: boolean, su
 
 export const startSubscription = (tier: 'monthly' | 'annual' | 'lifetime') => {
     localStorage.setItem('miamchef_subscription', tier);
+};
+
+// Profile Operations (LocalStorage)
+export const getUserProfile = (): UserProfile => {
+  const stored = localStorage.getItem(PROFILE_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse profile", e);
+    }
+  }
+  return {
+    name: '',
+    diet: 'Classique (Aucun)',
+    allergies: '',
+    dislikes: '',
+    equipment: '',
+    householdSize: 2,
+    cookingLevel: 'Intermédiaire'
+  };
+};
+
+export const saveUserProfile = (profile: UserProfile): void => {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 };
 
 // Open Database Connection

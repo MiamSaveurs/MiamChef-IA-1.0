@@ -370,3 +370,10 @@ export const PremiumBeef = ({ size = 24, className = "", style = {} }: { size?: 
     <path d="M20 50C20 30 40 20 70 20C85 20 85 40 85 60C85 80 60 85 40 85C20 85 20 70 20 50Z" fill="currentColor" />
   </svg>
 );
+
+export const PremiumPaperPlane = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
+    <path d="M20 50L85 20L55 85L45 55L20 50Z" fill="currentColor" />
+    <path d="M45 55L85 20" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+  </svg>
+);

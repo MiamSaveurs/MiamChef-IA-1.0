@@ -28,7 +28,9 @@ import {
   CheckSquare,
   ArrowRight,
   XCircle,
-  Snowflake
+  Snowflake,
+  Play,
+  ArrowLeft
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -51,6 +53,7 @@ interface RecipeCreatorProps {
         utensils: string[];
         ingredients: string[];
         ingredientsWithQuantities?: string[];
+        steps?: string[]; // NOUVEAU
         image: string | null;
         storageAdvice?: string;
     } | null;
@@ -67,7 +70,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [ingredients, setIngredients] = useState('');
   const [dietary, setDietary] = useState('Classique (Aucun)');
   const [mealTime, setMealTime] = useState('Déjeuner / Dîner');
-  const [cuisineStyle, setCuisineStyle] = useState('Cuisine Française'); 
+  const [cuisineStyle, setCuisineStyle] = useState('Tradition Française'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
@@ -79,6 +82,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [loadingStep, setLoadingStep] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+
+  // --- STATE POUR LE MODE CUISINE ---
+  const [isCookingMode, setIsCookingMode] = useState(false);
+  const [cookingSteps, setCookingSteps] = useState<string[]>([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const isPatissier = chefMode === 'patisserie';
   const themeColor = isPatissier ? '#ec4899' : '#509f2a'; 
@@ -93,6 +101,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const utensilsList = persistentState?.utensils || [];
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
+  const persistentSteps = persistentState?.steps || []; // Récupération des étapes IA
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -109,6 +118,75 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     }
     return () => clearInterval(interval);
   }, [status, isPatissier]);
+
+  // Fonction utilitaire pour nettoyer le markdown
+  const cleanMarkdown = (text: string) => {
+    if (!text) return "";
+    return text
+        .replace(/\*\*/g, '') // Enlève le gras **
+        .replace(/\*/g, '')   // Enlève l'italique *
+        .replace(/__/g, '')   // Enlève le souligné __
+        .replace(/^#+\s/g, '') // Enlève les titres #
+        .replace(/^Étape \d+\s*:\s*/i, '') // Enlève "Étape X :" si déjà présent
+        .trim();
+  };
+
+  // Parsing des étapes quand une recette est chargée
+  useEffect(() => {
+    if (persistentSteps && persistentSteps.length > 0) {
+        // CAS 1 (IDÉAL) : L'IA a renvoyé un tableau propre d'étapes
+        setCookingSteps(persistentSteps.map(cleanMarkdown));
+    } else if (recipe) {
+        // CAS 2 (FALLBACK) : Ancienne recette sans étapes ou erreur API -> Parsing manuel
+        const lines = recipe.split('\n');
+        let extractedSteps: string[] = [];
+        let inInstructions = false;
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            
+            // Détection début instructions
+            if (trimmed.match(/^##\s*(Instruction|Préparation|Étapes|Recette)/i)) {
+                inInstructions = true;
+                return;
+            }
+            // Si on rencontre un nouveau titre H2 (ex: ## Astuces), on arrête
+            if (inInstructions && trimmed.startsWith('## ') && !trimmed.match(/étape/i)) {
+                inInstructions = false;
+                return;
+            }
+            
+            // Capture des étapes numérotées ou à puces
+            if ((inInstructions || extractedSteps.length > 0) && (trimmed.match(/^\d+\./) || trimmed.startsWith('- ') || trimmed.startsWith('* '))) {
+                const cleanStep = trimmed.replace(/^(\d+\.|-|\*)\s*/, '');
+                if (cleanStep.length > 10) { 
+                    extractedSteps.push(cleanMarkdown(cleanStep));
+                }
+            }
+        });
+
+        // FALLBACK ROBUSTE : Si le parsing intelligent a échoué (0 étape ou 1 seule grosse étape)
+        if (extractedSteps.length <= 1) {
+            // On essaie de découper par double saut de ligne dans la section instructions
+            // Ou on prend tout le texte après "Instructions"
+            const instructionPart = recipe.split(/##\s*(Instruction|Préparation|Étapes|Recette)/i)[2] || recipe;
+            
+            // On nettoie les lignes vides et on découpe par paragraphes
+            const rawSteps = instructionPart.split(/\n\n+/).map(s => s.trim()).filter(s => s.length > 10 && !s.startsWith('#') && !s.includes('Ingrédients'));
+            
+            // Si toujours rien, on découpe par phrases si c'est un gros bloc
+            if (rawSteps.length <= 1 && rawSteps[0]) {
+                 const sentences = rawSteps[0].split('. ').filter(s => s.length > 10).map(s => s.trim() + '.');
+                 extractedSteps = sentences.map(cleanMarkdown);
+            } else {
+                 extractedSteps = rawSteps.map(cleanMarkdown);
+            }
+        }
+
+        // Dernier nettoyage pour éviter les étapes vides
+        setCookingSteps(extractedSteps.filter(s => s && s.length > 5));
+    }
+  }, [recipe, persistentSteps]);
 
   const handleGenerate = async () => {
     if (mode === 'create' && !ingredients.trim()) return;
@@ -150,6 +228,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           utensils: result.utensils || [],
           ingredients: result.ingredients || [],
           ingredientsWithQuantities: result.ingredientsWithQuantities || [],
+          steps: result.steps || [], // Sauvegarde des étapes structurées
           storageAdvice: result.storageAdvice || '',
           image: img
       });
@@ -166,6 +245,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       setPersistentState(null);
       setIngredients('');
       setSearchQuery('');
+      setIsCookingMode(false);
   };
 
   const handleSaveToBook = async () => {
@@ -181,6 +261,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       utensils: persistentState?.utensils,
       ingredients: ingredientsList,
       ingredientsWithQuantities: ingredientsWithQuantities,
+      steps: persistentSteps, // Sauvegarde des étapes
       storageAdvice: storageAdvice
     });
     setIsSaved(true);
@@ -207,6 +288,13 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       await addToShoppingList(Array.from(selectedIngredients));
       setIsAddedToCart(true);
       setTimeout(() => setIsAddedToCart(false), 3000);
+  };
+
+  const startCooking = () => {
+      setCurrentStepIndex(0);
+      setIsCookingMode(true);
+      // Remonter en haut de page pour mobile
+      window.scrollTo(0, 0);
   };
 
   const CustomSelect = ({ 
@@ -238,6 +326,80 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     </div>
   );
 
+  // --- RENDU MODE CUISINE IMMERSIF ---
+  if (isCookingMode) {
+      const currentStepText = cookingSteps[currentStepIndex];
+      const progress = cookingSteps.length > 0 ? ((currentStepIndex + 1) / cookingSteps.length) * 100 : 0;
+      const isLastStep = currentStepIndex >= cookingSteps.length - 1;
+
+      return (
+          <div className="fixed inset-0 z-[100] bg-black text-white flex flex-col font-sans">
+              {/* Header Immersif */}
+              <div className="px-6 py-6 flex items-center justify-between bg-black/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-10">
+                  <button 
+                    onClick={() => setIsCookingMode(false)}
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                  >
+                      <XCircle size={24} />
+                  </button>
+                  <div className="flex flex-col items-center">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Mode Cuisine</span>
+                      <span className="font-display text-xl leading-none mt-1">Étape {currentStepIndex + 1} <span className="text-gray-600 font-sans text-sm">/ {cookingSteps.length}</span></span>
+                  </div>
+                  <div className="w-10"></div> {/* Spacer pour centrer */}
+              </div>
+
+              {/* Barre de progression */}
+              <div className="h-1 w-full bg-[#1a1a1a]">
+                  <div 
+                    className="h-full transition-all duration-500 ease-out"
+                    style={{ width: `${progress}%`, backgroundColor: themeColor }}
+                  ></div>
+              </div>
+
+              {/* Contenu de l'étape (Centré et Gros) */}
+              <div className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
+                  <div className="max-w-2xl w-full animate-slide-up">
+                      <p className="text-2xl md:text-4xl font-sans font-medium leading-normal text-center text-gray-100 drop-shadow-lg">
+                        {currentStepText}
+                      </p>
+                  </div>
+              </div>
+
+              {/* Navigation Footer */}
+              <div className="p-6 pb-12 bg-black/90 backdrop-blur-lg border-t border-white/10 safe-pb">
+                  <div className="flex gap-4 max-w-md mx-auto">
+                      <button 
+                        onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
+                        disabled={currentStepIndex === 0}
+                        className="flex-1 py-6 rounded-2xl bg-[#1a1a1a] border border-white/10 text-white font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#252525] active:scale-95 transition-all flex items-center justify-center gap-2"
+                      >
+                          <ChevronLeft size={20} /> Précédent
+                      </button>
+
+                      {!isLastStep ? (
+                          <button 
+                            onClick={() => setCurrentStepIndex(currentStepIndex + 1)}
+                            className="flex-[2] py-6 rounded-2xl text-white font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg"
+                            style={{ backgroundColor: themeColor, boxShadow: `0 10px 30px -10px ${themeColor}66` }}
+                          >
+                              Suivant <ArrowRight size={24} />
+                          </button>
+                      ) : (
+                          <button 
+                            onClick={() => setIsCookingMode(false)}
+                            className="flex-[2] py-6 rounded-2xl bg-white text-black font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 text-lg hover:bg-gray-200"
+                          >
+                              <Check size={24} /> Terminer
+                          </button>
+                      )}
+                  </div>
+              </div>
+          </div>
+      );
+  }
+
+  // --- RENDU STANDARD ---
   return (
     <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
       
@@ -269,7 +431,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             )}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-display mb-2 drop-shadow-md transition-colors duration-500" style={{ color: themeColor }}>
-                            La Cuisine du Chef
+                            {isPatissier ? "L'Atelier Sucré" : "L'Atelier Salé"}
                         </h1>
                         <p className="text-gray-400 text-sm font-light tracking-widest uppercase">
                             Cuisine & Improvisation
@@ -287,14 +449,14 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all duration-300 ${chefMode === 'cuisine' ? 'bg-[#509f2a] text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
                                 >
                                     <PremiumChefHat size={16} />
-                                    <span className="font-bold text-xs uppercase tracking-wider">Cuisinier</span>
+                                    <span className="font-bold text-xs uppercase tracking-wider">Côté Salé</span>
                                 </button>
                                 <button 
                                 onClick={() => setChefMode('patisserie')}
                                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all duration-300 ${chefMode === 'patisserie' ? 'bg-pink-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
                                 >
                                     <PremiumCake size={16} />
-                                    <span className="font-bold text-xs uppercase tracking-wider">Pâtissier</span>
+                                    <span className="font-bold text-xs uppercase tracking-wider">Côté Sucré</span>
                                 </button>
                             </div>
 
@@ -343,14 +505,14 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'authentic' ? 'bg-[#509f2a]/10 border-[#509f2a] text-[#509f2a]' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
                                     >
                                         <PremiumMedal size={20} className="mb-1" />
-                                        <span className="text-[10px] font-bold uppercase">Authentique</span>
+                                        <span className="text-[10px] font-bold uppercase">De Qualité</span>
                                     </button>
                                     <button
                                         onClick={() => setRecipeCost('budget')}
                                         className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'budget' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
                                     >
                                         <PremiumEuro size={20} className="mb-1" />
-                                        <span className="text-[10px] font-bold uppercase">Petit Budget</span>
+                                        <span className="text-[10px] font-bold uppercase">Économique</span>
                                     </button>
                                 </div>
 
@@ -411,7 +573,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     icon={Globe}
                                     value={cuisineStyle}
                                     onChange={setCuisineStyle}
-                                    options={["Cuisine Française", "Cuisine Italienne", "Cuisine Asiatique", "Cuisine Mexicaine", "Cuisine Orientale", "Cuisine Bistrot", "Cuisine Gastronomique", "Street Food"]}
+                                    options={["Tradition Française", "Italie / Pâtes", "Saveurs Asiatiques", "Mexicain / Épicé", "Oriental / Méditerranéen", "Plat du Jour (Bistrot)", "Repas d'Exception", "Street Food / Rapide"]}
                                 />
 
                                 <div 
@@ -420,7 +582,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 >
                                     <div className="flex items-center gap-3">
                                         <Layers size={18} className={isBatchCooking ? 'text-white' : 'text-gray-500'} />
-                                        <span className={`text-sm font-medium ${isBatchCooking ? 'text-white' : 'text-gray-400'}`}>Batch Cooking</span>
+                                        <span className={`text-sm font-medium ${isBatchCooking ? 'text-white' : 'text-gray-400'}`}>Cuisiner pour la semaine (Batch Cooking)</span>
                                     </div>
                                     <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isBatchCooking ? 'bg-white border-white' : 'border-gray-600 bg-transparent'}`}>
                                         {isBatchCooking && <Check size={12} className="text-black" />}
@@ -440,7 +602,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 ) : (
                                     <>
                                     {mode === 'create' ? <Zap size={16} fill="white" /> : <Search size={16} />}
-                                    {mode === 'create' ? 'Générer la Recette' : 'Lancer la Recherche'}
+                                    {mode === 'create' ? 'Lancer la Recette' : 'Lancer la Recherche'}
                                     </>
                                 )}
                             </button>
@@ -451,7 +613,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             </div>
         </>
       ) : (
-        /* VUE RECETTE GENEREE (DESIGN AMÉLIORÉ) */
+        /* VUE RECETTE GENEREE (DESIGN ORIGINAL RESTAURÉ) */
         <div className="animate-fade-in relative bg-[#0a0a0a]">
             
             {/* HERO HEADER IMAGE */}
@@ -485,7 +647,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     <div className="flex justify-center gap-3 mb-6">
                         <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 flex items-center gap-2" style={{ backgroundColor: themeColor }}>
                             {isPatissier ? <PremiumCake size={12}/> : <PremiumChefHat size={12}/>}
-                            {isPatissier ? 'Pâtisserie' : 'Cuisine'}
+                            {isPatissier ? 'Sucré' : 'Salé'}
                         </div>
                         {recipeCost === 'budget' && (
                             <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-blue-600">
@@ -523,6 +685,19 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                              </div>
                         </div>
                     )}
+
+                    {/* BOUTON DÉMARRER LA CUISINE */}
+                    <div className="mb-10 flex justify-center">
+                        <button 
+                            onClick={startCooking}
+                            disabled={cookingSteps.length === 0}
+                            className="group relative px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3"
+                        >
+                            <Play size={20} fill="black" />
+                            Lancer le Mode Cuisine
+                            <div className="absolute inset-0 rounded-full ring-2 ring-white/50 animate-pulse group-hover:ring-white"></div>
+                        </button>
+                    </div>
 
                     <div className="grid md:grid-cols-[1fr_2fr] gap-8">
                         
@@ -581,54 +756,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             )}
                         </div>
 
-                        {/* RIGHT COLUMN: INSTRUCTIONS */}
+                        {/* RIGHT COLUMN: INSTRUCTIONS (PRESENTATION ORIGINALE RESTAUREE) */}
                         <div className="order-1 md:order-2">
                             
-                            {/* STORAGE ADVICE BLOCK (NEW) */}
-                            {storageAdvice && (
-                                <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 flex items-start gap-3">
-                                    <div className="bg-blue-500/20 p-2 rounded-full text-blue-300">
-                                        <Snowflake size={18} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Conservation</h3>
-                                        <p className="text-sm text-blue-100/90 leading-relaxed">{storageAdvice}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* INGREDIENTS WITH QUANTITIES BLOCK (NEW FOR COOKING) */}
-                            {ingredientsWithQuantities && ingredientsWithQuantities.length > 0 && (
-                                <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
-                                     <h3 className="font-display text-lg text-white mb-4 flex items-center gap-2" style={{ color: themeColor }}>
-                                        <Leaf size={18} /> Ingrédients & Dosages
-                                    </h3>
-                                    <ul className="space-y-2">
-                                        {ingredientsWithQuantities.map((ing, idx) => (
-                                            <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
-                                                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
-                                                <span>{ing}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* USTENSILES BLOCK */}
-                            {utensilsList && utensilsList.length > 0 && (
-                                <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
-                                    <h3 className="font-display text-lg text-white mb-3 flex items-center gap-2" style={{ color: themeColor }}>
-                                        <PremiumUtensils size={18} /> Matériel Requis
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {utensilsList.map((item, idx) => (
-                                            <span key={idx} className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#151515] text-gray-300 border border-white/5 shadow-sm">
-                                                {item}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            {/* NOTE: Les blocs "Ingrédients avec Quantités" et "Ustensiles" ont été masqués
+                                ici pour respecter la demande de ne PAS changer la présentation.
+                                Le texte Markdown généré par l'IA doit contenir ces infos. */}
 
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                                 <ReactMarkdown 

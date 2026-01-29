@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
 
@@ -50,9 +50,26 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     );
   };
 
-  const filteredRecipes = recipes.filter(r => 
-      r.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fonction pour ignorer les accents et la casse (Ex: "bœuf" == "boeuf")
+  const normalizeText = (text: string) => 
+    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const filteredRecipes = recipes.filter(r => {
+      if (!searchTerm.trim()) return true;
+      
+      const term = normalizeText(searchTerm);
+      
+      // Recherche dans le titre
+      const matchesTitle = normalizeText(r.title).includes(term);
+      
+      // Recherche dans les ingrédients (Panier)
+      const matchesIngredients = r.ingredients?.some(i => normalizeText(i).includes(term)) || false;
+      
+      // Recherche dans les ingrédients détaillés (Cuisine)
+      const matchesQtyIngredients = r.ingredientsWithQuantities?.some(i => normalizeText(i).includes(term)) || false;
+      
+      return matchesTitle || matchesIngredients || matchesQtyIngredients;
+  });
 
   return (
     <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
@@ -199,27 +216,56 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             ) : (
                 /* VUE LISTE (GRILLE) */
                 <>
-                    {/* Search Bar */}
-                    <div className="max-w-md mx-auto mb-8 relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Search size={16} className="text-gray-500" />
-                        </div>
+                    {/* Search Bar - ACTIVE ET FONCTIONNELLE */}
+                    <div className="max-w-md mx-auto mb-8 relative flex items-center">
                         <input 
                             type="text"
-                            placeholder="Rechercher une recette..."
+                            placeholder="Rechercher (Titre ou Ingrédient)..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-[#151515] text-white pl-10 pr-4 py-3 rounded-xl border border-white/10 focus:border-amber-500/50 focus:ring-0 outline-none transition-colors text-sm placeholder:text-gray-600"
+                            onKeyDown={(e) => {
+                                // Valider sur Entrée (ferme le clavier mobile)
+                                if (e.key === 'Enter') {
+                                    (e.target as HTMLInputElement).blur();
+                                }
+                            }}
+                            className="w-full bg-[#151515] text-white pl-5 pr-14 py-4 rounded-xl border border-white/10 focus:border-amber-500/50 focus:ring-0 outline-none transition-colors text-sm placeholder:text-gray-600 shadow-md"
                         />
+                        
+                        {/* Boutons d'action à droite dans l'input */}
+                        <div className="absolute right-2 flex items-center gap-1">
+                            {searchTerm && (
+                                <button 
+                                    onClick={() => setSearchTerm('')}
+                                    className="p-2 text-gray-500 hover:text-white transition-colors rounded-full"
+                                >
+                                    <X size={16} />
+                                </button>
+                            )}
+                            <button 
+                                className="p-2.5 bg-amber-500/20 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all shadow-sm active:scale-95"
+                                onClick={() => {
+                                    // Simulation "Envoyer" (Focus out pour voir les résultats)
+                                    const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+                                    input?.blur();
+                                }}
+                            >
+                                <Search size={18} />
+                            </button>
+                        </div>
                     </div>
 
                     {loading ? (
                         <div className="flex justify-center py-20"><div className="animate-spin text-amber-500"><Sparkles size={32} /></div></div>
                     ) : filteredRecipes.length === 0 ? (
-                        <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10 backdrop-blur-md">
+                        <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10 backdrop-blur-md animate-fade-in">
                             <GourmetBook size={48} className="mx-auto text-white/20 mb-4" />
-                            <p className="text-gray-400 font-display text-xl">Aucune recette trouvée.</p>
-                            <p className="text-gray-600 text-sm mt-2">C'est le moment de créer quelque chose de délicieux !</p>
+                            <p className="text-gray-400 font-display text-xl">
+                                {searchTerm ? "Aucun résultat pour cette recherche." : "Votre carnet est vide."}
+                            </p>
+                            <p className="text-gray-600 text-sm mt-2">
+                                {searchTerm ? "Essayez un autre mot clé." : "Commencez par créer une recette !"}
+                            </p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
