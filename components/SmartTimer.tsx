@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { t } from '../services/translationService'; // Import translation
 import { 
     PremiumTimer, 
     PremiumPlay, 
@@ -15,6 +14,7 @@ import {
     PremiumDroplet
 } from './Icons';
 
+// Interface pour les props reçus de App.tsx
 interface SmartTimerProps {
     timeLeft: number;
     initialTime: number;
@@ -25,15 +25,16 @@ interface SmartTimerProps {
     onAdd: (seconds: number) => void;
 }
 
-const getPresets = () => [
-    { label: t('timer_egg_soft'), time: 180, icon: PremiumEgg, color: "text-yellow-400" },
-    { label: t('timer_egg_mollet'), time: 360, icon: PremiumEgg, color: "text-orange-400" },
-    { label: t('timer_egg_hard'), time: 540, icon: PremiumEgg, color: "text-red-400" },
-    { label: t('timer_pasta'), time: 480, icon: PremiumWheat, color: "text-amber-200" },
-    { label: t('timer_rice'), time: 660, icon: PremiumWheat, color: "text-gray-300" },
-    { label: t('timer_veg'), time: 900, icon: PremiumDroplet, color: "text-blue-400" },
-    { label: t('timer_steak_rare'), time: 150, icon: PremiumBeef, color: "text-red-500" },
-    { label: t('timer_steak_medium'), time: 240, icon: PremiumBeef, color: "text-amber-600" },
+// Presets configuration
+const PRESETS = [
+    { label: "Oeuf à la coque", time: 180, icon: PremiumEgg, color: "text-yellow-400" },
+    { label: "Oeuf Mollet", time: 360, icon: PremiumEgg, color: "text-orange-400" },
+    { label: "Oeuf Dur", time: 540, icon: PremiumEgg, color: "text-red-400" },
+    { label: "Pâtes Al Dente", time: 480, icon: PremiumWheat, color: "text-amber-200" },
+    { label: "Riz Blanc", time: 660, icon: PremiumWheat, color: "text-gray-300" },
+    { label: "Légumes Vapeur", time: 900, icon: PremiumDroplet, color: "text-blue-400" },
+    { label: "Steak Saignant", time: 150, icon: PremiumBeef, color: "text-red-500" },
+    { label: "Steak À point", time: 240, icon: PremiumBeef, color: "text-amber-600" },
 ];
 
 const SmartTimer: React.FC<SmartTimerProps> = ({ 
@@ -45,10 +46,11 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
     onReset, 
     onAdd 
 }) => {
+    // UI Local state for the custom minute selector
     const [customMinutes, setCustomMinutes] = useState(1);
-    const presets = getPresets();
 
-    const themeColor = '#ef4444'; 
+    // Theme Configuration
+    const themeColor = '#ef4444'; // Red-500
     const themeGradient = 'from-red-600 to-red-900';
     
     const formatTime = (seconds: number) => {
@@ -63,6 +65,7 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
     return (
         <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
              
+             {/* Background Image & Overlay */}
              <div className="absolute inset-0 z-0">
                 <img 
                   src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" 
@@ -74,23 +77,26 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
 
              <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
                 
+                {/* Header */}
                 <div className="text-center mb-10">
                     <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${themeGradient} shadow-[0_0_30px_rgba(239,68,68,0.3)] mb-4 border border-red-500/30`}>
                         <PremiumTimer size={32} className="text-red-100" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-display text-red-500 mb-2 drop-shadow-md">
-                        {t('st_title')}
+                        Chrono Cuisine
                     </h1>
                     <p className="text-red-200/60 text-sm font-light tracking-widest uppercase">
-                        {t('st_sub')}
+                        Minuteur Tactile
                     </p>
                 </div>
 
+                {/* Main Timer Card */}
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl mb-10 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="flex flex-col items-center justify-center relative z-10">
                         
+                        {/* Circular Progress */}
                         <div className="relative w-64 h-64 flex items-center justify-center mb-8">
                             <svg className="absolute w-full h-full transform -rotate-90 drop-shadow-lg">
                                 <circle
@@ -120,15 +126,17 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                                     {formatTime(timeLeft)}
                                 </span>
                                 <span className={`text-xs font-bold uppercase tracking-widest mt-2 ${isActive ? 'text-red-400 animate-pulse' : 'text-gray-500'}`}>
-                                    {isActive ? t('st_cooking') : (timeLeft > 0 ? t('st_paused') : t('st_ready'))}
+                                    {isActive ? 'Cuisson en cours' : (timeLeft > 0 ? 'En pause' : 'Prêt')}
                                 </span>
                             </div>
                         </div>
 
+                        {/* Controls */}
                         <div className="flex items-center gap-6">
                             <button 
                                 onClick={onReset}
                                 className="w-12 h-12 rounded-full bg-white/10 text-gray-400 flex items-center justify-center hover:bg-white/20 hover:text-white transition-all border border-white/5"
+                                title="Réinitialiser"
                             >
                                 <PremiumRotateCcw size={20} />
                             </button>
@@ -149,12 +157,14 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                     </div>
                 </div>
 
+                {/* Manual & Presets */}
                 <div className="space-y-6">
                     
+                    {/* Manual Input */}
                     <div className="bg-[#121212] p-6 rounded-[2rem] shadow-lg border border-white/10">
                         <div className="flex items-center gap-3 mb-4 opacity-80">
                             <div className="p-2 bg-red-500/20 rounded-lg"><PremiumPlay size={16} className="text-red-400"/></div>
-                            <h3 className="font-bold text-gray-200 text-sm uppercase tracking-wide">{t('st_manual')}</h3>
+                            <h3 className="font-bold text-gray-200 text-sm uppercase tracking-wide">Minuteur Libre</h3>
                         </div>
                         
                         <div className="flex items-center gap-4 bg-black/40 p-2 rounded-2xl border border-white/5">
@@ -183,14 +193,15 @@ const SmartTimer: React.FC<SmartTimerProps> = ({
                         </div>
                     </div>
 
+                    {/* Presets Grid */}
                     <div className="bg-[#121212] p-6 rounded-[2rem] shadow-lg border border-white/10">
                         <div className="flex items-center gap-3 mb-4 opacity-80">
                             <div className="p-2 bg-red-500/20 rounded-lg"><PremiumFlame size={16} className="text-red-400"/></div>
-                            <h3 className="font-bold text-gray-200 text-sm uppercase tracking-wide">{t('st_presets')}</h3>
+                            <h3 className="font-bold text-gray-200 text-sm uppercase tracking-wide">Cuissons Parfaites</h3>
                         </div>
                         
                         <div className="grid grid-cols-2 gap-3">
-                            {presets.map((preset, idx) => {
+                            {PRESETS.map((preset, idx) => {
                                 const Icon = preset.icon;
                                 return (
                                     <button

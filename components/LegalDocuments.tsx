@@ -1,7 +1,13 @@
 
 import React, { useState } from 'react';
 import { X, Scale, FileText, Shield, AlertCircle, Lock } from 'lucide-react';
-import { t } from '../services/translationService';
+
+/* 
+ * NOTE SYSTÈME POUR L'IA (MÉMOIRE FUTURE) :
+ * Si de nouvelles fonctionnalités payantes ou impliquant des données utilisateur sont ajoutées à l'application MiamChef IA,
+ * VOUS DEVEZ IMPÉRATIVEMENT mettre à jour les sections 2 (Fonctionnalités) et 3 (Données) des CGU/CGV ci-dessous.
+ * Ces documents doivent évoluer de manière synchrone avec le code.
+ */
 
 interface LegalDocumentsProps {
   onClose: () => void;
@@ -18,7 +24,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
           <div className="px-6 py-4 flex justify-between items-center max-w-4xl mx-auto">
             <div className="flex items-center gap-2">
                 <Scale className="text-chef-green" size={24} />
-                <span className="font-display text-xl">{t('legal_title')}</span>
+                <span className="font-display text-xl">Informations Légales</span>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <X size={24} className="text-gray-500" />
@@ -31,25 +37,25 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 onClick={() => setActiveTab('mentions')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'mentions' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  {t('legal_tab_mentions')}
+                  Mentions Légales
               </button>
               <button 
                 onClick={() => setActiveTab('rgpd')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'rgpd' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  {t('legal_tab_rgpd')}
+                  RGPD & Confidentialité
               </button>
               <button 
                 onClick={() => setActiveTab('cgu')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'cgu' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  {t('legal_tab_cgu')}
+                  CGU (Utilisation)
               </button>
               <button 
                 onClick={() => setActiveTab('cgv')}
                 className={`pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeTab === 'cgv' ? 'border-chef-green text-chef-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
               >
-                  {t('legal_tab_cgv')}
+                  CGV (Vente)
               </button>
           </div>
       </div>
@@ -60,8 +66,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex gap-3 text-sm text-yellow-800">
             <AlertCircle className="shrink-0" size={20} />
             <p>
-                <strong>Note :</strong> Les documents légaux ci-dessous sont fournis en Français (langue du siège social).<br/>
-                The legal documents below are provided in French (language of headquarters).
+                <strong>Note au propriétaire :</strong> Les mentions entre crochets <strong>[COMME CECI]</strong> doivent être remplacées par vos informations réelles (Nom, Adresse, SIRET) avant la mise en ligne officielle.
             </p>
         </div>
 
@@ -72,7 +77,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 <section>
                     <h2 className="font-bold text-lg mb-2">1. Éditeur de l'application</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        L'application <strong>MiamChef</strong> est éditée par :<br/><br/>
+                        L'application <strong>MiamChef IA</strong> est éditée par :<br/><br/>
                         <strong>[VOTRE NOM OU NOM DE SOCIÉTÉ]</strong><br/>
                         Statut juridique : [Ex: Auto-entrepreneur / SASU / SARL]<br/>
                         Siège social : [VOTRE ADRESSE COMPLÈTE]<br/>
@@ -103,7 +108,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                     <div>
                         <h2 className="font-bold text-lg text-green-900 mb-2">Engagement Confidentialité Totale</h2>
                         <p className="text-sm text-green-800 leading-relaxed">
-                            Chez MiamChef, nous appliquons le principe de <strong>"Privacy by Design"</strong>. 
+                            Chez MiamChef IA, nous appliquons le principe de <strong>"Privacy by Design"</strong>. 
                             Vos données sont votre propriété exclusive.
                         </p>
                     </div>
@@ -125,11 +130,11 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 <section>
                     <h2 className="font-bold text-lg mb-2">2. Photos et Analyse d'Images (Scan Frigo)</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        Lorsque vous utilisez la fonction "Scan Frigo", votre photo est envoyée temporairement à notre partenaire technologique (Google Cloud) pour analyse.<br/><br/>
+                        Lorsque vous utilisez la fonction "Scan Frigo", votre photo est envoyée temporairement à notre partenaire IA (Google Gemini) pour analyse.<br/><br/>
                         <strong>Garantie de sécurité :</strong><br/>
                         - La photo est traitée de manière éphémère (en mémoire vive).<br/>
                         - Elle n'est <strong>pas stockée</strong> sur nos serveurs après l'analyse.<br/>
-                        - Le système a pour instruction stricte d'ignorer les visages ou documents personnels visibles sur la photo.
+                        - L'IA a pour instruction stricte d'ignorer les visages ou documents personnels visibles sur la photo.
                     </p>
                 </section>
 
@@ -157,14 +162,14 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 <section>
                     <h2 className="font-bold text-lg mb-2">1. Objet</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        Les présentes CGU régissent l'utilisation de l'application MiamChef. En installant ou en utilisant l'application, l'utilisateur accepte sans réserve les présentes conditions.
+                        Les présentes CGU régissent l'utilisation de l'application MiamChef IA. En installant ou en utilisant l'application, l'utilisateur accepte sans réserve les présentes conditions.
                     </p>
                 </section>
 
                 <section className="bg-red-50 p-4 rounded-xl border border-red-100">
                     <h2 className="font-bold text-lg mb-2 text-red-800 flex items-center gap-2"><Shield size={20}/> 2. Avertissement Santé (Disclaimer)</h2>
                     <p className="text-red-700 text-sm leading-relaxed font-medium">
-                        MiamChef est une application d'assistance culinaire et d'information nutritionnelle. 
+                        MiamChef IA est une application d'assistance culinaire et d'information nutritionnelle. 
                         <strong>L'application ne fournit PAS de conseils médicaux.</strong><br/><br/>
                         Les informations nutritionnelles (calories, macros, nutri-score) sont des estimations basées sur des algorithmes et peuvent comporter des marges d'erreur. Elles sont fournies à titre indicatif uniquement.<br/><br/>
                         L'Utilisateur reconnaît utiliser ces informations sous sa responsabilité exclusive. En cas de pathologie (diabète, allergies sévères, troubles cardiaques...), l'Utilisateur doit impérativement consulter un professionnel de santé avant de modifier son régime alimentaire. L'Éditeur décline toute responsabilité en cas de problème de santé lié à l'interprétation des données de l'application.
@@ -172,9 +177,9 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 </section>
 
                 <section>
-                    <h2 className="font-bold text-lg mb-2">3. Technologie</h2>
+                    <h2 className="font-bold text-lg mb-2">3. Utilisation de l'IA</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        Les recettes et images sont générées par la technologie exclusive MiamChef (basée sur l'analyse générative avancée). Bien que nous visons une haute qualité, le système peut occasionnellement générer des résultats inattendus ou inexacts. L'utilisateur est invité à faire preuve de bon sens lors de la réalisation des recettes (notamment concernant la cuisson et l'hygiène).
+                        Les recettes et images sont générées par Intelligence Artificielle (Google Gemini). Bien que nous visons une haute qualité, l'IA peut occasionnellement générer des résultats inattendus ou inexacts. L'utilisateur est invité à faire preuve de bon sens lors de la réalisation des recettes (notamment concernant la cuisson et l'hygiène).
                     </p>
                 </section>
             </div>
@@ -187,7 +192,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                 <section>
                     <h2 className="font-bold text-lg mb-2">1. Prix et Abonnements</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        MiamChef propose trois formules d'abonnement :<br/>
+                        MiamChef IA propose trois formules d'abonnement :<br/>
                         - <strong>Offre Liberté (Mensuel)</strong> : 4,99 € / mois.<br/>
                         - <strong>Offre Annuelle (Premium)</strong> : 39,99 € / an (soit 3,33€/mois).<br/>
                         - <strong>Offre À Vie (Lifetime)</strong> : 149,99 € (paiement unique).<br/><br/>
@@ -215,7 +220,7 @@ const LegalDocuments: React.FC<LegalDocumentsProps> = ({ onClose }) => {
                     <h2 className="font-bold text-lg mb-2">4. Droit de Rétractation (Contenu Numérique)</h2>
                     <p className="text-gray-600 text-sm leading-relaxed">
                         Conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour les contrats de fourniture d'un contenu numérique non fourni sur un support matériel dont l'exécution a commencé après accord préalable exprès du consommateur et renoncement exprès à son droit de rétractation.<br/><br/>
-                        En souscrivant à MiamChef et en accédant immédiatement aux services Premium, l'Utilisateur accepte l'exécution immédiate du contrat et renonce à son droit de rétractation de 14 jours.
+                        En souscrivant à MiamChef IA et en accédant immédiatement aux services Premium, l'Utilisateur accepte l'exécution immédiate du contrat et renonce à son droit de rétractation de 14 jours.
                     </p>
                 </section>
             </div>

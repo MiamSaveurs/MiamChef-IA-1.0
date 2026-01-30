@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
-import { AppView, Language } from '../types';
+import React from 'react';
+import { AppView } from '../types';
 import { Star, ChevronRight, Settings } from 'lucide-react';
-import { getCurrentLanguage, setLanguage, t, getDateLocale } from '../services/translationService';
 import { 
   PremiumChefHat, 
   WickerBasket, 
@@ -12,6 +11,7 @@ import {
   PremiumWine, 
   PremiumHeart, 
   PremiumEuro, 
+  PremiumCrown, 
   PremiumLeaf, 
   PremiumPaperPlane, 
   PremiumFingerprint 
@@ -23,10 +23,7 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
-  const currentLang = getCurrentLanguage();
-  const dateLocale = getDateLocale();
-  
-  const today = new Date().toLocaleDateString(dateLocale, { 
+  const today = new Date().toLocaleDateString('fr-FR', { 
     weekday: 'long', 
     day: 'numeric', 
     month: 'long',
@@ -35,19 +32,12 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
 
   const currentYear = new Date().getFullYear();
 
-  const languages: {code: Language, flag: string}[] = [
-      { code: 'fr', flag: '🇫🇷' },
-      { code: 'en', flag: '🇬🇧' },
-      { code: 'es', flag: '🇪🇸' },
-      { code: 'it', flag: '🇮🇹' },
-      { code: 'de', flag: '🇩🇪' }
-  ];
-
+  // "Mes Préférences" a été retiré de la grille pour être mis en avant
   const blocks = [
     {
       view: AppView.RECIPE_CREATOR,
-      title: t('card_creator_title'),
-      subtitle: t('card_creator_sub'),
+      title: "Cuisine du Chef",
+      subtitle: "Création sur-mesure",
       icon: <PremiumChefHat size={28} />,
       color: "from-[#1a4a2a] to-[#0f2e1b]", // Vert
       accent: "text-green-400",
@@ -56,8 +46,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
     },
     {
       view: AppView.PLANNING,
-      title: t('card_planning_title'),
-      subtitle: t('card_planning_sub'),
+      title: "Semainier",
+      subtitle: "Menus & Organisation",
       icon: <PremiumCalendar size={28} />,
       color: "from-[#3b2a4a] to-[#1f162e]", // Violet
       accent: "text-purple-400",
@@ -66,8 +56,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
     },
     {
       view: AppView.SCAN_FRIDGE,
-      title: t('card_scan_title'),
-      subtitle: t('card_scan_sub'),
+      title: "Scan Frigo",
+      subtitle: "Zéro Gaspillage",
       icon: <PremiumCamera size={28} />,
       color: "from-[#1a3a5a] to-[#0f1e2e]", // Bleu
       accent: "text-blue-400",
@@ -76,8 +66,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
     },
     {
       view: AppView.SOMMELIER,
-      title: t('card_sommelier_title'),
-      subtitle: t('card_sommelier_sub'),
+      title: "Sommelier",
+      subtitle: "Accords Vins",
       icon: <PremiumWine size={28} />,
       color: "from-[#4a1a2a] to-[#2e0f15]", // Rouge
       accent: "text-rose-400",
@@ -86,8 +76,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
     },
     {
       view: AppView.RECIPE_BOOK,
-      title: t('card_book_title'),
-      subtitle: t('card_book_sub'),
+      title: "Mon Carnet",
+      subtitle: "Recettes Sauvegardées",
       icon: <GourmetBook size={28} />,
       color: "from-[#2c2010] to-[#1a1205]", // Marron/Ambre
       accent: "text-amber-500",
@@ -96,8 +86,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
     },
     {
       view: AppView.SHOPPING_LIST,
-      title: t('card_list_title'),
-      subtitle: t('card_list_sub'),
+      title: "Ma Liste",
+      subtitle: "Courses Intelligentes",
       icon: <WickerBasket size={28} />,
       color: "from-[#202020] to-[#101010]", // Gris foncé
       accent: "text-gray-400",
@@ -122,19 +112,13 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
               </p>
           </div>
           
-          {/* LANGUAGE SELECTOR - Replaces Premium Pill */}
-          <div className="flex bg-[#151515] rounded-full p-1 border border-white/10 shadow-lg">
-              {languages.map((lang) => (
-                  <button 
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full text-sm transition-all ${currentLang === lang.code ? 'bg-[#509f2a] scale-110 shadow-md' : 'text-white/50 hover:text-white hover:bg-white/10'}`}
-                    title={lang.code.toUpperCase()}
-                  >
-                      {lang.flag}
-                  </button>
-              ))}
-          </div>
+          <button 
+            onClick={() => setView(AppView.SUBSCRIPTION)} 
+            className="flex items-center gap-2 bg-[#151515] border border-[#509f2a]/30 hover:bg-[#509f2a] hover:border-[#509f2a] px-4 py-2 rounded-full transition-all group"
+          >
+              <PremiumCrown size={14} className="text-[#509f2a] group-hover:text-white transition-colors" />
+              <span className="text-[10px] font-black text-[#509f2a] group-hover:text-white tracking-widest uppercase transition-colors">Premium</span>
+          </button>
       </header>
 
       <div className="px-6 relative z-10">
@@ -142,20 +126,21 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           {/* TITRE HERO + SLOGAN (CENTRÉ) */}
           <div className="mt-10 mb-10 text-center">
               <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
-                  {t('home_title')}
+                  Une cuisine unique,
               </h2>
               <div className="relative inline-block mt-1">
                   <h2 className="text-[3.5rem] leading-[0.9] font-display text-[#509f2a] relative z-10">
-                      {t('home_subtitle')}
+                      qui vous ressemble.
                   </h2>
               </div>
           </div>
 
-          {/* BLOC PREFERENCES */}
+          {/* BLOC PREFERENCES (DÉPLACÉ ICI SOUS LE SLOGAN) */}
           <button
             onClick={() => setView(AppView.PROFILE)}
             className="w-full bg-[#15151a] border border-indigo-500/30 rounded-[2rem] p-5 flex items-center justify-between mb-6 shadow-xl shadow-indigo-900/10 active:scale-[0.98] transition-all group relative overflow-hidden"
           >
+              {/* Background accent */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-500/20 transition-all"></div>
 
               <div className="flex items-center gap-5 relative z-10">
@@ -163,9 +148,9 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                       <PremiumFingerprint size={28} />
                   </div>
                   <div className="text-left">
-                      <h3 className="text-xl font-display text-white mb-1 group-hover:text-indigo-300 transition-colors">{t('profile_title')}</h3>
+                      <h3 className="text-xl font-display text-white mb-1 group-hover:text-indigo-300 transition-colors">Mon Profil Gourmand</h3>
                       <p className="text-xs text-gray-400 font-medium max-w-[200px] leading-relaxed">
-                          {t('profile_sub')}
+                          Configurez vos goûts, allergies et matériel pour des recettes 100% sur-mesure.
                       </p>
                   </div>
               </div>
@@ -175,30 +160,33 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
               </div>
           </button>
 
-          {/* BLOC CONCEPT (Format Pilule) */}
+          {/* BLOC CONCEPT (Format Pilule - DÉPLACÉ ICI) */}
           <button 
             onClick={() => setView(AppView.VALUE_PROPOSITION)}
             className="w-full bg-[#111] border border-white/10 rounded-full p-3 pl-5 flex items-center justify-between mb-8 shadow-lg active:scale-98 transition-all group relative overflow-hidden"
           >
+              {/* Left: Icons Overlap */}
               <div className="flex -space-x-3 shrink-0">
                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center z-30 relative shadow-md">
-                     <PremiumLeaf size={16} className="text-[#509f2a]" /> 
+                     <PremiumLeaf size={16} className="text-[#509f2a]" /> {/* Green: Santé */}
                  </div>
                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center z-20 relative shadow-md">
-                     <PremiumEuro size={16} className="text-blue-400" /> 
+                     <PremiumEuro size={16} className="text-blue-400" /> {/* Blue: Economie */}
                  </div>
                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center z-10 relative shadow-md">
-                     <PremiumHeart size={16} className="text-red-400" />
+                     <PremiumHeart size={16} className="text-red-400" /> {/* Red: Sur-mesure/Coeur */}
                  </div>
               </div>
 
+              {/* Center: Text */}
               <div className="flex flex-col items-center">
-                 <span className="text-white font-bold text-lg leading-none mb-1">{t('concept_title')}</span>
-                 <span className="text-[9px] text-gray-500 uppercase tracking-widest font-medium">{t('concept_sub')}</span>
+                 <span className="text-white font-bold text-lg leading-none mb-1">Découvrez le concept</span>
+                 <span className="text-[9px] text-gray-500 uppercase tracking-widest font-medium">Santé • Économies • Sur-mesure</span>
               </div>
 
+              {/* Right: Button */}
               <div className="bg-[#509f2a] text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#408020] transition-colors shadow-lg shadow-green-900/20 mr-1 shrink-0">
-                  {t('concept_btn')}
+                  VOIR
               </div>
           </button>
 
@@ -210,6 +198,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                     onClick={() => setView(block.view)}
                     className={`h-48 w-full rounded-[2.5rem] bg-gradient-to-br ${block.color} relative overflow-hidden group shadow-lg border ${block.border} flex flex-col justify-between p-6 text-left hover:scale-[1.02] active:scale-95 transition-all duration-300`}
                   >
+                      {/* Image de fond avec masque */}
                       <img 
                         src={block.bgImage} 
                         className="absolute right-0 top-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-700 transform group-hover:scale-110" 
@@ -217,6 +206,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                         alt={block.title}
                       />
                       
+                      {/* Icon Container */}
                       <div className="relative z-10 bg-white/10 backdrop-blur-md w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10 text-white shadow-inner group-hover:bg-white/20 transition-colors">
                           {block.icon}
                       </div>
@@ -231,9 +221,10 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
               ))}
           </div>
 
-          {/* SECTION ABONNEMENT */}
+          {/* SECTION ABONNEMENT (DESCRIPTION + LIEN) */}
           <div className="mb-10 px-2">
               <div className="bg-gradient-to-r from-[#111] to-[#151515] border border-white/5 rounded-3xl p-6 text-center relative overflow-hidden shadow-2xl">
+                  {/* Decorative glow */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#509f2a]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                   
                   <div className="relative z-10 flex flex-col items-center">
@@ -242,18 +233,18 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                       </div>
                       
                       <h3 className="font-display text-xl text-white mb-2">
-                          {t('promo_title')}
+                          Passez à la vitesse supérieure
                       </h3>
                       
                       <p className="text-gray-400 text-xs leading-relaxed max-w-sm mx-auto mb-5">
-                          {t('promo_sub')}
+                          Débloquez la création illimitée et toutes les fonctionnalités exclusives pour une expérience culinaire sans limites.
                       </p>
                       
                       <button 
                         onClick={() => setView(AppView.SUBSCRIPTION)}
                         className="group flex items-center gap-2 text-[#509f2a] font-bold uppercase text-[10px] tracking-widest border border-[#509f2a]/30 px-6 py-3 rounded-full hover:bg-[#509f2a] hover:text-white transition-all shadow-lg shadow-green-900/10"
                       >
-                          {t('promo_btn')} <PremiumPaperPlane size={14} className="group-hover:translate-x-1 transition-transform" />
+                          Voir les offres Premium <PremiumPaperPlane size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                   </div>
               </div>
@@ -262,7 +253,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           {/* FOOTER COPYRIGHT */}
           <div className="text-center pb-8 opacity-40">
               <p className="text-[10px] font-sans uppercase tracking-widest font-semibold text-gray-400">
-                  &copy; 2026-{currentYear} {t('footer')}
+                  &copy; 2026-{currentYear} MiamChef by MiamSaveurs
               </p>
           </div>
 

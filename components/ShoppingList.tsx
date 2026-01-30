@@ -1,30 +1,35 @@
 
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList } from '../services/storageService';
-import { t } from '../services/translationService'; // Import translation
 import { ShoppingItem } from '../types';
 import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft } from 'lucide-react';
 import { WickerBasket } from './Icons';
 
-const getCategories = () => ({
-  FRESH_PRODUCE: { id: 'produce', label: t('sl_cat_produce'), icon: Leaf, color: 'text-green-400', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau', 'clementine', 'mandarine', 'raisin', 'brocoli', 'apple', 'pear', 'banana', 'carrot', 'salad', 'onion', 'garlic', 'lemon', 'zucchini', 'tomato', 'vegetable', 'fruit', 'avocado', 'pepper', 'mushroom', 'cucumber', 'eggplant', 'cabbage', 'spinach', 'herb', 'parsley', 'basil', 'coriander', 'mint', 'orange', 'strawberry', 'raspberry', 'melon', 'watermelon', 'potato', 'radish', 'turnip', 'leek', 'tangerine', 'grape', 'broccoli'] },
-  FRESH_MARKET: { id: 'market', label: t('sl_cat_market'), icon: Beef, color: 'text-red-400', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon', 'charcuterie', 'salami', 'pave', 'truite', 'bar', 'daurade', 'chicken', 'beef', 'steak', 'meat', 'fish', 'salmon', 'ham', 'sausage', 'turkey', 'pork', 'veal', 'shrimp', 'mussel', 'cod', 'mince', 'roast', 'fillet', 'cutlet', 'duck', 'bacon', 'salami', 'trout', 'seabass', 'bream'] },
-  DAIRY: { id: 'dairy', label: t('sl_cat_dairy'), icon: Milk, color: 'text-blue-400', keywords: ['lait', 'beurre', 'creme', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comte', 'cheddar', 'mozzarella', 'parmesan', 'chevre', 'feta', 'blanc', 'skyr', 'dessert', 'gruyere', 'roquefort', 'camembert', 'brie', 'ricotta', 'mascarpone', 'grec', 'milk', 'butter', 'cream', 'yogurt', 'cheese', 'egg', 'cheddar', 'mozzarella', 'parmesan', 'goat', 'feta', 'white', 'skyr', 'dessert', 'brie', 'ricotta', 'mascarpone', 'greek'] },
-  GROCERY_SAVORY: { id: 'grocery_savory', label: t('sl_cat_grocery_savory'), icon: Wheat, color: 'text-amber-400', keywords: ['pate', 'riz', 'semoule', 'puree', 'huile', 'vinaigre', 'sel', 'poivre', 'epice', 'moutarde', 'mayonnaise', 'ketchup', 'sauce', 'conserve', 'boite', 'bocal', 'thon', 'sardine', 'maquereau', 'haricot', 'pois', 'lentille', 'mais', 'cornichon', 'olive', 'boulgour', 'quinoa', 'couscous', 'chips', 'apero', 'cacahuete', 'bouillon', 'cube', 'soupe', 'crouton', 'tapenade', 'pesto', 'pasta', 'rice', 'semolina', 'mash', 'oil', 'vinegar', 'salt', 'pepper', 'spice', 'mustard', 'mayonnaise', 'ketchup', 'sauce', 'can', 'jar', 'tuna', 'sardine', 'mackerel', 'bean', 'pea', 'lentil', 'corn', 'pickle', 'olive', 'bulgur', 'quinoa', 'couscous', 'chips', 'peanut', 'stock', 'cube', 'soup', 'crouton', 'pesto'] },
-  GROCERY_SWEET: { id: 'grocery_sweet', label: t('sl_cat_grocery_sweet'), icon: Candy, color: 'text-pink-400', keywords: ['sucre', 'farine', 'chocolat', 'biscuit', 'gateau', 'cereale', 'muesli', 'confiture', 'miel', 'pate a tartiner', 'nutella', 'bonbon', 'compote', 'sirop', 'vanille', 'levure', 'cacao', 'cafe', 'the', 'tisane', 'capsule', 'dosette', 'pain', 'biscotte', 'brioche', 'madeleine', 'speculoos', 'sugar', 'flour', 'chocolate', 'biscuit', 'cake', 'cereal', 'muesli', 'jam', 'honey', 'spread', 'candy', 'compote', 'syrup', 'vanilla', 'yeast', 'cocoa', 'coffee', 'tea', 'herbal', 'pod', 'bread', 'toast', 'brioche', 'madeleine'] },
-  FROZEN: { id: 'frozen', label: t('sl_cat_frozen'), icon: Snowflake, color: 'text-cyan-400', keywords: ['surgele', 'congele', 'glace', 'sorbet', 'frite', 'pizza', 'nugget', 'frozen', 'ice', 'sorbet', 'fries', 'pizza', 'nugget'] },
-  DRINKS: { id: 'drinks', label: t('sl_cat_drinks'), icon: Coffee, color: 'text-indigo-400', keywords: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'boisson', 'alcool', 'cidre', 'limonade', 'whisky', 'vodka', 'rhum', 'champagne', 'volvic', 'evian', 'perrier', 'water', 'juice', 'wine', 'beer', 'soda', 'coke', 'drink', 'alcohol', 'cider', 'lemonade', 'whisky', 'vodka', 'rum', 'champagne'] },
-  HOME: { id: 'home', label: t('sl_cat_home'), icon: Droplet, color: 'text-purple-400', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'eponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant', 'sopalin', 'aluminium', 'film', 'rasoir', 'deodorant', 'couche', 'lingette', 'soap', 'paper', 'toothpaste', 'shampoo', 'gel', 'shower', 'laundry', 'dish', 'sponge', 'bag', 'bin', 'tissue', 'cleaner', 'foil', 'film', 'razor', 'deodorant', 'diaper', 'wipe'] },
-  OTHER: { id: 'other', label: t('sl_cat_other'), icon: Package, color: 'text-gray-400', keywords: [] }
-});
+const CATEGORIES = {
+  FRESH_PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-400', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau', 'clementine', 'mandarine', 'raisin', 'brocoli'] },
+  FRESH_MARKET: { id: 'market', label: 'Boucherie & Poisson', icon: Beef, color: 'text-red-400', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon', 'charcuterie', 'salami', 'pave', 'truite', 'bar', 'daurade'] },
+  DAIRY: { id: 'dairy', label: 'Frais & Crèmerie', icon: Milk, color: 'text-blue-400', keywords: ['lait', 'beurre', 'creme', 'yaourt', 'fromage', 'oeuf', 'emmental', 'comte', 'cheddar', 'mozzarella', 'parmesan', 'chevre', 'feta', 'blanc', 'skyr', 'dessert', 'gruyere', 'roquefort', 'camembert', 'brie', 'ricotta', 'mascarpone', 'grec'] },
+  GROCERY_SAVORY: { id: 'grocery_savory', label: 'Épicerie Salée', icon: Wheat, color: 'text-amber-400', keywords: ['pate', 'riz', 'semoule', 'puree', 'huile', 'vinaigre', 'sel', 'poivre', 'epice', 'moutarde', 'mayonnaise', 'ketchup', 'sauce', 'conserve', 'boite', 'bocal', 'thon', 'sardine', 'maquereau', 'haricot', 'pois', 'lentille', 'mais', 'cornichon', 'olive', 'boulgour', 'quinoa', 'couscous', 'chips', 'apero', 'cacahuete', 'bouillon', 'cube', 'soupe', 'crouton', 'tapenade', 'pesto'] },
+  GROCERY_SWEET: { id: 'grocery_sweet', label: 'Épicerie Sucrée', icon: Candy, color: 'text-pink-400', keywords: ['sucre', 'farine', 'chocolat', 'biscuit', 'gateau', 'cereale', 'muesli', 'confiture', 'miel', 'pate a tartiner', 'nutella', 'bonbon', 'compote', 'sirop', 'vanille', 'levure', 'cacao', 'cafe', 'the', 'tisane', 'capsule', 'dosette', 'pain', 'biscotte', 'brioche', 'madeleine', 'speculoos'] },
+  FROZEN: { id: 'frozen', label: 'Surgelés', icon: Snowflake, color: 'text-cyan-400', keywords: ['surgele', 'congele', 'glace', 'sorbet', 'frite', 'pizza', 'nugget'] },
+  DRINKS: { id: 'drinks', label: 'Boissons', icon: Coffee, color: 'text-indigo-400', keywords: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'boisson', 'alcool', 'cidre', 'limonade', 'whisky', 'vodka', 'rhum', 'champagne', 'volvic', 'evian', 'perrier'] },
+  HOME: { id: 'home', label: 'Hygiène & Maison', icon: Droplet, color: 'text-purple-400', keywords: ['savon', 'papier', 'dentifrice', 'shampoing', 'gel', 'douche', 'lessive', 'vaisselle', 'eponge', 'sac', 'poubelle', 'mouchoir', 'nettoyant', 'sopalin', 'aluminium', 'film', 'rasoir', 'deodorant', 'couche', 'lingette'] },
+  OTHER: { id: 'other', label: 'Divers', icon: Package, color: 'text-gray-400', keywords: [] }
+};
 
 const getCategory = (itemText: string) => {
     const clean = itemText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (clean.includes('surgele') || clean.includes('frozen') || clean.includes('congele') || clean.includes('glace')) return 'FROZEN';
-    const cats = getCategories();
-    for (const key in cats) {
+    if (clean.includes('surgele') || clean.includes('congele') || clean.includes('glace')) return 'FROZEN';
+    if (clean.includes('boite') || clean.includes('conserve') || clean.includes('bocal')) {
+        if (clean.includes('sirop') || clean.includes('fruit') || clean.includes('poire') || clean.includes('peche') || clean.includes('ananas')) return 'GROCERY_SWEET';
+        return 'GROCERY_SAVORY';
+    }
+    if (clean.includes('thon') && (clean.includes('frais') || clean.includes('pave') || clean.includes('steak'))) return 'FRESH_MARKET';
+    if (clean.includes('thon')) return 'GROCERY_SAVORY';
+    if (clean.includes('sirop')) return 'GROCERY_SWEET';
+    for (const key in CATEGORIES) {
         // @ts-ignore
-        const cat = cats[key];
+        const cat = CATEGORIES[key];
         if (cat.id === 'other') continue;
         if (cat.keywords.some((k: string) => clean.includes(k))) return key;
     }
@@ -42,6 +47,8 @@ const ShoppingList: React.FC = () => {
       return saved ? JSON.parse(saved) : null;
   });
 
+  // Thème Teal (Sarcelle)
+  const themeColor = '#14b8a6'; // teal-500
   const themeGradient = 'from-teal-600 to-teal-900';
   const themeShadow = 'shadow-teal-900/40';
 
@@ -80,19 +87,19 @@ const ShoppingList: React.FC = () => {
   const handleClear = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm(t('sl_btn_clear') + " ?")) {
+    if (confirm("Vider toute la liste ?")) {
         setItems([]); 
         await clearShoppingList();
     }
   };
 
   const handleShare = async () => {
-    const text = `📝 ${t('sl_title')} - MiamChef :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
+    const text = `📝 Ma liste de courses MiamChef IA :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
     if (navigator.share) {
-        try { await navigator.share({ title: 'MiamChef List', text: text }); } catch (err) {}
+        try { await navigator.share({ title: 'Ma liste', text: text }); } catch (err) {}
     } else {
         copyToClipboard(text);
-        alert(t('copied'));
+        alert("Copié !");
     }
   };
 
@@ -124,6 +131,7 @@ const ShoppingList: React.FC = () => {
 
   const handleDirectSearch = (itemText: string) => {
       if (!selectedRetailer) {
+          alert("Sélectionnez d'abord un magasin.");
           setDriveStep('retailers');
           return;
       }
@@ -135,14 +143,12 @@ const ShoppingList: React.FC = () => {
   const handleCopyAll = () => {
       const allText = items.map(i => cleanSearchTerm(i.text)).join(', ');
       copyToClipboard(allText);
-      alert(t('copied'));
+      alert("Liste complète copiée !");
   };
 
   const activeItems = items.filter(i => !i.checked);
   const checkedItems = items.filter(i => i.checked);
   const groupedItems: Record<string, ShoppingItem[]> = {};
-  const currentCategories = getCategories();
-  
   activeItems.forEach(item => {
       const catKey = getCategory(item.text);
       if (!groupedItems[catKey]) groupedItems[catKey] = [];
@@ -152,6 +158,7 @@ const ShoppingList: React.FC = () => {
   return (
     <div className="relative min-h-screen pb-32 bg-black text-white font-sans overflow-x-hidden">
         
+        {/* Background Image & Overlay */}
         <div className="absolute inset-0 z-0">
             <img 
                 src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop" 
@@ -163,25 +170,28 @@ const ShoppingList: React.FC = () => {
 
         <div className="relative z-10 max-w-2xl mx-auto px-6 pt-10">
             
+            {/* Header */}
             <div className="text-center mb-10">
                 <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${themeGradient} shadow-[0_0_30px_rgba(20,184,166,0.3)] mb-4 border border-teal-500/30`}>
                     <WickerBasket size={32} className="text-teal-100" />
                 </div>
                 <h1 className="text-4xl md:text-5xl font-display text-teal-400 mb-2 drop-shadow-md">
-                    {t('sl_title')}
+                    Liste de Courses
                 </h1>
                 <p className="text-teal-200/60 text-sm font-light tracking-widest uppercase">
-                    {t('sl_sub')}
+                    Rayon par Rayon
                 </p>
             </div>
 
+            {/* Input & Actions Container */}
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-1.5 shadow-2xl mb-10">
                 <div className="bg-black/40 rounded-[1.7rem] p-6 border border-white/5">
                     
+                    {/* Input Bar */}
                     <div className="relative mb-6">
                         <input 
                             type="text" 
-                            placeholder={t('sl_placeholder')}
+                            placeholder="Ajouter (ex: Lait, Thon...)" 
                             className="w-full pl-5 pr-12 py-4 bg-[#151515] text-white rounded-xl border border-white/10 outline-none focus:border-teal-500/50 focus:bg-[#1a1a1a] transition-all placeholder:text-gray-600"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
@@ -208,14 +218,14 @@ const ShoppingList: React.FC = () => {
                             disabled={items.length === 0} 
                             className="flex-1 bg-[#1a1a1a] border border-white/10 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all disabled:opacity-50"
                         >
-                            <Share2 size={16} className="text-teal-400" /> {t('sl_btn_share')}
+                            <Share2 size={16} className="text-teal-400" /> Partager
                         </button>
                         <button 
                             onClick={() => { setDriveStep('retailers'); setShowDriveModal(true); }} 
                             disabled={items.length === 0} 
                             className={`flex-1 bg-gradient-to-r ${themeGradient} text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg ${themeShadow} hover:brightness-110 transition-all disabled:opacity-50`}
                         >
-                            <Store size={16} /> {t('sl_btn_drive')}
+                            <Store size={16} /> Drive
                         </button>
                     </div>
 
@@ -224,7 +234,7 @@ const ShoppingList: React.FC = () => {
                             onClick={handleClear}
                             className="w-full mt-4 py-2 text-xs font-bold text-red-400/70 hover:text-red-400 transition-colors uppercase tracking-widest flex items-center justify-center gap-2"
                         >
-                            <Trash2 size={12} /> {t('sl_btn_clear')}
+                            <Trash2 size={12} /> Vider la liste
                         </button>
                     )}
                 </div>
@@ -235,13 +245,13 @@ const ShoppingList: React.FC = () => {
             ) : items.length === 0 ? (
                 <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10 backdrop-blur-md">
                     <WickerBasket size={48} className="mx-auto text-white/20 mb-4" />
-                    <p className="text-gray-400 font-display text-xl">{t('sl_empty')}</p>
+                    <p className="text-gray-400 font-display text-xl">Votre liste est vide.</p>
                 </div>
             ) : (
                 <div className="space-y-6 pb-12 animate-fade-in">
-                    {Object.keys(currentCategories).map(catKey => {
+                    {Object.keys(CATEGORIES).map(catKey => {
                         // @ts-ignore
-                        const categoryInfo = currentCategories[catKey];
+                        const categoryInfo = CATEGORIES[catKey];
                         const catItems = groupedItems[catKey];
                         if (!catItems || catItems.length === 0) return null;
                         const Icon = categoryInfo.icon;
@@ -282,11 +292,12 @@ const ShoppingList: React.FC = () => {
                         );
                     })}
 
+                    {/* COMPLETED ITEMS */}
                     {checkedItems.length > 0 && (
                         <div className="mt-8">
                             <div className="flex items-center gap-2 mb-3 px-2 opacity-50">
                                 <Check size={14} className="text-teal-400"/>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({checkedItems.length})</span>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Déjà au panier ({checkedItems.length})</span>
                             </div>
                             <div className="bg-[#121212]/50 rounded-[1.5rem] border border-white/5 overflow-hidden">
                                 {checkedItems.map((item) => (
@@ -306,14 +317,15 @@ const ShoppingList: React.FC = () => {
                 </div>
             )}
             
+            {/* DRIVE MODAL (DARK MODE) */}
             {showDriveModal && (
                 <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
                     <div className="bg-[#1a1a1a] border border-white/10 rounded-[2rem] w-full max-w-md p-6 shadow-2xl relative animate-fade-in flex flex-col max-h-[85vh]">
                         <button onClick={() => setShowDriveModal(false)} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"><X size={20} className="text-gray-400"/></button>
                         
                         <div className="mb-6 text-center">
-                            <h3 className="font-display text-2xl text-white mb-1">{driveStep === 'retailers' ? t('sl_drive_title') : t('sl_drive_express')}</h3>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">{t('sl_connect')}</p>
+                            <h3 className="font-display text-2xl text-white mb-1">{driveStep === 'retailers' ? 'Choisir votre Drive' : 'Remplissage Express'}</h3>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">Connecté aux plus grandes enseignes</p>
                         </div>
                         
                         {driveStep === 'retailers' ? (
@@ -329,10 +341,10 @@ const ShoppingList: React.FC = () => {
                                 <div className="flex items-center gap-2 mb-4">
                                      <button onClick={() => setDriveStep('retailers')} className="p-2 bg-white/5 rounded-lg hover:bg-white/10"><ChevronLeft size={16}/></button>
                                      <button onClick={handleCopyAll} className="flex-1 py-3 bg-teal-500/20 text-teal-400 border border-teal-500/30 font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-teal-500/30 transition-colors">
-                                        <ClipboardList size={16}/> {t('sl_copy_all')}
+                                        <ClipboardList size={16}/> Copier toute la liste
                                      </button>
                                 </div>
-                                <p className="text-xs text-center text-gray-500 mb-2">{t('sl_click_drive')}</p>
+                                <p className="text-xs text-center text-gray-500 mb-2">Cliquez sur un produit pour l'ouvrir dans le Drive</p>
                                 {items.filter(i => !i.checked).map((item) => (
                                     <button key={item.id} onClick={() => handleDirectSearch(item.text)} className="text-left px-4 py-4 bg-[#252525] rounded-xl hover:bg-[#333] border border-white/5 flex justify-between group transition-all items-center">
                                         <span className="font-medium text-gray-200 text-sm">{cleanSearchTerm(item.text)}</span>

@@ -2,14 +2,23 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
-import { getCurrentLanguage } from "./translationService";
 
-// Instructions for MiamChef to avoid certain words
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux' ou 'incroyable'. Laissez la technique parler d'elle-même. NE DITES JAMAIS QUE VOUS ÊTES UNE IA. Dites 'Je suis MiamChef'.";
+// Instructions for the AI to avoid certain words
+// AJOUT: Interdiction stricte de mentionner "IA" ou "Intelligence Artificielle"
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux', 'incroyable', 'IA', 'Intelligence Artificielle' ou 'Algorithme'. Vous êtes un Chef, pas un robot. Laissez la technique parler d'elle-même.";
+
+// RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
+const GDPR_COMPLIANCE_PROTOCOL = `
+=== PROTOCOLE RGPD & SÉCURITÉ DES DONNÉES (NIVEAU CRITIQUE) ===
+1. MINIMISATION DES DONNÉES : Ne demandez JAMAIS d'informations identifiantes.
+2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies comme strictement confidentielles.
+3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement les précautions d'usage sans jargon médical.
+`;
 
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
+    // On garde la structure pour l'IA, mais le nom est juste "Contexte Utilisateur"
     let context = `=== CONTEXTE / PRÉFÉRENCES DE L'UTILISATEUR ===\n`;
     context += `NOM : ${profile.name}\n`;
     context += `NIVEAU CUISINE : ${profile.cookingLevel}\n`;
@@ -29,32 +38,11 @@ const getUserProfileContext = (): string => {
         context += `🛠️ MATÉRIEL DISPONIBLE : ${profile.equipment} (Adapter la recette à ce matériel).\n`;
     }
 
-    // Global Diet
+    // Global Diet (Combined with input diet usually, but good to have as fallback)
     context += `RÉGIME GLOBAL : ${profile.diet}\n`;
     
     return context;
 };
-
-// Helper to get Language Instruction
-const getLanguageInstruction = (): string => {
-    const lang = getCurrentLanguage();
-    const map = {
-        'fr': 'FRENCH (Français)',
-        'en': 'ENGLISH (Anglais)',
-        'es': 'SPANISH (Espagnol)',
-        'it': 'ITALIAN (Italien)',
-        'de': 'GERMAN (Allemand)'
-    };
-    return `IMPORTANT: YOU MUST ANSWER EXCLUSIVELY IN ${map[lang]}. TOUT LE CONTENU DOIT ÊTRE DANS CETTE LANGUE.`;
-};
-
-// RGPD & SAFETY PROTOCOL
-const GDPR_COMPLIANCE_PROTOCOL = `
-=== PROTOCOLE RGPD & SÉCURITÉ DES DONNÉES (NIVEAU CRITIQUE) ===
-1. MINIMISATION DES DONNÉES : Ne demandez JAMAIS d'informations identifiantes.
-2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies comme strictement confidentielles.
-3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement que vous êtes MiamChef, un expert culinaire virtuel.
-`;
 
 // Helper to get the current season based on the date
 const getCurrentSeason = (date: Date): string => {
@@ -66,43 +54,27 @@ const getCurrentSeason = (date: Date): string => {
 };
 
 // Helper to translate diet selection into strict AI instructions
-// Updated to handle inputs from all languages by detecting keywords
 const getDietaryConstraints = (diet: string): string => {
-  const lowerDiet = diet.toLowerCase();
-  
-  if (lowerDiet.includes('végétarien') || lowerDiet.includes('vegetarian') || lowerDiet.includes('vegetariano') || lowerDiet.includes('vegetarisch')) {
-      return "RÉGIME STRICTEMENT VÉGÉTARIEN : Aucune viande, aucun poisson, aucun fruit de mer. Oeufs, miel et produits laitiers sont autorisés.";
+  switch (diet) {
+    case 'Végétarien': 
+        return "RÉGIME STRICTEMENT VÉGÉTARIEN : Aucune viande, aucun poisson, aucun fruit de mer. Oeufs, miel et produits laitiers sont autorisés.";
+    case 'Vegan': 
+        return "RÉGIME STRICTEMENT VEGAN (VÉGÉTALIEN) : Aucun produit d'origine animale. Ni viande, ni poisson, ni oeuf, ni produit laitier, ni miel. Utilisez des alternatives végétales.";
+    case 'Halal': 
+        return "RÉGIME HALAL : Interdiction ABSOLUE de porc (et dérivés : lardons, gélatine de porc, saindoux). Interdiction ABSOLUE d'alcool (même cuit, pas de vin/bière dans les sauces). La viande doit être certifiée Halal.";
+    case 'Casher': 
+        return "RÉGIME CASHER : Interdiction ABSOLUE de porc, lapin, cheval. Pas de fruits de mer ni crustacés (seuls les poissons à écailles/nageoires sont ok). INTERDICTION FORMELLE DE MÉLANGER VIANDE ET PRODUITS LAITIERS dans la même recette ou le même menu (Respecter les temps de pause).";
+    case 'Sans Gluten': 
+        return "RÉGIME SANS GLUTEN (Cœliaque) : Interdiction stricte de blé, orge, seigle, avoine, épeautre. Utilisez : Farine de riz, maïs, sarrasin, fécule, pois chiche. Attention aux sauces soja classiques (tamari ok).";
+    case 'Sans Lactose': 
+        return "RÉGIME SANS LACTOSE : Pas de lait de vache, crème, beurre ou fromages frais contenant du lactose. Privilégiez les produits délactosés ou les alternatives végétales (soja, amande).";
+    case 'Régime Crétois': 
+        return "RÉGIME CRÉTOIS (MÉDITERRANÉEN STRICT) : La base de TOUS les repas doit être végétale (légumes, légumineuses, noix, céréales complètes). Huile d'olive comme source de graisse principale. VIANDE ROUGE : Maximum 1 à 2 fois par MOIS. VOLAILLE/OEUFS : Modéré (1-2 fois par semaine). POISSON : Modéré (2 fois par semaine). Les autres jours doivent être SANS protéine animale (protéines végétales uniquement).";
+    case 'Sportif (Protéiné)': 
+        return "NUTRITION SPORTIVE : Riche en protéines (20-30g min/repas). Glucides complexes à indice glycémique bas/moyen. Bonnes graisses (oméga-3). Focus sur la récupération et l'énergie.";
+    default: 
+        return "Régime classique équilibré (Omnivore).";
   }
-  
-  if (lowerDiet.includes('vegan') || lowerDiet.includes('végétalien') || lowerDiet.includes('vegano')) {
-      return "RÉGIME STRICTEMENT VEGAN (VÉGÉTALIEN) : Aucun produit d'origine animale. Ni viande, ni poisson, ni oeuf, ni produit laitier, ni miel. Utilisez des alternatives végétales.";
-  }
-  
-  if (lowerDiet.includes('halal')) {
-      return "RÉGIME HALAL : Interdiction ABSOLUE de porc (et dérivés : lardons, gélatine de porc, saindoux). Interdiction ABSOLUE d'alcool (même cuit, pas de vin/bière dans les sauces). La viande doit être certifiée Halal.";
-  }
-  
-  if (lowerDiet.includes('casher') || lowerDiet.includes('kosher') || lowerDiet.includes('koscher')) {
-      return "RÉGIME CASHER : Interdiction ABSOLUE de porc, lapin, cheval. Pas de fruits de mer ni crustacés (seuls les poissons à écailles/nageoires sont ok). INTERDICTION FORMELLE DE MÉLANGER VIANDE ET PRODUITS LAITIERS dans la même recette ou le même menu (Respecter les temps de pause).";
-  }
-  
-  if (lowerDiet.includes('gluten')) {
-      return "RÉGIME SANS GLUTEN (Cœliaque) : Interdiction stricte de blé, orge, seigle, avoine, épeautre. Utilisez : Farine de riz, maïs, sarrasin, fécule, pois chiche. Attention aux sauces soja classiques (tamari ok).";
-  }
-  
-  if (lowerDiet.includes('lactose') || lowerDiet.includes('lattosio') || lowerDiet.includes('lactosa') || lowerDiet.includes('laktose')) {
-      return "RÉGIME SANS LACTOSE : Pas de lait de vache, crème, beurre ou fromages frais contenant du lactose. Privilégiez les produits délactosés ou les alternatives végétales (soja, amande).";
-  }
-  
-  if (lowerDiet.includes('crétois') || lowerDiet.includes('keto') || lowerDiet.includes('cretan') || lowerDiet.includes('creto') || lowerDiet.includes('kreta')) {
-      return "RÉGIME CRÉTOIS (MÉDITERRANÉEN STRICT) : La base de TOUS les repas doit être végétale (légumes, légumineuses, noix, céréales complètes). Huile d'olive comme source de graisse principale. VIANDE ROUGE : Maximum 1 à 2 fois par MOIS. VOLAILLE/OEUFS : Modéré (1-2 fois par semaine). POISSON : Modéré (2 fois par semaine). Les autres jours doivent être SANS protéine animale (protéines végétales uniquement).";
-  }
-  
-  if (lowerDiet.includes('sport') || lowerDiet.includes('prot')) {
-      return "NUTRITION SPORTIVE : Riche en protéines (20-30g min/repas). Glucides complexes à indice glycémique bas/moyen. Bonnes graisses (oméga-3). Focus sur la récupération et l'énergie.";
-  }
-
-  return "Régime classique équilibré (Omnivore).";
 };
 
 // Helper to clean and parse JSON strings returned by the model
@@ -128,7 +100,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE. Titre, Intro, Liste ingrédients, Instructions, Conclusion. Dans la langue demandée."
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur. Il doit être beau et complet."
     },
     metrics: {
       type: Type.OBJECT,
@@ -148,17 +120,17 @@ const recipeSchema = {
     ingredients: { 
         type: Type.ARRAY, 
         items: { type: Type.STRING },
-        description: "LISTE PANIER : Noms des produits SEULS pour la liste de courses (ex: 'Riz'). DANS LA LANGUE DEMANDÉE." 
+        description: "LISTE PANIER : Noms des produits SEULS pour la liste de courses (ex: 'Riz')." 
     },
     ingredientsWithQuantities: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "LISTE CUISINE : Ingrédients détaillés avec quantités (ex: '300g de Riz'). DANS LA LANGUE DEMANDÉE."
+        description: "LISTE CUISINE : Ingrédients détaillés avec quantités (ex: '300g de Riz')."
     },
     steps: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. PAS de Markdown ici. DANS LA LANGUE DEMANDÉE."
+        description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. PAS de Markdown ici (*, #). Juste du texte brut pour être lu à haute voix ou affiché en gros."
     },
     storageAdvice: { type: Type.STRING },
     seoTitle: { type: Type.STRING },
@@ -235,6 +207,7 @@ const weeklyPlanSchema = {
   required: ['days', 'batchCookingTips'],
 };
 
+// Main function to generate a recipe from user inputs
 export const generateChefRecipe = async (
   userConfig: string,
   people: number,
@@ -252,49 +225,143 @@ export const generateChefRecipe = async (
     const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const currentSeason = getCurrentSeason(today);
     
+    // Inject User Profile (Mes Préférences)
     const userProfileContext = getUserProfileContext();
-    const langInstruction = getLanguageInstruction();
 
-    // 1. DYNAMIC PERSONA MATRIX
+    // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
     let personaPrompt = "";
     
     if (chefMode === 'patisserie') {
         if (difficultyLevel === 'beginner') {
-             personaPrompt = `CERVEAU ACTIF : PÂTISSERIE MAISON. IDENTITÉ : Grand-Mère Pâtissière pédagogue.`;
+             // FACILE : Pâtisserie Maison
+             personaPrompt = `
+             IDENTITÉ : Grand-Mère Pâtissière ou Pâtissier Amateur Passionné.
+             TON : Bienveillant, rassurant, ultra-clair. 
+             MISSION : Démystifier la pâtisserie. Rendre l'impossible accessible.
+             INTERDIT : Techniques de laboratoire (glucose atomisé, pectine NH, tempérage sur marbre).
+             VOCABULAIRE : Simple ("Mélanger vigoureusement" au lieu de "Emulsionner").
+             `;
         } else if (difficultyLevel === 'intermediate') {
-             personaPrompt = `CERVEAU ACTIF : PÂTISSIER BOUTIQUE. IDENTITÉ : Chef de laboratoire.`;
+             // MOYEN : Artisan de Quartier
+             personaPrompt = `
+             IDENTITÉ : Artisan Boulanger-Pâtissier de quartier.
+             TON : Professionnel, efficace, précis sans être pédant.
+             MISSION : Garantir un résultat "boutique" à la maison.
+             TECHNIQUE : Pâtes maison, crèmes maîtrisées, pochage soigné.
+             `;
         } else {
-             personaPrompt = `CERVEAU ACTIF : MAÎTRE PÂTISSIER HAUTE COUTURE.`;
+             // EXPERT : MOF (Haute Couture)
+             personaPrompt = `
+             IDENTITÉ : Meilleur Ouvrier de France (MOF) Pâtissier (Style Pierre Hermé / Cédric Grolet).
+             TON : Chirurgical, scientifique, obsessionnel sur les textures et températures.
+             MISSION : L'excellence absolue. La pâtisserie est une chimie exacte.
+             EXIGENCE : Précision au gramme. Temps de repos respectés à la minute.
+             STRUCTURE : Inserts, Croustillants, Mousses, Glaçages.
+             `;
         }
     } else {
+        // MODE CUISINE
         if (difficultyLevel === 'beginner') {
-             personaPrompt = `CERVEAU ACTIF : CUISINE DU QUOTIDIEN. IDENTITÉ : Chef de famille astucieux.`;
+             // FACILE : Cuisine du Quotidien
+             personaPrompt = `
+             IDENTITÉ : Chef TV Pédagogue (Style Cyril Lignac / Jamie Oliver).
+             TON : Enthousiaste, décomplexé, encourageant. "C'est gourmand, c'est malin".
+             MISSION : Faire cuisiner les gens pressés sans les décourager.
+             INTERDIT : Termes comme "Singer", "Suer", "Déglacer" SANS explication immédiate entre parenthèses.
+             MATÉRIEL : Standard (Poêle, Casserole). Pas de sous-vide ni de siphon.
+             `;
         } else if (difficultyLevel === 'intermediate') {
-             personaPrompt = `CERVEAU ACTIF : BISTRONOMIE. IDENTITÉ : Chef de Bistrot.`;
+             // MOYEN : Bistronomie
+             personaPrompt = `
+             IDENTITÉ : Chef de Bistrot Gourmand.
+             TON : Franc, généreux, amoureux du produit brut.
+             MISSION : La "Cuisine de Marché". On respecte le produit, on soigne les cuissons.
+             TECHNIQUE : Vrais jus, sauces montées, découpes régulières.
+             `;
         } else {
-             personaPrompt = `CERVEAU ACTIF : GASTRONOMIE ÉTOILÉE.`;
+             // EXPERT : Haute Gastronomie
+             personaPrompt = `
+             IDENTITÉ : Grand Chef 3 Étoiles (Style Robuchon / Ducasse).
+             TON : Autoritaire, technique, perfectionniste.
+             MISSION : La quintessence du goût. Aucune approximation tolérée.
+             EXIGENCE : Maîtrise absolue du feu. Assaisonnement millimétré à chaque étape.
+             VOCABULAIRE : Technique pure (Mirepoix, Concassée, Sucs, Réduction à glace).
+             `;
         }
     }
 
-    // 2. DIFFICULTY & COST
-    let difficultyPrompt = `NIVEAU : ${difficultyLevel.toUpperCase()}`;
-    let costPrompt = `BUDGET : ${recipeCost === 'budget' ? 'ECONOMIQUE' : 'AUTHENTIQUE'}`;
+    // 2. NIVEAU DE DIFFICULTÉ (CONTRAINTES DE RÉALISATION)
+    let difficultyPrompt = "";
+    switch (difficultyLevel) {
+        case 'beginner':
+            difficultyPrompt = `
+            NIVEAU : DÉBUTANT.
+            OBJECTIF : Zéro stress. Résultat garanti.
+            COMPLEXITÉ : Minimale. Étapes courtes.
+            `;
+            break;
+        case 'expert':
+            difficultyPrompt = `
+            NIVEAU : EXPERT.
+            OBJECTIF : Épater visuellement et gustativement.
+            COMPLEXITÉ : Élevée. Plusieurs préparations simultanées. Dressage minute.
+            `;
+            break;
+        default: // intermediate
+            difficultyPrompt = `
+            NIVEAU : INTERMÉDIAIRE.
+            OBJECTIF : Bon équilibre temps/résultat. Fait maison prioritaire.
+            `;
+            break;
+    }
 
-    // 3. GOLDEN RULES
+    // 3. BUDGET (CONTRAINTES ÉCONOMIQUES)
+    let costPrompt = "";
+    if (recipeCost === 'budget') {
+        costPrompt = `
+        BUDGET : ÉCONOMIQUE / ÉTUDIANT.
+        INTERDICTION : Produits de luxe (Truffe, Foie gras, Boeuf de Kobe, Lotte).
+        SUBSTITUTIONS : Proposer des alternatives malines pour les ingrédients coûteux.
+        PHILOSOPHIE : "L'art d'accommoder les restes" ou "Manger royal pour pas un rond".
+        `;
+    } else {
+        costPrompt = `
+        BUDGET : NO LIMIT / AUTHENTIQUE.
+        PRIORITÉ : Qualité du produit (AOP, Label Rouge, Bio, Terroir).
+        PHILOSOPHIE : "Le produit se suffit à lui-même s'il est exceptionnel".
+        `;
+    }
+
+    // 4. GOLDEN RULES (LOIS PHYSIQUES INVIOLABLES)
     const technicalRules = `
-    ⚠️ RÈGLES CULINAIRES ABSOLUES :
-    1. Respecter la chimie des aliments.
-    2. Réaction de Maillard pour les viandes.
-    3. Repos des viandes après cuisson.
+    ⚠️ RÈGLES CULINAIRES ABSOLUES (A RESPECTER SOUS PEINE DE DISQUALIFICATION) :
+    
+    1. LOI DE LA PÂTISSERIE ET DES FRUITS :
+       - INTERDICTION FORMELLE de cuire des fraises ou framboises fraîches sur une tarte. 
+       - PROCÉDURE : Fond de tarte cuit à blanc > Refroidissement > Crème > Fruits frais posés crus à la fin.
+       
+    2. RÉACTION DE MAILLARD & REPOS (INDISPENSABLE) :
+       - Sauf pour le "bouilli" ou "blanquette", une viande doit subir une RÉACTION DE MAILLARD (saisie/coloration) à feu vif pour développer les sucs.
+       - REPOS OBLIGATOIRE après cuisson (sous papier alu) pour détendre les fibres (5 à 10 min).
+       
+    3. LOI DES PÂTES :
+       - Cuisson Al Dente.
+       - Ne JAMAIS rincer les pâtes après cuisson (sauf salade de pâtes).
+       - Toujours utiliser un peu d'eau de cuisson pour lier la sauce (Mantecatura).
+       
+    4. LOI DES LÉGUMES VERTS :
+       - Cuisson à l'anglaise (eau bouillante très salée).
+       - Refroidissement immédiat dans l'eau glacée (fixer la chlorophylle) pour garder le vert.
     `;
 
+    // Récupération des contraintes strictes
     const strictDietaryRules = getDietaryConstraints(dietary);
 
+    // CONSTRUCTION DU PROMPT FINAL
     const prompt = `
-      CONTEXTE TEMPOREL : ${currentDate} (Saison: ${currentSeason}).
+      CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
       ${userProfileContext}
-      ${langInstruction}
 
       === VOTRE PERSONA ===
       ${personaPrompt}
@@ -308,13 +375,35 @@ export const generateChefRecipe = async (
       - TYPE DE REPAS : ${mealTime}
       - RÉGIME (CRITIQUE) : ${strictDietaryRules}
 
-      === CONTRAINTES ===
+      === CONTRAINTES STRICTES ===
       1. ${costPrompt}
       2. ${difficultyPrompt}
       3. ${technicalRules}
       4. ${GDPR_COMPLIANCE_PROTOCOL}
       
-      Réponse UNIQUEMENT en JSON valide respectant le schéma recipeSchema.
+      === FORMAT DE SORTIE ATTENDU (JSON) ===
+      Vous devez répondre UNIQUEMENT en JSON valide respectant ce schéma :
+      {
+        "markdownContent": "LE TEXTE DE LA RECETTE. Il doit être complet, rédigé avec passion et parfaitement formaté en Markdown (Titres ##, Gras **, Listes -). Il doit inclure l'introduction, la liste des ingrédients, les instructions de préparation et la conclusion.",
+        "metrics": {
+          "nutriScore": "A/B/C/D/E",
+          "caloriesPerPerson": Nombre entier,
+          "caloriesPer100g": Nombre entier,
+          "pricePerPerson": Nombre (Estimez selon le marché actuel),
+          "carbohydrates": Nombre,
+          "proteins": Nombre,
+          "fats": Nombre,
+          "difficulty": "Facile/Moyen/Expert" (Doit correspondre au niveau demandé)
+        },
+        "utensils": ["Liste", "Des", "Ustensiles"],
+        "ingredients": ["Carottes", "Oignons", "Boeuf"] (Liste pour les courses, SANS quantités),
+        "ingredientsWithQuantities": ["300g de Carottes", "2 Oignons", "500g de Boeuf"] (Liste technique pour cuisiner),
+        "steps": ["Étape 1: Préchauffer...", "Étape 2: Couper...", "Étape 3: Cuire..."] (Liste TEXTE BRUT étape par étape pour le mode interactif. Pas de markdown ici.),
+        "storageAdvice": "Conseil précis (Durée + Mode) pour la conservation.",
+        "seoTitle": "Titre court et accrocheur",
+        "seoDescription": "Description courte qui donne faim."
+      }
+      
       ${BANNED_WORDS_INSTRUCTION}
     `;
 
@@ -346,18 +435,18 @@ export const generateChefRecipe = async (
   }
 };
 
+// Searches for a chef's recipe based on query
 export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const langInstruction = getLanguageInstruction();
   
-  const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique' : 'économique'} pour "${query}" pour ${people} personnes.
+  const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique et gastronomique' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
   
   ${userProfileContext}
-  ${langInstruction}
+  
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT : JSON format selon recipeSchema.`;
+  IMPORTANT : Fournissez un contenu Markdown riche ("markdownContent") pour l'affichage principal, et une liste d'étapes claire ("steps") pour le mode pas-à-pas.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -383,17 +472,113 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   };
 };
 
+// --- NOUVEAU : AJUSTEMENT INTELLIGENT DE RECETTE ---
+export const adjustRecipe = async (originalRecipeText: string, adjustmentType: string): Promise<GeneratedContent> => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const userProfileContext = getUserProfileContext();
+    
+    // Définition de la stratégie d'ajustement
+    let specificInstruction = "";
+    switch (adjustmentType) {
+        case "Réduire le sel":
+            specificInstruction = `
+            OBJECTIF : Réduire drastiquement le sodium SANS rendre le plat fade.
+            STRATÉGIE : Compenser par l'utilisation accrue d'épices, d'herbes fraîches, d'agrumes (acidité) ou d'aromates (ail, oignon).
+            ACTION : Supprimer ou réduire le sel ajouté, les bouillons cubes industriels, la sauce soja. Proposer des alternatives.
+            `;
+            break;
+        case "Augmenter les protéines":
+            specificInstruction = `
+            OBJECTIF : Booster l'apport en protéines de cette recette.
+            STRATÉGIE : Ajouter ou augmenter les quantités de viandes magres, oeufs, légumineuses (lentilles, pois chiches), tofu ou laitages.
+            ACTION : Rééquilibrer les ratios sans dénaturer le plat.
+            `;
+            break;
+        case "Passer au végétal":
+            specificInstruction = `
+            OBJECTIF : Végétaliser la recette (Végétarien/Vegan selon contexte).
+            STRATÉGIE : Remplacer la viande/poisson par des alternatives texturées (Champignons, Tofu, Seitan, Légumineuses). Remplacer la crème/beurre par des équivalents végétaux si nécessaire.
+            ACTION : Garder l'esprit du plat mais changer la source de protéine et de gras.
+            `;
+            break;
+        case "Adapter aux enfants":
+            specificInstruction = `
+            OBJECTIF : Rendre le plat "Kid-Friendly" (Attractif et doux).
+            STRATÉGIE : Cacher les légumes (mixer/raper), adoucir les épices fortes (remplacer piment par paprika doux), rendre la présentation ludique.
+            ACTION : Simplifier les textures complexes.
+            `;
+            break;
+        default:
+            specificInstruction = `OBJECTIF : Appliquer l'ajustement demandé : "${adjustmentType}".`;
+    }
+
+    const prompt = `
+    TU ES UN CHEF EXPERT EN REVISITE CULINAIRE.
+    
+    ${userProfileContext}
+
+    TA MISSION : Réécrire entièrement la recette ci-dessous en appliquant STRICTEMENT l'ajustement demandé, tout en garantissant un équilibre des saveurs parfait.
+    
+    === RECETTE D'ORIGINE ===
+    ${originalRecipeText}
+    
+    === AJUSTEMENT DEMANDÉ ===
+    ${adjustmentType}
+    
+    === INSTRUCTIONS TECHNIQUES ===
+    ${specificInstruction}
+    
+    ${GDPR_COMPLIANCE_PROTOCOL}
+    
+    Tu dois renvoyer TOUTE la recette mise à jour (Ingrédients, Instructions, Métriques recalculées) au format JSON.
+    ${BANNED_WORDS_INSTRUCTION}
+    `;
+
+    const response: GenerateContentResponse = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+        config: {
+            thinkingConfig: { thinkingBudget: 0 },
+            responseMimeType: "application/json",
+            responseSchema: recipeSchema,
+        },
+    });
+
+    const data = cleanAndParseJSON(response.text || "{}");
+    return {
+        text: sanitizeText(data.markdownContent) || "Erreur d'ajustement.",
+        metrics: data.metrics,
+        utensils: data.utensils,
+        ingredients: data.ingredients, 
+        ingredientsWithQuantities: data.ingredientsWithQuantities,
+        steps: data.steps, 
+        storageAdvice: sanitizeText(data.storageAdvice),
+        seoTitle: sanitizeText(data.seoTitle),
+        seoDescription: sanitizeText(data.seoDescription)
+    };
+};
+
+// Generates a high-quality food image
+// MODIFIED: Accepts ingredients context for realism
 export const generateRecipeImage = async (title: string, context: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
+  // PROMPT HYPER-RÉALISTE AMÉLIORÉ
+  // On force le modèle à prendre en compte les ingrédients et à éviter le texte.
   const gdprSafePrompt = `
   Hyper-realistic professional food photography of: ${title}.
+  
   CRITICAL DETAILS FOR COHERENCE:
-  - Context/Style: ${context}
+  - Context/Style: ${context} (Ensure plating matches this style, e.g., Rustic for family meals, Minimalist for gourmet).
+  - Visible Ingredients: Ensure the main ingredients mentioned in the title are visibly present and appetizing.
+  
   TECHNICAL SPECS:
   - 8k resolution, highly detailed textures.
   - Macro photography or 50mm lens.
-  - Lighting: Soft natural window light.
+  - Lighting: Soft natural window light or professional studio food lighting.
+  - Effect: Steam rising (if hot dish), condensation droplets (if cold drink/dessert).
+  - Depth of field: Shallow (bokeh background).
+  
   RESTRICTIONS:
   - NO TEXT overlay.
   - NO HUMANS/FACES/HANDS.
@@ -424,10 +609,10 @@ export const generateRecipeImage = async (title: string, context: string): Promi
   throw new Error("Failed to generate image");
 };
 
+// Scans fridge image and suggests a recipe
 export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const langInstruction = getLanguageInstruction();
   
   const imagePart = {
     inlineData: {
@@ -436,27 +621,35 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     },
   };
   
+  const dietRules = getDietaryConstraints(dietary);
+
+  // Prompt amélioré pour forcer l'identification visuelle explicite
   const textPart = {
-    text: `ROLE : Tu es MiamChef, expert en vision par ordinateur et cuisine.
+    text: `ROLE : Tu es un Chef Cuisinier expert en vision par ordinateur.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
-    ${langInstruction}
 
     ETAPE 1 : IDENTIFICATION
-    Analyse visuellement cette photo. Liste TOUS les ingrédients comestibles.
+    Analyse visuellement cette photo avec une extrême précision. Liste TOUS les ingrédients comestibles que tu vois.
+    ATTENTION RGPD : Ignore tout texte visible sur des courriers, des photos de personnes ou tout objet personnel non culinaire. Concentre-toi UNIQUEMENT sur la nourriture.
     
     ETAPE 2 : FILTRAGE
-    REGIME : ${dietary}
+    REGIME IMPOSÉ PAR L'UTILISATEUR : ${dietary}
+    RÈGLES STRICTES : ${dietRules}
+    
+    Si tu as identifié des ingrédients sur la photo qui sont INTERDITS par ce régime ou par les préférences de l'utilisateur, TU DOIS LES IGNORER TOTALEMENT pour la recette.
     
     ETAPE 3 : CRÉATION
-    Crée une recette gastronomique avec les ingrédients identifiés.
+    En utilisant PRINCIPALEMENT les ingrédients identifiés, crée une recette gastronomique et anti-gaspillage.
     
     FORMAT DE RÉPONSE (Markdown) :
-    1. Commence par : "**Ingrédients identifiés :** [Liste]"
+    1. Commence par : "**Ingrédients identifiés :** [Liste des ingrédients vus]"
     2. Titre de la recette (avec #)
     3. Ingrédients complets (avec quantités estimées)
-    4. Instructions étape par étape.`,
+    4. Instructions étape par étape.
+    
+    Ton ton doit être encourageant, professionnel et créatif.`,
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -467,6 +660,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   return response.text || "Je n'ai pas pu analyser l'image.";
 };
 
+// Converts a browser File to base64 string
 export const fileToGenerativePart = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -479,21 +673,22 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
   });
 };
 
+// Gets sommelier advice with search grounding
 export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): Promise<{ text: string, groundingChunks?: GroundingChunk[] }> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const langInstruction = getLanguageInstruction();
 
-  const prompt = `Vous êtes MiamChef Sommelier.
+  const prompt = `Vous êtes un Sommelier Expert Moderne. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
   
   ${userProfileContext}
-  ${langInstruction}
 
-  MISSION : Proposez des accords mets-boissons d'excellence pour : "${query}".
+  MISSION : Proposez des accords mets-boissons d'excellence pour la demande : "${query}".
 
-  VOTRE RÉPONSE DOIT CONTENIR :
-  1. 🍷 ACCORDS VINS (TRADITION)
-  2. 🍃 ACCORDS SANS ALCOOL (SOBRIÉTÉ HEUREUSE)
+  VOTRE RÉPONSE DOIT CONTENIR DEUX SECTIONS DISTINCTES :
+  1. 🍷 ACCORDS VINS (TRADITION) : Recommandez des appellations précises, millésimes ou cépages.
+  2. 🍃 ACCORDS SANS ALCOOL (SOBRIÉTÉ HEUREUSE) : Proposez des alternatives sophistiquées (Thés grands crus, Jus de dégustation, Kombuchas, Eaux aromatisées, Mocktails complexes). Traitez le sans-alcool avec le même vocabulaire et la même exigence que le vin.
+  
+  Utilisez Google Search pour vérifier les disponibilités ou tendances actuelles si nécessaire.
   
   ${GDPR_COMPLIANCE_PROTOCOL}`;
 
@@ -519,6 +714,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   };
 };
 
+// Edits a dish photo based on a prompt
 export const editDishPhoto = async (base64Image: string, prompt: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -548,34 +744,46 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
   throw new Error("Failed to edit image");
 };
 
+// Generates a full weekly menu
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  const langInstruction = getLanguageInstruction();
   
+  // Récupération des contraintes strictes pour le semainier
   const strictDietaryRules = getDietaryConstraints(dietary);
 
   let ingredientsPrompt = "";
   if (ingredients.trim()) {
-      ingredientsPrompt = `CONTEXTE SPÉCIAL ANTI-GASPI : L'utilisateur dispose de : "${ingredients}". Intégrez-les.`;
+      ingredientsPrompt = `
+      CONTEXTE SPÉCIAL ANTI-GASPI :
+      L'utilisateur dispose de ces ingrédients : "${ingredients}".
+      MISSION : Intégrez intelligemment ces ingrédients dans les repas de la semaine (Lunch ou Dîner).
+      Complétez avec d'autres produits pour équilibrer.`;
   }
 
-  const prompt = `Créez un planning de repas hebdomadaire complet pour ${people} personnes.
+  const prompt = `Créez un planning de repas hebdomadaire complet (Petit-déj, Midi, Collation, Soir) pour ${people} personnes.
   
   ${userProfileContext}
-  ${langInstruction}
 
-  CONTRAINTES : 
+  CONTRAINTES ALIMENTAIRES STRICTES À RESPECTER : 
   ${strictDietaryRules}
+
   ${ingredientsPrompt}
+  
   ${GDPR_COMPLIANCE_PROTOCOL}
   
-  Répondez au format JSON strict selon le schéma weeklyPlanSchema.`;
+  IMPORTANT POUR LA GÉNÉRATION :
+  - Respectez SCUPULEUSEMENT le régime indiqué. Si c'est Régime Crétois, limitez drastiquement la viande/poisson comme indiqué dans les règles.
+  - Soyez varié et équilibré.
+  - Incluez des conseils de Batch Cooking pour le dimanche.
+  
+  Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
     contents: prompt,
     config: {
+      // Pour le menu hebdo (plus complexe), 4096 est un bon compromis Vitesse/Qualité.
       thinkingConfig: { thinkingBudget: 4096 },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
