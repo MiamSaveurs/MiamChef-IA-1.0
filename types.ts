@@ -106,4 +106,5 @@ export interface UserProfile {
   equipment: string;
   householdSize: number;
   cookingLevel: string;
+  smartDevices?: string[];
 }

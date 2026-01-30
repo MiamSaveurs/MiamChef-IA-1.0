@@ -1,5 +1,6 @@
+
 {
-  "name": "MiamChef IA",
+  "name": "MiamChef",
   "short_name": "MiamChef",
   "start_url": ".",
   "display": "standalone",

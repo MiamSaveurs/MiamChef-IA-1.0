@@ -1,4 +1,6 @@
 
+
+
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
@@ -217,7 +219,8 @@ export const generateChefRecipe = async (
   isBatchCooking: boolean,
   chefMode: 'cuisine' | 'patisserie', 
   recipeCost: 'authentic' | 'budget' = 'authentic',
-  difficultyLevel: 'beginner' | 'intermediate' | 'expert' = 'intermediate'
+  difficultyLevel: 'beginner' | 'intermediate' | 'expert' = 'intermediate',
+  smartDevices: string[] = []
 ): Promise<GeneratedContent> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -227,6 +230,11 @@ export const generateChefRecipe = async (
     
     // Inject User Profile (Mes Préférences)
     const userProfileContext = getUserProfileContext();
+    
+    // Integration Smart Devices
+    const smartDevicePrompt = smartDevices.length > 0 
+        ? `APPAREILS INTELLIGENTS DISPONIBLES : ${smartDevices.join(', ')}. Intégrez explicitement leur usage dans les étapes (ex: "Préchauffer le Four Connecté à 180°C").`
+        : "";
 
     // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
     let personaPrompt = "";
@@ -362,6 +370,7 @@ export const generateChefRecipe = async (
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
       ${userProfileContext}
+      ${smartDevicePrompt}
 
       === VOTRE PERSONA ===
       ${personaPrompt}

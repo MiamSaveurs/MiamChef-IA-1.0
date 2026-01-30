@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe } from '../services/geminiService';
-import { saveRecipeToBook, addToShoppingList } from '../services/storageService';
+import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
 import { LoadingState, RecipeMetrics } from '../types';
 import { 
   ChevronLeft, 
@@ -51,7 +51,7 @@ import {
   PremiumTimer, 
   PremiumSparkles, 
   PremiumEuro, 
-  PremiumMedal,
+  PremiumMedal, 
   PremiumUtensils 
 } from './Icons';
 
@@ -104,6 +104,10 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [connectStep, setConnectStep] = useState<'searching' | 'found' | 'sending' | 'success'>('searching');
 
+  // --- STATE POUR OVERRIDE DES APPAREILS ---
+  const [localSmartDevices, setLocalSmartDevices] = useState<string[]>([]);
+  const [availableProfileDevices, setAvailableProfileDevices] = useState<string[]>([]);
+
   const isPatissier = chefMode === 'patisserie';
   const themeColor = isPatissier ? '#ec4899' : '#509f2a'; 
   const themeGradient = isPatissier ? 'from-pink-600 to-pink-900' : 'from-[#509f2a] to-[#1a4a2a]';
@@ -118,6 +122,23 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
   const persistentSteps = persistentState?.steps || []; // Récupération des étapes IA
+
+  // Chargement initial des devices du profil
+  useEffect(() => {
+      const profile = getUserProfile();
+      if (profile.smartDevices && profile.smartDevices.length > 0) {
+          setAvailableProfileDevices(profile.smartDevices);
+          setLocalSmartDevices(profile.smartDevices); // Par défaut, tout est actif
+      }
+  }, []);
+
+  const toggleLocalDevice = (device: string) => {
+      if (localSmartDevices.includes(device)) {
+          setLocalSmartDevices(prev => prev.filter(d => d !== device));
+      } else {
+          setLocalSmartDevices(prev => [...prev, device]);
+      }
+  };
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -228,7 +249,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             isBatchCooking, 
             chefMode, 
             recipeCost || 'authentic', 
-            difficulty || 'intermediate'
+            difficulty || 'intermediate',
+            localSmartDevices // Passage de la liste surchargée pour cette recette
         );
       } else {
         result = await searchChefsRecipe(searchQuery, people, searchType);
@@ -359,7 +381,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       const title = titleMatch ? titleMatch[1] : 'Ma Recette';
       const shareData = {
           title: `MiamChef: ${title}`,
-          text: `🍽️ Je viens de créer cette recette unique avec MiamChef IA !\n\n👨‍🍳 ${title}\n🔥 ${metrics?.caloriesPerPerson} Kcal | Score ${metrics?.nutriScore}\n\nTélécharge l'app pour avoir la recette complète !`,
+          text: `🍽️ Je viens de créer cette recette unique avec MiamChef !\n\n👨‍🍳 ${title}\n🔥 ${metrics?.caloriesPerPerson} Kcal | Score ${metrics?.nutriScore}\n\nTélécharge l'app pour avoir la recette complète !`,
           url: window.location.href // En production, mettre le lien du store
       };
 
@@ -726,6 +748,31 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         {isBatchCooking && <Check size={12} className="text-black" />}
                                     </div>
                                 </div>
+
+                                {/* NOUVEAU : SELECTEUR APPAREILS CONNECTES (SI DISPONIBLE) */}
+                                {availableProfileDevices.length > 0 && (
+                                    <div className="bg-[#151515] p-3 rounded-xl border border-white/10">
+                                        <div className="flex items-center gap-2 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">
+                                            <Wifi size={10} /> Appareils pour cette recette
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {availableProfileDevices.map(device => (
+                                                <button
+                                                    key={device}
+                                                    onClick={() => toggleLocalDevice(device)}
+                                                    className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all flex items-center gap-2 ${
+                                                        localSmartDevices.includes(device)
+                                                            ? 'bg-purple-900/30 border-purple-500 text-purple-200'
+                                                            : 'bg-[#1a1a1a] border-white/10 text-gray-500 hover:text-gray-300'
+                                                    }`}
+                                                >
+                                                    {device}
+                                                    {localSmartDevices.includes(device) && <Check size={12} />}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <button 

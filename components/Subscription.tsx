@@ -109,7 +109,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               </div>
                               <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
                                   <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Création Illimitée</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier IA Inclus</div>
+                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier Expert Inclus</div>
                               </div>
                           </div>
 

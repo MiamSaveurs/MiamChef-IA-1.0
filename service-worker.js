@@ -1,6 +1,6 @@
 
 /*
- * Service Worker pour MiamChef IA
+ * Service Worker pour MiamChef
  * Version : v3 - Retour à Boogaloo
  */
 

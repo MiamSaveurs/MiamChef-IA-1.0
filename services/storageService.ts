@@ -1,5 +1,6 @@
 
 
+
 import { SavedRecipe, ShoppingItem, WeeklyPlan, UserProfile } from '../types';
 
 const DB_NAME = 'MiamChefDB';
@@ -59,7 +60,8 @@ export const getUserProfile = (): UserProfile => {
     dislikes: '',
     equipment: '',
     householdSize: 2,
-    cookingLevel: 'Intermédiaire'
+    cookingLevel: 'Intermédiaire',
+    smartDevices: []
   };
 };
 

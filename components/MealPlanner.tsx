@@ -44,14 +44,14 @@ const MealPlanner: React.FC = () => {
         try {
             // Ajout des ingrédients en 3ème argument
             const newPlan = await generateWeeklyMenu(dietary, people, ingredients);
-            if (!newPlan) throw new Error("L'IA n'a pas renvoyé de planning valide.");
+            if (!newPlan) throw new Error("Le Chef n'a pas pu générer de planning valide.");
             if (!newPlan.id) newPlan.id = 'current';
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');
         } catch (e: any) {
             setStatus('error');
-            setErrorMessage(e.message || "Erreur de connexion à l'IA.");
+            setErrorMessage(e.message || "Le Chef ne répond pas (Connexion).");
         }
     };
 
@@ -138,7 +138,7 @@ const MealPlanner: React.FC = () => {
     const renderIngredients = (ingredients: string[] = []) => {
         if (!ingredients || ingredients.length === 0) return '';
         const cleaned = ingredients.map(text => {
-             let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').trim(); 
+             let clean = text.replace(/^[-*•]\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '').trim(); 
              clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
              return clean.charAt(0).toUpperCase() + clean.slice(1);
         });
@@ -202,7 +202,7 @@ const MealPlanner: React.FC = () => {
                                 <div className="text-center mb-8">
                                     <PremiumSparkles size={40} className="text-purple-400 mx-auto mb-4" />
                                     <h3 className="font-display text-2xl text-white mb-2">Générer votre Menu</h3>
-                                    <p className="text-gray-400 text-sm">L'IA organise vos repas, vos courses et votre batch cooking.</p>
+                                    <p className="text-gray-400 text-sm">MiamChef organise vos repas, vos courses et votre batch cooking.</p>
                                 </div>
 
                                 <div className="space-y-6">
