@@ -50,11 +50,16 @@ const App: React.FC = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     
+    // VERIFICATION DU STATUT ABONNEMENT ET ESSAI
     const status = getTrialStatus();
     const now = Date.now();
     const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
+    
+    // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
+    // Cela couvre aussi le cas où l'utilisateur ne renouvelle pas (status.isSubscribed devient false)
     if (!status.isSubscribed && daysPassed > 7) {
         setIsTrialExpired(true);
+        setCurrentView(AppView.SUBSCRIPTION); // Force l'affichage de l'abonnement
     }
 
     return () => {
@@ -232,7 +237,8 @@ const App: React.FC = () => {
       
       <main className="w-full">{renderView()}</main>
 
-      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && (
+      {/* La navigation est masquée si l'essai est terminé et non payé pour bloquer l'utilisateur */}
+      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && !isTrialExpired && (
         <Navigation 
             currentView={currentView} 
             setView={setCurrentView} 

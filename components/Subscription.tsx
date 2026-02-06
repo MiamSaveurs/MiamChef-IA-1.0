@@ -137,7 +137,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                   <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Accès Premium Illimité à Vie</strong></span></div>
                                   <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span>Plus aucun paiement futur</span></div>
                                   <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span>Toutes les futures mises à jour (v2, v3...)</span></div>
-                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className={selectedPlan === 'lifetime' ? "text-yellow-300" : "text-[#509f2a]"} /> <span className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}>Statut "Membre Fondateur"</span></div>
+                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className={selectedPlan === 'lifetime' ? "text-yellow-300" : "text-[#509f2a]"} /> <span className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}>Statut "Membre à vie"</span></div>
                               </div>
                           </div>
 
