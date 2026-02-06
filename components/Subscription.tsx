@@ -70,6 +70,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       
                       <div className="space-y-4">
                           
+                          {/* MONTHLY PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('monthly')}
                             className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
@@ -83,12 +84,15 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                                       {selectedPlan === 'monthly' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Accès illimité</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Scan Frigo Anti-Gaspi</div>
+                              <div className={`text-xs space-y-2 pt-3 border-t ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'monthly' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Création Illimitée</strong> (Chef & Pâtissier)</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'monthly' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Scan Frigo</strong> Anti-Gaspi</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'monthly' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Sommelier</strong> & Accords Vins</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'monthly' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Semainier</strong> & Listes de courses</span></div>
                               </div>
                           </div>
 
+                          {/* ANNUAL PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('annual')}
                             className={`relative p-5 rounded-2xl border transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
@@ -102,33 +106,38 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               <div className="flex justify-between items-start mb-3">
                                   <div>
                                       <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
+                                      <div className={`text-xs font-medium opacity-90 bg-white/10 px-2 py-0.5 rounded inline-block ${selectedPlan === 'annual' ? 'text-white' : 'text-[#509f2a]'}`}>Soit 3,33€ / mois</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Création Illimitée</div>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Sommelier Expert Inclus</div>
+                              <div className={`text-xs space-y-2 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Tout le contenu Mensuel inclus</strong></span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span><strong>2 mois offerts</strong> (Économisez ~20€)</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span>Accès Prioritaire & Support</span></div>
                               </div>
                           </div>
 
+                          {/* LIFETIME PLAN */}
                           <div 
                             onClick={() => setSelectedPlan('lifetime')}
                             className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'lifetime' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                           >
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1 text-[#509f2a]">149,99 € <span className="text-sm font-sans font-normal opacity-80 text-white">À Vie</span></div>
-                                      <div className="text-xs font-medium opacity-90">Accès illimité pour toujours.</div>
+                                      <div className="text-2xl font-display mb-1 text-[#509f2a]"><span className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}>149,99 €</span> <span className="text-sm font-sans font-normal opacity-80 text-white">À Vie</span></div>
+                                      <div className="text-xs font-medium opacity-90">Paiement unique.</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'lifetime' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
                                   </div>
                               </div>
-                              <div className={`text-xs space-y-1.5 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
-                                  <div className="flex items-center gap-2"><Check size={12} className="opacity-70"/> Toutes les futures mises à jour</div>
-                                  <div className="flex items-center gap-2 text-[#509f2a] font-bold"><Star size={12} fill="currentColor" /> Pack Premium Intégral</div>
+                              <div className={`text-xs space-y-2 pt-3 border-t ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Accès Premium Illimité à Vie</strong></span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span>Plus aucun paiement futur</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}/> <span>Toutes les futures mises à jour (v2, v3...)</span></div>
+                                  <div className="flex items-center gap-2 font-bold"><Star size={12} fill="currentColor" className={selectedPlan === 'lifetime' ? "text-yellow-300" : "text-[#509f2a]"} /> <span className={selectedPlan === 'lifetime' ? "text-white" : "text-[#509f2a]"}>Statut "Membre Fondateur"</span></div>
                               </div>
                           </div>
 
