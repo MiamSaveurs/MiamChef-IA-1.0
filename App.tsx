@@ -53,9 +53,10 @@ const App: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('payment_success') === 'true') {
         // On active l'abonnement (par défaut annuel si on ne sait pas lequel, l'important est de débloquer)
-        // Dans une version plus avancée, on pourrait passer le type dans l'URL (?plan=annual)
         startSubscription('annual'); 
-        alert("Paiement réussi ! Bienvenue dans le club MiamChef Premium.");
+        
+        // Message chaleureux de bienvenue
+        alert("🎉 Félicitations !\n\nBienvenue dans le Club MiamChef Premium.\nVotre abonnement est activé. Prêt à cuisiner comme un Chef ?");
         
         // Nettoyage de l'URL pour ne pas réactiver à chaque rafraichissement
         window.history.replaceState({}, document.title, window.location.pathname);

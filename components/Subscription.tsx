@@ -119,7 +119,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                             className={`relative p-5 rounded-2xl border transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-[#3f622f] border-[#4a7c45] shadow-lg ring-1 ring-[#4a7c45]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                           >
                               {selectedPlan === 'annual' && (
-                                <div className="absolute -top-3 right-4 bg-[#509f2a] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
+                                <div className="absolute -top-3 right-4 bg-[#509f2a] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wide animate-pulse">
                                     Meilleure Offre
                                 </div>
                               )}
