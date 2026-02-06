@@ -1,8 +1,18 @@
 
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Eye, Circle, Star } from 'lucide-react';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2 } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
+
+// ============================================================================
+// CONFIGURATION STRIPE
+// Collez ici les liens "buy.stripe.com" que vous avez générés à l'étape précédente.
+// ============================================================================
+const STRIPE_LINKS = {
+    monthly: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_MENSUEL", // ex: https://buy.stripe.com/test_12345
+    annual: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_ANNUEL",   // ex: https://buy.stripe.com/test_67890
+    lifetime: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_A_VIE"   // ex: https://buy.stripe.com/test_abcde
+};
 
 interface SubscriptionProps {
   onClose: () => void;
@@ -18,12 +28,22 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
 
   const handleProcessPayment = () => {
       setProcessing(true);
-      setTimeout(() => {
+      
+      // On récupère le lien correspondant au choix
+      const paymentUrl = STRIPE_LINKS[selectedPlan];
+      
+      // Sécurité : Vérifier si l'utilisateur a configuré ses liens
+      if (paymentUrl.includes("REMPLACER")) {
+          alert("Erreur de configuration : Veuillez ajouter vos liens Stripe dans le fichier Subscription.tsx");
           setProcessing(false);
-          startSubscription(selectedPlan);
-          alert("Félicitations ! Votre abonnement MiamChef Premium est activé.");
-          window.location.reload(); 
-      }, 1500);
+          return;
+      }
+
+      // Redirection vers Stripe
+      // L'utilisateur reviendra sur l'app grâce à la configuration "Après le paiement" dans Stripe
+      setTimeout(() => {
+          window.location.href = paymentUrl;
+      }, 500);
   };
 
   return (
@@ -149,17 +169,20 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       <div className="space-y-3">
                           <button 
                             onClick={handleProcessPayment}
-                            className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg"
+                            disabled={processing}
+                            className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           >
-                              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />
-                              <span className="opacity-90">PayPal</span>
+                              {processing ? <Loader2 className="animate-spin text-black" size={24}/> : <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />}
+                              <span className="opacity-90">{processing ? 'Redirection...' : 'PayPal'}</span>
                           </button>
 
                           <button 
                             onClick={handleProcessPayment}
-                            className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg"
+                            disabled={processing}
+                            className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           >
-                              <span className="opacity-80 font-normal text-sm">Carte Bancaire (Stripe)</span>
+                              {processing ? <Loader2 className="animate-spin" size={24}/> : <ExternalLink size={20} />}
+                              <span className="opacity-80 font-normal text-sm">{processing ? 'Ouverture de Stripe...' : 'Carte Bancaire (Stripe)'}</span>
                           </button>
                       </div>
                   </div>

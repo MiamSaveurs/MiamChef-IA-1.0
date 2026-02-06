@@ -14,7 +14,7 @@ import LegalDocuments from './components/LegalDocuments';
 import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
-import { getTrialStatus } from './services/storageService';
+import { getTrialStatus, startSubscription } from './services/storageService';
 import { AppView, RecipeMetrics } from './types';
 import { WifiOff } from 'lucide-react';
 
@@ -24,7 +24,6 @@ const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // --- PERSISTENT RECIPE STATE ---
-  // Stocke la recette générée pour qu'elle ne disparaisse pas en changeant de vue
   const [persistentRecipe, setPersistentRecipe] = useState<{
     text: string;
     metrics: RecipeMetrics | null;
@@ -35,13 +34,12 @@ const App: React.FC = () => {
     image: string | null;
   } | null>(null);
 
-  // --- TIMER STATE LIFTED UP ---
+  // --- TIMER STATE ---
   const [timerTimeLeft, setTimerTimeLeft] = useState(0);
   const [timerInitialTime, setTimerInitialTime] = useState(0);
   const [timerIsActive, setTimerIsActive] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
-  // CORRECTION AUDIO : On garde le contexte en référence pour le réutiliser
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
@@ -50,13 +48,29 @@ const App: React.FC = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     
+    // --- GESTION DU RETOUR DE PAIEMENT STRIPE ---
+    // Si l'URL contient ?payment_success=true, on active l'abonnement
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment_success') === 'true') {
+        // On active l'abonnement (par défaut annuel si on ne sait pas lequel, l'important est de débloquer)
+        // Dans une version plus avancée, on pourrait passer le type dans l'URL (?plan=annual)
+        startSubscription('annual'); 
+        alert("Paiement réussi ! Bienvenue dans le club MiamChef Premium.");
+        
+        // Nettoyage de l'URL pour ne pas réactiver à chaque rafraichissement
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // On recharge pour bien prendre en compte le changement
+        window.location.reload();
+        return;
+    }
+
     // VERIFICATION DU STATUT ABONNEMENT ET ESSAI
     const status = getTrialStatus();
     const now = Date.now();
     const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
     
     // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
-    // Cela couvre aussi le cas où l'utilisateur ne renouvelle pas (status.isSubscribed devient false)
     if (!status.isSubscribed && daysPassed > 7) {
         setIsTrialExpired(true);
         setCurrentView(AppView.SUBSCRIPTION); // Force l'affichage de l'abonnement
@@ -82,10 +96,9 @@ const App: React.FC = () => {
       }
   };
 
-  // --- SOUND GENERATOR (Kitchen Buzzer - High Volume) ---
+  // --- SOUND GENERATOR (Kitchen Buzzer) ---
   const playAlarmSound = () => {
     try {
-        // Fallback: create context if null (should not happen if initAudio called on start)
         if (!audioCtxRef.current) {
              const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
              if (AudioContext) audioCtxRef.current = new AudioContext();
@@ -94,29 +107,23 @@ const App: React.FC = () => {
         const ctx = audioCtxRef.current;
         if (!ctx) return;
         
-        // Fonction pour jouer un bip composite puissant
         const beep = (startTime: number, duration: number) => {
             const osc1 = ctx.createOscillator();
             const osc2 = ctx.createOscillator();
             const gain = ctx.createGain();
             
-            // Connexion des oscillateurs au volume
             osc1.connect(gain);
             osc2.connect(gain);
             gain.connect(ctx.destination);
             
-            // Formes d'ondes agressives pour percer le bruit ambiant
-            osc1.type = 'square';      // Son type "Buzzer" classique
-            osc2.type = 'sawtooth';    // Son type "Alarme" strident
+            osc1.type = 'square';
+            osc2.type = 'sawtooth';
 
-            // Fréquences (Harmoniques)
-            // 880Hz (La5) et 1760Hz (La6) pour max de présence
             osc1.frequency.setValueAtTime(880, startTime); 
-            osc1.frequency.exponentialRampToValueAtTime(800, startTime + duration); // Légère descente pour l'effet "Alerte"
+            osc1.frequency.exponentialRampToValueAtTime(800, startTime + duration);
             
             osc2.frequency.setValueAtTime(1760, startTime);
             
-            // VOLUME FORT (Gain élevé avec attaque rapide)
             gain.gain.setValueAtTime(0.8, startTime); 
             gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
             
@@ -128,11 +135,10 @@ const App: React.FC = () => {
         };
 
         const now = ctx.currentTime;
-        // Séquence : 4 bips rapides et incisifs
         beep(now, 0.4);
         beep(now + 0.5, 0.4); 
         beep(now + 1.0, 0.4);
-        beep(now + 1.5, 0.8); // Dernier bip plus long
+        beep(now + 1.5, 0.8);
         
     } catch (e) {
         console.error("Audio playback failed", e);
@@ -145,13 +151,9 @@ const App: React.FC = () => {
         timerRef.current = setInterval(() => {
             setTimerTimeLeft((prev) => {
                 if (prev <= 1) {
-                    // TIMER FINISHED
                     setTimerIsActive(false);
                     if (timerRef.current) clearInterval(timerRef.current);
-                    
-                    // Trigger Sound
                     playAlarmSound();
-                    
                     return 0;
                 }
                 return prev - 1;
@@ -167,7 +169,7 @@ const App: React.FC = () => {
   }, [timerIsActive, timerTimeLeft]);
 
   const handleTimerStart = (seconds: number) => {
-    initAudio(); // IMPORTANT: Débloque l'audio sur l'interaction utilisateur
+    initAudio();
     setTimerInitialTime(seconds);
     setTimerTimeLeft(seconds);
     setTimerIsActive(true);
@@ -175,7 +177,7 @@ const App: React.FC = () => {
 
   const handleTimerToggle = () => {
     if (timerTimeLeft > 0) {
-        if (!timerIsActive) initAudio(); // Débloque aussi si on reprend après pause
+        if (!timerIsActive) initAudio();
         setTimerIsActive(!timerIsActive);
     }
   };
@@ -187,8 +189,6 @@ const App: React.FC = () => {
   };
 
   const handleTimerAdd = (seconds: number) => {
-    // Si on ajoute du temps alors que c'est en pause, pas besoin d'initAudio
-    // Si on ajoute pendant que ça tourne, l'audio est déjà init
     setTimerInitialTime(prev => prev + seconds);
     setTimerTimeLeft(prev => prev + seconds);
   };
@@ -237,14 +237,14 @@ const App: React.FC = () => {
       
       <main className="w-full">{renderView()}</main>
 
-      {/* La navigation est masquée si l'essai est terminé et non payé pour bloquer l'utilisateur */}
+      {/* Navigation masquée si bloqué */}
       {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && !isTrialExpired && (
         <Navigation 
             currentView={currentView} 
             setView={setCurrentView} 
             isOnline={isOnline}
             isTimerActive={timerIsActive}
-            timerTimeLeft={timerTimeLeft} // On passe le temps restant
+            timerTimeLeft={timerTimeLeft}
         />
       )}
     </div>
