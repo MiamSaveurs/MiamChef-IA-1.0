@@ -55,8 +55,8 @@ const App: React.FC = () => {
         // On active l'abonnement (par défaut annuel si on ne sait pas lequel, l'important est de débloquer)
         startSubscription('annual'); 
         
-        // Message chaleureux de bienvenue
-        alert("🎉 Félicitations !\n\nBienvenue dans le Club MiamChef Premium.\nVotre abonnement est activé. Prêt à cuisiner comme un Chef ?");
+        // Message chaleureux de bienvenue - STYLE "MILLIARDAIRE" ;)
+        alert("🥂 Félicitations !\n\nPaiement accepté. Bienvenue dans le Club MiamChef Premium.\nVous avez désormais accès à toutes les fonctionnalités en illimité.\n\nÀ vos fourneaux !");
         
         // Nettoyage de l'URL pour ne pas réactiver à chaque rafraichissement
         window.history.replaceState({}, document.title, window.location.pathname);
