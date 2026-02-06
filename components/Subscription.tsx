@@ -5,13 +5,23 @@ import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
 // ============================================================================
-// CONFIGURATION STRIPE
-// Collez ici les liens "buy.stripe.com" que vous avez générés à l'étape précédente.
+// ZONE DE CONFIGURATION STRIPE (A REMPLIR OBLIGATOIREMENT)
 // ============================================================================
+// 1. Allez sur votre Dashboard Stripe > Produits > Cliquez sur un tarif > "Créer un lien de paiement".
+// 2. IMPORTANT : Dans "Après le paiement", choisissez "Rediriger vers votre site".
+// 3. Mettez l'URL : http://localhost:5173/?payment_success=true (si vous êtes en local)
+// 4. Copiez le lien généré (commence par https://buy.stripe.com/...) et collez-le ci-dessous.
+// ============================================================================
+
 const STRIPE_LINKS = {
-    monthly: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_MENSUEL", // ex: https://buy.stripe.com/test_12345
-    annual: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_ANNUEL",   // ex: https://buy.stripe.com/test_67890
-    lifetime: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_A_VIE"   // ex: https://buy.stripe.com/test_abcde
+    // Collez le lien pour l'offre à 4,99€ ici :
+    monthly: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_MENSUEL", 
+    
+    // Collez le lien pour l'offre à 49,99€ ici :
+    annual: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_ANNUEL",   
+    
+    // Collez le lien pour l'offre à 149,99€ ici :
+    lifetime: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_A_VIE"   
 };
 
 interface SubscriptionProps {
@@ -32,16 +42,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       // On récupère le lien correspondant au choix
       const paymentUrl = STRIPE_LINKS[selectedPlan];
       
-      // Sécurité : Vérifier si l'utilisateur a configuré ses liens
+      // Sécurité : Vérifier si l'utilisateur a bien remplacé les liens placeholder
       if (paymentUrl.includes("REMPLACER")) {
-          alert("Erreur de configuration : Veuillez ajouter vos liens Stripe dans le fichier Subscription.tsx");
+          alert("⚠️ ATTENTION : Vous n'avez pas collé vos liens Stripe dans le code !\n\nOuvrez le fichier 'components/Subscription.tsx' et remplacez les textes 'REMPLACER_PAR...' par vos vrais liens Stripe.");
           setProcessing(false);
           return;
       }
 
-      // Redirection vers Stripe
-      // L'utilisateur reviendra sur l'app grâce à la configuration "Après le paiement" dans Stripe
+      // Redirection vers la page sécurisée Stripe
       setTimeout(() => {
+          // Ceci ouvre la page de paiement sécurisée de Stripe dans le même onglet
           window.location.href = paymentUrl;
       }, 500);
   };
@@ -170,19 +180,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           <button 
                             onClick={handleProcessPayment}
                             disabled={processing}
-                            className="w-full bg-[#ffc439] hover:bg-[#f4bb33] text-[#2c2e2f] font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                          >
-                              {processing ? <Loader2 className="animate-spin text-black" size={24}/> : <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-6" alt="PayPal" />}
-                              <span className="opacity-90">{processing ? 'Redirection...' : 'PayPal'}</span>
-                          </button>
-
-                          <button 
-                            onClick={handleProcessPayment}
-                            disabled={processing}
                             className="w-full bg-[#635bff] hover:bg-[#5851e3] text-white font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           >
                               {processing ? <Loader2 className="animate-spin" size={24}/> : <ExternalLink size={20} />}
-                              <span className="opacity-80 font-normal text-sm">{processing ? 'Ouverture de Stripe...' : 'Carte Bancaire (Stripe)'}</span>
+                              <span className="opacity-100 font-normal text-sm">{processing ? 'Ouverture de Stripe...' : 'Payer par Carte Bancaire (Sécurisé)'}</span>
                           </button>
                       </div>
                   </div>
