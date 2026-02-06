@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2, CreditCard, Book } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2, CreditCard, Book, Timer, Gift } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
@@ -24,26 +24,41 @@ interface SubscriptionProps {
   setView?: (view: AppView) => void;
   largeText?: boolean;
   toggleLargeText?: () => void;
-  onAccessBook?: () => void; // Nouvelle prop
+  onAccessBook?: () => void;
 }
 
 const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText, onAccessBook }) => {
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
   const [processing, setProcessing] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  
+  // FOMO Timer State
+  const [timeLeft, setTimeLeft] = useState(900); // 15 minutes in seconds
+
+  useEffect(() => {
+      const timer = setInterval(() => {
+          setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   const handleProcessPayment = () => {
       setProcessing(true);
       
       const paymentUrl = STRIPE_LINKS[selectedPlan];
       
-      // Sécurité basique
       if (!paymentUrl) {
           alert("Erreur de configuration : Lien de paiement manquant.");
           setProcessing(false);
           return;
       }
 
-      // Simulation d'attente pour UX
       setTimeout(() => {
           window.location.href = paymentUrl;
       }, 800);
@@ -52,6 +67,14 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   return (
     <div className="fixed inset-0 z-[60] bg-black font-sans text-white overflow-y-auto">
       
+      {/* FOMO BANNER - STICKY TOP */}
+      <div className="fixed top-0 left-0 w-full z-[80] bg-gradient-to-r from-red-600 to-red-800 text-white py-2 px-4 text-center shadow-lg animate-slide-up flex items-center justify-center gap-3">
+          <div className="animate-pulse bg-white text-red-600 rounded-full p-1"><Timer size={14} /></div>
+          <p className="text-xs font-bold uppercase tracking-widest">
+              Offre Flash -50% sur l'annuel : <span className="font-mono text-lg ml-1">{formatTime(timeLeft)}</span>
+          </p>
+      </div>
+
       <div className="fixed inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974&auto=format&fit=crop" 
@@ -62,18 +85,18 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       </div>
 
       {!isTrialExpired && (
-        <button onClick={onClose} className="fixed top-6 right-6 z-[70] text-white/60 hover:text-white transition-colors bg-black/20 backdrop-blur-md p-2 rounded-full border border-white/10">
+        <button onClick={onClose} className="fixed top-14 right-6 z-[70] text-white/60 hover:text-white transition-colors bg-black/20 backdrop-blur-md p-2 rounded-full border border-white/10">
             <X size={24} />
         </button>
       )}
 
       {toggleLargeText && (
-          <button onClick={toggleLargeText} className="fixed top-6 left-6 z-[70] text-white/30 hover:text-white transition-colors flex gap-2 items-center text-xs uppercase tracking-widest bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+          <button onClick={toggleLargeText} className="fixed top-14 left-6 z-[70] text-white/30 hover:text-white transition-colors flex gap-2 items-center text-xs uppercase tracking-widest bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
               <Eye size={16} /> {largeText ? 'Texte Normal' : 'Texte Agrandir'}
           </button>
       )}
 
-      <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-20 pb-12 px-4">
+      <div className="relative z-10 min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-12 px-4">
           
           <div className="w-full max-w-lg bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in relative">
               
@@ -88,7 +111,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       MiamChef <span className="text-[#509f2a] italic">Premium</span>
                   </h1>
                   <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xs mx-auto">
-                      Débloquez la puissance illimitée de votre application personnelle.
+                      Rejoignez l'élite culinaire et cuisinez sans limites.
                   </p>
               </div>
 
@@ -118,14 +141,14 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           </div>
                       </div>
 
-                      {/* ANNUAL PLAN (RECOMMENDED) */}
+                      {/* ANNUAL PLAN (RECOMMENDED & FOMO) */}
                       <div 
                         onClick={() => setSelectedPlan('annual')}
                         className={`relative p-6 rounded-2xl border-2 transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#0f2e1b] border-[#509f2a] shadow-[0_0_40px_rgba(80,159,42,0.15)] scale-[1.02]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                       >
                           {selectedPlan === 'annual' && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#509f2a] text-white text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-green-400 animate-pulse">
-                                Recommandé
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-red-400 animate-pulse flex items-center gap-2">
+                                <Timer size={10} /> Offre Limitée
                             </div>
                           )}
                           
@@ -172,6 +195,20 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           </div>
                       </div>
 
+                  </div>
+
+                  {/* PROMO CODE FIELD */}
+                  <div className="relative">
+                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                          <Gift size={14} className="text-gray-500" />
+                      </div>
+                      <input 
+                        type="text" 
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        placeholder="Code Promo / Parrainage (Optionnel)"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-xs text-white placeholder-gray-500 focus:border-[#509f2a] outline-none transition-colors uppercase tracking-widest"
+                      />
                   </div>
 
                   {/* Payment Button */}

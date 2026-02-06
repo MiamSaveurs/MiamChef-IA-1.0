@@ -1,5 +1,4 @@
 
-
 export enum AppView {
   HOME = 'HOME',
   RECIPE_CREATOR = 'RECIPE_CREATOR',
@@ -107,4 +106,7 @@ export interface UserProfile {
   householdSize: number;
   cookingLevel: string;
   smartDevices?: string[];
+  // Growth Hacking Fields
+  referralCode?: string; // Le code unique de l'utilisateur (ex: MIAM-JEAN)
+  referralsCount?: number; // Nombre de personnes parrainées
 }

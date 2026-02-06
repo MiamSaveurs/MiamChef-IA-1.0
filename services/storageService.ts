@@ -1,6 +1,4 @@
 
-
-
 import { SavedRecipe, ShoppingItem, WeeklyPlan, UserProfile } from '../types';
 
 const DB_NAME = 'MiamChefDB';
@@ -43,12 +41,29 @@ export const startSubscription = (tier: 'monthly' | 'annual' | 'lifetime') => {
     localStorage.setItem('miamchef_subscription', tier);
 };
 
+// Helper to generate random referral code
+const generateReferralCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No I, O, 1, 0 to avoid confusion
+    let result = 'CHEF-';
+    for (let i = 0; i < 4; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+};
+
 // Profile Operations (LocalStorage)
 export const getUserProfile = (): UserProfile => {
   const stored = localStorage.getItem(PROFILE_KEY);
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const profile = JSON.parse(stored);
+      // Migration : Add referral code if missing
+      if (!profile.referralCode) {
+          profile.referralCode = generateReferralCode();
+          profile.referralsCount = 0;
+          saveUserProfile(profile);
+      }
+      return profile;
     } catch (e) {
       console.error("Failed to parse profile", e);
     }
@@ -61,7 +76,9 @@ export const getUserProfile = (): UserProfile => {
     equipment: '',
     householdSize: 2,
     cookingLevel: 'Intermédiaire',
-    smartDevices: []
+    smartDevices: [],
+    referralCode: generateReferralCode(),
+    referralsCount: 0
   };
 };
 
