@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Settings } from 'lucide-react';
+import { Star, ChevronRight, Settings, Activity, Globe } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import { 
   PremiumChefHat, 
@@ -26,11 +26,42 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
   const [streak, setStreak] = useState(0);
+  // Compteur global (Fake stats pour l'effet de masse)
+  const [globalCount, setGlobalCount] = useState(142050);
+  // Ticker activity
+  const [currentActivity, setCurrentActivity] = useState("Sophie (Lyon) a créé : Tarte au Citron Meringuée");
 
   useEffect(() => {
       // Calcul et mise à jour de la série au chargement de la Home
       const currentStreak = updateDailyStreak();
       setStreak(currentStreak);
+
+      // Simulation compteur live
+      const interval = setInterval(() => {
+          setGlobalCount(prev => prev + Math.floor(Math.random() * 3));
+      }, 3000);
+
+      // Simulation Ticker
+      const activities = [
+          "Thomas (Paris) a scanné son frigo : 3 ingrédients trouvés",
+          "Julie (Bordeaux) cuisine : Blanquette de Veau",
+          "Karim (Marseille) a généré : Couscous Royal Express",
+          "Emma (Lille) a ajouté : Liste de courses Drive",
+          "Lucas (Nantes) a débloqué le mode Expert",
+          "Sarah (Nice) prépare : Salade Niçoise Revisitée",
+          "Marc (Strasbourg) : Choucroute de la mer",
+          "Léa (Toulouse) : Cassoulet léger (Diet)"
+      ];
+      let i = 0;
+      const activityInterval = setInterval(() => {
+          i = (i + 1) % activities.length;
+          setCurrentActivity(activities[i]);
+      }, 4000);
+
+      return () => {
+          clearInterval(interval);
+          clearInterval(activityInterval);
+      };
   }, []);
 
   const today = new Date().toLocaleDateString('fr-FR', { 
@@ -112,8 +143,23 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       {/* Background Subtle Gradient */}
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#509f2a]/10 to-transparent pointer-events-none" />
 
+      {/* LIVE ACTIVITY TICKER (UNICORN VIBES) */}
+      <div className="bg-[#509f2a] w-full overflow-hidden py-1 relative z-30 shadow-lg border-b border-green-400/30">
+          <div className="animate-marquee whitespace-nowrap flex items-center gap-8">
+              <span className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <Activity size={10} className="animate-pulse"/> {currentActivity}
+              </span>
+              <span className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <Globe size={10} /> {globalCount.toLocaleString()} Recettes générées à ce jour
+              </span>
+              <span className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <Activity size={10} className="animate-pulse"/> {currentActivity}
+              </span>
+          </div>
+      </div>
+
       {/* HEADER */}
-      <header className="px-6 pt-10 pb-2 flex items-center justify-between relative z-20">
+      <header className="px-6 pt-6 pb-2 flex items-center justify-between relative z-20">
           <div>
               <h1 className="text-3xl font-display text-white leading-none mb-2">MiamChef</h1>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
