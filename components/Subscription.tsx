@@ -105,8 +105,8 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               
                               <div className="flex justify-between items-start mb-3">
                                   <div>
-                                      <div className="text-2xl font-display mb-1">39,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
-                                      <div className={`text-xs font-medium opacity-90 bg-white/10 px-2 py-0.5 rounded inline-block ${selectedPlan === 'annual' ? 'text-white' : 'text-[#509f2a]'}`}>Soit 3,33€ / mois</div>
+                                      <div className="text-2xl font-display mb-1">49,99 € <span className="text-sm font-sans font-normal opacity-80">/ an</span></div>
+                                      <div className={`text-xs font-medium opacity-90 bg-white/10 px-2 py-0.5 rounded inline-block ${selectedPlan === 'annual' ? 'text-white' : 'text-[#509f2a]'}`}>Soit 4,16€ / mois</div>
                                   </div>
                                   <div className="text-white">
                                       {selectedPlan === 'annual' ? <div className="bg-white text-[#3f622f] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-30" />}
@@ -114,7 +114,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               </div>
                               <div className={`text-xs space-y-2 pt-3 border-t ${selectedPlan === 'annual' ? 'border-white/20' : 'border-white/10'}`}>
                                   <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span><strong>Tout le contenu Mensuel inclus</strong></span></div>
-                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span><strong>2 mois offerts</strong> (Économisez ~20€)</span></div>
+                                  <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span><strong>2 mois offerts</strong> (Économisez ~10€)</span></div>
                                   <div className="flex items-center gap-2"><Check size={12} strokeWidth={3} className={selectedPlan === 'annual' ? "text-white" : "text-[#509f2a]"}/> <span>Accès Prioritaire & Support</span></div>
                               </div>
                           </div>
