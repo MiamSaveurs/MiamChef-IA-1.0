@@ -49,24 +49,25 @@ const App: React.FC = () => {
     window.addEventListener('offline', handleOffline);
     
     // --- GESTION DU RETOUR DE PAIEMENT STRIPE ---
-    // Si l'URL contient ?payment_success=true, on active l'abonnement
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('payment_success') === 'true') {
-        // On active l'abonnement (par défaut annuel si on ne sait pas lequel, l'important est de débloquer)
         startSubscription('annual'); 
-        
-        // Message chaleureux de bienvenue - STYLE "MILLIARDAIRE" ;)
         alert("🥂 Félicitations !\n\nPaiement accepté. Bienvenue dans le Club MiamChef Premium.\nVous avez désormais accès à toutes les fonctionnalités en illimité.\n\nÀ vos fourneaux !");
-        
-        // Nettoyage de l'URL pour ne pas réactiver à chaque rafraichissement
         window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // On recharge pour bien prendre en compte le changement
         window.location.reload();
         return;
     }
 
     // VERIFICATION DU STATUT ABONNEMENT ET ESSAI
+    checkSubscriptionStatus();
+
+    return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const checkSubscriptionStatus = () => {
     const status = getTrialStatus();
     const now = Date.now();
     const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
@@ -74,14 +75,19 @@ const App: React.FC = () => {
     // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
     if (!status.isSubscribed && daysPassed > 7) {
         setIsTrialExpired(true);
-        setCurrentView(AppView.SUBSCRIPTION); // Force l'affichage de l'abonnement
+        // On force l'abonnement, SAUF si l'utilisateur est déjà en train de regarder son carnet (autorisé)
+        if (currentView !== AppView.RECIPE_BOOK) {
+             setCurrentView(AppView.SUBSCRIPTION);
+        }
     }
+  };
 
-    return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  // Sécurité supplémentaire : Si on change de vue et qu'on est expiré
+  useEffect(() => {
+      if (isTrialExpired && currentView !== AppView.SUBSCRIPTION && currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
+          setCurrentView(AppView.SUBSCRIPTION);
+      }
+  }, [currentView, isTrialExpired]);
 
   // Initialize or Resume AudioContext on User Interaction
   const initAudio = () => {
@@ -206,8 +212,24 @@ const App: React.FC = () => {
       case AppView.SCAN_FRIDGE: return <FridgeScanner />;
       case AppView.SOMMELIER: return <Sommelier />;
       case AppView.DISH_EDITOR: return <DishEditor />;
-      case AppView.RECIPE_BOOK: return <RecipeBook onBack={() => setCurrentView(AppView.HOME)} />;
-      case AppView.SUBSCRIPTION: return <Subscription onClose={() => !isTrialExpired && setCurrentView(AppView.HOME)} isTrialExpired={isTrialExpired} setView={setCurrentView} />;
+      
+      // Passage de isTrialExpired au RecipeBook pour gérer l'affichage "Restreint"
+      case AppView.RECIPE_BOOK: return (
+        <RecipeBook 
+            onBack={() => setCurrentView(isTrialExpired ? AppView.SUBSCRIPTION : AppView.HOME)} 
+            isTrialExpired={isTrialExpired}
+        />
+      );
+      
+      case AppView.SUBSCRIPTION: return (
+        <Subscription 
+            onClose={() => !isTrialExpired && setCurrentView(AppView.HOME)} 
+            isTrialExpired={isTrialExpired} 
+            setView={setCurrentView} 
+            onAccessBook={() => setCurrentView(AppView.RECIPE_BOOK)}
+        />
+      );
+      
       case AppView.SHOPPING_LIST: return <ShoppingList />;
       case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} onSubscribe={() => setCurrentView(AppView.SUBSCRIPTION)} />;
       case AppView.LEGAL: return <LegalDocuments onClose={() => setCurrentView(AppView.HOME)} />;
@@ -238,7 +260,7 @@ const App: React.FC = () => {
       
       <main className="w-full">{renderView()}</main>
 
-      {/* Navigation masquée si bloqué */}
+      {/* Navigation masquée si bloqué (Trial Expired), sauf pour les vues légales ou l'abonnement */}
       {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && !isTrialExpired && (
         <Navigation 
             currentView={currentView} 

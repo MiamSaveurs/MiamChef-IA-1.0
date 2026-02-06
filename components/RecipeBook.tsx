@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X, Lock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
 
-const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<SavedRecipe | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,29 +92,57 @@ const RecipeBook: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
             
+            {/* ALERT BANNER IF EXPIRED */}
+            {isTrialExpired && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-6 flex items-center justify-center gap-3 animate-fade-in backdrop-blur-md">
+                    <Lock size={16} className="text-red-400" />
+                    <p className="text-xs text-red-200 font-bold uppercase tracking-wide">Mode Lecture Seule - Abonnement requis pour créer</p>
+                </div>
+            )}
+
             {/* Header / Navigation */}
-            <div className="mb-8">
+            <div className="mb-8 flex justify-between items-center">
                 {selectedRecipe ? (
                      <button 
                         onClick={() => setSelectedRecipe(null)}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md mb-6"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md"
                     >
                         <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Retour</span>
                     </button>
                 ) : (
-                    <div className="text-center mb-10">
-                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${themeGradient} shadow-[0_0_30px_rgba(245,158,11,0.3)] mb-4 border border-amber-500/30`}>
-                            <GourmetBook size={32} className="text-amber-100" />
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-display text-amber-500 mb-2 drop-shadow-md">
-                            Mon Carnet
-                        </h1>
-                        <p className="text-amber-200/60 text-sm font-light tracking-widest uppercase">
-                            Mes recettes sauvegardées
-                        </p>
-                    </div>
+                    // Si on est en mode expiré, on affiche un bouton "Retour aux offres" spécial
+                    isTrialExpired ? (
+                        <button 
+                            onClick={onBack}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-600/80 rounded-full text-white hover:bg-red-600 border border-red-400/30 transition-colors backdrop-blur-md shadow-lg"
+                        >
+                            <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Débloquer l'app</span>
+                        </button>
+                    ) : (
+                        // Sinon c'est le header standard (ou bouton retour standard si on venait d'ailleurs)
+                        <button 
+                            onClick={onBack}
+                            className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md"
+                        >
+                            <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Accueil</span>
+                        </button>
+                    )
                 )}
             </div>
+
+            {!selectedRecipe && (
+                 <div className="text-center mb-10">
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${themeGradient} shadow-[0_0_30px_rgba(245,158,11,0.3)] mb-4 border border-amber-500/30`}>
+                        <GourmetBook size={32} className="text-amber-100" />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-display text-amber-500 mb-2 drop-shadow-md">
+                        Mon Carnet
+                    </h1>
+                    <p className="text-amber-200/60 text-sm font-light tracking-widest uppercase">
+                        Mes recettes sauvegardées
+                    </p>
+                </div>
+            )}
 
             {selectedRecipe ? (
                 /* VUE DÉTAILLÉE */

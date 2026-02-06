@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2, CreditCard } from 'lucide-react';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2, CreditCard, Book } from 'lucide-react';
 import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
@@ -24,9 +24,10 @@ interface SubscriptionProps {
   setView?: (view: AppView) => void;
   largeText?: boolean;
   toggleLargeText?: () => void;
+  onAccessBook?: () => void; // Nouvelle prop
 }
 
-const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText }) => {
+const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText, onAccessBook }) => {
   const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
   const [processing, setProcessing] = useState(false);
 
@@ -201,7 +202,20 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       </div>
                   </div>
 
-                  <p className="text-[10px] text-center text-gray-500 leading-relaxed px-4 pt-4 border-t border-white/5">
+                  {/* Bouton d'accès exceptionnel au carnet */}
+                  {isTrialExpired && onAccessBook && (
+                      <div className="mt-6 pt-6 border-t border-white/10 text-center animate-fade-in">
+                          <p className="text-xs text-gray-400 mb-2">Vous avez déjà sauvegardé des recettes ?</p>
+                          <button 
+                            onClick={onAccessBook}
+                            className="flex items-center justify-center gap-2 mx-auto px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-xs text-gray-300 hover:text-white transition-colors uppercase tracking-widest font-bold"
+                          >
+                              <Book size={14} /> Accéder à mon carnet (Lecture Seule)
+                          </button>
+                      </div>
+                  )}
+
+                  <p className="text-[10px] text-center text-gray-500 leading-relaxed px-4 pt-4 border-t border-white/5 mt-4">
                       Accès immédiat après paiement. Facture disponible par email.<br/>
                       <button onClick={() => setView && setView(AppView.LEGAL)} className="underline hover:text-white mt-1">Conditions Générales de Vente</button>
                   </p>
