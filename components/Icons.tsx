@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 // Icons updated to match the minimalist premium line-art style.
@@ -28,7 +27,7 @@ export const GourmetBook = ({ size = 24, className = "", style = {} }: { size?: 
 export const PremiumChefHat = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
     {/* High structured top with minimalist lines */}
-    <path d="M30 65V45C30 35 35 25 50 25C65 25 70 35 70 45V65" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeJoin="round"/>
+    <path d="M30 65V45C30 35 35 25 50 25C65 25 70 35 70 45V65" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M40 28V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
     <path d="M50 25V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
     <path d="M60 28V60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
@@ -97,7 +96,7 @@ export const PremiumPlus = ({ size = 24, className = "", style = {} }: { size?: 
 export const PremiumHome = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
     <path d="M20 45L50 20L80 45V80H60V60H40V80H20V45Z" fill="currentColor" />
-    <path d="M20 45L50 20L80 45" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeJoin="round" />
+    <path d="M20 45L50 20L80 45" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -140,7 +139,7 @@ export const PremiumUsers = ({ size = 24, className = "", style = {} }: { size?:
 
 export const PremiumLeaf = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M50 80C50 80 20 70 20 40C20 20 40 15 50 15C60 15 80 20 80 40C80 70 50 80 50 80Z" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeJoin="round" />
+    <path d="M50 80C50 80 20 70 20 40C20 20 40 15 50 15C60 15 80 20 80 40C80 70 50 80 50 80Z" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M50 80V30" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
     <path d="M50 50C40 45 35 45 35 45" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
     <path d="M50 65C60 60 65 60 65 60" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
@@ -158,8 +157,8 @@ export const PremiumGlobe = ({ size = 24, className = "", style = {} }: { size?:
 export const PremiumLayers = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
     <path d="M20 40L50 25L80 40L50 55L20 40Z" fill="currentColor" />
-    <path d="M20 55L50 70L80 55" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeJoin="round" opacity="0.6" />
-    <path d="M20 70L50 85L80 70" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeJoin="round" opacity="0.3" />
+    <path d="M20 55L50 70L80 55" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+    <path d="M20 70L50 85L80 70" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.3" />
   </svg>
 );
 
@@ -201,7 +200,7 @@ export const PremiumPlay = ({ size = 24, className = "", style = {} }: { size?: 
 
 export const PremiumShoppingCart = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M15 20H25L35 70H85L90 30H30" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeJoin="round" />
+    <path d="M15 20H25L35 70H85L90 30H30" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
     <circle cx="40" cy="85" r="7" fill="currentColor" />
     <circle cx="80" cy="85" r="7" fill="currentColor" />
   </svg>
@@ -258,7 +257,7 @@ export const PremiumStore = ({ size = 24, className = "", style = {} }: { size?:
 
 export const PremiumDownload = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M50 20V65M50 65L30 45M50 65L70 45" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeJoin="round" />
+    <path d="M50 20V65M50 65L30 45M50 65L70 45" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M20 80H80" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
   </svg>
 );
@@ -272,7 +271,7 @@ export const PremiumFingerprint = ({ size = 24, className = "", style = {} }: { 
 
 export const PremiumHeart = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M50 80L45 75C25 60 15 50 15 35C15 23 23 15 35 15C42 15 48 19 50 23C52 19 58 15 65 15C77 15 85 23 85 35C85 50 75 60 55 75L50 80Z" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeJoin="round" />
+    <path d="M50 80L45 75C25 60 15 50 15 35C15 23 23 15 35 15C42 15 48 19 50 23C52 19 58 15 65 15C77 15 85 23 85 35C85 50 75 60 55 75L50 80Z" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -299,7 +298,7 @@ export const PremiumTrash = ({ size = 24, className = "", style = {} }: { size?:
 export const PremiumCheck = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
     <circle cx="50" cy="50" r="40" fill="#509f2a" />
-    <path d="M35 50L45 60L65 40" stroke="white" strokeWidth="8" strokeLinecap="round" strokeJoin="round" />
+    <path d="M35 50L45 60L65 40" stroke="white" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -324,7 +323,7 @@ export const PremiumSoup = ({ size = 24, className = "", style = {} }: { size?: 
 
 export const PremiumChevronDown = ({ size = 24, className = "", style = {} }: { size?: number, className?: string, style?: React.CSSProperties }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} style={style}>
-    <path d="M25 40L50 65L75 40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeJoin="round" />
+    <path d="M25 40L50 65L75 40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

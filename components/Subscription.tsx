@@ -5,23 +5,17 @@ import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
 // ============================================================================
-// ZONE DE CONFIGURATION STRIPE (A REMPLIR OBLIGATOIREMENT)
+// CONFIGURATION STRIPE (LIENS INTEGRÉS)
 // ============================================================================
-// 1. Allez sur votre Dashboard Stripe > Produits > Cliquez sur un tarif > "Créer un lien de paiement".
-// 2. IMPORTANT : Dans "Après le paiement", choisissez "Rediriger vers votre site".
-// 3. Mettez l'URL : http://localhost:5173/?payment_success=true (si vous êtes en local)
-// 4. Copiez le lien généré (commence par https://buy.stripe.com/...) et collez-le ci-dessous.
-// ============================================================================
-
 const STRIPE_LINKS = {
-    // Collez le lien pour l'offre à 4,99€ ici :
-    monthly: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_MENSUEL", 
+    // 1. Lien pour l'abonnement MENSUEL (4,99€)
+    monthly: "https://buy.stripe.com/cNi5kxefkaIZ2K2aRf04800", 
     
-    // Collez le lien pour l'offre à 49,99€ ici :
-    annual: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_ANNUEL",   
+    // 2. Lien pour l'abonnement ANNUEL (49,99€)
+    annual: "https://buy.stripe.com/6oU8wJfjoeZfacucZn04801",   
     
-    // Collez le lien pour l'offre à 149,99€ ici :
-    lifetime: "https://buy.stripe.com/REMPLACER_PAR_VOTRE_LIEN_A_VIE"   
+    // 3. Lien pour l'offre A VIE (149,99€)
+    lifetime: "https://buy.stripe.com/3cIcMZ6MScR7ckCgbz04802"   
 };
 
 interface SubscriptionProps {
@@ -39,19 +33,16 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
   const handleProcessPayment = () => {
       setProcessing(true);
       
-      // On récupère le lien correspondant au choix
       const paymentUrl = STRIPE_LINKS[selectedPlan];
       
-      // Sécurité : Vérifier si l'utilisateur a bien remplacé les liens placeholder
-      if (paymentUrl.includes("REMPLACER")) {
-          alert("⚠️ ATTENTION : Vous n'avez pas collé vos liens Stripe dans le code !\n\nOuvrez le fichier 'components/Subscription.tsx' et remplacez les textes 'REMPLACER_PAR...' par vos vrais liens Stripe.");
+      // Sécurité basique
+      if (!paymentUrl) {
+          alert("Erreur de configuration des liens.");
           setProcessing(false);
           return;
       }
 
-      // Redirection vers la page sécurisée Stripe
       setTimeout(() => {
-          // Ceci ouvre la page de paiement sécurisée de Stripe dans le même onglet
           window.location.href = paymentUrl;
       }, 500);
   };
