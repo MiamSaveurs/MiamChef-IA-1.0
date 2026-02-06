@@ -87,7 +87,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       MiamChef <span className="text-[#509f2a] italic">Premium</span>
                   </h1>
                   <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xs mx-auto">
-                      Débloquez la puissance illimitée de votre MiamChef personnel.
+                      Débloquez la puissance illimitée de votre application personnelle.
                   </p>
               </div>
 
