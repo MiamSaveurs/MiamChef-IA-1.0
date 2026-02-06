@@ -109,4 +109,8 @@ export interface UserProfile {
   // Growth Hacking Fields
   referralCode?: string; // Le code unique de l'utilisateur (ex: MIAM-JEAN)
   referralsCount?: number; // Nombre de personnes parrainées
+  // Retention Fields (Gamification)
+  currentStreak?: number; // Jours consécutifs
+  lastLoginDate?: string; // Date du dernier login (YYYY-MM-DD)
+  totalRecipesCreated?: number;
 }

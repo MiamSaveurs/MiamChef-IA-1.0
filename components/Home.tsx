@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
 import { Star, ChevronRight, Settings } from 'lucide-react';
+import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import { 
   PremiumChefHat, 
   WickerBasket, 
@@ -14,7 +15,8 @@ import {
   PremiumCrown, 
   PremiumLeaf, 
   PremiumPaperPlane, 
-  PremiumFingerprint 
+  PremiumFingerprint,
+  PremiumFlame 
 } from './Icons';
 
 interface HomeProps {
@@ -23,6 +25,14 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+      // Calcul et mise à jour de la série au chargement de la Home
+      const currentStreak = updateDailyStreak();
+      setStreak(currentStreak);
+  }, []);
+
   const today = new Date().toLocaleDateString('fr-FR', { 
     weekday: 'long', 
     day: 'numeric', 
@@ -112,13 +122,21 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
               </p>
           </div>
           
-          <button 
-            onClick={() => setView(AppView.SUBSCRIPTION)} 
-            className="flex items-center gap-2 bg-[#151515] border border-[#509f2a]/30 hover:bg-[#509f2a] hover:border-[#509f2a] px-4 py-2 rounded-full transition-all group"
-          >
-              <PremiumCrown size={14} className="text-[#509f2a] group-hover:text-white transition-colors" />
-              <span className="text-[10px] font-black text-[#509f2a] group-hover:text-white tracking-widest uppercase transition-colors">Premium</span>
-          </button>
+          <div className="flex gap-2">
+              {/* STREAK BADGE (GAMIFICATION) */}
+              <div className="flex items-center gap-1.5 bg-[#1a1a1a] border border-orange-500/30 px-3 py-1.5 rounded-full shadow-lg">
+                  <PremiumFlame size={14} className="text-orange-500 animate-pulse" />
+                  <span className="text-xs font-black text-orange-400">{streak}</span>
+              </div>
+
+              <button 
+                onClick={() => setView(AppView.SUBSCRIPTION)} 
+                className="flex items-center gap-2 bg-[#151515] border border-[#509f2a]/30 hover:bg-[#509f2a] hover:border-[#509f2a] px-4 py-2 rounded-full transition-all group"
+              >
+                  <PremiumCrown size={14} className="text-[#509f2a] group-hover:text-white transition-colors" />
+                  <span className="text-[10px] font-black text-[#509f2a] group-hover:text-white tracking-widest uppercase transition-colors">Premium</span>
+              </button>
+          </div>
       </header>
 
       <div className="px-6 relative z-10">

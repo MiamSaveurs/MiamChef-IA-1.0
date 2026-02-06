@@ -63,6 +63,13 @@ export const getUserProfile = (): UserProfile => {
           profile.referralsCount = 0;
           saveUserProfile(profile);
       }
+      // Migration : Add streaks if missing
+      if (profile.currentStreak === undefined) {
+          profile.currentStreak = 0;
+          profile.lastLoginDate = '';
+          profile.totalRecipesCreated = 0;
+          saveUserProfile(profile);
+      }
       return profile;
     } catch (e) {
       console.error("Failed to parse profile", e);
@@ -78,12 +85,53 @@ export const getUserProfile = (): UserProfile => {
     cookingLevel: 'Intermédiaire',
     smartDevices: [],
     referralCode: generateReferralCode(),
-    referralsCount: 0
+    referralsCount: 0,
+    currentStreak: 0,
+    lastLoginDate: '',
+    totalRecipesCreated: 0
   };
 };
 
 export const saveUserProfile = (profile: UserProfile): void => {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+};
+
+// --- NOUVEAU : GESTION DES STREAKS (Gamification) ---
+export const updateDailyStreak = (): number => {
+    const profile = getUserProfile();
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const lastLogin = profile.lastLoginDate;
+
+    // Si c'est le même jour, on ne fait rien
+    if (lastLogin === today) {
+        return profile.currentStreak || 0;
+    }
+
+    let newStreak = profile.currentStreak || 0;
+
+    if (lastLogin) {
+        const lastDate = new Date(lastLogin);
+        const currentDate = new Date(today);
+        const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            // Connexion le lendemain : +1
+            newStreak += 1;
+        } else if (diffDays > 1) {
+            // Série brisée : Reset à 1
+            newStreak = 1;
+        }
+    } else {
+        // Première connexion
+        newStreak = 1;
+    }
+
+    profile.currentStreak = newStreak;
+    profile.lastLoginDate = today;
+    saveUserProfile(profile);
+    
+    return newStreak;
 };
 
 // Open Database Connection
@@ -179,7 +227,13 @@ export const saveRecipeToBook = async (recipe: SavedRecipe): Promise<void> => {
       const store = transaction.objectStore(RECIPE_STORE);
       const request = store.put(recipe);
 
-      request.onsuccess = () => resolve();
+      request.onsuccess = () => {
+          // Increment total recipes stats
+          const profile = getUserProfile();
+          profile.totalRecipesCreated = (profile.totalRecipesCreated || 0) + 1;
+          saveUserProfile(profile);
+          resolve();
+      };
       request.onerror = () => reject(request.error);
     });
   } catch (e) {
