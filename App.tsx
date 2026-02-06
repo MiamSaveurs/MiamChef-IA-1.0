@@ -14,6 +14,7 @@ import LegalDocuments from './components/LegalDocuments';
 import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
+import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import { getTrialStatus, startSubscription } from './services/storageService';
 import { AppView, RecipeMetrics } from './types';
 import { WifiOff } from 'lucide-react';
@@ -259,6 +260,9 @@ const App: React.FC = () => {
       )}
       
       <main className="w-full">{renderView()}</main>
+
+      {/* BANNIÈRE D'INSTALLATION INTELLIGENTE */}
+      <InstallPWA />
 
       {/* Navigation masquée si bloqué (Trial Expired), sauf pour les vues légales ou l'abonnement */}
       {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && !isTrialExpired && (
