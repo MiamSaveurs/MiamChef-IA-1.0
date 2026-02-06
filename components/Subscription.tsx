@@ -87,7 +87,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       MiamChef <span className="text-[#509f2a] italic">Premium</span>
                   </h1>
                   <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xs mx-auto">
-                      Débloquez la puissance illimitée de votre Chef IA personnel.
+                      Débloquez la puissance illimitée de votre MiamChef personnel.
                   </p>
               </div>
 
@@ -108,6 +108,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               <div className="text-white">
                                   {selectedPlan === 'monthly' ? <div className="bg-white text-[#1a4a2a] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-20" />}
                               </div>
+                          </div>
+                          {/* Features List for Monthly */}
+                          <div className={`text-xs space-y-2 pt-4 mt-2 border-t transition-colors ${selectedPlan === 'monthly' ? 'border-white/20' : 'border-white/10'}`}>
+                              <div className="flex items-center gap-2"><Check size={14} className="text-[#509f2a]"/> <span>Recettes & Scan Frigo <strong>Illimités</strong></span></div>
+                              <div className="flex items-center gap-2"><Check size={14} className="text-[#509f2a]"/> <span>Sommelier & Semainier inclus</span></div>
+                              <div className="flex items-center gap-2"><Check size={14} className="text-[#509f2a]"/> <span>Accès à toutes les fonctions</span></div>
                           </div>
                       </div>
 
@@ -156,6 +162,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                               <div className="text-white">
                                   {selectedPlan === 'lifetime' ? <div className="bg-amber-400 text-black rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-20" />}
                               </div>
+                          </div>
+                          {/* Features List for Lifetime */}
+                          <div className={`text-xs space-y-2 pt-4 mt-2 border-t transition-colors ${selectedPlan === 'lifetime' ? 'border-white/20' : 'border-white/10'}`}>
+                              <div className="flex items-center gap-2"><Check size={14} className={selectedPlan === 'lifetime' ? "text-amber-400" : "text-[#509f2a]"}/> <span><strong>Accès Premium Illimité à Vie</strong></span></div>
+                              <div className="flex items-center gap-2"><Check size={14} className={selectedPlan === 'lifetime' ? "text-amber-400" : "text-[#509f2a]"}/> <span>Plus aucun paiement futur</span></div>
+                              <div className="flex items-center gap-2"><Check size={14} className={selectedPlan === 'lifetime' ? "text-amber-400" : "text-[#509f2a]"}/> <span>Toutes les futures mises à jour</span></div>
                           </div>
                       </div>
 
