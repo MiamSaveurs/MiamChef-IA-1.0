@@ -71,7 +71,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
       <div className="fixed top-0 left-0 w-full z-[80] bg-gradient-to-r from-red-600 to-red-800 text-white py-2 px-4 text-center shadow-lg animate-slide-up flex items-center justify-center gap-3">
           <div className="animate-pulse bg-white text-red-600 rounded-full p-1"><Timer size={14} /></div>
           <p className="text-xs font-bold uppercase tracking-widest">
-              Offre Flash -50% sur l'annuel : <span className="font-mono text-lg ml-1">{formatTime(timeLeft)}</span>
+              Offre Flash -10% sur l'annuel : <span className="font-mono text-lg ml-1">{formatTime(timeLeft)}</span>
           </p>
       </div>
 
