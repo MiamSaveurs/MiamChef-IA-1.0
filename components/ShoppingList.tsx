@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList } from '../services/storageService';
+import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList, addToShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft } from 'lucide-react';
+import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft, Plus } from 'lucide-react';
 import { WickerBasket } from './Icons';
 
+// ... CATEGORIES and getCategory helper (unchanged) ...
 const CATEGORIES = {
   FRESH_PRODUCE: { id: 'produce', label: 'Fruits & Légumes', icon: Leaf, color: 'text-green-400', keywords: ['pomme', 'poire', 'banane', 'carotte', 'salade', 'oignon', 'ail', 'citron', 'courgette', 'tomate', 'legume', 'fruit', 'avocat', 'poivron', 'champignon', 'concombre', 'aubergine', 'chou', 'epinard', 'herbe', 'persil', 'basilic', 'coriandre', 'menthe', 'orange', 'fraise', 'framboise', 'melon', 'pasteque', 'patate', 'terre', 'radis', 'navet', 'poireau', 'clementine', 'mandarine', 'raisin', 'brocoli'] },
   FRESH_MARKET: { id: 'market', label: 'Boucherie & Poisson', icon: Beef, color: 'text-red-400', keywords: ['poulet', 'boeuf', 'steak', 'viande', 'poisson', 'saumon', 'jambon', 'lardon', 'saucisse', 'dinde', 'porc', 'veau', 'crevette', 'moule', 'cabillaud', 'hache', 'merguez', 'chipolata', 'roti', 'filet', 'escalope', 'canard', 'bacon', 'charcuterie', 'salami', 'pave', 'truite', 'bar', 'daurade'] },
@@ -46,6 +47,9 @@ const ShoppingList: React.FC = () => {
       const saved = localStorage.getItem('miamchef_retailer');
       return saved ? JSON.parse(saved) : null;
   });
+  
+  // NOUVEAU STATE POUR L'INPUT
+  const [newItemText, setNewItemText] = useState('');
 
   // Thème Teal (Sarcelle)
   const themeColor = '#14b8a6'; // teal-500
@@ -93,6 +97,22 @@ const ShoppingList: React.FC = () => {
     }
   };
 
+  const cleanSearchTerm = (text: string) => {
+      let clean = text.replace(/^[-*•]\s*/, '').trim(); 
+      clean = clean.replace(/\s*\(.*?\)/g, '');
+      clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+      clean = clean.replace(/^\d+\s+/, '');
+      return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
+  };
+
+  // Function to add item (used by both Enter key and Button click)
+  const handleAddItem = async () => {
+      if (!newItemText.trim()) return;
+      await addToShoppingList([cleanSearchTerm(newItemText)]);
+      setNewItemText('');
+      loadItems();
+  };
+
   const handleShare = async () => {
     const text = `📝 Ma liste de courses MiamChef :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
     if (navigator.share) {
@@ -119,14 +139,6 @@ const ShoppingList: React.FC = () => {
           window.open(`https://www.google.com/maps/search/${encodeURIComponent(`Drive ${retailer.name} ${userCity}`)}`, '_blank');
       }
       setDriveStep('ingredients');
-  };
-
-  const cleanSearchTerm = (text: string) => {
-      let clean = text.replace(/^[-*•]\s*/, '').trim(); 
-      clean = clean.replace(/\s*\(.*?\)/g, '');
-      clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
-      clean = clean.replace(/^\d+\s+/, '');
-      return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
   };
 
   const handleDirectSearch = (itemText: string) => {
@@ -190,24 +202,17 @@ const ShoppingList: React.FC = () => {
                     {/* Input Bar */}
                     <div className="relative mb-6">
                         <input 
-                            type="text" 
+                            type="text"
+                            value={newItemText}
+                            onChange={(e) => setNewItemText(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
                             placeholder="Ajouter (ex: Lait, Thon...)" 
                             className="w-full pl-5 pr-12 py-4 bg-[#151515] text-white rounded-xl border border-white/10 outline-none focus:border-teal-500/50 focus:bg-[#1a1a1a] transition-all placeholder:text-gray-600"
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    const val = (e.target as HTMLInputElement).value;
-                                    if (val.trim()) {
-                                        import('../services/storageService').then(mod => {
-                                            mod.addToShoppingList([cleanSearchTerm(val)]).then(() => {
-                                                (e.target as HTMLInputElement).value = '';
-                                                loadItems();
-                                            });
-                                        });
-                                    }
-                                }
-                            }}
                         />
-                        <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-teal-400 transition-colors">
+                        <button 
+                            onClick={handleAddItem}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-teal-400 transition-colors p-2"
+                        >
                             <Search size={20} />
                         </button>
                     </div>
