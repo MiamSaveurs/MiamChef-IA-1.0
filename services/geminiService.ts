@@ -35,11 +35,8 @@ const getUserProfileContext = (): string => {
         context += `⛔ À ÉVITER : ${profile.dislikes}.\n`;
     }
     
-    // Equipment
-    if (profile.equipment.trim()) {
-        context += `🛠️ MATÉRIEL DISPONIBLE : ${profile.equipment} (Adapter la recette à ce matériel).\n`;
-    }
-
+    // Equipment is handled in the main function now
+    
     // Global Diet (Combined with input diet usually, but good to have as fallback)
     context += `RÉGIME GLOBAL : ${profile.diet}\n`;
     
@@ -102,7 +99,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur. Il doit être beau et complet."
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur."
     },
     metrics: {
       type: Type.OBJECT,
@@ -132,7 +129,7 @@ const recipeSchema = {
     steps: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. PAS de Markdown ici (*, #). Juste du texte brut pour être lu à haute voix ou affiché en gros."
+        description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. Si un appareil est utilisé, commence l'étape par [APPAREIL] en majuscules."
     },
     storageAdvice: { type: Type.STRING },
     seoTitle: { type: Type.STRING },
@@ -231,9 +228,22 @@ export const generateChefRecipe = async (
     // Inject User Profile (Mes Préférences)
     const userProfileContext = getUserProfileContext();
     
-    // Integration Smart Devices
+    // Integration Smart Devices - PROMPT RENFORCÉ "DOUBLE CERVEAU"
     const smartDevicePrompt = smartDevices.length > 0 
-        ? `APPAREILS INTELLIGENTS DISPONIBLES : ${smartDevices.join(', ')}. Intégrez explicitement leur usage dans les étapes (ex: "Préchauffer le Four Connecté à 180°C").`
+        ? `
+        🚨 ACTIVATION MODE PILOTE APPAREIL : ${smartDevices.join(', ').toUpperCase()} DÉTECTÉ(S) 🚨
+        
+        Tu n'es plus seulement un chef, tu es un TECHNICIEN AGRÉÉ pour ces machines.
+        Tes instructions doivent être chirurgicales.
+        
+        RÈGLES IMPÉRATIVES POUR LA LISTE DES ÉTAPES (steps) et le texte (markdownContent) :
+        1. Utilise le VOCABULAIRE EXACT de l'interface de la machine.
+        2. SI COOKEO : Utilise "Mode Doré", "Cuisson sous pression" (ou Rapide), "Maintien au chaud". Ne dis pas juste "cuire".
+        3. SI THERMOMIX / MONSIEUR CUISINE : Utilise le format "Vitesse X / Température Y / Durée Z". Mentionne "Sens Inverse" ou "Varoma" si nécessaire.
+        4. SI AIRFRYER : Précise "Mode Airfry", "180°C", "Secouer le panier".
+        
+        L'utilisateur a payé cher ces appareils. Il veut sentir que l'application les contrôle.
+        `
         : "";
 
     // 1. DYNAMIC PERSONA MATRIX (LOGIQUE EXPERTE)
@@ -241,125 +251,72 @@ export const generateChefRecipe = async (
     
     if (chefMode === 'patisserie') {
         if (difficultyLevel === 'beginner') {
-             // FACILE : Pâtisserie Maison
              personaPrompt = `
              IDENTITÉ : Grand-Mère Pâtissière ou Pâtissier Amateur Passionné.
              TON : Bienveillant, rassurant, ultra-clair. 
              MISSION : Démystifier la pâtisserie. Rendre l'impossible accessible.
-             INTERDIT : Techniques de laboratoire (glucose atomisé, pectine NH, tempérage sur marbre).
-             VOCABULAIRE : Simple ("Mélanger vigoureusement" au lieu de "Emulsionner").
              `;
         } else if (difficultyLevel === 'intermediate') {
-             // MOYEN : Artisan de Quartier
              personaPrompt = `
              IDENTITÉ : Artisan Boulanger-Pâtissier de quartier.
              TON : Professionnel, efficace, précis sans être pédant.
              MISSION : Garantir un résultat "boutique" à la maison.
-             TECHNIQUE : Pâtes maison, crèmes maîtrisées, pochage soigné.
              `;
         } else {
-             // EXPERT : MOF (Haute Couture)
              personaPrompt = `
-             IDENTITÉ : Meilleur Ouvrier de France (MOF) Pâtissier (Style Pierre Hermé / Cédric Grolet).
+             IDENTITÉ : Meilleur Ouvrier de France (MOF) Pâtissier.
              TON : Chirurgical, scientifique, obsessionnel sur les textures et températures.
              MISSION : L'excellence absolue. La pâtisserie est une chimie exacte.
-             EXIGENCE : Précision au gramme. Temps de repos respectés à la minute.
-             STRUCTURE : Inserts, Croustillants, Mousses, Glaçages.
              `;
         }
     } else {
         // MODE CUISINE
         if (difficultyLevel === 'beginner') {
-             // FACILE : Cuisine du Quotidien
              personaPrompt = `
-             IDENTITÉ : Chef TV Pédagogue (Style Cyril Lignac / Jamie Oliver).
+             IDENTITÉ : Chef TV Pédagogue.
              TON : Enthousiaste, décomplexé, encourageant. "C'est gourmand, c'est malin".
              MISSION : Faire cuisiner les gens pressés sans les décourager.
-             INTERDIT : Termes comme "Singer", "Suer", "Déglacer" SANS explication immédiate entre parenthèses.
-             MATÉRIEL : Standard (Poêle, Casserole). Pas de sous-vide ni de siphon.
              `;
         } else if (difficultyLevel === 'intermediate') {
-             // MOYEN : Bistronomie
              personaPrompt = `
              IDENTITÉ : Chef de Bistrot Gourmand.
              TON : Franc, généreux, amoureux du produit brut.
              MISSION : La "Cuisine de Marché". On respecte le produit, on soigne les cuissons.
-             TECHNIQUE : Vrais jus, sauces montées, découpes régulières.
              `;
         } else {
-             // EXPERT : Haute Gastronomie
              personaPrompt = `
-             IDENTITÉ : Grand Chef 3 Étoiles (Style Robuchon / Ducasse).
+             IDENTITÉ : Grand Chef 3 Étoiles.
              TON : Autoritaire, technique, perfectionniste.
              MISSION : La quintessence du goût. Aucune approximation tolérée.
-             EXIGENCE : Maîtrise absolue du feu. Assaisonnement millimétré à chaque étape.
-             VOCABULAIRE : Technique pure (Mirepoix, Concassée, Sucs, Réduction à glace).
              `;
         }
     }
 
-    // 2. NIVEAU DE DIFFICULTÉ (CONTRAINTES DE RÉALISATION)
+    // 2. NIVEAU DE DIFFICULTÉ
     let difficultyPrompt = "";
     switch (difficultyLevel) {
         case 'beginner':
-            difficultyPrompt = `
-            NIVEAU : DÉBUTANT.
-            OBJECTIF : Zéro stress. Résultat garanti.
-            COMPLEXITÉ : Minimale. Étapes courtes.
-            `;
+            difficultyPrompt = `NIVEAU : DÉBUTANT. Objectif : Zéro stress.`;
             break;
         case 'expert':
-            difficultyPrompt = `
-            NIVEAU : EXPERT.
-            OBJECTIF : Épater visuellement et gustativement.
-            COMPLEXITÉ : Élevée. Plusieurs préparations simultanées. Dressage minute.
-            `;
+            difficultyPrompt = `NIVEAU : EXPERT. Objectif : Épater visuellement et gustativement.`;
             break;
-        default: // intermediate
-            difficultyPrompt = `
-            NIVEAU : INTERMÉDIAIRE.
-            OBJECTIF : Bon équilibre temps/résultat. Fait maison prioritaire.
-            `;
+        default:
+            difficultyPrompt = `NIVEAU : INTERMÉDIAIRE. Bon équilibre temps/résultat.`;
             break;
     }
 
-    // 3. BUDGET (CONTRAINTES ÉCONOMIQUES)
-    let costPrompt = "";
-    if (recipeCost === 'budget') {
-        costPrompt = `
-        BUDGET : ÉCONOMIQUE / ÉTUDIANT.
-        INTERDICTION : Produits de luxe (Truffe, Foie gras, Boeuf de Kobe, Lotte).
-        SUBSTITUTIONS : Proposer des alternatives malines pour les ingrédients coûteux.
-        PHILOSOPHIE : "L'art d'accommoder les restes" ou "Manger royal pour pas un rond".
-        `;
-    } else {
-        costPrompt = `
-        BUDGET : NO LIMIT / AUTHENTIQUE.
-        PRIORITÉ : Qualité du produit (AOP, Label Rouge, Bio, Terroir).
-        PHILOSOPHIE : "Le produit se suffit à lui-même s'il est exceptionnel".
-        `;
-    }
+    // 3. BUDGET
+    let costPrompt = recipeCost === 'budget' 
+        ? "BUDGET : ÉCONOMIQUE. Interdiction des produits de luxe." 
+        : "BUDGET : AUTHENTIQUE. Priorité à la qualité du produit.";
 
-    // 4. GOLDEN RULES (LOIS PHYSIQUES INVIOLABLES)
+    // 4. GOLDEN RULES
     const technicalRules = `
-    ⚠️ RÈGLES CULINAIRES ABSOLUES (A RESPECTER SOUS PEINE DE DISQUALIFICATION) :
-    
-    1. LOI DE LA PÂTISSERIE ET DES FRUITS :
-       - INTERDICTION FORMELLE de cuire des fraises ou framboises fraîches sur une tarte. 
-       - PROCÉDURE : Fond de tarte cuit à blanc > Refroidissement > Crème > Fruits frais posés crus à la fin.
-       
-    2. RÉACTION DE MAILLARD & REPOS (INDISPENSABLE) :
-       - Sauf pour le "bouilli" ou "blanquette", une viande doit subir une RÉACTION DE MAILLARD (saisie/coloration) à feu vif pour développer les sucs.
-       - REPOS OBLIGATOIRE après cuisson (sous papier alu) pour détendre les fibres (5 à 10 min).
-       
-    3. LOI DES PÂTES :
-       - Cuisson Al Dente.
-       - Ne JAMAIS rincer les pâtes après cuisson (sauf salade de pâtes).
-       - Toujours utiliser un peu d'eau de cuisson pour lier la sauce (Mantecatura).
-       
-    4. LOI DES LÉGUMES VERTS :
-       - Cuisson à l'anglaise (eau bouillante très salée).
-       - Refroidissement immédiat dans l'eau glacée (fixer la chlorophylle) pour garder le vert.
+    ⚠️ RÈGLES TECHNIQUES :
+    1. Cuisson Al Dente.
+    2. Réaction de Maillard pour les viandes.
+    3. Respect des saisons.
     `;
 
     // Récupération des contraintes strictes
@@ -378,40 +335,20 @@ export const generateChefRecipe = async (
       === LA MISSION ===
       Créer une recette pour la demande : "${userConfig}"
       
-      === PARAMÈTRES OBLIGATOIRES ===
+      === PARAMÈTRES ===
       - STYLE : ${cuisineStyle}
       - COUVERTS : ${people} personnes
       - TYPE DE REPAS : ${mealTime}
       - RÉGIME (CRITIQUE) : ${strictDietaryRules}
 
-      === CONTRAINTES STRICTES ===
+      === CONTRAINTES ===
       1. ${costPrompt}
       2. ${difficultyPrompt}
       3. ${technicalRules}
       4. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
-      Vous devez répondre UNIQUEMENT en JSON valide respectant ce schéma :
-      {
-        "markdownContent": "LE TEXTE DE LA RECETTE. Il doit être complet, rédigé avec passion et parfaitement formaté en Markdown (Titres ##, Gras **, Listes -). Il doit inclure l'introduction, la liste des ingrédients, les instructions de préparation et la conclusion.",
-        "metrics": {
-          "nutriScore": "A/B/C/D/E",
-          "caloriesPerPerson": Nombre entier,
-          "caloriesPer100g": Nombre entier,
-          "pricePerPerson": Nombre (Estimez selon le marché actuel),
-          "carbohydrates": Nombre,
-          "proteins": Nombre,
-          "fats": Nombre,
-          "difficulty": "Facile/Moyen/Expert" (Doit correspondre au niveau demandé)
-        },
-        "utensils": ["Liste", "Des", "Ustensiles"],
-        "ingredients": ["Carottes", "Oignons", "Boeuf"] (Liste pour les courses, SANS quantités),
-        "ingredientsWithQuantities": ["300g de Carottes", "2 Oignons", "500g de Boeuf"] (Liste technique pour cuisiner),
-        "steps": ["Étape 1: Préchauffer...", "Étape 2: Couper...", "Étape 3: Cuire..."] (Liste TEXTE BRUT étape par étape pour le mode interactif. Pas de markdown ici.),
-        "storageAdvice": "Conseil précis (Durée + Mode) pour la conservation.",
-        "seoTitle": "Titre court et accrocheur",
-        "seoDescription": "Description courte qui donne faim."
-      }
+      Répondre UNIQUEMENT en JSON valide respectant le schéma fourni.
       
       ${BANNED_WORDS_INSTRUCTION}
     `;
@@ -455,7 +392,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT : Fournissez un contenu Markdown riche ("markdownContent") pour l'affichage principal, et une liste d'étapes claire ("steps") pour le mode pas-à-pas.`;
+  IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -490,57 +427,36 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     let specificInstruction = "";
     switch (adjustmentType) {
         case "Réduire le sel":
-            specificInstruction = `
-            OBJECTIF : Réduire drastiquement le sodium SANS rendre le plat fade.
-            STRATÉGIE : Compenser par l'utilisation accrue d'épices, d'herbes fraîches, d'agrumes (acidité) ou d'aromates (ail, oignon).
-            ACTION : Supprimer ou réduire le sel ajouté, les bouillons cubes industriels, la sauce soja. Proposer des alternatives.
-            `;
+            specificInstruction = "OBJECTIF : Réduire le sodium. Compenser par épices/herbes.";
             break;
         case "Augmenter les protéines":
-            specificInstruction = `
-            OBJECTIF : Booster l'apport en protéines de cette recette.
-            STRATÉGIE : Ajouter ou augmenter les quantités de viandes magres, oeufs, légumineuses (lentilles, pois chiches), tofu ou laitages.
-            ACTION : Rééquilibrer les ratios sans dénaturer le plat.
-            `;
+            specificInstruction = "OBJECTIF : Booster l'apport en protéines.";
             break;
         case "Passer au végétal":
-            specificInstruction = `
-            OBJECTIF : Végétaliser la recette (Végétarien/Vegan selon contexte).
-            STRATÉGIE : Remplacer la viande/poisson par des alternatives texturées (Champignons, Tofu, Seitan, Légumineuses). Remplacer la crème/beurre par des équivalents végétaux si nécessaire.
-            ACTION : Garder l'esprit du plat mais changer la source de protéine et de gras.
-            `;
+            specificInstruction = "OBJECTIF : Végétaliser la recette (Végétarien/Vegan).";
             break;
         case "Adapter aux enfants":
-            specificInstruction = `
-            OBJECTIF : Rendre le plat "Kid-Friendly" (Attractif et doux).
-            STRATÉGIE : Cacher les légumes (mixer/raper), adoucir les épices fortes (remplacer piment par paprika doux), rendre la présentation ludique.
-            ACTION : Simplifier les textures complexes.
-            `;
+            specificInstruction = "OBJECTIF : Rendre le plat 'Kid-Friendly'.";
             break;
         default:
-            specificInstruction = `OBJECTIF : Appliquer l'ajustement demandé : "${adjustmentType}".`;
+            specificInstruction = `OBJECTIF : ${adjustmentType}`;
     }
 
     const prompt = `
     TU ES UN CHEF EXPERT EN REVISITE CULINAIRE.
-    
     ${userProfileContext}
-
-    TA MISSION : Réécrire entièrement la recette ci-dessous en appliquant STRICTEMENT l'ajustement demandé, tout en garantissant un équilibre des saveurs parfait.
+    TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé.
     
     === RECETTE D'ORIGINE ===
     ${originalRecipeText}
     
-    === AJUSTEMENT DEMANDÉ ===
+    === AJUSTEMENT ===
     ${adjustmentType}
     
-    === INSTRUCTIONS TECHNIQUES ===
+    === INSTRUCTION ===
     ${specificInstruction}
     
     ${GDPR_COMPLIANCE_PROTOCOL}
-    
-    Tu dois renvoyer TOUTE la recette mise à jour (Ingrédients, Instructions, Métriques recalculées) au format JSON.
-    ${BANNED_WORDS_INSTRUCTION}
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -568,46 +484,19 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
 };
 
 // Generates a high-quality food image
-// MODIFIED: Accepts ingredients context for realism
 export const generateRecipeImage = async (title: string, context: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  // PROMPT HYPER-RÉALISTE AMÉLIORÉ
-  // On force le modèle à prendre en compte les ingrédients et à éviter le texte.
   const gdprSafePrompt = `
   Hyper-realistic professional food photography of: ${title}.
-  
-  CRITICAL DETAILS FOR COHERENCE:
-  - Context/Style: ${context} (Ensure plating matches this style, e.g., Rustic for family meals, Minimalist for gourmet).
-  - Visible Ingredients: Ensure the main ingredients mentioned in the title are visibly present and appetizing.
-  
-  TECHNICAL SPECS:
-  - 8k resolution, highly detailed textures.
-  - Macro photography or 50mm lens.
-  - Lighting: Soft natural window light or professional studio food lighting.
-  - Effect: Steam rising (if hot dish), condensation droplets (if cold drink/dessert).
-  - Depth of field: Shallow (bokeh background).
-  
-  RESTRICTIONS:
-  - NO TEXT overlay.
-  - NO HUMANS/FACES/HANDS.
-  - NO CARTOON/3D RENDER STYLE. MUST LOOK LIKE A REAL PHOTO.
+  Context/Style: ${context}.
+  No text. No faces.
   `;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
-    contents: {
-      parts: [
-        {
-          text: gdprSafePrompt,
-        },
-      ],
-    },
-    config: {
-      imageConfig: {
-        aspectRatio: "1:1",
-      },
-    },
+    contents: { parts: [{ text: gdprSafePrompt }] },
+    config: { imageConfig: { aspectRatio: "1:1" } },
   });
 
   for (const part of response.candidates[0].content.parts) {
@@ -632,33 +521,23 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   
   const dietRules = getDietaryConstraints(dietary);
 
-  // Prompt amélioré pour forcer l'identification visuelle explicite
   const textPart = {
-    text: `ROLE : Tu es un Chef Cuisinier expert en vision par ordinateur.
+    text: `ROLE : Chef Cuisinier expert en vision par ordinateur.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
 
     ETAPE 1 : IDENTIFICATION
-    Analyse visuellement cette photo avec une extrême précision. Liste TOUS les ingrédients comestibles que tu vois.
-    ATTENTION RGPD : Ignore tout texte visible sur des courriers, des photos de personnes ou tout objet personnel non culinaire. Concentre-toi UNIQUEMENT sur la nourriture.
+    Liste les ingrédients visibles.
     
     ETAPE 2 : FILTRAGE
-    REGIME IMPOSÉ PAR L'UTILISATEUR : ${dietary}
-    RÈGLES STRICTES : ${dietRules}
-    
-    Si tu as identifié des ingrédients sur la photo qui sont INTERDITS par ce régime ou par les préférences de l'utilisateur, TU DOIS LES IGNORER TOTALEMENT pour la recette.
+    REGIME : ${dietary}
+    RÈGLES : ${dietRules}
+    Ignorer les ingrédients interdits.
     
     ETAPE 3 : CRÉATION
-    En utilisant PRINCIPALEMENT les ingrédients identifiés, crée une recette gastronomique et anti-gaspillage.
-    
-    FORMAT DE RÉPONSE (Markdown) :
-    1. Commence par : "**Ingrédients identifiés :** [Liste des ingrédients vus]"
-    2. Titre de la recette (avec #)
-    3. Ingrédients complets (avec quantités estimées)
-    4. Instructions étape par étape.
-    
-    Ton ton doit être encourageant, professionnel et créatif.`,
+    Crée une recette anti-gaspillage adaptée au régime demandé. 
+    Format Markdown.`,
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -687,18 +566,11 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
 
-  const prompt = `Vous êtes un Sommelier Expert Moderne. ${target === 'b2b' ? 'Conseillez un professionnel de la restauration.' : 'Conseillez un particulier.'} 
-  
+  const prompt = `Sommelier Expert. ${target === 'b2b' ? 'Conseil Pro.' : 'Conseil Particulier.'} 
   ${userProfileContext}
-
-  MISSION : Proposez des accords mets-boissons d'excellence pour la demande : "${query}".
-
-  VOTRE RÉPONSE DOIT CONTENIR DEUX SECTIONS DISTINCTES :
-  1. 🍷 ACCORDS VINS (TRADITION) : Recommandez des appellations précises, millésimes ou cépages.
-  2. 🍃 ACCORDS SANS ALCOOL (SOBRIÉTÉ HEUREUSE) : Proposez des alternatives sophistiquées (Thés grands crus, Jus de dégustation, Kombuchas, Eaux aromatisées, Mocktails complexes). Traitez le sans-alcool avec le même vocabulaire et la même exigence que le vin.
-  
-  Utilisez Google Search pour vérifier les disponibilités ou tendances actuelles si nécessaire.
-  
+  Requete : "${query}".
+  Proposez Accords Vins ET Accords Sans Alcool.
+  Utilisez Google Search.
   ${GDPR_COMPLIANCE_PROTOCOL}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -730,17 +602,8 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
     model: 'gemini-2.5-flash-image',
     contents: {
       parts: [
-        {
-          inlineData: {
-            data: base64Image,
-            mimeType: 'image/jpeg',
-          },
-        },
-        {
-          text: `Retouchez cette photo de plat selon cette demande : ${prompt}. 
-          Maintenez le réalisme et la qualité photographique.
-          IMPORTANT : Ne générez jamais de visages humains.`,
-        },
+        { inlineData: { data: base64Image, mimeType: 'image/jpeg' } },
+        { text: `Retouche photo culinaire : ${prompt}. Pas de visages.` },
       ],
     },
   });
@@ -757,42 +620,22 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
-  
-  // Récupération des contraintes strictes pour le semainier
   const strictDietaryRules = getDietaryConstraints(dietary);
 
-  let ingredientsPrompt = "";
-  if (ingredients.trim()) {
-      ingredientsPrompt = `
-      CONTEXTE SPÉCIAL ANTI-GASPI :
-      L'utilisateur dispose de ces ingrédients : "${ingredients}".
-      MISSION : Intégrez intelligemment ces ingrédients dans les repas de la semaine (Lunch ou Dîner).
-      Complétez avec d'autres produits pour équilibrer.`;
-  }
+  let ingredientsPrompt = ingredients.trim() ? `Avec ces ingrédients : "${ingredients}".` : "";
 
-  const prompt = `Créez un planning de repas hebdomadaire complet (Petit-déj, Midi, Collation, Soir) pour ${people} personnes.
-  
+  const prompt = `Créez un planning de repas hebdomadaire pour ${people} personnes.
   ${userProfileContext}
-
-  CONTRAINTES ALIMENTAIRES STRICTES À RESPECTER : 
-  ${strictDietaryRules}
-
+  RÉGIME : ${dietary}
+  RÈGLES : ${strictDietaryRules}
   ${ingredientsPrompt}
-  
   ${GDPR_COMPLIANCE_PROTOCOL}
-  
-  IMPORTANT POUR LA GÉNÉRATION :
-  - Respectez SCUPULEUSEMENT le régime indiqué. Si c'est Régime Crétois, limitez drastiquement la viande/poisson comme indiqué dans les règles.
-  - Soyez varié et équilibré.
-  - Incluez des conseils de Batch Cooking pour le dimanche.
-  
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
     contents: prompt,
     config: {
-      // Pour le menu hebdo (plus complexe), 4096 est un bon compromis Vitesse/Qualité.
       thinkingConfig: { thinkingBudget: 4096 },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,

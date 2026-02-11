@@ -1,4 +1,6 @@
 
+
+
 import React, { useState, useEffect } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
@@ -143,12 +145,22 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (status === 'loading' || adjusting) {
-      const steps = isPatissier 
+      
+      // AJUSTEMENT DES MESSAGES DE CHARGEMENT SELON LES APPAREILS
+      let baseSteps = isPatissier 
         ? ["Analyse moléculaire des saveurs...", "Calibrage du four virtuel...", "Émulsion des idées...", "Montage de la structure...", "Glaçage final..."]
         : ["Inspection du garde-manger...", "Préchauffage des idées...", "Optimisation du budget...", "Touche du Chef...", "Dressage..."];
       
+      if (localSmartDevices.some(d => d.includes('Cookeo'))) {
+          baseSteps = ["Connexion au Cookeo...", "Calcul du temps sous pression...", "Génération des étapes dorures...", "Synchronisation MiamChef..."];
+      } else if (localSmartDevices.some(d => d.includes('Thermomix') || d.includes('Monsieur'))) {
+          baseSteps = ["Synchronisation Robot...", "Calcul vitesse des lames...", "Ajustement température Varoma...", "Programmation des étapes..."];
+      } else if (localSmartDevices.some(d => d.includes('Airfryer'))) {
+          baseSteps = ["Préchauffage Airfryer virtuel...", "Optimisation circulation air...", "Calcul du croustillant...", "Finalisation..."];
+      }
+
       const adjustSteps = ["Analyse des saveurs...", "Rééquilibrage des ingrédients...", "Mise à jour de la cuisson...", "Finalisation de la recette..."];
-      const currentSteps = adjusting ? adjustSteps : steps;
+      const currentSteps = adjusting ? adjustSteps : baseSteps;
       
       let i = 0;
       setLoadingStep(currentSteps[0]);
@@ -158,7 +170,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       }, 2000); 
     }
     return () => clearInterval(interval);
-  }, [status, isPatissier, adjusting]);
+  }, [status, isPatissier, adjusting, localSmartDevices]);
 
   // Fonction utilitaire pour nettoyer le markdown
   const cleanMarkdown = (text: string) => {
@@ -250,7 +262,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             chefMode, 
             recipeCost || 'authentic', 
             difficulty || 'intermediate',
-            localSmartDevices // Passage de la liste surchargée pour cette recette
+            localSmartDevices // PASSAGE EXPLICITE DES APPAREILS SÉLECTIONNÉS
         );
       } else {
         result = await searchChefsRecipe(searchQuery, people, searchType);
@@ -445,6 +457,14 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                   <div className="flex flex-col items-center">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Mode Cuisine</span>
                       <span className="font-display text-xl leading-none mt-1">Étape {currentStepIndex + 1} <span className="text-gray-600 font-sans text-sm">/ {cookingSteps.length}</span></span>
+                      
+                      {/* BADGE CONNECTÉ SI APPAREIL ACTIF */}
+                      {localSmartDevices.length > 0 && (
+                          <div className="mt-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-900/30 border border-blue-500/30">
+                              <Wifi size={10} className="text-blue-400 animate-pulse" />
+                              <span className="text-[9px] font-bold text-blue-200 uppercase tracking-widest">Connecté : {localSmartDevices[0]}</span>
+                          </div>
+                      )}
                   </div>
                   <div className="w-10"></div> {/* Spacer pour centrer */}
               </div>
@@ -528,7 +548,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                          </div>
                          <h3 className="text-xl font-display text-white mb-2">Appareil Détecté</h3>
                          <p className="text-lg font-bold text-gray-200 mb-1">
-                             {isPatissier ? "Robot Pâtissier Pro" : "Four Vapeur Connecté"}
+                             {localSmartDevices.length > 0 ? localSmartDevices[0] : (isPatissier ? "Robot Pâtissier Pro" : "Four Vapeur Connecté")}
                          </p>
                          <p className="text-xs text-gray-500 uppercase tracking-widest">Signal Excellent</p>
                     </div>
@@ -542,7 +562,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                          <h3 className="text-xl font-display text-white mb-2">Synchronisation</h3>
                          <p className="text-sm text-gray-400">
                              Envoi du programme de cuisson : <br/>
-                             <span className="text-white font-bold">{metrics?.difficulty === 'Expert' ? 'Mode Chef (Précision)' : 'Mode Eco (180°C)'}</span>
+                             <span className="text-white font-bold">{metrics?.difficulty === 'Expert' ? 'Mode Chef (Précision)' : 'Mode Eco'}</span>
                          </p>
                     </div>
                 )}
