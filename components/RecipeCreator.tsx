@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useEffect } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
@@ -41,7 +39,16 @@ import {
   Smile,
   Droplets,
   Wand2,
-  ChevronRight
+  ChevronRight,
+  Heart,
+  Moon,
+  Wheat,
+  Milk,
+  Sun,
+  Flame,
+  Coffee,
+  Utensils,
+  Star
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -54,7 +61,8 @@ import {
   PremiumSparkles, 
   PremiumEuro, 
   PremiumMedal, 
-  PremiumUtensils 
+  PremiumUtensils,
+  WickerBasket
 } from './Icons';
 
 interface RecipeCreatorProps {
@@ -409,34 +417,82 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       }
   };
 
-  const CustomSelect = ({ 
-    icon: Icon, 
+  // --- NOUVEAU COMPOSANT VISUEL DE SÉLECTION (HORIZONTAL SCROLL) ---
+  const VisualSelector = ({ 
+    label, 
+    icon: MainIcon, 
     value, 
     onChange, 
-    options 
+    options,
+    getIcon
   }: { 
+    label: string, 
     icon: any, 
     value: string, 
     onChange: (val: string) => void, 
-    options: string[] 
-  }) => (
-    <div className="relative group">
-      <div className="flex items-center justify-between bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-4 rounded-xl border border-white/10 focus-within:border-white/30 transition-colors">
-        <div className="flex items-center gap-3">
-          <Icon size={18} style={{ color: themeColor }} />
-          <span className="font-medium text-sm text-gray-200">{value}</span>
+    options: string[],
+    getIcon?: (opt: string) => any
+  }) => {
+    return (
+        <div className="mb-6">
+            <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-3" style={{ color: themeColor }}>
+                <MainIcon size={12} /> {label}
+            </label>
+            <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 no-scrollbar snap-x">
+                {options.map((option) => {
+                    const isSelected = value === option;
+                    const OptionIcon = getIcon ? getIcon(option) : Star;
+                    
+                    return (
+                        <button
+                            key={option}
+                            onClick={() => onChange(option)}
+                            className={`flex-shrink-0 snap-center min-w-[100px] p-3 rounded-xl border flex flex-col items-center gap-2 transition-all duration-300 ${
+                                isSelected 
+                                ? `bg-${isPatissier ? 'pink' : 'green'}-900/40 border-${isPatissier ? 'pink' : 'green'}-500 shadow-lg scale-105` 
+                                : 'bg-[#151515] border-white/5 hover:border-white/20'
+                            }`}
+                            style={{ borderColor: isSelected ? themeColor : '' }}
+                        >
+                            <div className={`p-2 rounded-full ${isSelected ? 'text-white' : 'text-gray-500'}`} style={{ backgroundColor: isSelected ? themeColor : 'rgba(255,255,255,0.05)' }}>
+                                {OptionIcon && <OptionIcon size={18} />}
+                            </div>
+                            <span className={`text-[10px] font-bold text-center uppercase tracking-wide leading-tight ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                                {option}
+                            </span>
+                        </button>
+                    )
+                })}
+            </div>
         </div>
-        <ChevronDown size={16} className="text-gray-500" />
-      </div>
-      <select 
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-      >
-        {options.map(opt => <option key={opt} value={opt} className="bg-[#1a1a1a] text-white">{opt}</option>)}
-      </select>
-    </div>
-  );
+    );
+  };
+
+  // Helper pour les icônes de régime
+  const getDietIcon = (diet: string) => {
+      if (diet.includes("Végétarien")) return Leaf;
+      if (diet.includes("Vegan")) return Heart;
+      if (diet.includes("Halal")) return Moon;
+      if (diet.includes("Casher")) return PremiumSparkles;
+      if (diet.includes("Gluten")) return Wheat;
+      if (diet.includes("Lactose")) return Milk;
+      if (diet.includes("Sportif")) return Activity;
+      if (diet.includes("Crétois")) return Sun;
+      return Globe;
+  };
+
+  // Helper pour les icônes de style
+  const getStyleIcon = (style: string) => {
+      if (style.includes("Française")) return Crown;
+      if (style.includes("Italie")) return Globe; 
+      if (style.includes("Asiatique")) return WickerBasket; // Faute de mieux
+      if (style.includes("Mexicain")) return Flame;
+      if (style.includes("Méditerranéen")) return Sun;
+      if (style.includes("Bistrot")) return Coffee;
+      if (style.includes("Exception")) return PremiumMedal;
+      if (style.includes("Street")) return Utensils;
+      return Globe;
+  };
 
   // --- RENDU MODE CUISINE IMMERSIF ---
   if (isCookingMode) {
@@ -742,18 +798,24 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     </div>
                                 </div>
 
-                                <CustomSelect 
+                                {/* REMPLACEMENT DES SELECTS PAR VISUAL SELECTOR */}
+                                
+                                <VisualSelector 
+                                    label="Régime"
                                     icon={Leaf}
                                     value={dietary}
                                     onChange={setDietary}
                                     options={["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"]}
+                                    getIcon={getDietIcon}
                                 />
 
-                                <CustomSelect 
+                                <VisualSelector 
+                                    label="Style"
                                     icon={Globe}
                                     value={cuisineStyle}
                                     onChange={setCuisineStyle}
                                     options={["Tradition Française", "Italie / Pâtes", "Saveurs Asiatiques", "Mexicain / Épicé", "Oriental / Méditerranéen", "Plat du Jour (Bistrot)", "Repas d'Exception", "Street Food / Rapide"]}
+                                    getIcon={getStyleIcon}
                                 />
 
                                 <div 

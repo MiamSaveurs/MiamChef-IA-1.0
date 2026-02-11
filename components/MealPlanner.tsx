@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { generateWeeklyMenu } from '../services/geminiService';
 import { saveWeeklyPlan, getWeeklyPlan, addToShoppingList, deleteWeeklyPlan } from '../services/storageService';
 import { WeeklyPlan, LoadingState } from '../types';
-import { Loader2, Users, Leaf, ChevronDown, Download, Trash2, Calendar, ShoppingCart, Check, Carrot } from 'lucide-react';
+import { Loader2, Users, Leaf, ChevronDown, Download, Trash2, Calendar, ShoppingCart, Check, Carrot, Heart, Moon, Wheat, Activity } from 'lucide-react';
 import { 
     PremiumCalendar, 
     PremiumChefHat, 
@@ -11,7 +11,8 @@ import {
     PremiumUtensils, 
     PremiumCoffee, 
     PremiumSoup, 
-    PremiumSparkles
+    PremiumSparkles,
+    PremiumCheck
 } from './Icons';
 
 const MealPlanner: React.FC = () => {
@@ -145,6 +146,17 @@ const MealPlanner: React.FC = () => {
         return cleaned.slice(0, 4).join(', ') + (cleaned.length > 4 ? '...' : '');
     };
 
+    // Helper pour les icônes de régime (Dupliqué pour simplicité sans contexte global)
+    const getDietIcon = (diet: string) => {
+        if (diet.includes("Végétarien")) return Leaf;
+        if (diet.includes("Vegan")) return Heart;
+        if (diet.includes("Halal")) return Moon;
+        if (diet.includes("Casher")) return PremiumSparkles;
+        if (diet.includes("Gluten")) return Wheat;
+        if (diet.includes("Sportif")) return Activity;
+        return Leaf;
+    };
+
     if (isInitializing) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-black">
@@ -206,25 +218,35 @@ const MealPlanner: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-6">
-                                    {/* Selecteurs Style Sombre */}
-                                    <div>
+                                    
+                                    {/* Visual Selector for Diet */}
+                                    <div className="mb-2">
                                         <label className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-3">
                                             <Leaf size={12} /> Régime Alimentaire
                                         </label>
-                                        <div className="relative group">
-                                            <div className="flex items-center justify-between bg-[#151515] hover:bg-[#1a1a1a] text-white px-4 py-4 rounded-xl border border-white/10 focus-within:border-purple-500/50 transition-colors">
-                                                <span className="font-medium text-sm text-gray-200">{dietary}</span>
-                                                <ChevronDown size={16} className="text-gray-500" />
-                                            </div>
-                                            <select 
-                                                value={dietary}
-                                                onChange={(e) => setDietary(e.target.value)}
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                            >
-                                                {["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"].map(opt => 
-                                                    <option key={opt} value={opt} className="bg-[#1a1a1a] text-white">{opt}</option>
-                                                )}
-                                            </select>
+                                        <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 no-scrollbar snap-x">
+                                            {["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"].map((opt) => {
+                                                const isSelected = dietary === opt;
+                                                const OptionIcon = getDietIcon(opt);
+                                                return (
+                                                    <button
+                                                        key={opt}
+                                                        onClick={() => setDietary(opt)}
+                                                        className={`flex-shrink-0 snap-center min-w-[100px] p-3 rounded-xl border flex flex-col items-center gap-2 transition-all duration-300 ${
+                                                            isSelected 
+                                                            ? `bg-purple-900/40 border-purple-500 shadow-lg scale-105` 
+                                                            : 'bg-[#151515] border-white/5 hover:border-white/20'
+                                                        }`}
+                                                    >
+                                                        <div className={`p-2 rounded-full ${isSelected ? 'text-white' : 'text-gray-500'}`} style={{ backgroundColor: isSelected ? '#a855f7' : 'rgba(255,255,255,0.05)' }}>
+                                                            <OptionIcon size={18} />
+                                                        </div>
+                                                        <span className={`text-[10px] font-bold text-center uppercase tracking-wide leading-tight ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                                                            {opt}
+                                                        </span>
+                                                    </button>
+                                                )
+                                            })}
                                         </div>
                                     </div>
 
