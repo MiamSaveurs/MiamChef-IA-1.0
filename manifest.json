@@ -2,11 +2,11 @@
 {
   "name": "MiamChef",
   "short_name": "MiamChef",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#000000",
   "theme_color": "#509f2a",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Le premier livre de cuisine infini. Votre assistant culinaire intelligent à double cerveau crée des recettes uniques, sur-mesure et illimitées.",
   "icons": [
     {
