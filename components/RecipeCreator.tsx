@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe } from '../services/geminiService';
+import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe, generateRecipeVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
 import { LoadingState, RecipeMetrics } from '../types';
 import { 
@@ -48,7 +48,8 @@ import {
   Flame,
   Coffee,
   Utensils,
-  Star
+  Star,
+  Video
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -105,6 +106,10 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   // Smart Adjust State
   const [adjusting, setAdjusting] = useState<string | null>(null);
 
+  // Video Generation State (Veo)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [generatingVideo, setGeneratingVideo] = useState(false);
+
   // --- STATE POUR LE MODE CUISINE ---
   const [isCookingMode, setIsCookingMode] = useState(false);
   const [cookingSteps, setCookingSteps] = useState<string[]>([]);
@@ -152,14 +157,16 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (status === 'loading' || adjusting) {
+    if (status === 'loading' || adjusting || generatingVideo) {
       
       // AJUSTEMENT DES MESSAGES DE CHARGEMENT SELON LES APPAREILS
       let baseSteps = isPatissier 
         ? ["Analyse moléculaire des saveurs...", "Calibrage du four virtuel...", "Émulsion des idées...", "Montage de la structure...", "Glaçage final..."]
         : ["Inspection du garde-manger...", "Préchauffage des idées...", "Optimisation du budget...", "Touche du Chef...", "Dressage..."];
       
-      if (localSmartDevices.some(d => d.includes('Cookeo'))) {
+      if (generatingVideo) {
+          baseSteps = ["Initialisation du studio Veo...", "Lumières, Caméra, Action...", "Rendu cinématique en cours...", "Finalisation du montage..."];
+      } else if (localSmartDevices.some(d => d.includes('Cookeo'))) {
           baseSteps = ["Connexion au Cookeo...", "Calcul du temps sous pression...", "Génération des étapes dorures...", "Synchronisation MiamChef..."];
       } else if (localSmartDevices.some(d => d.includes('Thermomix') || d.includes('Monsieur'))) {
           baseSteps = ["Synchronisation Robot...", "Calcul vitesse des lames...", "Ajustement température Varoma...", "Programmation des étapes..."];
@@ -178,7 +185,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       }, 2000); 
     }
     return () => clearInterval(interval);
-  }, [status, isPatissier, adjusting, localSmartDevices]);
+  }, [status, isPatissier, adjusting, localSmartDevices, generatingVideo]);
 
   // Fonction utilitaire pour nettoyer le markdown
   const cleanMarkdown = (text: string) => {
@@ -255,6 +262,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     
     setStatus('loading');
     setPersistentState(null); // Reset previous recipe
+    setVideoUrl(null); // Reset video
     setIsAddedToCart(false);
     
     try {
@@ -279,7 +287,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : 'Création du Chef';
       
-      // PASSAGE DU CONTEXTE COMPLET À L'IMAGE GENERATOR
+      // PASSAGE DU CONTEXTE COMPLET À L'IMAGE GENERATOR (NANO BANANA)
       const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}. Ingredients: ${mode === 'create' ? ingredients : searchQuery}`;
       const img = await generateRecipeImage(title, contextString);
       
@@ -301,6 +309,37 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       console.error(e);
       setStatus('error');
     }
+  };
+
+  const handleGenerateVideo = async () => {
+      const titleMatch = recipe.match(/^#\s+(.+)$/m);
+      const title = titleMatch ? titleMatch[1] : 'Recette Gourmande';
+      
+      // Veo requires API key selection check
+      try {
+          // @ts-ignore
+          if (window.aistudio && window.aistudio.hasSelectedApiKey) {
+              // @ts-ignore
+              const hasKey = await window.aistudio.hasSelectedApiKey();
+              if (!hasKey) {
+                   // @ts-ignore
+                   await window.aistudio.openSelectKey();
+              }
+          }
+      } catch (e) {
+          console.warn("AI Studio check failed or not available", e);
+      }
+
+      setGeneratingVideo(true);
+      try {
+          const video = await generateRecipeVideo(title, cuisineStyle);
+          setVideoUrl(video);
+      } catch (e) {
+          console.error("Video generation failed", e);
+          alert("La génération de vidéo a échoué. Assurez-vous d'avoir une clé API valide.");
+      } finally {
+          setGeneratingVideo(false);
+      }
   };
 
   const handleAdjustRecipe = async (type: string) => {
@@ -333,6 +372,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       setIngredients('');
       setSearchQuery('');
       setIsCookingMode(false);
+      setVideoUrl(null);
   };
 
   const handleSaveToBook = async () => {
@@ -884,19 +924,32 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         <div className="animate-fade-in relative bg-[#0a0a0a]">
 
             {/* OVERLAY LOADING (SI AJUSTEMENT EN COURS) */}
-            {adjusting && (
-                <div className="absolute inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center">
+            {(adjusting || generatingVideo) && (
+                <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center">
                     <div className="text-center">
-                        <Wand2 size={48} className="text-purple-400 animate-bounce mx-auto mb-4" />
-                        <h3 className="text-xl font-display text-white mb-2">Ajustement en cours...</h3>
+                        {generatingVideo ? (
+                            <Video size={48} className="text-red-500 animate-pulse mx-auto mb-4" />
+                        ) : (
+                            <Wand2 size={48} className="text-purple-400 animate-bounce mx-auto mb-4" />
+                        )}
+                        <h3 className="text-xl font-display text-white mb-2">
+                            {generatingVideo ? "Studio Veo en cours..." : "Ajustement en cours..."}
+                        </h3>
                         <p className="text-sm text-gray-400 animate-pulse">{loadingStep}</p>
                     </div>
                 </div>
             )}
             
-            {/* HERO HEADER IMAGE */}
+            {/* HERO HEADER IMAGE (OU VIDEO SI GENEREE) */}
             <div className="w-full h-[50vh] relative">
-                {generatedImage ? (
+                {videoUrl ? (
+                    <div className="w-full h-full bg-black flex items-center justify-center relative">
+                        <video src={videoUrl} controls autoPlay loop className="h-full w-auto max-w-full" />
+                        <div className="absolute top-4 right-4 bg-red-600 text-white text-[10px] px-2 py-1 rounded font-bold uppercase animate-pulse">
+                            Généré par Veo
+                        </div>
+                    </div>
+                ) : generatedImage ? (
                     <img src={generatedImage} className="w-full h-full object-cover" alt="Plat" />
                 ) : (
                     <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center">
@@ -904,7 +957,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     </div>
                 )}
                 {/* Gradient overlay for readability */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0a0a]"></div>
+                {!videoUrl && <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0a0a]"></div>}
                 
                 {/* Back / Clear Button */}
                 <button 
@@ -913,6 +966,17 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 >
                       <XCircle size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Fermer</span>
                 </button>
+
+                {/* BOUTON GENERER VIDEO (SI PAS ENCORE FAIT) */}
+                {!videoUrl && (
+                    <button 
+                        onClick={handleGenerateVideo}
+                        className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl text-white font-bold text-xs uppercase tracking-widest transition-all shadow-lg group"
+                    >
+                        <Video size={16} className="text-red-500 group-hover:scale-110 transition-transform"/>
+                        Générer Vidéo (Veo)
+                    </button>
+                )}
             </div>
 
             {/* CONTENT CARD (FLOATING UP) */}

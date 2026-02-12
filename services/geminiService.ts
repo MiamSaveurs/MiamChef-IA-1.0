@@ -1,6 +1,4 @@
 
-
-
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
@@ -505,6 +503,45 @@ export const generateRecipeImage = async (title: string, context: string): Promi
     }
   }
   throw new Error("Failed to generate image");
+};
+
+// --- NOUVEAU : GENERATE VEO VIDEO (Social Media Asset) ---
+export const generateRecipeVideo = async (title: string, style: string): Promise<string> => {
+  // IMPORTANT: For Veo, we re-instantiate with the current key environment,
+  // but rely on the calling component to have performed the `window.aistudio` check.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+  const videoPrompt = `
+  Cinematic professional food b-roll video of: ${title}.
+  Style: ${style}.
+  Slow motion, steam rising, highly detailed texture, professional studio lighting, 4k.
+  No text, no faces.
+  `;
+
+  let operation = await ai.models.generateVideos({
+    model: 'veo-3.1-fast-generate-preview',
+    prompt: videoPrompt,
+    config: {
+      numberOfVideos: 1,
+      resolution: '720p', // Fast preview resolution
+      aspectRatio: '9:16' // Vertical for TikTok/Reels
+    }
+  });
+
+  // Polling loop to wait for video generation
+  while (!operation.done) {
+    await new Promise(resolve => setTimeout(resolve, 5000)); // Check every 5 seconds
+    operation = await ai.operations.getVideosOperation({operation: operation});
+  }
+
+  const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+  if (!downloadLink) throw new Error("Video generation failed");
+
+  // Fetch the actual video bytes using the API Key
+  const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+  const blob = await response.blob();
+  
+  return URL.createObjectURL(blob);
 };
 
 // Scans fridge image and suggests a recipe
