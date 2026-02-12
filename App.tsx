@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Navigation from './components/Navigation';
 import Home from './components/Home';
@@ -31,8 +30,10 @@ const App: React.FC = () => {
     utensils: string[];
     ingredients: string[];
     ingredientsWithQuantities?: string[];
+    steps?: string[];
     storageAdvice?: string;
     image: string | null;
+    videoUrl?: string | null;
   } | null>(null);
 
   // --- TIMER STATE ---
