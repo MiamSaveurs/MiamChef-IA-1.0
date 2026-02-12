@@ -5,16 +5,12 @@ import { startSubscription } from '../services/storageService';
 import { AppView } from '../types';
 
 // ============================================================================
-// CONFIGURATION STRIPE (VOS LIENS SONT ICI)
+// CONFIGURATION STRIPE (PRODUCTION)
 // ============================================================================
+
 const STRIPE_LINKS = {
-    // 1. Lien pour l'abonnement MENSUEL (4,99€)
     monthly: "https://buy.stripe.com/cNi5kxefkaIZ2K2aRf04800", 
-    
-    // 2. Lien pour l'abonnement ANNUEL (49,99€)
     annual: "https://buy.stripe.com/6oU8wJfjoeZfacucZn04801",   
-    
-    // 3. Lien pour l'offre A VIE (149,99€)
     lifetime: "https://buy.stripe.com/3cIcMZ6MScR7ckCgbz04802"   
 };
 
