@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
 import { Star, ChevronRight, Settings, Activity, Globe } from 'lucide-react';
@@ -187,13 +188,13 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       <div className="px-6 relative z-10">
           
           {/* TITRE HERO + SLOGAN (CENTRÉ) */}
-          <div className="mt-10 mb-10 text-center max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-5xl leading-tight font-display text-white mb-2">
-                  L’application nouvelle génération qui crée instantanément des recettes sur mesure,
+          <div className="mt-10 mb-10 text-center">
+              <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
+                  Une cuisine unique,
               </h2>
-              <div className="relative inline-block mt-2">
-                  <h2 className="text-3xl md:text-5xl leading-tight font-display text-[#509f2a] relative z-10">
-                      en harmonie avec vos goûts, vos envies et vos traditions.
+              <div className="relative inline-block mt-1">
+                  <h2 className="text-[3.5rem] leading-[0.9] font-display text-[#509f2a] relative z-10">
+                      qui vous ressemble.
                   </h2>
               </div>
           </div>
