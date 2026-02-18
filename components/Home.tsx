@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Settings, Activity, Globe } from 'lucide-react';
+import { Star, ChevronRight, Settings, Activity, Globe, Share2 } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import { 
   PremiumChefHat, 
@@ -80,6 +80,20 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
           window.removeEventListener('focus', refreshStreak);
       };
   }, []);
+
+  const handleShareApp = async () => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Découvre MiamChef !',
+                text: 'L\'application qui transforme ton frigo en plats de Chef grâce à l\'IA. Essaie, c\'est bluffant !',
+                url: window.location.href
+            });
+        } catch (err) { console.log('Partage annulé'); }
+    } else {
+        alert("Partagez ce lien : " + window.location.href);
+    }
+  };
 
   const today = new Date().toLocaleDateString('fr-FR', { 
     weekday: 'long', 
@@ -191,6 +205,14 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   <PremiumFlame size={14} className="text-orange-500 animate-pulse" />
                   <span className="text-xs font-black text-orange-400">{streak}</span>
               </div>
+
+              {/* BOUTON PARTAGE VIRAL (NEW) */}
+              <button 
+                onClick={handleShareApp}
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-[#151515] border border-white/10 hover:bg-white/10 transition-colors"
+              >
+                  <Share2 size={14} className="text-white" />
+              </button>
 
               <button 
                 onClick={() => setView(AppView.SUBSCRIPTION)} 

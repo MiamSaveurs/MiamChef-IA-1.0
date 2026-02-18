@@ -142,11 +142,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                         onClick={() => setSelectedPlan('annual')}
                         className={`relative p-6 rounded-2xl border-2 transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#0f2e1b] border-[#509f2a] shadow-[0_0_40px_rgba(80,159,42,0.15)] scale-[1.02]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                       >
-                          {selectedPlan === 'annual' && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-red-400 animate-pulse flex items-center gap-2">
-                                <Timer size={10} /> Offre Limitée
-                            </div>
-                          )}
+                          {/* BEST VALUE BADGE - UPDATED FOR CONVERSION */}
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-yellow-200 flex items-center gap-2 z-10">
+                                <Star size={10} fill="black" /> Choix N°1 des Chefs
+                          </div>
                           
                           <div className="flex justify-between items-start mb-3 mt-1">
                               <div>
