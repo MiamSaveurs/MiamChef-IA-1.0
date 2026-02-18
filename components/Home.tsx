@@ -32,9 +32,24 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
   const [currentActivity, setCurrentActivity] = useState("Sophie (Lyon) a créé : Tarte au Citron Meringuée");
 
   useEffect(() => {
-      // Calcul et mise à jour de la série au chargement de la Home
-      const currentStreak = updateDailyStreak();
-      setStreak(currentStreak);
+      // Fonction pour mettre à jour le streak
+      const refreshStreak = () => {
+          const currentStreak = updateDailyStreak();
+          setStreak(currentStreak);
+      };
+
+      // Calcul initial
+      refreshStreak();
+
+      // IMPORTANT : Mettre à jour le streak quand l'utilisateur revient sur l'app (sortie de veille/background)
+      // Cela évite le bug où le compteur reste figé sur la veille et reset à 1 le surlendemain
+      const handleVisibilityChange = () => {
+          if (document.visibilityState === 'visible') {
+              refreshStreak();
+          }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('focus', refreshStreak);
 
       // Simulation compteur live
       const interval = setInterval(() => {
@@ -61,6 +76,8 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
       return () => {
           clearInterval(interval);
           clearInterval(activityInterval);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+          window.removeEventListener('focus', refreshStreak);
       };
   }, []);
 

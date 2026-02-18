@@ -99,36 +99,43 @@ export const saveUserProfile = (profile: UserProfile): void => {
 // --- NOUVEAU : GESTION DES STREAKS (Gamification) ---
 export const updateDailyStreak = (): number => {
     const profile = getUserProfile();
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const lastLogin = profile.lastLoginDate;
+    
+    // FIX BUG: Utiliser la date locale pour éviter les problèmes de fuseau horaire (UTC vs Local)
+    // 'fr-CA' donne le format YYYY-MM-DD qui est parfait pour les comparaisons lexicographiques
+    const todayStr = new Date().toLocaleDateString('fr-CA'); 
+    
+    const lastLoginStr = profile.lastLoginDate;
 
-    // Si c'est le même jour, on ne fait rien
-    if (lastLogin === today) {
+    // Si c'est le même jour local, on ne touche à rien
+    if (lastLoginStr === todayStr) {
         return profile.currentStreak || 0;
     }
 
     let newStreak = profile.currentStreak || 0;
 
-    if (lastLogin) {
-        const lastDate = new Date(lastLogin);
-        const currentDate = new Date(today);
-        const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (lastLoginStr) {
+        // Pour comparer, on force le temps à midi (12:00) UTC pour éviter tout problème de DST
+        const last = new Date(lastLoginStr + 'T12:00:00Z');
+        const current = new Date(todayStr + 'T12:00:00Z');
+        
+        const diffTime = current.getTime() - last.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
         if (diffDays === 1) {
-            // Connexion le lendemain : +1
+            // Connexion le jour suivant exact : +1
             newStreak += 1;
         } else if (diffDays > 1) {
-            // Série brisée : Reset à 1
+            // Plus d'un jour d'écart : Série brisée, retour à 1
             newStreak = 1;
         }
+        // Si diffDays < 1 (ex: retour en arrière), on ne fait rien pour protéger le streak
     } else {
         // Première connexion
         newStreak = 1;
     }
 
     profile.currentStreak = newStreak;
-    profile.lastLoginDate = today;
+    profile.lastLoginDate = todayStr;
     saveUserProfile(profile);
     
     return newStreak;
@@ -228,7 +235,7 @@ export const saveRecipeToBook = async (recipe: SavedRecipe): Promise<void> => {
       const request = store.put(recipe);
 
       request.onsuccess = () => {
-          // Increment total recipes stats
+          // Increment total recipes created in profile
           const profile = getUserProfile();
           profile.totalRecipesCreated = (profile.totalRecipesCreated || 0) + 1;
           saveUserProfile(profile);
@@ -237,7 +244,7 @@ export const saveRecipeToBook = async (recipe: SavedRecipe): Promise<void> => {
       request.onerror = () => reject(request.error);
     });
   } catch (e) {
-    console.error("Failed to save recipe to DB", e);
+    console.error("Failed to save recipe", e);
     throw e;
   }
 };
@@ -272,145 +279,82 @@ export const getShoppingList = async (): Promise<ShoppingItem[]> => {
       request.onsuccess = () => resolve(request.result as ShoppingItem[]);
       request.onerror = () => reject(request.error);
     });
-  } catch (e) {
-    console.error("Failed to get shopping list", e);
-    return [];
-  }
+  } catch (e) { return []; }
 };
 
-export const addToShoppingList = async (itemsText: string[]): Promise<void> => {
+export const addToShoppingList = async (items: string[]): Promise<void> => {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
-      const store = transaction.objectStore(SHOPPING_STORE);
-      
-      itemsText.forEach(text => {
-        store.add({
-          text,
-          checked: false,
-          addedAt: new Date().toISOString()
-        } as Omit<ShoppingItem, 'id'>);
-      });
+    const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
+    const store = transaction.objectStore(SHOPPING_STORE);
 
-      transaction.oncomplete = () => {
-          window.dispatchEvent(new Event('shopping-list-updated'));
-          resolve();
-      };
-      transaction.onerror = () => reject(transaction.error);
+    items.forEach(text => {
+      store.put({ text, checked: false, addedAt: new Date().toISOString() });
     });
-  } catch (e) {
-    console.error("Failed to add to shopping list", e);
-    throw e;
-  }
+
+    return new Promise((resolve) => {
+        transaction.oncomplete = () => resolve();
+    });
+  } catch (e) { console.error(e); }
 };
 
 export const toggleShoppingItem = async (item: ShoppingItem): Promise<void> => {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
-      const store = transaction.objectStore(SHOPPING_STORE);
-      const request = store.put({ ...item, checked: !item.checked });
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to toggle item", e);
-    throw e;
-  }
+    const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
+    const store = transaction.objectStore(SHOPPING_STORE);
+    store.put({ ...item, checked: !item.checked });
+  } catch (e) { console.error(e); }
 };
 
 export const deleteShoppingItem = async (id: number): Promise<void> => {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
-      const store = transaction.objectStore(SHOPPING_STORE);
-      const request = store.delete(id);
-
-      request.onsuccess = () => {
-          window.dispatchEvent(new Event('shopping-list-updated'));
-          resolve();
-      };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to delete item", e);
-    throw e;
-  }
+    const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
+    const store = transaction.objectStore(SHOPPING_STORE);
+    store.delete(id);
+  } catch (e) { console.error(e); }
 };
 
 export const clearShoppingList = async (): Promise<void> => {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
-      const store = transaction.objectStore(SHOPPING_STORE);
-      const request = store.clear();
-
-      request.onsuccess = () => {
-          window.dispatchEvent(new Event('shopping-list-updated'));
-          resolve();
-      };
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to clear list", e);
-    throw e;
-  }
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(SHOPPING_STORE, 'readwrite');
+        const store = transaction.objectStore(SHOPPING_STORE);
+        store.clear();
+    } catch (e) { console.error(e); }
 };
 
-/* --- WEEKLY PLANNING OPERATIONS --- */
+/* --- MEAL PLANNER OPERATIONS --- */
 
 export const saveWeeklyPlan = async (plan: WeeklyPlan): Promise<void> => {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(PLANNING_STORE, 'readwrite');
-      const store = transaction.objectStore(PLANNING_STORE);
-      const request = store.put(plan); // Always overwrite 'current'
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to save plan", e);
-    throw e;
-  }
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(PLANNING_STORE, 'readwrite');
+        const store = transaction.objectStore(PLANNING_STORE);
+        // Use a fixed ID 'current' for now to have one plan at a time
+        store.put({ ...plan, id: 'current' });
+    } catch (e) { console.error(e); }
 };
 
 export const getWeeklyPlan = async (): Promise<WeeklyPlan | null> => {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(PLANNING_STORE, 'readonly');
-      const store = transaction.objectStore(PLANNING_STORE);
-      const request = store.get('current');
-
-      request.onsuccess = () => resolve(request.result as WeeklyPlan || null);
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to get plan", e);
-    return null;
-  }
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(PLANNING_STORE, 'readonly');
+            const store = transaction.objectStore(PLANNING_STORE);
+            const request = store.get('current');
+            request.onsuccess = () => resolve(request.result || null);
+            request.onerror = () => reject(request.error);
+        });
+    } catch (e) { return null; }
 };
 
 export const deleteWeeklyPlan = async (): Promise<void> => {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(PLANNING_STORE, 'readwrite');
-      const store = transaction.objectStore(PLANNING_STORE);
-      const request = store.delete('current');
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  } catch (e) {
-    console.error("Failed to delete plan", e);
-    throw e;
-  }
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(PLANNING_STORE, 'readwrite');
+        const store = transaction.objectStore(PLANNING_STORE);
+        store.delete('current');
+    } catch (e) { console.error(e); }
 };

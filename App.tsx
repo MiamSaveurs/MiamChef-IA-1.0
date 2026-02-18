@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Navigation from './components/Navigation';
 import Home from './components/Home';
@@ -60,12 +61,22 @@ const App: React.FC = () => {
         return;
     }
 
-    // VERIFICATION DU STATUT ABONNEMENT ET ESSAI
+    // VERIFICATION INITIALE
     checkSubscriptionStatus();
+
+    // SÉCURITÉ : Vérification Périodique (toutes les 1h) et à chaque retour sur l'app
+    // Pour s'assurer que si la période d'essai expire pendant que l'app est en fond, elle bloque au retour.
+    const interval = setInterval(checkSubscriptionStatus, 1000 * 60 * 60);
+    const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') checkSubscriptionStatus();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
+        clearInterval(interval);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -77,8 +88,9 @@ const App: React.FC = () => {
     // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
     if (!status.isSubscribed && daysPassed > 7) {
         setIsTrialExpired(true);
-        // On force l'abonnement, SAUF si l'utilisateur est déjà en train de regarder son carnet (autorisé)
-        if (currentView !== AppView.RECIPE_BOOK) {
+        // On force l'abonnement immédiatement si on n'est pas dans une zone autorisée (Carnet/Legal)
+        // La condition est stricte : Si expiré, on redirige vers l'abonnement.
+        if (currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
              setCurrentView(AppView.SUBSCRIPTION);
         }
     }
