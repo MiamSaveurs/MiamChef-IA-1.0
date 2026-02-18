@@ -4,12 +4,12 @@ import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../
 import { getUserProfile } from "./storageService";
 
 // Instructions for the AI to avoid certain words
-// AJOUT: Interdiction stricte de mentionner "IA" ou "Intelligence Artificielle"
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'délicieux', 'savoureux', 'incroyable', 'IA', 'Intelligence Artificielle' ou 'Algorithme'. Vous êtes un Chef, pas un robot. Laissez la technique parler d'elle-même.";
+// AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie"
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite' ou 'Chef' (sauf pour dire 'MiamChef'). Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur.";
 
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
-=== PROTOCOLE RGPD & SÉCURITÉ DES DONNÉES (NIVEAU CRITIQUE) ===
+=== PROTOCOLE CONFIDENTIALITÉ ===
 1. MINIMISATION DES DONNÉES : Ne demandez JAMAIS d'informations identifiantes.
 2. TRAITEMENT ÉPHÉMÈRE : Considérez toutes les données fournies comme strictement confidentielles.
 3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement les précautions d'usage sans jargon médical.
@@ -229,18 +229,16 @@ export const generateChefRecipe = async (
     // Integration Smart Devices - PROMPT RENFORCÉ "DOUBLE CERVEAU"
     const smartDevicePrompt = smartDevices.length > 0 
         ? `
-        🚨 ACTIVATION MODE PILOTE APPAREIL : ${smartDevices.join(', ').toUpperCase()} DÉTECTÉ(S) 🚨
+        🚨 MODE APPAREIL ACTIVÉ : ${smartDevices.join(', ').toUpperCase()} DÉTECTÉ(S) 🚨
         
-        Tu n'es plus seulement un chef, tu es un TECHNICIEN AGRÉÉ pour ces machines.
-        Tes instructions doivent être chirurgicales.
+        Tu maîtrises parfaitement ces machines.
+        Tes instructions doivent être précises.
         
         RÈGLES IMPÉRATIVES POUR LA LISTE DES ÉTAPES (steps) et le texte (markdownContent) :
         1. Utilise le VOCABULAIRE EXACT de l'interface de la machine.
-        2. SI COOKEO : Utilise "Mode Doré", "Cuisson sous pression" (ou Rapide), "Maintien au chaud". Ne dis pas juste "cuire".
+        2. SI COOKEO : Utilise "Mode Doré", "Cuisson sous pression" (ou Rapide), "Maintien au chaud".
         3. SI THERMOMIX / MONSIEUR CUISINE : Utilise le format "Vitesse X / Température Y / Durée Z". Mentionne "Sens Inverse" ou "Varoma" si nécessaire.
         4. SI AIRFRYER : Précise "Mode Airfry", "180°C", "Secouer le panier".
-        
-        L'utilisateur a payé cher ces appareils. Il veut sentir que l'application les contrôle.
         `
         : "";
 
@@ -250,42 +248,42 @@ export const generateChefRecipe = async (
     if (chefMode === 'patisserie') {
         if (difficultyLevel === 'beginner') {
              personaPrompt = `
-             IDENTITÉ : Grand-Mère Pâtissière ou Pâtissier Amateur Passionné.
+             IDENTITÉ : Grand-Mère Pâtissière ou Ami Passionné.
              TON : Bienveillant, rassurant, ultra-clair. 
-             MISSION : Démystifier la pâtisserie. Rendre l'impossible accessible.
+             MISSION : Rendre la pâtisserie simple et amusante.
              `;
         } else if (difficultyLevel === 'intermediate') {
              personaPrompt = `
-             IDENTITÉ : Artisan Boulanger-Pâtissier de quartier.
-             TON : Professionnel, efficace, précis sans être pédant.
-             MISSION : Garantir un résultat "boutique" à la maison.
+             IDENTITÉ : Artisan Boulanger de quartier.
+             TON : Professionnel, efficace, précis.
+             MISSION : Garantir un résultat "comme à la boulangerie" à la maison.
              `;
         } else {
              personaPrompt = `
-             IDENTITÉ : Meilleur Ouvrier de France (MOF) Pâtissier.
-             TON : Chirurgical, scientifique, obsessionnel sur les textures et températures.
-             MISSION : L'excellence absolue. La pâtisserie est une chimie exacte.
+             IDENTITÉ : Expert Pâtissier Créatif.
+             TON : Précis, pointu sur les textures et températures.
+             MISSION : L'excellence du goût et du visuel.
              `;
         }
     } else {
         // MODE CUISINE
         if (difficultyLevel === 'beginner') {
              personaPrompt = `
-             IDENTITÉ : Chef TV Pédagogue.
-             TON : Enthousiaste, décomplexé, encourageant. "C'est gourmand, c'est malin".
+             IDENTITÉ : Cuisinier Pédagogue.
+             TON : Enthousiaste, décomplexé, encourageant. "C'est bon, c'est malin".
              MISSION : Faire cuisiner les gens pressés sans les décourager.
              `;
         } else if (difficultyLevel === 'intermediate') {
              personaPrompt = `
-             IDENTITÉ : Chef de Bistrot Gourmand.
-             TON : Franc, généreux, amoureux du produit brut.
-             MISSION : La "Cuisine de Marché". On respecte le produit, on soigne les cuissons.
+             IDENTITÉ : Cuisinier Passionné du Quotidien.
+             TON : Franc, généreux, amoureux du produit.
+             MISSION : La cuisine de tous les jours, mais en mieux.
              `;
         } else {
              personaPrompt = `
-             IDENTITÉ : Grand Chef 3 Étoiles.
-             TON : Autoritaire, technique, perfectionniste.
-             MISSION : La quintessence du goût. Aucune approximation tolérée.
+             IDENTITÉ : Expert Culinaire.
+             TON : Technique, perfectionniste mais accessible.
+             MISSION : Sublimer les produits, maîtriser les cuissons.
              `;
         }
     }
@@ -297,7 +295,7 @@ export const generateChefRecipe = async (
             difficultyPrompt = `NIVEAU : DÉBUTANT. Objectif : Zéro stress.`;
             break;
         case 'expert':
-            difficultyPrompt = `NIVEAU : EXPERT. Objectif : Épater visuellement et gustativement.`;
+            difficultyPrompt = `NIVEAU : AVANCÉ. Objectif : Épater visuellement et gustativement.`;
             break;
         default:
             difficultyPrompt = `NIVEAU : INTERMÉDIAIRE. Bon équilibre temps/résultat.`;
@@ -306,14 +304,14 @@ export const generateChefRecipe = async (
 
     // 3. BUDGET
     let costPrompt = recipeCost === 'budget' 
-        ? "BUDGET : ÉCONOMIQUE. Interdiction des produits de luxe." 
-        : "BUDGET : AUTHENTIQUE. Priorité à la qualité du produit.";
+        ? "BUDGET : ÉCONOMIQUE. Cuisine maligne." 
+        : "BUDGET : QUALITÉ. Priorité aux bons produits.";
 
     // 4. GOLDEN RULES
     const technicalRules = `
     ⚠️ RÈGLES TECHNIQUES :
-    1. Cuisson Al Dente.
-    2. Réaction de Maillard pour les viandes.
+    1. Cuisson juste.
+    2. Goût équilibré.
     3. Respect des saisons.
     `;
 
@@ -384,13 +382,14 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const userProfileContext = getUserProfileContext();
   
-  const prompt = `Trouvez une recette de Chef ${type === 'authentic' ? 'authentique et gastronomique' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
+  const prompt = `Trouvez une recette ${type === 'authentic' ? 'gourmande et savoureuse' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
   
   ${userProfileContext}
   
   ${GDPR_COMPLIANCE_PROTOCOL}
 
-  IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.`;
+  IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.
+  ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -434,14 +433,14 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
             specificInstruction = "OBJECTIF : Végétaliser la recette (Végétarien/Vegan).";
             break;
         case "Adapter aux enfants":
-            specificInstruction = "OBJECTIF : Rendre le plat 'Kid-Friendly'.";
+            specificInstruction = "OBJECTIF : Rendre le plat adapté aux enfants (goûts simples, ludique).";
             break;
         default:
             specificInstruction = `OBJECTIF : ${adjustmentType}`;
     }
 
     const prompt = `
-    TU ES UN CHEF EXPERT EN REVISITE CULINAIRE.
+    TU ES UN EXPERT EN REVISITE CULINAIRE.
     ${userProfileContext}
     TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé.
     
@@ -455,6 +454,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     ${specificInstruction}
     
     ${GDPR_COMPLIANCE_PROTOCOL}
+    ${BANNED_WORDS_INSTRUCTION}
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -559,7 +559,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   const dietRules = getDietaryConstraints(dietary);
 
   const textPart = {
-    text: `ROLE : Chef Cuisinier expert en vision par ordinateur.
+    text: `ROLE : Expert Cuisinier en vision par ordinateur.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${userProfileContext}
@@ -573,8 +573,9 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     Ignorer les ingrédients interdits.
     
     ETAPE 3 : CRÉATION
-    Crée une recette anti-gaspillage adaptée au régime demandé. 
-    Format Markdown.`,
+    Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé. 
+    Format Markdown.
+    ${BANNED_WORDS_INSTRUCTION}`,
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -608,7 +609,8 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   Requete : "${query}".
   Proposez Accords Vins ET Accords Sans Alcool.
   Utilisez Google Search.
-  ${GDPR_COMPLIANCE_PROTOCOL}`;
+  ${GDPR_COMPLIANCE_PROTOCOL}
+  ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
@@ -667,6 +669,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   RÈGLES : ${strictDietaryRules}
   ${ingredientsPrompt}
   ${GDPR_COMPLIANCE_PROTOCOL}
+  ${BANNED_WORDS_INSTRUCTION}
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({

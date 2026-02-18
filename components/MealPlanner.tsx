@@ -45,14 +45,14 @@ const MealPlanner: React.FC = () => {
         try {
             // Ajout des ingrédients en 3ème argument
             const newPlan = await generateWeeklyMenu(dietary, people, ingredients);
-            if (!newPlan) throw new Error("Le Chef n'a pas pu générer de planning valide.");
+            if (!newPlan) throw new Error("Le système n'a pas pu générer de planning valide.");
             if (!newPlan.id) newPlan.id = 'current';
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');
         } catch (e: any) {
             setStatus('error');
-            setErrorMessage(e.message || "Le Chef ne répond pas (Connexion).");
+            setErrorMessage(e.message || "Le service ne répond pas (Connexion).");
         }
     };
 

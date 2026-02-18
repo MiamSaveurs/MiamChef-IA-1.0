@@ -107,7 +107,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       MiamChef <span className="text-[#509f2a] italic">Premium</span>
                   </h1>
                   <p className="text-gray-400 text-sm font-light leading-relaxed max-w-xs mx-auto">
-                      Rejoignez l'élite culinaire et cuisinez sans limites.
+                      Cuisinez sans limites et profitez de toutes les fonctionnalités.
                   </p>
               </div>
 
@@ -144,7 +144,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                       >
                           {/* BEST VALUE BADGE - UPDATED FOR CONVERSION */}
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-yellow-200 flex items-center gap-2 z-10">
-                                <Star size={10} fill="black" /> Choix N°1 des Chefs
+                                <Star size={10} fill="black" /> La Formule Préférée
                           </div>
                           
                           <div className="flex justify-between items-start mb-3 mt-1">

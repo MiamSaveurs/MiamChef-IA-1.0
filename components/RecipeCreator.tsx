@@ -162,10 +162,10 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       
       let baseSteps = isPatissier 
         ? ["Analyse moléculaire des saveurs...", "Calibrage du four virtuel...", "Émulsion des idées...", "Montage de la structure...", "Glaçage final..."]
-        : ["Inspection du garde-manger...", "Préchauffage des idées...", "Optimisation du budget...", "Touche du Chef...", "Dressage..."];
+        : ["Inspection du garde-manger...", "Préchauffage des idées...", "Optimisation du budget...", "Touche MiamChef...", "Dressage..."];
       
       if (generatingVideo) {
-          baseSteps = ["Initialisation du studio Veo...", "Lumières, Caméra, Action...", "Rendu cinématique en cours...", "Finalisation du montage..."];
+          baseSteps = ["Initialisation du studio...", "Lumières, Caméra, Action...", "Rendu vidéo en cours...", "Finalisation du montage..."];
       } else if (localSmartDevices.some(d => d.includes('Cookeo'))) {
           baseSteps = ["Connexion au Cookeo...", "Calcul du temps sous pression...", "Génération des étapes dorures...", "Synchronisation MiamChef..."];
       } else if (localSmartDevices.some(d => d.includes('Thermomix') || d.includes('Monsieur'))) {
@@ -267,7 +267,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       }
       
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
-      const title = titleMatch ? titleMatch[1] : 'Création du Chef';
+      const title = titleMatch ? titleMatch[1] : 'Création Miam';
       
       const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}. Ingredients: ${mode === 'create' ? ingredients : searchQuery}`;
       const img = await generateRecipeImage(title, contextString);
@@ -616,7 +616,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                          <h3 className="text-xl font-display text-white mb-2">Synchronisation</h3>
                          <p className="text-sm text-gray-400">
                              Envoi du programme de cuisson : <br/>
-                             <span className="text-white font-bold">{metrics?.difficulty === 'Expert' ? 'Mode Chef (Précision)' : 'Mode Eco'}</span>
+                             <span className="text-white font-bold">{metrics?.difficulty === 'Expert' ? 'Mode Précision' : 'Mode Eco'}</span>
                          </p>
                     </div>
                 )}
@@ -665,7 +665,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             {isPatissier ? "L'Atelier Sucré" : "L'Atelier Salé"}
                         </h1>
                         <p className="text-gray-400 text-sm font-light tracking-widest uppercase">
-                            {isPatissier ? "Précision & Gourmandise" : "Cuisine & Improvisation"}
+                            {isPatissier ? "Pâtisserie & Gourmandise" : "Cuisine du Quotidien"}
                         </p>
                     </div>
 
@@ -766,7 +766,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                             className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'expert' ? 'bg-gray-800 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                                         >
                                             <Crown size={16} />
-                                            <span className="text-[9px] font-bold uppercase">Expert</span>
+                                            <span className="text-[9px] font-bold uppercase">Avancé</span>
                                         </button>
                                     </div>
                                 </div>
@@ -882,7 +882,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             <Wand2 size={48} className="text-purple-400 animate-bounce mx-auto mb-4" />
                         )}
                         <h3 className="text-xl font-display text-white mb-2">
-                            {generatingVideo ? "Studio Veo en cours..." : "Ajustement en cours..."}
+                            {generatingVideo ? "Studio Miam en cours..." : "Ajustement en cours..."}
                         </h3>
                         <p className="text-sm text-gray-400 animate-pulse">{loadingStep}</p>
                     </div>
@@ -944,7 +944,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
-                        {recipe.match(/^#\s+(.+)$/m)?.[1] || 'Recette du Chef'}
+                        {recipe.match(/^#\s+(.+)$/m)?.[1] || 'Recette Gourmande'}
                     </h1>
 
                     {metrics && (

@@ -197,7 +197,7 @@ const FridgeScanner: React.FC = () => {
                     <div className="bg-gradient-to-r from-blue-950/50 to-black p-6 border-b border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <PremiumChefHat size={24} className="text-blue-400" />
-                            <span className="font-display text-xl text-gray-100">La Création du Chef</span>
+                            <span className="font-display text-xl text-gray-100">Votre Recette Anti-Gaspi</span>
                         </div>
                         
                         <button 
@@ -218,7 +218,7 @@ const FridgeScanner: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                 <div className="absolute bottom-3 left-3 flex items-center gap-2">
                                     <div className="bg-blue-500/20 backdrop-blur-md border border-blue-500/30 px-2 py-1 rounded text-[9px] text-blue-100 uppercase font-bold">
-                                        Suggestion Chef
+                                        Suggestion Miam
                                     </div>
                                     {dietary !== 'Classique (Aucun)' && (
                                         <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-1 rounded text-[9px] text-green-100 uppercase font-bold">

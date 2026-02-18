@@ -86,7 +86,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
         try {
             await navigator.share({
                 title: 'Découvre MiamChef !',
-                text: 'L\'application qui transforme ton frigo en plats de Chef grâce à l\'IA. Essaie, c\'est bluffant !',
+                text: 'L\'application qui transforme ton frigo en plats incroyables. Essaie, c\'est bluffant !',
                 url: window.location.href
             });
         } catch (err) { console.log('Partage annulé'); }
@@ -108,7 +108,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
   const blocks = [
     {
       view: AppView.RECIPE_CREATOR,
-      title: "Cuisine du Chef",
+      title: "L'Atelier Cuisine",
       subtitle: "Création sur-mesure",
       icon: <PremiumChefHat size={28} />,
       color: "from-[#1a4a2a] to-[#0f2e1b]", // Vert
