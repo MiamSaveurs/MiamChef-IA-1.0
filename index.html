@@ -65,6 +65,16 @@
       
       /* Utilitaires pour le mode cuisine */
       .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+
+      /* Cache la barre d'outils Vercel */
+      vercel-live-feedback,
+      #vercel-toolbar,
+      [data-vercel-toolbar] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
     </style>
   <script type="importmap">
 {
