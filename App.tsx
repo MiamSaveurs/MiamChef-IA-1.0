@@ -15,7 +15,8 @@ import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
-import { getTrialStatus, startSubscription } from './services/storageService';
+import InAppMessageModal from './components/InAppMessageModal';
+import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen } from './services/storageService';
 import { AppView, RecipeMetrics } from './types';
 import { WifiOff } from 'lucide-react';
 
@@ -23,6 +24,15 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
   const [isTrialExpired, setIsTrialExpired] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // --- IN-APP MESSAGING STATE ---
+  const [messageModal, setMessageModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  }>({ isOpen: false, title: '', message: '' });
 
   // --- PERSISTENT RECIPE STATE ---
   const [persistentRecipe, setPersistentRecipe] = useState<{
@@ -63,6 +73,47 @@ const App: React.FC = () => {
 
     // VERIFICATION INITIALE
     checkSubscriptionStatus();
+
+    // --- CHECK IN-APP MESSAGES ---
+    const checkInAppMessages = () => {
+      const { startDate, isSubscribed } = getTrialStatus();
+      if (isSubscribed) return;
+
+      const now = Date.now();
+      const daysPassed = (now - startDate) / (1000 * 60 * 60 * 24);
+      const day = Math.floor(daysPassed);
+
+      // Day 1 Message (24h-48h)
+      if (day === 1 && !getInAppMessageSeen('day1')) {
+        setMessageModal({
+          isOpen: true,
+          title: "Bienvenue dans MiamChef !",
+          message: "En 2 minutes, génèrez votre premier menu personnalisé.\nTestez avec 3 ingrédients que vous avez déjà chez toi.",
+        });
+        setInAppMessageSeen('day1');
+      }
+      // Day 3 Message (72h-96h)
+      else if (day === 3 && !getInAppMessageSeen('day3')) {
+        setMessageModal({
+          isOpen: true,
+          title: "Astuce du Chef",
+          message: "Avez-vous testé plusieurs combinaisons ?\nEssaiez un régime différent ou ajoutez une contrainte (économique, de qualité, végétarien…).\nPlus vous testez, plus MiamChef devient votre assistant cuisine au quotidien.",
+        });
+        setInAppMessageSeen('day3');
+      }
+      // Day 6 Message (144h-168h)
+      else if (day === 6 && !getInAppMessageSeen('day6')) {
+        setMessageModal({
+          isOpen: true,
+          title: "Dernier jour d'essai !",
+          message: "Votre essai se termine demain.\nContinuez à planifier vos repas en 1 clic.\nChoisisez votre abonnement pour garder l’accès complet.",
+          actionLabel: "Voir les abonnements",
+          onAction: () => setCurrentView(AppView.SUBSCRIPTION)
+        });
+        setInAppMessageSeen('day6');
+      }
+    };
+    checkInAppMessages();
 
     // SÉCURITÉ : Vérification Périodique (toutes les 1h) et à chaque retour sur l'app
     // Pour s'assurer que si la période d'essai expire pendant que l'app est en fond, elle bloque au retour.
@@ -287,6 +338,16 @@ const App: React.FC = () => {
             timerTimeLeft={timerTimeLeft}
         />
       )}
+
+      {/* MODALE DE MESSAGES IN-APP */}
+      <InAppMessageModal
+        isOpen={messageModal.isOpen}
+        onClose={() => setMessageModal(prev => ({ ...prev, isOpen: false }))}
+        title={messageModal.title}
+        message={messageModal.message}
+        actionLabel={messageModal.actionLabel}
+        onAction={messageModal.onAction}
+      />
     </div>
   );
 };

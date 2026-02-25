@@ -41,6 +41,15 @@ export const startSubscription = (tier: 'monthly' | 'annual' | 'lifetime') => {
     localStorage.setItem('miamchef_subscription', tier);
 };
 
+// In-App Messaging Status
+export const getInAppMessageSeen = (messageId: string): boolean => {
+    return !!localStorage.getItem(`miamchef_msg_seen_${messageId}`);
+};
+
+export const setInAppMessageSeen = (messageId: string): void => {
+    localStorage.setItem(`miamchef_msg_seen_${messageId}`, 'true');
+};
+
 // Helper to generate random referral code
 const generateReferralCode = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No I, O, 1, 0 to avoid confusion
