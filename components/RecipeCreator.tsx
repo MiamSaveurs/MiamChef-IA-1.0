@@ -239,8 +239,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   }, [recipe, persistentSteps]);
 
   const handleGenerate = async () => {
-    if (mode === 'create' && !ingredients.trim()) return;
-    if (mode === 'search' && !searchQuery.trim()) return;
+    const input = mode === 'create' ? ingredients : searchQuery;
+    if (!input.trim()) {
+        // Au lieu de désactiver le bouton, on informe l'utilisateur s'il clique sans texte
+        alert(mode === 'create' ? "Veuillez entrer quelques ingrédients pour que MiamChef puisse créer votre recette." : "Veuillez entrer le nom d'un plat ou d'une envie.");
+        return;
+    }
     
     setStatus('loading');
     setPersistentState(null); 
@@ -248,6 +252,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     setIsAddedToCart(false);
     
     try {
+      console.log("Démarrage de la génération...", { mode, chefMode, ingredients: input });
       let result;
       if (mode === 'create') {
         result = await generateChefRecipe(
@@ -266,11 +271,21 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         result = await searchChefsRecipe(searchQuery, people, searchType);
       }
       
+      if (!result || !result.text) {
+          throw new Error("L'IA n'a pas retourné de contenu valide.");
+      }
+
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : 'Création Miam';
       
       const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}. Ingredients: ${mode === 'create' ? ingredients : searchQuery}`;
-      const img = await generateRecipeImage(title, contextString);
+      
+      let img = null;
+      try {
+          img = await generateRecipeImage(title, contextString);
+      } catch (imgError) {
+          console.warn("Image generation failed, continuing without image", imgError);
+      }
       
       setPersistentState({
           text: result.text,
@@ -286,8 +301,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       setStatus('success');
       
     } catch (e: any) {
-      console.error(e);
+      console.error("Erreur lors de la génération:", e);
       setStatus('error');
+      alert("Désolé, une erreur technique est survenue lors de la création de votre recette. Veuillez réessayer.");
     }
   };
 
@@ -850,7 +866,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                             <button 
                                 onClick={handleGenerate}
-                                disabled={status === 'loading' || (mode === 'create' ? !ingredients : !searchQuery)}
+                                disabled={status === 'loading'}
                                 className={`w-full py-5 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-bold text-sm tracking-widest uppercase ${themeShadow} hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none shadow-lg`}
                             >
                                 {status === 'loading' ? (

@@ -350,10 +350,10 @@ export const generateChefRecipe = async (
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: "gemini-3-flash-preview", 
-      contents: prompt,
+      model: "gemini-3.1-pro-preview", // Utilisation de Pro pour plus de fiabilité sur les schémas complexes
+      contents: [{ parts: [{ text: prompt }] }],
       config: {
-        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }, // On garde LOW pour la rapidité si Pro est utilisé
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
       },
@@ -393,7 +393,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: prompt,
+    contents: [{ parts: [{ text: prompt }] }],
     config: {
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
@@ -459,7 +459,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
 
     const response: GenerateContentResponse = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: prompt,
+        contents: [{ parts: [{ text: prompt }] }],
         config: {
             thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
             responseMimeType: "application/json",
