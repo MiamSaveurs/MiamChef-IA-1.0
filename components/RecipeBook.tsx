@@ -243,7 +243,6 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 components={{
                                     h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
                                     h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
-                                    h3: ({node, ...props}) => <h3 className="text-md font-bold text-white mt-6 mb-3" {...props} />,
                                     strong: ({node, ...props}) => <strong className="text-amber-400" {...props} />,
                                     li: ({node, ...props}) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>
                                 }}
