@@ -360,10 +360,9 @@ export const generateChefRecipe = async (
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: "gemini-3-flash-preview", // Retour à Flash pour éviter les restrictions de clé sur Pro
+      model: "gemini-3.1-pro-preview", 
       contents: { parts: [{ text: prompt }] },
       config: {
-        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
       },
@@ -402,10 +401,9 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.1-flash-preview",
     contents: { parts: [{ text: prompt }] },
     config: {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
     },
@@ -468,10 +466,9 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-3.1-flash-preview",
         contents: { parts: [{ text: prompt }] },
         config: {
-            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
             responseMimeType: "application/json",
             responseSchema: recipeSchema,
         },
@@ -592,7 +589,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-3.1-flash-preview',
     contents: { parts: [imagePart, textPart] },
   });
 
@@ -626,7 +623,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview", // Utilisation de Flash pour éviter les restrictions de clé
+    model: "gemini-3.1-flash-preview",
     contents: { parts: [{ text: prompt }] },
     config: {
       tools: [{ googleSearch: {} }],
@@ -686,10 +683,9 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview", // Utilisation de Flash pour éviter les restrictions de clé
+    model: "gemini-3.1-pro-preview", 
     contents: { parts: [{ text: prompt }] },
     config: {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
     },
