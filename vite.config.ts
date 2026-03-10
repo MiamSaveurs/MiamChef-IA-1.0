@@ -8,9 +8,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    // Cette section remplace "process.env.API_KEY" par la vraie valeur lors de la construction du site
+    // Cette section remplace "process.env.GEMINI_API_KEY" par la vraie valeur lors de la construction du site
     define: {
-      'process.env.API_KEY': JSON.stringify(env.API_KEY || process.env.API_KEY)
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || process.env.GEMINI_API_KEY)
     },
     build: {
       outDir: 'dist',

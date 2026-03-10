@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Type, GenerateContentResponse, ThinkingLevel } from "@google/genai";
 import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
 
@@ -218,7 +218,7 @@ export const generateChefRecipe = async (
   smartDevices: string[] = []
 ): Promise<GeneratedContent> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const today = new Date();
     const currentDate = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const currentSeason = getCurrentSeason(today);
@@ -353,7 +353,7 @@ export const generateChefRecipe = async (
       model: "gemini-3-flash-preview", 
       contents: prompt,
       config: {
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
       },
@@ -379,7 +379,7 @@ export const generateChefRecipe = async (
 
 // Searches for a chef's recipe based on query
 export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const userProfileContext = getUserProfileContext();
   
   const prompt = `Trouvez une recette ${type === 'authentic' ? 'gourmande et savoureuse' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
@@ -395,7 +395,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
-      thinkingConfig: { thinkingBudget: 0 },
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
     },
@@ -417,7 +417,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
 
 // --- NOUVEAU : AJUSTEMENT INTELLIGENT DE RECETTE ---
 export const adjustRecipe = async (originalRecipeText: string, adjustmentType: string): Promise<GeneratedContent> => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const userProfileContext = getUserProfileContext();
     
     // Définition de la stratégie d'ajustement
@@ -461,7 +461,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
-            thinkingConfig: { thinkingBudget: 0 },
+            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
             responseMimeType: "application/json",
             responseSchema: recipeSchema,
         },
@@ -483,7 +483,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
 
 // Generates a high-quality food image
 export const generateRecipeImage = async (title: string, context: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   
   const gdprSafePrompt = `
   Hyper-realistic professional food photography of: ${title}.
@@ -509,7 +509,7 @@ export const generateRecipeImage = async (title: string, context: string): Promi
 export const generateRecipeVideo = async (title: string, style: string): Promise<string> => {
   // IMPORTANT: For Veo, we re-instantiate with the current key environment,
   // but rely on the calling component to have performed the `window.aistudio` check.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const videoPrompt = `
   Cinematic professional food b-roll video of: ${title}.
@@ -538,7 +538,7 @@ export const generateRecipeVideo = async (title: string, style: string): Promise
   if (!downloadLink) throw new Error("Video generation failed");
 
   // Fetch the actual video bytes using the API Key
-  const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+  const response = await fetch(`${downloadLink}&key=${process.env.GEMINI_API_KEY}`);
   const blob = await response.blob();
   
   return URL.createObjectURL(blob);
@@ -546,7 +546,7 @@ export const generateRecipeVideo = async (title: string, style: string): Promise
 
 // Scans fridge image and suggests a recipe
 export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const userProfileContext = getUserProfileContext();
   
   const imagePart = {
@@ -601,7 +601,7 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
 
 // Gets sommelier advice with search grounding
 export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): Promise<{ text: string, groundingChunks?: GroundingChunk[] }> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const userProfileContext = getUserProfileContext();
 
   const prompt = `Sommelier Expert. ${target === 'b2b' ? 'Conseil Pro.' : 'Conseil Particulier.'} 
@@ -613,7 +613,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
+    model: "gemini-3.1-pro-preview",
     contents: prompt,
     config: {
       tools: [{ googleSearch: {} }],
@@ -636,7 +636,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
 
 // Edits a dish photo based on a prompt
 export const editDishPhoto = async (base64Image: string, prompt: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
     contents: {
@@ -657,7 +657,7 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
 
 // Generates a full weekly menu
 export const generateWeeklyMenu = async (dietary: string, people: number, ingredients: string = ''): Promise<WeeklyPlan> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const userProfileContext = getUserProfileContext();
   const strictDietaryRules = getDietaryConstraints(dietary);
 
@@ -673,10 +673,10 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
+    model: "gemini-3.1-pro-preview",
     contents: prompt,
     config: {
-      thinkingConfig: { thinkingBudget: 4096 },
+      thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH },
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
     },
