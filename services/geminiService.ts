@@ -97,7 +97,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur."
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE EN MARKDOWN. Utilisez `#` uniquement pour le titre principal, `##` pour les sections principales (ex: `## Ingrédients`, `## Préparation`), et du texte normal pour le contenu et les paragraphes. Ne mettez surtout pas tout en titre."
     },
     metrics: {
       type: Type.OBJECT,

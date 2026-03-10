@@ -1138,6 +1138,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                             <div className="h-[1px] flex-1 bg-white/10"></div>
                                         </div>
                                     ),
+                                    h3: ({node, ...props}) => <h3 className="text-md font-bold text-white mt-6 mb-3" {...props} />,
                                     strong: ({node, ...props}) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
                                     ul: ({node, ...props}) => <ul className="space-y-4 my-6" {...props} />,
                                     li: ({node, ...props}) => (

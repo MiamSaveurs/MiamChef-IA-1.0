@@ -234,6 +234,7 @@ const FridgeScanner: React.FC = () => {
                                 components={{
                                     h1: ({node, ...props}) => <h3 className="text-xl font-display text-blue-200 mb-4 mt-2" {...props} />,
                                     h2: ({node, ...props}) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-blue-900/30 pb-2" {...props} />,
+                                    h3: ({node, ...props}) => <h5 className="text-md font-bold text-blue-300 mt-4 mb-2" {...props} />,
                                     strong: ({node, ...props}) => <strong className="text-blue-400 font-bold" {...props} />,
                                     ul: ({node, ...props}) => <ul className="space-y-2 my-4" {...props} />,
                                     li: ({node, ...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
