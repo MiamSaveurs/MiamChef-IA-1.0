@@ -303,7 +303,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     } catch (e: any) {
       console.error("Erreur lors de la génération:", e);
       setStatus('error');
-      alert("Désolé, une erreur technique est survenue lors de la création de votre recette. Veuillez réessayer.");
+      const errorMsg = e.message || "";
+      if (errorMsg.includes("Clé API manquante")) {
+          alert("La clé API Gemini est manquante. Veuillez la configurer dans les paramètres de l'application (bouton Settings en haut à droite).");
+      } else {
+          alert("Désolé, une erreur technique est survenue lors de la création de votre recette. Veuillez vérifier votre connexion ou la configuration de votre clé API.");
+      }
     }
   };
 
