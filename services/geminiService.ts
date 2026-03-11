@@ -206,10 +206,13 @@ const weeklyPlanSchema = {
 
 // Helper to get the AI instance with the current API key
 const getAI = () => {
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Dans AI Studio, on utilise process.env.GEMINI_API_KEY
+    // Sur Vercel/Vite, on peut avoir besoin de import.meta.env.VITE_GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+    
     if (!apiKey) {
-        console.error("ERREUR : La clé API Gemini (GEMINI_API_KEY) est manquante dans l'environnement.");
-        throw new Error("Clé API manquante. Veuillez configurer GEMINI_API_KEY.");
+        console.error("ERREUR : La clé API Gemini est manquante.");
+        throw new Error("Clé API manquante. Veuillez configurer GEMINI_API_KEY dans les Secrets (AI Studio) ou VITE_GEMINI_API_KEY (Vercel).");
     }
     return new GoogleGenAI({ apiKey });
 };
@@ -407,7 +410,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3.1-flash-preview",
+    model: "gemini-3-flash-preview",
     contents: { parts: [{ text: prompt }] },
     config: {
       responseMimeType: "application/json",
@@ -475,7 +478,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-        model: "gemini-3.1-flash-preview",
+        model: "gemini-3-flash-preview",
         contents: { parts: [{ text: prompt }] },
         config: {
             responseMimeType: "application/json",
@@ -598,7 +601,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: 'gemini-3.1-flash-preview',
+    model: 'gemini-3-flash-preview',
     contents: { parts: [imagePart, textPart] },
   });
 
