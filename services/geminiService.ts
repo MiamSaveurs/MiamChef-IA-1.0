@@ -363,7 +363,8 @@ export const generateChefRecipe = async (
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système.
-      2. Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+      2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients. Chaque ingrédient doit être sur sa propre ligne.
+      3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Répondre UNIQUEMENT en JSON valide respectant le schéma fourni.
@@ -417,7 +418,8 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire.
-  2. Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+  2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients. Chaque ingrédient doit être sur sa propre ligne.
+  3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -521,15 +523,21 @@ export const generateRecipeImage = async (title: string, context: string): Promi
   const ai = getAI();
   
   const gdprSafePrompt = `
-  Hyper-realistic professional food photography of: ${title}.
+  Ultra-realistic 1K professional food photography of: ${title}.
   Context/Style: ${context}.
+  High resolution, professional studio lighting, macro shot, appetizing, 1K quality.
   No text. No faces.
   `;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-3.1-flash-image-preview',
     contents: { parts: [{ text: gdprSafePrompt }] },
-    config: { imageConfig: { aspectRatio: "1:1" } },
+    config: { 
+      imageConfig: { 
+        aspectRatio: "1:1",
+        imageSize: "1K"
+      } 
+    },
   });
 
   for (const part of response.candidates[0].content.parts) {
@@ -615,7 +623,8 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
     Format Markdown. 
     1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat).
-    2. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
+    2. Utilisez des listes à puces (avec des tirets '-') pour les ingrédients. Chaque ingrédient doit être sur sa propre ligne.
+    3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };
 

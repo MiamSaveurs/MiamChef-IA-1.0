@@ -37,6 +37,22 @@ const FridgeScanner: React.FC = () => {
 
   const handleScan = async () => {
     if (!base64Image) return;
+
+    try {
+      // Check for API key for high quality images (Gemini 3.1 Flash Image)
+      // @ts-ignore
+      if (window.aistudio && window.aistudio.hasSelectedApiKey) {
+          // @ts-ignore
+          const hasKey = await window.aistudio.hasSelectedApiKey();
+          if (!hasKey) {
+               // @ts-ignore
+               await window.aistudio.openSelectKey();
+          }
+      }
+    } catch (e) {
+      console.warn("AI Studio key check failed", e);
+    }
+
     setStatus('loading');
     setGeneratedImage(null);
     setIsSaved(false);
