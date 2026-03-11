@@ -366,11 +366,12 @@ export const generateChefRecipe = async (
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: "gemini-3.1-pro-preview", 
+      model: "gemini-3-flash-preview", 
       contents: { parts: [{ text: prompt }] },
       config: {
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
       },
     });
 
@@ -397,7 +398,9 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   const ai = getAI();
   const userProfileContext = getUserProfileContext();
   
-  const prompt = `Trouvez une recette ${type === 'authentic' ? 'gourmande et savoureuse' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
+  const prompt = `Trouvez une recette ${type === 'authentic' ? 'strictement authentique, fidèle à la recette originale et traditionnelle' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
+  
+  ${type === 'authentic' ? "IMPORTANT : Respectez scrupuleusement les ingrédients et les techniques traditionnelles de la recette originale. Pas de raccourcis modernes si cela dénature le plat." : ""}
   
   ${userProfileContext}
   
@@ -415,6 +418,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     },
   });
 
@@ -483,6 +487,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
         config: {
             responseMimeType: "application/json",
             responseSchema: recipeSchema,
+            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
         },
     });
 
@@ -603,6 +608,9 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: { parts: [imagePart, textPart] },
+    config: {
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
+    }
   });
 
   return response.text || "Je n'ai pas pu analyser l'image.";
