@@ -33,7 +33,10 @@ const getUserProfileContext = (): string => {
         context += `⛔ À ÉVITER : ${profile.dislikes}.\n`;
     }
     
-    // Equipment is handled in the main function now
+    // Equipment
+    if (profile.equipment.trim()) {
+        context += `MATÉRIEL DISPONIBLE : ${profile.equipment}\n`;
+    }
     
     // Global Diet (Combined with input diet usually, but good to have as fallback)
     context += `RÉGIME GLOBAL : ${profile.diet}\n`;
@@ -354,7 +357,8 @@ export const generateChefRecipe = async (
       1. ${costPrompt}
       2. ${difficultyPrompt}
       3. ${technicalRules}
-      4. ${GDPR_COMPLIANCE_PROTOCOL}
+      4. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Si un ustensile spécifique est indispensable, listez-le clairement dans le champ 'utensils'.
+      5. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
@@ -404,7 +408,9 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   
   ${userProfileContext}
   
-  ${GDPR_COMPLIANCE_PROTOCOL}
+  === CONTRAINTES ===
+  1. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
+  2. ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
@@ -463,7 +469,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     const prompt = `
     TU ES UN EXPERT EN REVISITE CULINAIRE.
     ${userProfileContext}
-    TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé.
+    TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé et en l'adaptant au MATÉRIEL DISPONIBLE de l'utilisateur.
     
     === RECETTE D'ORIGINE ===
     ${originalRecipeText}
@@ -572,7 +578,7 @@ export const generateRecipeVideo = async (title: string, style: string): Promise
 };
 
 // Scans fridge image and suggests a recipe
-export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<string> => {
+export const scanFridgeAndSuggest = async (base64Image: string, dietary: string = 'Classique (Aucun)'): Promise<GeneratedContent> => {
   const ai = getAI();
   const userProfileContext = getUserProfileContext();
   
@@ -600,7 +606,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     Ignorer les ingrédients interdits.
     
     ETAPE 3 : CRÉATION
-    Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé. 
+    Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé et au MATÉRIEL DISPONIBLE de l'utilisateur. 
     Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };
@@ -609,11 +615,24 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     model: 'gemini-3-flash-preview',
     contents: { parts: [imagePart, textPart] },
     config: {
+      responseMimeType: "application/json",
+      responseSchema: recipeSchema,
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     }
   });
 
-  return response.text || "Je n'ai pas pu analyser l'image.";
+  const data = cleanAndParseJSON(response.text || "{}");
+  return {
+    text: sanitizeText(data.markdownContent) || "Je n'ai pas pu analyser l'image.",
+    metrics: data.metrics,
+    utensils: data.utensils,
+    ingredients: data.ingredients, 
+    ingredientsWithQuantities: data.ingredientsWithQuantities,
+    steps: data.steps, 
+    storageAdvice: sanitizeText(data.storageAdvice),
+    seoTitle: sanitizeText(data.seoTitle),
+    seoDescription: sanitizeText(data.seoDescription)
+  };
 };
 
 // Converts a browser File to base64 string

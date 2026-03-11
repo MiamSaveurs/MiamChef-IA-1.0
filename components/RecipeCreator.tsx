@@ -1072,6 +1072,24 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     <div className="grid md:grid-cols-[1fr_2fr] gap-8">
                         
                         <div className="order-2 md:order-1">
+                            {utensilsList && utensilsList.length > 0 && (
+                                <div className="bg-[#1a1a1a] rounded-2xl border-l-4 overflow-hidden shadow-lg mb-6" style={{ borderLeftColor: '#3b82f6' }}>
+                                    <div className="p-5 border-b border-white/5 bg-white/5">
+                                        <h3 className="font-display text-lg text-white flex items-center gap-2">
+                                            <Utensils size={18} className="text-white/60" />
+                                            Matériel Nécessaire
+                                        </h3>
+                                    </div>
+                                    <div className="p-4 flex flex-wrap gap-2">
+                                        {utensilsList.map((utensil, idx) => (
+                                            <span key={idx} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] font-bold text-gray-300 uppercase tracking-wide">
+                                                {utensil}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {ingredientsList && ingredientsList.length > 0 && (
                                 <div className="bg-[#1a1a1a] rounded-2xl border-l-4 overflow-hidden shadow-lg sticky top-6" style={{ borderLeftColor: themeColor }}>
                                     <div className="p-5 border-b border-white/5 bg-white/5">

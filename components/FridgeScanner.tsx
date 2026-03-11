@@ -2,15 +2,15 @@
 import React, { useState, useRef } from 'react';
 import { scanFridgeAndSuggest, fileToGenerativePart, generateRecipeImage } from '../services/geminiService';
 import { saveRecipeToBook } from '../services/storageService';
-import { LoadingState } from '../types';
-import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon, ChevronRight, Camera, Leaf, ChevronDown } from 'lucide-react';
+import { LoadingState, GeneratedContent } from '../types';
+import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon, ChevronRight, Camera, Leaf, ChevronDown, Utensils } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { PremiumCamera, PremiumChefHat } from './Icons';
 
 const FridgeScanner: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState<GeneratedContent | null>(null);
   const [status, setStatus] = useState<LoadingState>('idle');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -47,14 +47,12 @@ const FridgeScanner: React.FC = () => {
       setStatus('success');
 
       // Attempt to generate image automatically based on title if possible
-      const titleMatch = response.match(/^#\s+(.+)$/m);
-      if (titleMatch) {
-          try {
-              const img = await generateRecipeImage(titleMatch[1], `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
-              setGeneratedImage(img);
-          } catch(e) {
-              console.error("Failed to generate scan image");
-          }
+      const title = response.seoTitle || "Recette Anti-Gaspi";
+      try {
+          const img = await generateRecipeImage(title, `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
+          setGeneratedImage(img);
+      } catch(e) {
+          console.error("Failed to generate scan image");
       }
 
     } catch (e) {
@@ -64,16 +62,15 @@ const FridgeScanner: React.FC = () => {
 
   const handleSaveToBook = async () => {
     if (!result) return;
-    const titleMatch = result.match(/^#\s+(.+)$/m);
-    const title = titleMatch ? titleMatch[1] : "Recette Anti-Gaspi";
+    const title = result.seoTitle || "Recette Anti-Gaspi";
 
     await saveRecipeToBook({
       id: Date.now().toString(),
       title: title,
-      markdownContent: result,
+      markdownContent: result.text,
       date: new Date().toLocaleDateString('fr-FR'),
       image: generatedImage || undefined,
-      utensils: [], 
+      utensils: result.utensils || [], 
     });
     
     setIsSaved(true);
@@ -212,6 +209,21 @@ const FridgeScanner: React.FC = () => {
 
                     {/* Content */}
                     <div className="p-8">
+                         {result.utensils && result.utensils.length > 0 && (
+                            <div className="mb-8 bg-blue-500/5 rounded-2xl border border-blue-500/20 p-4">
+                                <h4 className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">
+                                    <Utensils size={14} /> Matériel Nécessaire
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {result.utensils.map((u, i) => (
+                                        <span key={i} className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-200 uppercase">
+                                            {u}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                          {generatedImage && (
                             <div className="w-full h-56 rounded-2xl overflow-hidden mb-8 border border-white/10 shadow-2xl relative group">
                                 <img src={generatedImage} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt="Plat généré" />
@@ -239,7 +251,7 @@ const FridgeScanner: React.FC = () => {
                                     li: ({node, ...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
                                 }}
                             >
-                                {result}
+                                {result.text}
                             </ReactMarkdown>
                          </div>
                     </div>
