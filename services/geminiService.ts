@@ -97,7 +97,7 @@ const recipeSchema = {
   properties: {
     markdownContent: { 
         type: Type.STRING,
-        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Commencez IMPÉRATIVEMENT par '# Nom de la Recette', puis Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur."
+        description: "LA RECETTE COMPLÈTE ET RÉDIGÉE : Titre, Intro, Liste des ingrédients (avec quantités), Instructions détaillées, Conclusion. C'est ce texte qui s'affiche à l'utilisateur."
     },
     metrics: {
       type: Type.OBJECT,
@@ -357,7 +357,7 @@ export const generateChefRecipe = async (
       4. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
-      Pour le champ 'markdownContent', commencez TOUJOURS par '# Nom de la Recette'. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+      Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Répondre UNIQUEMENT en JSON valide respectant le schéma fourni.
@@ -404,7 +404,7 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
-  Pour le champ 'markdownContent', commencez TOUJOURS par '# Nom de la Recette'. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+  Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -471,7 +471,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     ${specificInstruction}
     
     === FORMAT DE TEXTE (CRITIQUE) ===
-    Pour le champ 'markdownContent', commencez TOUJOURS par '# Nom de la Recette'. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+    Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${BANNED_WORDS_INSTRUCTION}
@@ -596,7 +596,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     
     ETAPE 3 : CRÉATION
     Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé. 
-    Format Markdown. Commencez TOUJOURS par '# Nom de la Recette'. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
+    Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };
 
