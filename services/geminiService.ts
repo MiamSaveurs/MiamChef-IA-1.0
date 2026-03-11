@@ -358,7 +358,8 @@ export const generateChefRecipe = async (
       2. ${difficultyPrompt}
       3. ${technicalRules}
       4. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Si un ustensile spécifique est indispensable, listez-le clairement dans le champ 'utensils'.
-      5. ${GDPR_COMPLIANCE_PROTOCOL}
+      5. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
+      6. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
@@ -410,7 +411,8 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   
   === CONTRAINTES ===
   1. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
-  2. ${GDPR_COMPLIANCE_PROTOCOL}
+  2. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
+  3. ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
@@ -479,6 +481,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     
     === INSTRUCTION ===
     ${specificInstruction}
+    CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
     
     === FORMAT DE TEXTE (CRITIQUE) ===
     Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
@@ -607,6 +610,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     
     ETAPE 3 : CRÉATION
     Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé et au MATÉRIEL DISPONIBLE de l'utilisateur. 
+    CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
     Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };

@@ -1171,6 +1171,17 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 </ReactMarkdown>
                             </div>
 
+                            {storageAdvice && (
+                                <div className="mt-8 p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 shadow-lg">
+                                    <h3 className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">
+                                        <Snowflake size={14} /> Conseils de Conservation
+                                    </h3>
+                                    <p className="text-sm text-gray-300 font-light leading-relaxed italic">
+                                        {storageAdvice}
+                                    </p>
+                                </div>
+                            )}
+
                             <button 
                                 onClick={handleSaveToBook} 
                                 disabled={isSaved}
