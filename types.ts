@@ -61,6 +61,7 @@ export interface SavedRecipe {
   storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
+  servings?: number;
 }
 
 export interface ShoppingItem {

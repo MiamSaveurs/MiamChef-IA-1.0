@@ -76,6 +76,7 @@ interface RecipeCreatorProps {
         steps?: string[];
         image: string | null;
         storageAdvice?: string;
+        servings?: number;
     } | null;
     setPersistentState: (data: any) => void;
 }
@@ -295,7 +296,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           ingredientsWithQuantities: result.ingredientsWithQuantities || [],
           steps: result.steps || [], 
           storageAdvice: result.storageAdvice || '',
-          image: img
+          image: img,
+          servings: people
       });
 
       setStatus('success');
@@ -385,7 +387,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       ingredients: ingredientsList,
       ingredientsWithQuantities: ingredientsWithQuantities,
       steps: persistentSteps,
-      storageAdvice: storageAdvice
+      storageAdvice: storageAdvice,
+      servings: persistentState?.servings || people
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);

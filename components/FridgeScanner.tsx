@@ -71,6 +71,8 @@ const FridgeScanner: React.FC = () => {
       date: new Date().toLocaleDateString('fr-FR'),
       image: generatedImage || undefined,
       utensils: result.utensils || [], 
+      metrics: result.metrics,
+      servings: result.metrics?.people
     });
     
     setIsSaved(true);

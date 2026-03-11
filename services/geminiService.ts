@@ -362,7 +362,8 @@ export const generateChefRecipe = async (
       6. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
-      Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+      1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système.
+      2. Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
       Répondre UNIQUEMENT en JSON valide respectant le schéma fourni.
@@ -415,7 +416,8 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   3. ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
-  Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
+  1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire.
+  2. Pour le champ 'markdownContent', n'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -611,7 +613,9 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ETAPE 3 : CRÉATION
     Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé et au MATÉRIEL DISPONIBLE de l'utilisateur. 
     CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
-    Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
+    Format Markdown. 
+    1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat).
+    2. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };
 

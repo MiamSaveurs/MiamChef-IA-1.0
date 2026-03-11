@@ -182,8 +182,13 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                             <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
                                                 <Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal
                                             </span>
-                                            <div className="scale-110">
+                                            <div className="scale-110 flex items-center gap-2">
                                                 <NutriBadge score={selectedRecipe.metrics.nutriScore} />
+                                                {selectedRecipe.servings && (
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                                                        {selectedRecipe.servings} Pers.
+                                                    </span>
+                                                )}
                                             </div>
                                         </>
                                     )}
@@ -344,7 +349,14 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                             {recipe.metrics && (
                                                 <div className="flex items-center gap-3">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
-                                                    <NutriBadge score={recipe.metrics.nutriScore} />
+                                                    <div className="flex items-center gap-1.5">
+                                                        <NutriBadge score={recipe.metrics.nutriScore} />
+                                                        {recipe.servings && (
+                                                            <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+                                                                {recipe.servings}P
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
