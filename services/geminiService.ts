@@ -5,7 +5,7 @@ import { getUserProfile } from "./storageService";
 
 // Instructions for the AI to avoid certain words
 // AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie"
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite' ou 'Chef' (sauf pour dire 'MiamChef'). Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur.";
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite' ou 'Chef' (sauf pour dire 'MiamChef'). Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur. Utilisez IMPÉRATIVEMENT le vouvoiement (VOUVOYEZ l'utilisateur) dans toutes vos réponses.";
 
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
