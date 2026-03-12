@@ -155,12 +155,30 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
             {/* Header / Navigation */}
             <div className="mb-8 flex justify-between items-center">
                 {selectedRecipe ? (
-                     <button 
-                        onClick={() => setSelectedRecipe(null)}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md"
-                    >
-                        <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Retour</span>
-                    </button>
+                    <>
+                        <button 
+                            onClick={() => setSelectedRecipe(null)}
+                            className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-md"
+                        >
+                            <ChevronLeft size={16} /> <span className="text-xs font-bold uppercase tracking-wider">Retour</span>
+                        </button>
+                        <div className="flex gap-2">
+                            <button 
+                                onClick={(e) => handleShare(e, selectedRecipe)}
+                                className="p-2.5 bg-white/10 backdrop-blur-md text-white hover:bg-amber-500/80 transition-colors rounded-full border border-white/10"
+                                title="Partager la recette"
+                            >
+                                <Share2 size={18} />
+                            </button>
+                            <button 
+                                onClick={(e) => handleDelete(e, selectedRecipe.id)}
+                                className="p-2.5 bg-white/10 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
+                                title="Supprimer la recette"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    </>
                 ) : (
                     // Si on est en mode expiré, on affiche un bouton "Retour aux offres" spécial
                     isTrialExpired ? (
@@ -210,24 +228,6 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     <PremiumChefHat size={48} className="opacity-20 text-white" />
                                 </div>
                             )}
-                            
-                            {/* Boutons Action */}
-                            <div className="absolute top-4 right-4 flex gap-2">
-                                <button 
-                                    onClick={(e) => handleShare(e, selectedRecipe)}
-                                    className="p-3 bg-black/40 backdrop-blur-md text-white hover:bg-amber-500/80 transition-colors rounded-full border border-white/10"
-                                    title="Partager la recette"
-                                >
-                                    <Share2 size={20} />
-                                </button>
-                                <button 
-                                    onClick={(e) => handleDelete(e, selectedRecipe.id)}
-                                    className="p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
-                                    title="Supprimer la recette"
-                                >
-                                    <Trash2 size={20} />
-                                </button>
-                            </div>
                         </div>
 
                         <div className="p-8 relative">
