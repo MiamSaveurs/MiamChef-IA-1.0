@@ -283,7 +283,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             localSmartDevices 
         );
       } else {
-        result = await searchChefsRecipe(searchQuery, people, recipeCost);
+        result = await searchChefsRecipe(searchQuery, people, recipeCost, difficulty);
       }
       
       if (!result || !result.text) {

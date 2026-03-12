@@ -383,8 +383,10 @@ export const generateChefRecipe = async (
       ${BANNED_WORDS_INSTRUCTION}
     `;
 
+    const modelName = (recipeCost === 'authentic' || difficultyLevel === 'expert') ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
+
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: "gemini-3-flash-preview", 
+      model: modelName, 
       contents: { parts: [{ text: prompt }] },
       config: {
         responseMimeType: "application/json",
@@ -411,27 +413,41 @@ export const generateChefRecipe = async (
 };
 
 // Searches for a chef's recipe based on query
-export const searchChefsRecipe = async (query: string, people: number, type: 'economical' | 'authentic'): Promise<GeneratedContent> => {
+export const searchChefsRecipe = async (
+  query: string, 
+  people: number, 
+  type: 'economical' | 'authentic',
+  difficulty: 'beginner' | 'intermediate' | 'expert' = 'intermediate'
+): Promise<GeneratedContent> => {
   const ai = getAI();
   const userProfileContext = getUserProfileContext();
   
+  const difficultyPrompt = difficulty === 'beginner' 
+    ? "NIVEAU : DÉBUTANT. Recette simple." 
+    : difficulty === 'expert' 
+      ? "NIVEAU : EXPERT. Techniques avancées, aucune simplification." 
+      : "NIVEAU : INTERMÉDIAIRE. Équilibre technique.";
+
   const prompt = `🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
-  IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" SI LE TYPE EST "AUTHENTIQUE".
+  IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" OU "SIMPLIFIÉE" SI LE TYPE EST "AUTHENTIQUE".
+  IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "DÉBUTANT" SI LE NIVEAU EST "INTERMÉDIAIRE" OU "EXPERT".
   NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
 
   TA MISSION : Trouver une recette qui respecte PARFAITEMENT les critères suivants :
-  - TYPE : ${type === 'authentic' ? 'STRICTEMENT AUTHENTIQUE ET GASTRONOMIQUE (fidèle à la tradition, ingrédients de haute qualité, aucune simplification)' : 'ÉCONOMIQUE ET MALIGNE (petit budget, ingrédients accessibles)'}
+  - TYPE : ${type === 'authentic' ? 'STRICTEMENT AUTHENTIQUE ET GASTRONOMIQUE (fidèle à la tradition, ingrédients de haute qualité, temps de cuisson réels, aucune simplification)' : 'ÉCONOMIQUE ET MALIGNE (petit budget, ingrédients accessibles)'}
+  - DIFFICULTÉ : ${difficultyPrompt}
   - PLAT : "${query}"
   - NOMBRE DE PERSONNES : ${people}
   
   ${userProfileContext}
   
   === CONTRAINTES CRITIQUES ===
-  1. RESPECT DU TYPE : Si le type est 'authentic', la recette DOIT être de haut niveau, sans compromis sur le prix des ingrédients. Si le type est 'economical', proposez des astuces pour réduire le coût.
-  2. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
-  3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
-  4. RÉGIME : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette impérativement.
-  5. ${GDPR_COMPLIANCE_PROTOCOL}
+  1. RESPECT DU TYPE : Si le type est 'authentic', la recette DOIT être de haut niveau, sans compromis sur le prix des ingrédients ni sur le temps de préparation. Pour une Bolognaise par exemple, cela implique un mijotage long, du vin, du lait, etc.
+  2. RESPECT DU NIVEAU : Si le niveau est 'expert' ou 'intermediate', utilise les termes techniques appropriés.
+  3. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
+  4. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
+  5. RÉGIME : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette impérativement.
+  6. ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette trouvée.
@@ -440,8 +456,11 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
 
   ${BANNED_WORDS_INSTRUCTION}`;
 
+  // Utilisation de Pro pour les requêtes de qualité ou expertes pour garantir le respect des consignes complexes
+  const modelName = (type === 'authentic' || difficulty === 'expert') ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
+
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: modelName,
     contents: { parts: [{ text: prompt }] },
     config: {
       responseMimeType: "application/json",
