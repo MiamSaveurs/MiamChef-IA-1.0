@@ -2,15 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X, Lock } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X, Lock, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
+import InAppMessageModal from './InAppMessageModal';
 
 const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<SavedRecipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalConfig, setModalConfig] = useState<{ isOpen: boolean, title: string, message: string, actionLabel?: string, onAction?: () => void } | null>(null);
 
   // Thème Orange/Ambre
   const themeColor = '#f59e0b';
@@ -28,15 +30,65 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('Voulez-vous vraiment supprimer cette recette ?')) {
-      try {
-        await deleteRecipeFromBook(id);
-        setRecipes(prev => prev.filter(r => r.id !== id));
-        if (selectedRecipe?.id === id) setSelectedRecipe(null);
-      } catch (err) {
-        console.error("Erreur lors de la suppression:", err);
-        alert("Impossible de supprimer la recette.");
+    setModalConfig({
+      isOpen: true,
+      title: "Supprimer la recette",
+      message: "Voulez-vous vraiment supprimer cette recette de votre carnet ?",
+      actionLabel: "Supprimer",
+      onAction: async () => {
+        try {
+          await deleteRecipeFromBook(id);
+          setRecipes(prev => prev.filter(r => r.id !== id));
+          if (selectedRecipe?.id === id) setSelectedRecipe(null);
+        } catch (err) {
+          console.error("Erreur lors de la suppression:", err);
+          setModalConfig({
+            isOpen: true,
+            title: "Erreur",
+            message: "Impossible de supprimer la recette."
+          });
+        }
       }
+    });
+  };
+
+  const handleShare = async (e: React.MouseEvent, recipe: SavedRecipe) => {
+    e.stopPropagation();
+    
+    // Formatage de la recette pour le partage
+    const ingredients = recipe.ingredientsWithQuantities?.join('\n- ') || recipe.ingredients?.join('\n- ') || '';
+    const shareText = `🍳 Découvrez cette recette sur MiamChef : ${recipe.title}\n\n📝 Ingrédients :\n- ${ingredients}\n\n📖 Préparation :\n${recipe.markdownContent.replace(/#+ /g, '')}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: recipe.title,
+          text: `Découvrez cette recette sur MiamChef : ${recipe.title}`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        // Si l'utilisateur annule ou si ça échoue, on tente le presse-papier
+        copyToClipboard(shareText);
+      }
+    } else {
+      copyToClipboard(shareText);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setModalConfig({
+        isOpen: true,
+        title: "Recette Partagée !",
+        message: "La recette complète a été copiée dans votre presse-papier. Vous pouvez maintenant la coller où vous le souhaitez !"
+      });
+    } catch (err) {
+      setModalConfig({
+        isOpen: true,
+        title: "Oups",
+        message: "Impossible de copier la recette automatiquement."
+      });
     }
   };
 
@@ -159,13 +211,23 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 </div>
                             )}
                             
-                            {/* Bouton Supprimer */}
-                            <button 
-                                onClick={(e) => handleDelete(e, selectedRecipe.id)}
-                                className="absolute top-4 right-4 p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
-                            >
-                                <Trash2 size={20} />
-                            </button>
+                            {/* Boutons Action */}
+                            <div className="absolute top-4 right-4 flex gap-2">
+                                <button 
+                                    onClick={(e) => handleShare(e, selectedRecipe)}
+                                    className="p-3 bg-black/40 backdrop-blur-md text-white hover:bg-amber-500/80 transition-colors rounded-full border border-white/10"
+                                    title="Partager la recette"
+                                >
+                                    <Share2 size={20} />
+                                </button>
+                                <button 
+                                    onClick={(e) => handleDelete(e, selectedRecipe.id)}
+                                    className="p-3 bg-black/40 backdrop-blur-md text-white hover:bg-red-500/80 transition-colors rounded-full border border-white/10"
+                                    title="Supprimer la recette"
+                                >
+                                    <Trash2 size={20} />
+                                </button>
+                            </div>
                         </div>
 
                         <div className="p-8 relative">
@@ -330,13 +392,23 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         {/* Overlay Gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent opacity-80"></div>
                                         
-                                        {/* Bouton Supprimer - Sur l'image (discret) */}
-                                        <button 
-                                            onClick={(e) => handleDelete(e, recipe.id)}
-                                            className="absolute top-3 left-3 p-2 bg-black/60 text-gray-400 hover:text-red-400 rounded-full backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100 border border-white/10"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
+                                        {/* Boutons Actions - Sur l'image (discret) */}
+                                        <div className="absolute top-3 left-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button 
+                                                onClick={(e) => handleShare(e, recipe)}
+                                                className="p-2 bg-black/60 text-gray-400 hover:text-amber-400 rounded-full backdrop-blur-md transition-colors border border-white/10"
+                                                title="Partager"
+                                            >
+                                                <Share2 size={16} />
+                                            </button>
+                                            <button 
+                                                onClick={(e) => handleDelete(e, recipe.id)}
+                                                className="p-2 bg-black/60 text-gray-400 hover:text-red-400 rounded-full backdrop-blur-md transition-colors border border-white/10"
+                                                title="Supprimer"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10">
@@ -368,6 +440,17 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                 </>
             )}
         </div>
+
+        {modalConfig && (
+            <InAppMessageModal 
+                isOpen={modalConfig.isOpen}
+                onClose={() => setModalConfig(null)}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                actionLabel={modalConfig.actionLabel}
+                onAction={modalConfig.onAction}
+            />
+        )}
     </div>
   );
 };
