@@ -94,7 +94,6 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [cuisineStyle, setCuisineStyle] = useState('Tradition Française'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState<'economical' | 'authentic'>('economical');
   const [people, setPeople] = useState(2);
   
   // Local state only for temporary interactions (selection, loading, saving feedback)
@@ -284,7 +283,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             localSmartDevices 
         );
       } else {
-        result = await searchChefsRecipe(searchQuery, people, searchType);
+        result = await searchChefsRecipe(searchQuery, people, recipeCost);
       }
       
       if (!result || !result.text) {

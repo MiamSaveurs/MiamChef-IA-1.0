@@ -339,7 +339,10 @@ export const generateChefRecipe = async (
 
     // CONSTRUCTION DU PROMPT FINAL
     const prompt = `
-      🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
+      🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
+      IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" SI LE BUDGET EST "QUALITÉ".
+      IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "DÉBUTANT" SI LE NIVEAU EST "AVANCÉ".
+      NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
 
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
@@ -352,13 +355,16 @@ export const generateChefRecipe = async (
       === LA MISSION ===
       Créer une recette pour la demande : "${userConfig}"
       
-      === PARAMÈTRES CRITIQUES (À RESPECTER SCRUPULEUSEMENT) ===
-      - STYLE : ${cuisineStyle} (L'esprit du plat doit être 100% fidèle à ce style)
-      - COUVERTS : ${people} personnes (Les quantités doivent être exactes pour ce nombre)
+      === PARAMÈTRES CRITIQUES (À RESPECTER SOUS PEINE D'ERREUR SYSTÈME) ===
+      - STYLE : ${cuisineStyle}
+      - COUVERTS : ${people} personnes
       - TYPE DE REPAS : ${mealTime}
-      - RÉGIME : ${strictDietaryRules} (AUCUNE déviation autorisée)
+      - RÉGIME : ${strictDietaryRules}
       - BUDGET : ${costPrompt}
       - DIFFICULTÉ : ${difficultyPrompt}
+
+      === VÉRIFICATION FINALE AVANT RÉPONSE ===
+      Vérifie que ta recette n'est PAS une recette "simple" ou "pas chère" si l'utilisateur a demandé de la QUALITÉ et un niveau AVANCÉ. Si c'est le cas, REFAIS la recette immédiatement.
 
       === CONTRAINTES SUPPLÉMENTAIRES ===
       1. ${technicalRules}
@@ -383,7 +389,6 @@ export const generateChefRecipe = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
-        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
       },
     });
 
@@ -410,17 +415,19 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   const ai = getAI();
   const userProfileContext = getUserProfileContext();
   
-  const prompt = `🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
+  const prompt = `🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
+  IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" SI LE TYPE EST "AUTHENTIQUE".
+  NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
 
   TA MISSION : Trouver une recette qui respecte PARFAITEMENT les critères suivants :
-  - TYPE : ${type === 'authentic' ? 'STRICTEMENT AUTHENTIQUE (fidèle à la tradition, sans raccourcis)' : 'ÉCONOMIQUE ET MALIGNE (petit budget, ingrédients accessibles)'}
+  - TYPE : ${type === 'authentic' ? 'STRICTEMENT AUTHENTIQUE ET GASTRONOMIQUE (fidèle à la tradition, ingrédients de haute qualité, aucune simplification)' : 'ÉCONOMIQUE ET MALIGNE (petit budget, ingrédients accessibles)'}
   - PLAT : "${query}"
   - NOMBRE DE PERSONNES : ${people}
   
   ${userProfileContext}
   
   === CONTRAINTES CRITIQUES ===
-  1. RESPECT DU TYPE : Si le type est 'authentic', ne proposez aucune variante moderne. Si le type est 'economical', proposez des astuces pour réduire le coût.
+  1. RESPECT DU TYPE : Si le type est 'authentic', la recette DOIT être de haut niveau, sans compromis sur le prix des ingrédients. Si le type est 'economical', proposez des astuces pour réduire le coût.
   2. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
   3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
   4. RÉGIME : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette impérativement.
@@ -439,7 +446,6 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     },
   });
 
