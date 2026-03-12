@@ -308,20 +308,23 @@ export const generateChefRecipe = async (
     let difficultyPrompt = "";
     switch (difficultyLevel) {
         case 'beginner':
-            difficultyPrompt = `NIVEAU : DÉBUTANT. Objectif : Zéro stress.`;
+            difficultyPrompt = `NIVEAU DE DIFFICULTÉ : FACILE / DÉBUTANT. 
+            INSTRUCTION : Utilisez un vocabulaire simple, des techniques de base, et assurez-vous que la recette soit réalisable sans stress.`;
             break;
         case 'expert':
-            difficultyPrompt = `NIVEAU : AVANCÉ. Objectif : Épater visuellement et gustativement.`;
+            difficultyPrompt = `NIVEAU DE DIFFICULTÉ : AVANCÉ / EXPERT. 
+            INSTRUCTION : Vous pouvez utiliser des techniques plus complexes, des cuissons précises et un dressage soigné. Ne simplifiez pas à l'excès.`;
             break;
         default:
-            difficultyPrompt = `NIVEAU : INTERMÉDIAIRE. Bon équilibre temps/résultat.`;
+            difficultyPrompt = `NIVEAU DE DIFFICULTÉ : MOYEN / INTERMÉDIAIRE. 
+            INSTRUCTION : Un bon équilibre entre technique et simplicité.`;
             break;
     }
 
     // 3. BUDGET
     let costPrompt = recipeCost === 'budget' 
-        ? "BUDGET : ÉCONOMIQUE. Cuisine maligne." 
-        : "BUDGET : QUALITÉ. Priorité aux bons produits.";
+        ? "BUDGET : ÉCONOMIQUE. INSTRUCTION : Priorité absolue aux ingrédients à bas prix, astuces anti-gaspi, et produits de saison accessibles. Évitez les produits de luxe." 
+        : "BUDGET : QUALITÉ / GASTRONOMIQUE. INSTRUCTION : Priorité aux produits d'exception, à la fraîcheur et à l'authenticité des saveurs. Ne cherchez pas à faire des économies au détriment du goût.";
 
     // 4. GOLDEN RULES
     const technicalRules = `
@@ -336,6 +339,8 @@ export const generateChefRecipe = async (
 
     // CONSTRUCTION DU PROMPT FINAL
     const prompt = `
+      🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
+
       CONTEXTE TEMPOREL : Nous sommes le ${currentDate} (Saison: ${currentSeason}).
       
       ${userProfileContext}
@@ -347,19 +352,19 @@ export const generateChefRecipe = async (
       === LA MISSION ===
       Créer une recette pour la demande : "${userConfig}"
       
-      === PARAMÈTRES ===
-      - STYLE : ${cuisineStyle}
-      - COUVERTS : ${people} personnes
+      === PARAMÈTRES CRITIQUES (À RESPECTER SCRUPULEUSEMENT) ===
+      - STYLE : ${cuisineStyle} (L'esprit du plat doit être 100% fidèle à ce style)
+      - COUVERTS : ${people} personnes (Les quantités doivent être exactes pour ce nombre)
       - TYPE DE REPAS : ${mealTime}
-      - RÉGIME (CRITIQUE) : ${strictDietaryRules}
+      - RÉGIME : ${strictDietaryRules} (AUCUNE déviation autorisée)
+      - BUDGET : ${costPrompt}
+      - DIFFICULTÉ : ${difficultyPrompt}
 
-      === CONTRAINTES ===
-      1. ${costPrompt}
-      2. ${difficultyPrompt}
-      3. ${technicalRules}
-      4. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Si un ustensile spécifique est indispensable, listez-le clairement dans le champ 'utensils'.
-      5. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
-      6. ${GDPR_COMPLIANCE_PROTOCOL}
+      === CONTRAINTES SUPPLÉMENTAIRES ===
+      1. ${technicalRules}
+      2. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Si un ustensile spécifique est indispensable, listez-le clairement dans le champ 'utensils'.
+      3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
+      4. ${GDPR_COMPLIANCE_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette créée.
@@ -405,23 +410,27 @@ export const searchChefsRecipe = async (query: string, people: number, type: 'ec
   const ai = getAI();
   const userProfileContext = getUserProfileContext();
   
-  const prompt = `Trouvez une recette ${type === 'authentic' ? 'strictement authentique, fidèle à la recette originale et traditionnelle' : 'économique et maligne'} pour "${query}" pour ${people} personnes.
-  
-  ${type === 'authentic' ? "IMPORTANT : Respectez scrupuleusement les ingrédients et les techniques traditionnelles de la recette originale. Pas de raccourcis modernes si cela dénature le plat." : ""}
+  const prompt = `🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
+
+  TA MISSION : Trouver une recette qui respecte PARFAITEMENT les critères suivants :
+  - TYPE : ${type === 'authentic' ? 'STRICTEMENT AUTHENTIQUE (fidèle à la tradition, sans raccourcis)' : 'ÉCONOMIQUE ET MALIGNE (petit budget, ingrédients accessibles)'}
+  - PLAT : "${query}"
+  - NOMBRE DE PERSONNES : ${people}
   
   ${userProfileContext}
   
-  === CONTRAINTES ===
-  1. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
-  2. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
-  3. ${GDPR_COMPLIANCE_PROTOCOL}
+  === CONTRAINTES CRITIQUES ===
+  1. RESPECT DU TYPE : Si le type est 'authentic', ne proposez aucune variante moderne. Si le type est 'economical', proposez des astuces pour réduire le coût.
+  2. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Listez IMPÉRATIVEMENT les ustensiles nécessaires dans le champ 'utensils'.
+  3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
+  4. RÉGIME : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette impérativement.
+  5. ${GDPR_COMPLIANCE_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette trouvée.
   2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients. Chaque ingrédient doit être sur sa propre ligne.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
-  IMPORTANT : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette.
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -473,6 +482,8 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     }
 
     const prompt = `
+    🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT L'AJUSTEMENT DEMANDÉ. NE PAS IGNORER L'OBJECTIF. 🚨
+
     TU ES UN EXPERT EN REVISITE CULINAIRE.
     ${userProfileContext}
     TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé et en l'adaptant au MATÉRIEL DISPONIBLE de l'utilisateur.
