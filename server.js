@@ -54,6 +54,43 @@ app.post('/api/send-referral', async (req, res) => {
     return res.status(400).json({ success: false, error: 'Email et code requis' });
   }
 
+  // --- 1. Inscription Mailchimp Automatique ---
+  const API_KEY = process.env.MAILCHIMP_API_KEY;
+  const LIST_ID = process.env.MAILCHIMP_LIST_ID;
+  const SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
+
+  if (API_KEY && LIST_ID && SERVER_PREFIX) {
+    const mcUrl = `https://${SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
+    const mcData = JSON.stringify({
+      email_address: email,
+      status: 'subscribed',
+      language: 'fr',
+      merge_fields: {
+        FNAME: name || ''
+      }
+    });
+
+    const mcOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`anyuser:${API_KEY}`).toString('base64')}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(mcData),
+      },
+    };
+
+    const mcReq = https.request(mcUrl, mcOptions, (mcRes) => {
+      mcRes.on('data', () => {});
+      mcRes.on('end', () => {
+        console.log(`[Mailchimp Ambassadeur Local] Statut: ${mcRes.statusCode} pour ${email}`);
+      });
+    });
+    mcReq.on('error', (e) => console.error('[Mailchimp Ambassadeur Local Error]', e));
+    mcReq.write(mcData);
+    mcReq.end();
+  }
+
+  // --- 2. Envoi de l'Email de Parrainage ---
   // Template HTML de l'email (Style MiamChef Dark/Green)
   const htmlTemplate = `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000000; color: #ffffff; border-radius: 16px; overflow: hidden;">

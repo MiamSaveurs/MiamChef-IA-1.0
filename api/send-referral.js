@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import https from 'https';
 
 export default async function handler(req, res) {
   // CORS pour Vercel
@@ -25,6 +26,44 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Email et code requis' });
   }
 
+  // --- 1. Inscription Mailchimp Automatique ---
+  const API_KEY = process.env.MAILCHIMP_API_KEY;
+  const LIST_ID = process.env.MAILCHIMP_LIST_ID;
+  const SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
+
+  if (API_KEY && LIST_ID && SERVER_PREFIX) {
+    const mcUrl = `https://${SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
+    const mcData = JSON.stringify({
+      email_address: email,
+      status: 'subscribed',
+      language: 'fr',
+      merge_fields: {
+        FNAME: name || ''
+      }
+    });
+
+    const mcOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`anyuser:${API_KEY}`).toString('base64')}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(mcData),
+      },
+    };
+
+    // On lance l'inscription en arrière-plan sans bloquer l'envoi de l'email
+    const mcReq = https.request(mcUrl, mcOptions, (mcRes) => {
+      mcRes.on('data', () => {}); // On consomme le flux
+      mcRes.on('end', () => {
+        console.log(`[Mailchimp Ambassadeur] Statut: ${mcRes.statusCode} pour ${email}`);
+      });
+    });
+    mcReq.on('error', (e) => console.error('[Mailchimp Ambassadeur Error]', e));
+    mcReq.write(mcData);
+    mcReq.end();
+  }
+
+  // --- 2. Envoi de l'Email de Parrainage ---
   // Configuration du transporteur Email (SMTP)
   const transporter = nodemailer.createTransport({
     service: 'gmail', 
