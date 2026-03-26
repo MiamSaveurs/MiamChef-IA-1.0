@@ -144,8 +144,8 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 
   const data = JSON.stringify({
     email_address: email,
-    status: 'pending', // 'pending' envoie l'email de confirmation.
-    language: 'fr',    // Force la langue française pour cet abonné
+    status: 'subscribed', // Inscription directe sans email de confirmation (Single Opt-in).
+    language: 'fr',
   });
 
   const options = {
