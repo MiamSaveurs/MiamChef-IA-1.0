@@ -144,7 +144,8 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 
   const data = JSON.stringify({
     email_address: email,
-    status: 'pending',
+    status: 'pending', // 'pending' envoie l'email de confirmation.
+    language: 'fr',    // Force la langue française pour cet abonné
   });
 
   const options = {
