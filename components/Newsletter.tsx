@@ -23,9 +23,16 @@ const Newsletter: React.FC = () => {
     try {
       // Test de connexion au serveur avant l'inscription
       const testRes = await fetch('/api/test');
+      
+      const contentType = testRes.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        throw new Error("L'API n'est pas disponible. Le serveur retourne une page HTML au lieu de JSON. (Vérifiez que le serveur backend tourne bien)");
+      }
+
       if (!testRes.ok) {
         throw new Error(`Le serveur API ne répond pas (Status: ${testRes.status})`);
       }
+      
       const testData = await testRes.json();
       console.log('Test API:', testData);
 
@@ -37,6 +44,11 @@ const Newsletter: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+
+      const resContentType = response.headers.get('content-type');
+      if (resContentType && resContentType.includes('text/html')) {
+        throw new Error("L'API Newsletter n'est pas disponible (HTML reçu).");
+      }
 
       const data = await response.json();
 

@@ -1,10 +1,10 @@
 
 /*
  * Service Worker pour MiamChef
- * Version : v3 - Retour à Boogaloo
+ * Version : v4 - API Bypass
  */
 
-const CACHE_NAME = 'miamchef-v3';
+const CACHE_NAME = 'miamchef-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -17,7 +17,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Installation v3 : Mise en cache de l\'application');
+      console.log('[Service Worker] Installation v4 : Mise en cache de l\'application');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
@@ -41,8 +41,8 @@ self.addEventListener('activate', (event) => {
 
 // Interception des requêtes
 self.addEventListener('fetch', (event) => {
-  // 1. Ne pas intercepter l'API Google
-  if (event.request.url.includes('generativelanguage.googleapis.com')) {
+  // 1. Ne pas intercepter l'API Google ni notre API locale
+  if (event.request.url.includes('generativelanguage.googleapis.com') || event.request.url.includes('/api/')) {
     return;
   }
 
