@@ -127,9 +127,17 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
   console.log('[Mailchimp] LIST_ID:', LIST_ID ? 'Défini' : 'Manquant');
   console.log('[Mailchimp] SERVER_PREFIX:', SERVER_PREFIX ? 'Défini' : 'Manquant');
 
-  if (!API_KEY || !LIST_ID || !SERVER_PREFIX) {
-    console.error('[Mailchimp] Configuration manquante');
-    return res.status(500).json({ success: false, error: 'Configuration newsletter incomplète' });
+  const missing = [];
+  if (!API_KEY) missing.push('MAILCHIMP_API_KEY');
+  if (!LIST_ID) missing.push('MAILCHIMP_LIST_ID');
+  if (!SERVER_PREFIX) missing.push('MAILCHIMP_SERVER_PREFIX');
+
+  if (missing.length > 0) {
+    console.error('[Mailchimp] Configuration manquante:', missing.join(', '));
+    return res.status(500).json({ 
+      success: false, 
+      error: `Configuration newsletter incomplète. Variables manquantes : ${missing.join(', ')}` 
+    });
   }
 
   const url = `https://${SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
