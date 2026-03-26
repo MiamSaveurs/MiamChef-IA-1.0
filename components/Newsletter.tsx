@@ -21,7 +21,10 @@ const Newsletter: React.FC = () => {
     setStatus('loading');
     
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
+      const apiUrl = `${window.location.origin}/api/newsletter/subscribe`;
+      console.log('Appel API Newsletter:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
