@@ -21,21 +21,6 @@ const Newsletter: React.FC = () => {
     setStatus('loading');
     
     try {
-      // Test de connexion au serveur avant l'inscription
-      const testRes = await fetch('/api/test');
-      
-      const contentType = testRes.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        throw new Error("L'API n'est pas disponible. Le serveur retourne une page HTML au lieu de JSON. (Vérifiez que le serveur backend tourne bien)");
-      }
-
-      if (!testRes.ok) {
-        throw new Error(`Le serveur API ne répond pas (Status: ${testRes.status})`);
-      }
-      
-      const testData = await testRes.json();
-      console.log('Test API:', testData);
-
       const apiUrl = '/api/newsletter/subscribe';
       console.log('Appel API Newsletter:', apiUrl);
       
@@ -54,7 +39,7 @@ const Newsletter: React.FC = () => {
 
       if (response.ok) {
         setStatus('success');
-        setMessage('Bienvenue dans la brigade ! Vérifiez vos emails pour confirmer.');
+        setMessage('Bienvenue dans la brigade ! Vous êtes maintenant inscrit.');
         setEmail('');
       } else {
         setStatus('error');
