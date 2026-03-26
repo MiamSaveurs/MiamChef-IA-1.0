@@ -91,6 +91,58 @@ app.post('/api/send-referral', async (req, res) => {
   }
 });
 
+// Route API : Inscription Newsletter Mailchimp
+app.post('/api/newsletter/subscribe', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, error: 'Email requis' });
+  }
+
+  const API_KEY = process.env.MAILCHIMP_API_KEY;
+  const LIST_ID = process.env.MAILCHIMP_LIST_ID;
+  const SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
+
+  if (!API_KEY || !LIST_ID || !SERVER_PREFIX) {
+    console.error('[Mailchimp] Configuration manquante');
+    return res.status(500).json({ success: false, error: 'Configuration newsletter incomplète' });
+  }
+
+  const url = `https://${SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
+
+  const data = {
+    email_address: email,
+    status: 'pending', // 'pending' pour le double opt-in (envoie un mail de confirmation)
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`anyuser:${API_KEY}`).toString('base64')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      res.status(200).json({ success: true });
+    } else {
+      // Gérer les cas spécifiques (ex: déjà inscrit)
+      if (result.title === 'Member Exists') {
+        return res.status(400).json({ success: false, error: 'Cet email est déjà inscrit à la brigade !' });
+      }
+      console.error('[Mailchimp Error]', result);
+      res.status(response.status).json({ success: false, error: result.detail || 'Erreur lors de l\'inscription' });
+    }
+  } catch (error) {
+    console.error('[Mailchimp Fetch Error]', error);
+    res.status(500).json({ success: false, error: 'Erreur de connexion à Mailchimp' });
+  }
+});
+
 // Lancement du serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur Backend MiamChef démarré sur http://localhost:${PORT}`);

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
 import { Star, ChevronRight, Settings, Activity, Globe, Share2 } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
+import Newsletter from './Newsletter';
 import { 
   PremiumChefHat, 
   WickerBasket, 
@@ -352,6 +353,9 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                   </div>
               </div>
           </div>
+
+          {/* SECTION NEWSLETTER (NEW) */}
+          <Newsletter />
 
           {/* FOOTER COPYRIGHT */}
           <div className="text-center pb-8 opacity-40">
