@@ -10,6 +10,8 @@ import { createServer as createViteServer } from 'vite';
 // Charger les variables d'environnement (.env)
 dotenv.config();
 
+console.log('🚀 Initialisation du serveur MiamChef...');
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -20,7 +22,15 @@ async function startServer() {
 
   // Route de test
   app.get('/api/test', (req, res) => {
-    res.json({ success: true, message: 'API MiamChef opérationnelle !' });
+    res.json({ 
+      success: true, 
+      message: 'API MiamChef opérationnelle !',
+      env: {
+        MAILCHIMP_API_KEY: !!process.env.MAILCHIMP_API_KEY,
+        MAILCHIMP_LIST_ID: !!process.env.MAILCHIMP_LIST_ID,
+        MAILCHIMP_SERVER_PREFIX: !!process.env.MAILCHIMP_SERVER_PREFIX,
+      }
+    });
   });
 
 // Configuration du transporteur Email (SMTP)
@@ -112,6 +122,10 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
   const API_KEY = process.env.MAILCHIMP_API_KEY;
   const LIST_ID = process.env.MAILCHIMP_LIST_ID;
   const SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
+
+  console.log('[Mailchimp] API_KEY:', API_KEY ? 'Défini' : 'Manquant');
+  console.log('[Mailchimp] LIST_ID:', LIST_ID ? 'Défini' : 'Manquant');
+  console.log('[Mailchimp] SERVER_PREFIX:', SERVER_PREFIX ? 'Défini' : 'Manquant');
 
   if (!API_KEY || !LIST_ID || !SERVER_PREFIX) {
     console.error('[Mailchimp] Configuration manquante');

@@ -21,7 +21,15 @@ const Newsletter: React.FC = () => {
     setStatus('loading');
     
     try {
-      const apiUrl = `${window.location.origin}/api/newsletter/subscribe`;
+      // Test de connexion au serveur avant l'inscription
+      const testRes = await fetch('/api/test');
+      if (!testRes.ok) {
+        throw new Error(`Le serveur API ne répond pas (Status: ${testRes.status})`);
+      }
+      const testData = await testRes.json();
+      console.log('Test API:', testData);
+
+      const apiUrl = '/api/newsletter/subscribe';
       console.log('Appel API Newsletter:', apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -41,8 +49,9 @@ const Newsletter: React.FC = () => {
         setMessage(data.error || 'Une erreur est survenue. Veuillez réessayer.');
       }
     } catch (error) {
+      console.error('Erreur fetch newsletter:', error);
       setStatus('error');
-      setMessage('Erreur de connexion au serveur.');
+      setMessage(`Erreur de connexion au serveur (${error instanceof Error ? error.message : 'Inconnue'}).`);
     }
   };
 
