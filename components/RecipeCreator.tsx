@@ -485,7 +485,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-3" style={{ color: themeColor }}>
                 <MainIcon size={12} /> {label}
             </label>
-            <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 no-scrollbar snap-x">
+            <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 custom-scrollbar snap-x">
                 {options.map((option) => {
                     const isSelected = value === option;
                     const OptionIcon = getIcon ? getIcon(option) : Star;
