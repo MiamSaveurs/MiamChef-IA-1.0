@@ -752,7 +752,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 </label>
                                 <textarea 
                                     className="w-full bg-[#151515] text-white px-4 py-4 rounded-xl border border-white/10 focus:border-white/30 focus:ring-0 outline-none transition-colors resize-none placeholder:text-gray-600 text-sm min-h-[100px]"
-                                    placeholder={mode === 'create' ? (isPatissier ? "Ex: Farine, oeufs, chocolat..." : "Ex: J'ai du poulet, du riz et...") : "Ex: Blanquette de veau..."}
+                                    placeholder={mode === 'create' ? (isPatissier ? "Ex: Farine, oeufs, chocolat..." : "Ex: J'ai du poulet, du riz et...") : (isPatissier ? "Ex: Tarte aux fraises..." : "Ex: Blanquette de veau...")}
                                     value={mode === 'create' ? ingredients : searchQuery}
                                     onChange={(e) => mode === 'create' ? setIngredients(e.target.value) : setSearchQuery(e.target.value)}
                                 />
