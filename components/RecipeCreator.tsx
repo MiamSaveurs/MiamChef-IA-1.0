@@ -838,9 +838,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     getIcon={getDietIcon}
                                 />
 
-                                {/* SÉLECTEUR VISUEL POUR STYLES - RESTAURÉ */}
+                                {/* SÉLECTEUR VISUEL POUR CUISINE DU MONDE - RESTAURÉ */}
                                 <VisualSelector 
-                                    label="Style"
+                                    label="Cuisine du monde"
                                     icon={Globe}
                                     value={cuisineStyle}
                                     onChange={setCuisineStyle}
