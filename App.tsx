@@ -50,7 +50,6 @@ const App: React.FC = () => {
   } | null>(null);
 
   const [persistentScanResult, setPersistentScanResult] = useState<(GeneratedContent & { dietary?: string }) | null>(null);
-  const [isScanResultSaved, setIsScanResultSaved] = useState(false);
 
   // --- TIMER STATE ---
   const [timerTimeLeft, setTimerTimeLeft] = useState(0);
@@ -363,22 +362,6 @@ const App: React.FC = () => {
       )}
       
       <main className="w-full">{renderView()}</main>
-
-      {/* PERSISTENT RECIPE OVERLAY */}
-      {persistentScanResult && currentView !== AppView.SCAN_FRIDGE && (
-        <div className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl">
-            <RecipeResultCard 
-              result={persistentScanResult}
-              generatedImage={persistentScanResult.image || null}
-              dietary={persistentScanResult.dietary || "Classique (Aucun)"}
-              isSaved={isScanResultSaved}
-              onSave={handleSaveScanResult}
-              onClose={() => setPersistentScanResult(null)}
-            />
-          </div>
-        </div>
-      )}
 
       {/* BANNIÈRE D'INSTALLATION INTELLIGENTE */}
       <InstallPWA />
