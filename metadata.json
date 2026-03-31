@@ -1,5 +1,5 @@
 {
   "name": "MiamChef",
   "description": "Votre compagnon de cuisine intelligent. Un expert pour le salé, un expert pour le sucré. Cuisinez simplement, mangez mieux.",
-  "requestFramePermissions": []
+  "requestFramePermissions": ["microphone", "camera", "geolocation"]
 }

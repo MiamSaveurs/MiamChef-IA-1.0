@@ -50,7 +50,18 @@ const ChatBot: React.FC = () => {
             recognition.onerror = (event: any) => {
                 console.error("Speech recognition error", event.error);
                 if (event.error === 'not-allowed') {
-                    alert("L'accès au micro a été refusé. Veuillez autoriser le micro dans les réglages de votre navigateur pour utiliser la fonction vocale.");
+                    // Use a message in the chat instead of an alert
+                    setMessages(prev => [...prev, { 
+                        role: 'model', 
+                        text: "⚠️ **Accès au micro refusé.** \n\nPour utiliser la fonction vocale, veuillez autoriser l'accès au micro dans les réglages de votre navigateur (cliquez sur le petit cadenas à gauche de l'adresse URL)." 
+                    }]);
+                } else if (event.error === 'no-speech') {
+                    // Silent error, just stop listening
+                } else {
+                    setMessages(prev => [...prev, { 
+                        role: 'model', 
+                        text: "Désolé, je n'ai pas pu activer le micro. Veuillez réessayer ou taper votre message." 
+                    }]);
                 }
                 setIsListening(false);
             };
