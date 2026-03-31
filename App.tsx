@@ -16,6 +16,7 @@ import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import InAppMessageModal from './components/InAppMessageModal';
+import ChatBot from './components/ChatBot';
 import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen } from './services/storageService';
 import { AppView, RecipeMetrics } from './types';
 import { WifiOff } from 'lucide-react';
@@ -348,6 +349,9 @@ const App: React.FC = () => {
         actionLabel={messageModal.actionLabel}
         onAction={messageModal.onAction}
       />
+
+      {/* CHATBOT ASSISTANT */}
+      <ChatBot />
     </div>
   );
 };

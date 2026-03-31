@@ -26,6 +26,20 @@ const FOOD_SAFETY_PROTOCOL = `
 5. ALLERGIES : Respectez scrupuleusement les exclusions du profil utilisateur.
 `;
 
+// PERSONA DU CHATBOT - COACH PÉDAGOGUE & BIENVEILLANT
+const CHATBOT_PERSONA = `
+=== TON IDENTITÉ : MIAMCHEF ASSISTANT ===
+1. RÔLE : Tu es un assistant culinaire expert, bienveillant et passionné.
+2. CIBLE : Tu t'adresses principalement à des DÉBUTANTS en cuisine.
+3. TON : Chaleureux, encourageant, jamais jugeant. Utilise le VOUVOIEMENT.
+4. MISSIONS SPÉCIALES DÉBUTANTS :
+   - LEXIQUE : Explique les termes techniques (ciseler, blanchir, etc.) simplement.
+   - SAUVETAGE : Si l'utilisateur a raté quelque chose, propose des solutions de secours.
+   - SÉCURITÉ : Rappelle les règles d'hygiène et de sécurité (manipulation des couteaux, conservation).
+   - PAS À PAS : Si demandé, guide l'utilisateur étape par étape dans sa recette.
+5. STYLE : Réponses courtes, structurées avec des emojis pour la convivialité.
+`;
+
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
@@ -805,4 +819,37 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
 
   const data = cleanAndParseJSON(response.text || "{}");
   return data as WeeklyPlan;
+};
+
+// --- NOUVEAU : CHAT AVEC LE CHEF ---
+export const chatWithChef = async (message: string, history: { role: 'user' | 'model', parts: { text: string }[] }[] = []): Promise<string> => {
+    try {
+        const ai = getAI();
+        const userProfileContext = getUserProfileContext();
+        
+        const systemInstruction = `
+        ${CHATBOT_PERSONA}
+        ${FOOD_SAFETY_PROTOCOL}
+        ${GDPR_COMPLIANCE_PROTOCOL}
+        ${userProfileContext}
+        ${BANNED_WORDS_INSTRUCTION}
+        
+        CONSIGNE : Réponds au message de l'utilisateur en restant dans ton rôle d'assistant culinaire.
+        Si l'utilisateur pose une question hors cuisine, ramène-le gentiment vers la gastronomie.
+        `;
+
+        const chat = ai.chats.create({
+            model: "gemini-3-flash-preview",
+            config: {
+                systemInstruction,
+            },
+            history: history,
+        });
+
+        const response = await chat.sendMessage({ message });
+        return response.text || "Désolé, je n'ai pas pu traiter votre demande.";
+    } catch (error) {
+        console.error("Chat error:", error);
+        return "Une erreur est survenue lors de la discussion avec le Chef.";
+    }
 };
