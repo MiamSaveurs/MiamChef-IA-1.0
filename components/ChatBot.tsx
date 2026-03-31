@@ -66,7 +66,7 @@ const ChatBot: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-bold text-white leading-none">MiamChef Assistant</h3>
-                                    <span className="text-[10px] text-chef-green font-medium uppercase tracking-wider">Coach Culinaire & Sécurité</span>
+                                    <span className="text-[10px] text-chef-green font-medium uppercase tracking-wider">VOTRE ASSISTANT CULINAIRE</span>
                                 </div>
                             </div>
                             <button 
