@@ -15,6 +15,17 @@ const GDPR_COMPLIANCE_PROTOCOL = `
 3. SANTÉ & SÉCURITÉ : Si l'utilisateur mentionne une pathologie grave, rappelez brièvement les précautions d'usage sans jargon médical.
 `;
 
+// SÉCURITÉ ALIMENTAIRE STRICTE - INJECTÉ DANS TOUS LES PROMPTS
+const FOOD_SAFETY_PROTOCOL = `
+=== PROTOCOLE SÉCURITÉ ALIMENTAIRE (CRITIQUE) ===
+1. TOXICITÉ : Interdiction ABSOLUE de proposer des produits non comestibles, toxiques ou dangereux pour la santé.
+2. PRÉCISION DES INGRÉDIENTS : Soyez ultra-précis sur les noms des produits chimiques ou additifs. 
+   - EXEMPLE : Ne dites jamais "Bicarbonate de soude" seul s'il y a un risque de confusion. Utilisez TOUJOURS "Bicarbonate de sodium alimentaire" ou "Bicarbonate alimentaire".
+3. HALLUCINATION INTERDITE : Ne JAMAIS inventer d'ingrédients ou de dosages. Si vous n'êtes pas sûr d'une proportion, utilisez une valeur prudente ou demandez à l'utilisateur de vérifier.
+4. HYGIÈNE : Rappelez les cuissons minimales pour les viandes/poissons sensibles si nécessaire.
+5. ALLERGIES : Respectez scrupuleusement les exclusions du profil utilisateur.
+`;
+
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
@@ -371,6 +382,7 @@ export const generateChefRecipe = async (
       2. MATÉRIEL : Adaptez la recette au matériel disponible de l'utilisateur. Si un ustensile spécifique est indispensable, listez-le clairement dans le champ 'utensils'.
       3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
       4. ${GDPR_COMPLIANCE_PROTOCOL}
+      5. ${FOOD_SAFETY_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette créée.
@@ -448,6 +460,7 @@ export const searchChefsRecipe = async (
   4. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
   5. RÉGIME : Si le profil utilisateur indique un régime spécifique, ADAPTEZ la recette impérativement.
   6. ${GDPR_COMPLIANCE_PROTOCOL}
+  7. ${FOOD_SAFETY_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette trouvée.
@@ -529,6 +542,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
+    ${FOOD_SAFETY_PROTOCOL}
     ${BANNED_WORDS_INSTRUCTION}
     `;
 
@@ -646,6 +660,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     text: `ROLE : Expert Cuisinier en vision par ordinateur.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
+    ${FOOD_SAFETY_PROTOCOL}
     ${userProfileContext}
 
     ETAPE 1 : IDENTIFICATION
@@ -715,6 +730,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   Utilisez Google Search.
   Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
   ${GDPR_COMPLIANCE_PROTOCOL}
+  ${FOOD_SAFETY_PROTOCOL}
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -774,6 +790,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   RÈGLES : ${strictDietaryRules}
   ${ingredientsPrompt}
   ${GDPR_COMPLIANCE_PROTOCOL}
+  ${FOOD_SAFETY_PROTOCOL}
   ${BANNED_WORDS_INSTRUCTION}
   Répondez au format JSON strict selon le schéma.`;
 
