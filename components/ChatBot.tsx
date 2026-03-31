@@ -53,7 +53,7 @@ const ChatBot: React.FC = () => {
                     // Use a message in the chat instead of an alert
                     setMessages(prev => [...prev, { 
                         role: 'model', 
-                        text: "⚠️ **Accès au micro refusé.** \n\nPour utiliser la fonction vocale, veuillez autoriser l'accès au micro dans les réglages de votre navigateur (cliquez sur le petit cadenas à gauche de l'adresse URL)." 
+                        text: "⚠️ **Accès au micro refusé.** \n\nPour m'utiliser à la voix, j'ai besoin de votre autorisation.\n\n**Sur smartphone :** Allez dans les paramètres de votre navigateur (les 3 petits points), puis 'Paramètres de site' > 'Micro' et autorisez l'accès.\n\n**Sur ordinateur :** Cliquez sur l'icône à gauche de l'adresse du site." 
                     }]);
                 } else if (event.error === 'no-speech') {
                     // Silent error, just stop listening
