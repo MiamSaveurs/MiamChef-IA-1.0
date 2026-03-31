@@ -182,7 +182,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       interval = setInterval(() => {
         i = (i + 1) % currentSteps.length;
         setLoadingStep(currentSteps[i]);
-      }, 2000); 
+      }, 1200); 
     }
     return () => clearInterval(interval);
   }, [status, isPatissier, adjusting, localSmartDevices, generatingVideo]);

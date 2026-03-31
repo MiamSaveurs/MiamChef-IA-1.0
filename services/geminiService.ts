@@ -417,6 +417,7 @@ export const generateChefRecipe = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
+        thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
       },
     });
 
@@ -492,6 +493,7 @@ export const searchChefsRecipe = async (
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
+      thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
     },
   });
 
@@ -566,7 +568,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
         config: {
             responseMimeType: "application/json",
             responseSchema: recipeSchema,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
+            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
         },
     });
 
@@ -701,7 +703,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
     }
   });
 
@@ -814,6 +816,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
     config: {
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     },
   });
 
@@ -842,7 +845,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
             model: "gemini-3-flash-preview",
             config: {
                 systemInstruction,
-                thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
+                thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
             },
             history: history,
         });
