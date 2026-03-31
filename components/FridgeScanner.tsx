@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { scanFridgeAndSuggest, fileToGenerativePart, generateRecipeImage } from '../services/geminiService';
 import { saveRecipeToBook } from '../services/storageService';
 import { LoadingState, GeneratedContent } from '../types';
-import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon, ChevronRight, Camera, Leaf, ChevronDown, Utensils } from 'lucide-react';
+import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon, ChevronRight, Camera, Leaf, ChevronDown, Utensils, Snowflake } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { PremiumCamera, PremiumChefHat } from './Icons';
 
@@ -23,7 +23,7 @@ const FridgeScanner: React.FC = () => {
 
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
-    setResult('');
+    setResult(null);
     setGeneratedImage(null);
     setIsSaved(false);
 
