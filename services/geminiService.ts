@@ -842,6 +842,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
             model: "gemini-3-flash-preview",
             config: {
                 systemInstruction,
+                thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
             },
             history: history,
         });

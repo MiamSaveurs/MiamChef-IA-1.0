@@ -173,9 +173,6 @@ const ChatBot: React.FC = () => {
                 }`}
             >
                 {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-                {!isOpen && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-black animate-pulse" />
-                )}
             </button>
         </div>
     );
