@@ -171,7 +171,7 @@ const ChatBot: React.FC = () => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 ${
-                    isOpen ? 'bg-zinc-800 text-white rotate-90' : 'bg-chef-green text-black'
+                    isOpen ? 'bg-zinc-800 text-red-500 rotate-90' : 'bg-chef-green text-black'
                 }`}
             >
                 {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
