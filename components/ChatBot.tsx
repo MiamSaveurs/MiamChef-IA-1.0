@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
 import { chatWithChef } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
@@ -15,72 +15,7 @@ const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isListening, setIsListening] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const recognitionRef = useRef<any>(null);
-    const messagesRef = useRef<Message[]>([]);
-
-    // Sync ref with state
-    useEffect(() => {
-        messagesRef.current = messages;
-    }, [messages]);
-
-    // Initialize Speech Recognition
-    useEffect(() => {
-        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'fr-FR';
-
-            recognition.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                if (transcript) {
-                    setInput(transcript);
-                    setIsListening(false);
-                    // Use a small delay to ensure the input state is updated visually
-                    setTimeout(() => {
-                        handleSend(transcript);
-                    }, 300);
-                }
-            };
-
-            recognition.onerror = (event: any) => {
-                console.error("Speech recognition error", event.error);
-                if (event.error === 'not-allowed') {
-                    // Use a message in the chat instead of an alert
-                    setMessages(prev => [...prev, { 
-                        role: 'model', 
-                        text: "⚠️ **Accès au micro refusé.** \n\nPour m'utiliser à la voix, j'ai besoin de votre autorisation.\n\n**Sur smartphone :** Allez dans les paramètres de votre navigateur (les 3 petits points), puis 'Paramètres de site' > 'Micro' et autorisez l'accès.\n\n**Sur ordinateur :** Cliquez sur l'icône à gauche de l'adresse du site." 
-                    }]);
-                } else if (event.error === 'no-speech') {
-                    // Silent error, just stop listening
-                } else {
-                    setMessages(prev => [...prev, { 
-                        role: 'model', 
-                        text: "Désolé, je n'ai pas pu activer le micro. Veuillez réessayer ou taper votre message." 
-                    }]);
-                }
-                setIsListening(false);
-            };
-
-            recognition.onend = () => {
-                setIsListening(false);
-            };
-
-            recognitionRef.current = recognition;
-        } else {
-            console.warn("Speech Recognition API not supported in this browser.");
-        }
-
-        // Pre-load voices
-        window.speechSynthesis.getVoices();
-        if (window.speechSynthesis.onvoiceschanged !== undefined) {
-            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-        }
-    }, []);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -88,63 +23,25 @@ const ChatBot: React.FC = () => {
         }
     }, [messages]);
 
-    const toggleListening = () => {
-        if (isListening) {
-            recognitionRef.current?.stop();
-        } else {
-            setInput('');
-            recognitionRef.current?.start();
-            setIsListening(true);
-        }
-    };
+    const handleSend = async () => {
+        if (!input.trim() || isLoading) return;
 
-    const speak = (text: string) => {
-        if (isMuted) return;
-        
-        // Clean markdown for better speech
-        const cleanText = text.replace(/[#*`_]/g, '').replace(/\[.*?\]/g, '');
-        
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        
-        // Find a nice French voice if available
-        const voices = window.speechSynthesis.getVoices();
-        const frenchVoice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google')) || voices.find(v => v.lang.startsWith('fr'));
-        if (frenchVoice) utterance.voice = frenchVoice;
-
-        window.speechSynthesis.cancel(); // Stop any current speech
-        window.speechSynthesis.speak(utterance);
-    };
-
-    const handleSend = async (overrideInput?: string) => {
-        const messageToSend = overrideInput || input;
-        if (!messageToSend.trim() || isLoading) return;
-
-        const userMessage = messageToSend.trim();
+        const userMessage = input.trim();
         setInput('');
         setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
         setIsLoading(true);
-        window.speechSynthesis.cancel(); // Stop speaking when user sends new message
 
         try {
-            // Use messagesRef to get the latest history even in callbacks
-            const history = messagesRef.current.map(m => ({
+            const history = messages.map(m => ({
                 role: m.role,
                 parts: [{ text: m.text }]
             }));
 
             const response = await chatWithChef(userMessage, history);
             setMessages(prev => [...prev, { role: 'model', text: response }]);
-            
-            // Speak the response
-            speak(response);
         } catch (error) {
             console.error("Chat error:", error);
-            const errorMsg = "Désolé, je rencontre une petite difficulté technique. Pouvez-vous répéter ?";
-            setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
-            speak(errorMsg);
+            setMessages(prev => [...prev, { role: 'model', text: "Désolé, je rencontre une petite difficulté technique. Pouvez-vous répéter ?" }]);
         } finally {
             setIsLoading(false);
         }
@@ -173,20 +70,7 @@ const ChatBot: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-1">
                                 <button 
-                                    onClick={() => {
-                                        setIsMuted(!isMuted);
-                                        if (!isMuted) window.speechSynthesis.cancel();
-                                    }}
-                                    className={`p-2 rounded-full transition-colors ${isMuted ? 'text-zinc-500 hover:bg-zinc-800' : 'text-chef-green hover:bg-chef-green/10'}`}
-                                    title={isMuted ? "Activer la voix" : "Couper la voix"}
-                                >
-                                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                                </button>
-                                <button 
-                                    onClick={() => {
-                                        setMessages([]);
-                                        window.speechSynthesis.cancel();
-                                    }}
+                                    onClick={() => setMessages([])}
                                     className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-400 hover:text-red-400"
                                     title="Effacer la conversation"
                                 >
@@ -262,27 +146,16 @@ const ChatBot: React.FC = () => {
                         {/* Input */}
                         <div className="p-4 bg-zinc-900 border-t border-zinc-800">
                             <div className="relative flex items-center gap-2">
-                                <button
-                                    onClick={toggleListening}
-                                    className={`p-3 rounded-xl transition-all ${
-                                        isListening 
-                                            ? 'bg-red-500 text-white animate-pulse' 
-                                            : 'bg-zinc-800 text-zinc-400 hover:text-chef-green'
-                                    }`}
-                                    title={isListening ? "Arrêter l'écoute" : "Parler au Chef"}
-                                >
-                                    {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-                                </button>
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                    placeholder={isListening ? "Je vous écoute..." : "Posez votre question..."}
+                                    placeholder="Posez votre question..."
                                     className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-chef-green/50 transition-all"
                                 />
                                 <button
-                                    onClick={() => handleSend()}
+                                    onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
                                     className="p-3 bg-chef-green text-black rounded-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-lg shadow-chef-green/20"
                                 >
