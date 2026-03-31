@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
 import { chatWithChef } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
@@ -70,10 +70,11 @@ const ChatBot: React.FC = () => {
                                 </div>
                             </div>
                             <button 
-                                onClick={() => setIsOpen(false)}
-                                className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-400 hover:text-white"
+                                onClick={() => setMessages([])}
+                                className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-400 hover:text-red-400"
+                                title="Effacer la conversation"
                             >
-                                <X size={20} />
+                                <Trash2 size={20} />
                             </button>
                         </div>
 
