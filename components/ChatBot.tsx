@@ -19,30 +19,55 @@ const ChatBot: React.FC = () => {
     const [isMuted, setIsMuted] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const recognitionRef = useRef<any>(null);
+    const messagesRef = useRef<Message[]>([]);
+
+    // Sync ref with state
+    useEffect(() => {
+        messagesRef.current = messages;
+    }, [messages]);
 
     // Initialize Speech Recognition
     useEffect(() => {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         if (SpeechRecognition) {
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'fr-FR';
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'fr-FR';
 
-            recognitionRef.current.onresult = (event: any) => {
+            recognition.onresult = (event: any) => {
                 const transcript = event.results[0][0].transcript;
-                setInput(transcript);
-                setIsListening(false);
+                if (transcript) {
+                    setInput(transcript);
+                    setIsListening(false);
+                    // Use a small delay to ensure the input state is updated visually
+                    setTimeout(() => {
+                        handleSend(transcript);
+                    }, 300);
+                }
             };
 
-            recognitionRef.current.onerror = (event: any) => {
+            recognition.onerror = (event: any) => {
                 console.error("Speech recognition error", event.error);
+                if (event.error === 'not-allowed') {
+                    alert("L'accès au micro a été refusé. Veuillez autoriser le micro dans les réglages de votre navigateur pour utiliser la fonction vocale.");
+                }
                 setIsListening(false);
             };
 
-            recognitionRef.current.onend = () => {
+            recognition.onend = () => {
                 setIsListening(false);
             };
+
+            recognitionRef.current = recognition;
+        } else {
+            console.warn("Speech Recognition API not supported in this browser.");
+        }
+
+        // Pre-load voices
+        window.speechSynthesis.getVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
         }
     }, []);
 
@@ -93,7 +118,8 @@ const ChatBot: React.FC = () => {
         window.speechSynthesis.cancel(); // Stop speaking when user sends new message
 
         try {
-            const history = messages.map(m => ({
+            // Use messagesRef to get the latest history even in callbacks
+            const history = messagesRef.current.map(m => ({
                 role: m.role,
                 parts: [{ text: m.text }]
             }));
