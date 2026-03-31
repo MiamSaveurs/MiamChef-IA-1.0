@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type, GenerateContentResponse, ThinkingLevel } from "@google/genai";
-import { GeneratedContent, RecipeMetrics, WeeklyPlan, GroundingChunk } from "../types";
+import { GeneratedContent, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
 
 // Instructions for the AI to avoid certain words
@@ -158,6 +158,7 @@ const recipeSchema = {
         description: "MODE CUISINE INTERACTIF : Une liste technique d'instructions courtes et claires. Si un appareil est utilisé, commence l'étape par [APPAREIL] en majuscules."
     },
     storageAdvice: { type: Type.STRING },
+    servings: { type: Type.NUMBER, description: "Nombre de personnes pour la recette." },
     seoTitle: { type: Type.STRING },
     seoDescription: { type: Type.STRING },
   },
@@ -236,7 +237,8 @@ const weeklyPlanSchema = {
 const getAI = () => {
     // Dans AI Studio, on utilise process.env.GEMINI_API_KEY
     // Sur Vercel/Vite, on peut avoir besoin de import.meta.env.VITE_GEMINI_API_KEY
-    const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+    // @ts-expect-error - import.meta.env is not defined in all environments
+    const apiKey = process.env.GEMINI_API_KEY || import.meta.env?.VITE_GEMINI_API_KEY;
     
     if (!apiKey) {
         console.error("ERREUR : La clé API Gemini est manquante.");
@@ -347,7 +349,7 @@ export const generateChefRecipe = async (
     }
 
     // 3. BUDGET
-    let costPrompt = recipeCost === 'budget' 
+    const costPrompt = recipeCost === 'budget' 
         ? "BUDGET : ÉCONOMIQUE. INSTRUCTION : Priorité absolue aux ingrédients à bas prix, astuces anti-gaspi, et produits de saison accessibles. Évitez les produits de luxe." 
         : "BUDGET : QUALITÉ / GASTRONOMIQUE. INSTRUCTION : Priorité aux produits d'exception, à la fraîcheur et à l'authenticité des saveurs. Ne cherchez pas à faire des économies au détriment du goût.";
 
@@ -517,7 +519,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     const userProfileContext = getUserProfileContext();
     
     // Définition de la stratégie d'ajustement
-    let specificInstruction = "";
+    let specificInstruction: string;
     switch (adjustmentType) {
         case "Réduire le sel":
             specificInstruction = "OBJECTIF : Réduire le sodium. Compenser par épices/herbes.";
@@ -679,6 +681,8 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     2. FILTRER selon REGIME : ${dietary} (${dietRules}).
     3. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
     4. CONSERVATION : Durée/mode (champ 'storageAdvice').
+    5. PORTIONS : Nombre de personnes (champ 'servings').
+    6. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g) et la difficulté (champ 'metrics').
     
     FORMAT :
     - Titre H1 (# Titre) obligatoire.
@@ -708,6 +712,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ingredientsWithQuantities: data.ingredientsWithQuantities,
     steps: data.steps, 
     storageAdvice: sanitizeText(data.storageAdvice),
+    servings: data.servings || 2,
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription)
   };
@@ -750,12 +755,14 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   });
 
   const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-  const groundingChunks: GroundingChunk[] = chunks ? chunks.map((c: any) => ({
+  const groundingChunks: GroundingChunk[] = chunks ? chunks.map((c) => ({
     web: {
+      // @ts-expect-error - grounding chunk structure
       uri: c.web?.uri || "",
+      // @ts-expect-error - grounding chunk structure
       title: c.web?.title || ""
     }
-  })).filter((c: any) => c.web && c.web.uri) : [];
+  })).filter((c) => c.web && c.web.uri) : [];
 
   return {
     text: response.text || "Pas de conseil disponible.",
@@ -790,7 +797,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   const userProfileContext = getUserProfileContext();
   const strictDietaryRules = getDietaryConstraints(dietary);
 
-  let ingredientsPrompt = ingredients.trim() ? `Avec ces ingrédients : "${ingredients}".` : "";
+  const ingredientsPrompt = ingredients.trim() ? `Avec ces ingrédients : "${ingredients}".` : "";
 
   const prompt = `Créez un planning de repas hebdomadaire pour ${people} personnes.
   ${userProfileContext}

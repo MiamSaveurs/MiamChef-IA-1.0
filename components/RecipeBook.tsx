@@ -2,10 +2,26 @@
 import React, { useState, useEffect } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, ChefHat, Activity, Sparkles, Soup, Hammer, BarChart, Clock, Search, Snowflake, Leaf, X, Lock, Share2 } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, Leaf, X, Lock, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { GourmetBook, PremiumChefHat, PremiumCalendar, PremiumUtensils } from './Icons';
+import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
+
+const NutriBadge = ({ score }: { score: string }) => {
+  const colors = { 
+      'A': '#008148', // Vert foncé
+      'B': '#8ac53e', // Vert clair
+      'C': '#fecb02', // Jaune
+      'D': '#ee8100', // Orange
+      'E': '#e63e11'  // Rouge
+  };
+  const color = colors[score as keyof typeof colors] || '#ccc';
+  return (
+    <span className="font-bold text-white text-[10px] px-2 py-0.5 rounded shadow-sm border border-white/20" style={{ backgroundColor: color }}>
+      {score}
+    </span>
+  );
+};
 
 const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
@@ -15,9 +31,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
   const [modalConfig, setModalConfig] = useState<{ isOpen: boolean, title: string, message: string, actionLabel?: string, onAction?: () => void } | null>(null);
 
   // Thème Orange/Ambre
-  const themeColor = '#f59e0b';
   const themeGradient = 'from-amber-700 to-amber-900';
-  const themeShadow = 'shadow-amber-900/40';
 
   useEffect(() => {
     const load = async () => {
@@ -40,8 +54,8 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
           await deleteRecipeFromBook(id);
           setRecipes(prev => prev.filter(r => r.id !== id));
           if (selectedRecipe?.id === id) setSelectedRecipe(null);
-        } catch (err) {
-          console.error("Erreur lors de la suppression:", err);
+        } catch (_err) {
+          console.error("Erreur lors de la suppression:", _err);
           setModalConfig({
             isOpen: true,
             title: "Erreur",
@@ -66,7 +80,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
           text: `Découvrez cette recette sur MiamChef : ${recipe.title}`,
           url: window.location.href,
         });
-      } catch (err) {
+      } catch (_err) {
         // Si l'utilisateur annule ou si ça échoue, on tente le presse-papier
         copyToClipboard(shareText);
       }
@@ -83,29 +97,13 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
         title: "Recette Partagée !",
         message: "La recette complète a été copiée dans votre presse-papier. Vous pouvez maintenant la coller où vous le souhaitez !"
       });
-    } catch (err) {
+    } catch (_err) {
       setModalConfig({
         isOpen: true,
         title: "Oups",
         message: "Impossible de copier la recette automatiquement."
       });
     }
-  };
-
-  const NutriBadge = ({ score }: { score: string }) => {
-    const colors = { 
-        'A': '#008148', // Vert foncé
-        'B': '#8ac53e', // Vert clair
-        'C': '#fecb02', // Jaune
-        'D': '#ee8100', // Orange
-        'E': '#e63e11'  // Rouge
-    };
-    const color = colors[score as keyof typeof colors] || '#ccc';
-    return (
-      <span className="font-bold text-white text-[10px] px-2 py-0.5 rounded shadow-sm border border-white/20" style={{ backgroundColor: color }}>
-        {score}
-      </span>
-    );
   };
 
   // Fonction pour ignorer les accents et la casse (Ex: "bœuf" == "boeuf")
@@ -244,6 +242,9 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                             <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
                                                 <Activity size={14} className="text-amber-500"/> {selectedRecipe.metrics.caloriesPerPerson} Kcal
                                             </span>
+                                            <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.proteins || 0}g Prot.
+                                            </span>
                                             <div className="scale-110 flex items-center gap-2">
                                                 <NutriBadge score={selectedRecipe.metrics.nutriScore} />
                                                 {selectedRecipe.servings && (
@@ -308,10 +309,10 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                                 <ReactMarkdown 
                                 components={{
-                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
-                                    h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
-                                    strong: ({node, ...props}) => <strong className="text-amber-400" {...props} />,
-                                    li: ({node, ...props}) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>
+                                    h1: ({ ...props }) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
+                                    h2: ({ ...props }) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
+                                    strong: ({ ...props }) => <strong className="text-amber-400" {...props} />,
+                                    li: ({ ...props }) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>
                                 }}
                                 >
                                 {selectedRecipe.markdownContent}

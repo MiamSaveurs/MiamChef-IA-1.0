@@ -11,14 +11,14 @@ const InstallPWA: React.FC = () => {
   useEffect(() => {
     // Détection si l'app est déjà installée (Mode Standalone)
     const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    setIsStandalone(isInStandaloneMode);
+    setTimeout(() => setIsStandalone(isInStandaloneMode), 0);
 
     if (isInStandaloneMode) return;
 
     // Détection iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const ios = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(ios);
+    setTimeout(() => setIsIOS(ios), 0);
 
     // Détection Android (Chrome) pour le prompt natif
     const handleBeforeInstallPrompt = (e: Event) => {

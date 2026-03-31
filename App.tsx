@@ -17,10 +17,9 @@ import Profile from './components/Profile';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import InAppMessageModal from './components/InAppMessageModal';
 import ChatBot from './components/ChatBot';
-import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen, saveRecipeToBook } from './services/storageService';
+import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen } from './services/storageService';
 import { AppView, RecipeMetrics, GeneratedContent } from './types';
 import { WifiOff } from 'lucide-react';
-import RecipeResultCard from './components/RecipeResultCard';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -51,6 +50,23 @@ const App: React.FC = () => {
 
   const [persistentScanResult, setPersistentScanResult] = useState<(GeneratedContent & { dietary?: string }) | null>(null);
 
+  // --- SUBSCRIPTION LOGIC ---
+  const checkSubscriptionStatus = () => {
+    const status = getTrialStatus();
+    const now = Date.now();
+    const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
+    
+    // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
+    if (!status.isSubscribed && daysPassed > 7) {
+        setIsTrialExpired(true);
+        // On force l'abonnement immédiatement si on n'est pas dans une zone autorisée (Carnet/Legal)
+        // La condition est stricte : Si expiré, on redirige vers l'abonnement.
+        if (currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
+             setCurrentView(AppView.SUBSCRIPTION);
+        }
+    }
+  };
+
   // --- TIMER STATE ---
   const [timerTimeLeft, setTimerTimeLeft] = useState(0);
   const [timerInitialTime, setTimerInitialTime] = useState(0);
@@ -76,7 +92,7 @@ const App: React.FC = () => {
     }
 
     // VERIFICATION INITIALE
-    checkSubscriptionStatus();
+    setTimeout(() => checkSubscriptionStatus(), 0);
 
     // --- CHECK IN-APP MESSAGES ---
     const checkInAppMessages = () => {
@@ -133,28 +149,12 @@ const App: React.FC = () => {
         clearInterval(interval);
         document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
-
-  const checkSubscriptionStatus = () => {
-    const status = getTrialStatus();
-    const now = Date.now();
-    const daysPassed = (now - status.startDate) / (1000 * 60 * 60 * 24);
-    
-    // Si pas d'abonnement actif ET période d'essai de 7 jours dépassée
-    if (!status.isSubscribed && daysPassed > 7) {
-        setIsTrialExpired(true);
-        // On force l'abonnement immédiatement si on n'est pas dans une zone autorisée (Carnet/Legal)
-        // La condition est stricte : Si expiré, on redirige vers l'abonnement.
-        if (currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
-             setCurrentView(AppView.SUBSCRIPTION);
-        }
-    }
-  };
+  }, [currentView]);
 
   // Sécurité supplémentaire : Si on change de vue et qu'on est expiré
   useEffect(() => {
       if (isTrialExpired && currentView !== AppView.SUBSCRIPTION && currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
-          setCurrentView(AppView.SUBSCRIPTION);
+          setTimeout(() => setCurrentView(AppView.SUBSCRIPTION), 0);
       }
   }, [currentView, isTrialExpired]);
 
@@ -236,7 +236,7 @@ const App: React.FC = () => {
             });
         }, 1000);
     } else if (timerTimeLeft === 0) {
-        setTimerIsActive(false);
+        setTimeout(() => setTimerIsActive(false), 0);
         if (timerRef.current) clearInterval(timerRef.current);
     }
     return () => {
@@ -321,35 +321,6 @@ const App: React.FC = () => {
         />
       );
       default: return <Home setView={setCurrentView} isOnline={isOnline} />;
-    }
-  };
-
-  const handleSaveScanResult = async () => {
-    if (!persistentScanResult) return;
-    const title = persistentScanResult.seoTitle || "Recette Anti-Gaspi";
-
-    try {
-      await saveRecipeToBook({
-        id: Date.now().toString(),
-        title: title,
-        markdownContent: persistentScanResult.text,
-        date: new Date().toLocaleDateString('fr-FR'),
-        image: persistentScanResult.image || undefined,
-        utensils: persistentScanResult.utensils || [], 
-        metrics: persistentScanResult.metrics || undefined,
-        ingredients: persistentScanResult.ingredients || [],
-        ingredientsWithQuantities: persistentScanResult.ingredientsWithQuantities || [],
-        steps: persistentScanResult.steps || [],
-        storageAdvice: persistentScanResult.storageAdvice || undefined,
-        seoTitle: persistentScanResult.seoTitle || undefined,
-        seoDescription: persistentScanResult.seoDescription || undefined,
-        servings: 2
-      });
-      
-      setIsScanResultSaved(true);
-      setTimeout(() => setIsScanResultSaved(false), 3000);
-    } catch (err) {
-      console.error("Failed to save recipe from overlay", err);
     }
   };
 

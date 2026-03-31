@@ -45,6 +45,7 @@ export interface GeneratedContent {
   storageAdvice?: string;
   seoTitle?: string;
   seoDescription?: string;
+  servings?: number;
 }
 
 export interface SavedRecipe {

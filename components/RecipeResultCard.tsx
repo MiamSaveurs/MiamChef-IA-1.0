@@ -72,8 +72,8 @@ const RecipeResultCard: React.FC<RecipeResultCardProps> = ({
                     </div>
                 )}
 
-                 {(generatedImage || result.image) && (
-                    <div className="w-full h-56 rounded-2xl overflow-hidden mb-8 border border-white/10 shadow-2xl relative group">
+                  {(generatedImage || result.image) && (
+                    <div className="w-full h-56 rounded-2xl overflow-hidden mb-4 border border-white/10 shadow-2xl relative group">
                         <img src={generatedImage || result.image || ''} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt="Plat généré" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div className="absolute bottom-3 left-3 flex items-center gap-2">
@@ -89,14 +89,34 @@ const RecipeResultCard: React.FC<RecipeResultCardProps> = ({
                     </div>
                  )}
 
+                  {/* NOUVEAU : Infos nutritionnelles et portions */}
+                  <div className="grid grid-cols-4 gap-2 mb-8 py-6 border-y border-white/5">
+                     <div className="text-center border-r border-white/10">
+                         <div className="text-xl font-display text-white">{result.metrics?.nutriScore || '---'}</div>
+                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Nutri</div>
+                     </div>
+                     <div className="text-center border-r border-white/10">
+                         <div className="text-xl font-display text-white">{result.metrics?.caloriesPerPerson || '---'}</div>
+                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Kcal</div>
+                     </div>
+                     <div className="text-center border-r border-white/10">
+                         <div className="text-xl font-display text-white">{result.metrics?.proteins || 0}g</div>
+                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Prot.</div>
+                     </div>
+                     <div className="text-center">
+                         <div className="text-xl font-display text-white">{result.servings || 2}</div>
+                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Pers.</div>
+                     </div>
+                  </div>
+
                  <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                     <ReactMarkdown
                         components={{
-                            h1: ({node, ...props}) => <h3 className="text-xl font-display text-blue-200 mb-4 mt-2" {...props} />,
-                            h2: ({node, ...props}) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-blue-900/30 pb-2" {...props} />,
-                            strong: ({node, ...props}) => <strong className="text-blue-400 font-bold" {...props} />,
-                            ul: ({node, ...props}) => <ul className="space-y-2 my-4" {...props} />,
-                            li: ({node, ...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
+                            h1: ({...props}) => <h3 className="text-xl font-display text-blue-200 mb-4 mt-2" {...props} />,
+                            h2: ({...props}) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-blue-900/30 pb-2" {...props} />,
+                            strong: ({...props}) => <strong className="text-blue-400 font-bold" {...props} />,
+                            ul: ({...props}) => <ul className="space-y-2 my-4" {...props} />,
+                            li: ({...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
                         }}
                     >
                         {result.text}

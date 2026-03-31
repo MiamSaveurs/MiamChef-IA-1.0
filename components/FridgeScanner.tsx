@@ -3,9 +3,8 @@ import React, { useState, useRef } from 'react';
 import { scanFridgeAndSuggest, fileToGenerativePart, generateRecipeImage } from '../services/geminiService';
 import { saveRecipeToBook } from '../services/storageService';
 import { LoadingState, GeneratedContent } from '../types';
-import { Sparkles, Loader2, Upload, RefreshCw, Lock, Book, Check, Image as ImageIcon, ChevronRight, Camera, Leaf, ChevronDown, Utensils, Snowflake, XCircle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import { PremiumCamera, PremiumChefHat } from './Icons';
+import { Sparkles, Loader2, RefreshCw, Lock, ChevronRight, Camera, Leaf, ChevronDown } from 'lucide-react';
+import { PremiumCamera } from './Icons';
 import RecipeResultCard from './RecipeResultCard';
 
 interface FridgeScannerProps {
@@ -26,8 +25,8 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
   const result = persistentState;
   const setResult = setPersistentState;
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     const previewUrl = URL.createObjectURL(file);
@@ -49,12 +48,12 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
 
     try {
       // Check for API key for high quality images (Gemini 3.1 Flash Image)
-      // @ts-ignore
+      // @ts-expect-error - AIS Studio API
       if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-          // @ts-ignore
+          // @ts-expect-error - AIS Studio API
           const hasKey = await window.aistudio.hasSelectedApiKey();
           if (!hasKey) {
-               // @ts-ignore
+               // @ts-expect-error - AIS Studio API
                await window.aistudio.openSelectKey();
           }
       }
@@ -77,11 +76,11 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
           const img = await generateRecipeImage(title, `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
           setGeneratedImage(img);
           setResult({ ...response, dietary, image: img });
-      } catch(e) {
+      } catch(_e) {
           console.error("Failed to generate scan image");
       }
 
-    } catch (e) {
+    } catch (_e) {
       setStatus('error');
     }
   };
@@ -105,7 +104,7 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
         storageAdvice: result.storageAdvice || undefined,
         seoTitle: result.seoTitle || undefined,
         seoDescription: result.seoDescription || undefined,
-        servings: 2 // Default servings for anti-gaspi
+        servings: result.servings || 2
       });
       
       setIsSaved(true);
