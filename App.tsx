@@ -17,9 +17,10 @@ import Profile from './components/Profile';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import InAppMessageModal from './components/InAppMessageModal';
 import ChatBot from './components/ChatBot';
-import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen } from './services/storageService';
-import { AppView, RecipeMetrics } from './types';
+import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen, saveRecipeToBook } from './services/storageService';
+import { AppView, RecipeMetrics, GeneratedContent } from './types';
 import { WifiOff } from 'lucide-react';
+import RecipeResultCard from './components/RecipeResultCard';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -47,6 +48,9 @@ const App: React.FC = () => {
     image: string | null;
     videoUrl?: string | null;
   } | null>(null);
+
+  const [persistentScanResult, setPersistentScanResult] = useState<(GeneratedContent & { dietary?: string }) | null>(null);
+  const [isScanResultSaved, setIsScanResultSaved] = useState(false);
 
   // --- TIMER STATE ---
   const [timerTimeLeft, setTimerTimeLeft] = useState(0);
@@ -275,7 +279,12 @@ const App: React.FC = () => {
             setPersistentState={setPersistentRecipe}
         />
       );
-      case AppView.SCAN_FRIDGE: return <FridgeScanner />;
+      case AppView.SCAN_FRIDGE: return (
+        <FridgeScanner 
+          persistentState={persistentScanResult}
+          setPersistentState={setPersistentScanResult}
+        />
+      );
       case AppView.SOMMELIER: return <Sommelier />;
       case AppView.DISH_EDITOR: return <DishEditor />;
       
@@ -316,6 +325,35 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSaveScanResult = async () => {
+    if (!persistentScanResult) return;
+    const title = persistentScanResult.seoTitle || "Recette Anti-Gaspi";
+
+    try {
+      await saveRecipeToBook({
+        id: Date.now().toString(),
+        title: title,
+        markdownContent: persistentScanResult.text,
+        date: new Date().toLocaleDateString('fr-FR'),
+        image: persistentScanResult.image || undefined,
+        utensils: persistentScanResult.utensils || [], 
+        metrics: persistentScanResult.metrics || undefined,
+        ingredients: persistentScanResult.ingredients || [],
+        ingredientsWithQuantities: persistentScanResult.ingredientsWithQuantities || [],
+        steps: persistentScanResult.steps || [],
+        storageAdvice: persistentScanResult.storageAdvice || undefined,
+        seoTitle: persistentScanResult.seoTitle || undefined,
+        seoDescription: persistentScanResult.seoDescription || undefined,
+        servings: 2
+      });
+      
+      setIsScanResultSaved(true);
+      setTimeout(() => setIsScanResultSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to save recipe from overlay", err);
+    }
+  };
+
   return (
     <div className="bg-black min-h-screen text-white font-body selection:bg-chef-green/30">
       {!isOnline && (
@@ -325,6 +363,22 @@ const App: React.FC = () => {
       )}
       
       <main className="w-full">{renderView()}</main>
+
+      {/* PERSISTENT RECIPE OVERLAY */}
+      {persistentScanResult && currentView !== AppView.SCAN_FRIDGE && (
+        <div className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl">
+            <RecipeResultCard 
+              result={persistentScanResult}
+              generatedImage={persistentScanResult.image || null}
+              dietary={persistentScanResult.dietary || "Classique (Aucun)"}
+              isSaved={isScanResultSaved}
+              onSave={handleSaveScanResult}
+              onClose={() => setPersistentScanResult(null)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* BANNIÈRE D'INSTALLATION INTELLIGENTE */}
       <InstallPWA />

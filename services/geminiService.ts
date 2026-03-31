@@ -673,27 +673,19 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   const dietRules = getDietaryConstraints(dietary);
 
   const textPart = {
-    text: `ROLE : Expert Cuisinier en vision par ordinateur.
+    text: `Expert Cuisinier. 
+    ${userProfileContext}
+    1. IDENTIFIER ingrédients visibles.
+    2. FILTRER selon REGIME : ${dietary} (${dietRules}).
+    3. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
+    4. CONSERVATION : Durée/mode (champ 'storageAdvice').
     
+    FORMAT :
+    - Titre H1 (# Titre) obligatoire.
+    - Listes à puces (-) pour ingrédients.
+    - Paragraphes pour étapes (PAS de # ou ## par ligne).
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${FOOD_SAFETY_PROTOCOL}
-    ${userProfileContext}
-
-    ETAPE 1 : IDENTIFICATION
-    Liste les ingrédients visibles.
-    
-    ETAPE 2 : FILTRAGE
-    REGIME : ${dietary}
-    RÈGLES : ${dietRules}
-    Ignorer les ingrédients interdits.
-    
-    ETAPE 3 : CRÉATION
-    Crée une recette anti-gaspillage simple et savoureuse adaptée au régime demandé et au MATÉRIEL DISPONIBLE de l'utilisateur. 
-    CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
-    Format Markdown. 
-    1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat Anti-Gaspi). C'est obligatoire et crucial pour le système.
-    2. Utilisez des listes à puces (avec des tirets '-') pour les ingrédients. Chaque ingrédient doit être sur sa propre ligne.
-    3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section peuvent avoir des ##.
     ${BANNED_WORDS_INSTRUCTION}`,
   };
 
