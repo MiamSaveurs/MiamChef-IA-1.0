@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { chatWithChef } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
@@ -15,7 +15,36 @@ const ChatBot: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const recognitionRef = useRef<any>(null);
+
+    // Initialize Speech Recognition
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognitionRef.current = new SpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = false;
+            recognitionRef.current.lang = 'fr-FR';
+
+            recognitionRef.current.onresult = (event: any) => {
+                const transcript = event.results[0][0].transcript;
+                setInput(transcript);
+                setIsListening(false);
+            };
+
+            recognitionRef.current.onerror = (event: any) => {
+                console.error("Speech recognition error", event.error);
+                setIsListening(false);
+            };
+
+            recognitionRef.current.onend = () => {
+                setIsListening(false);
+            };
+        }
+    }, []);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -23,16 +52,47 @@ const ChatBot: React.FC = () => {
         }
     }, [messages]);
 
-    const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+    const toggleListening = () => {
+        if (isListening) {
+            recognitionRef.current?.stop();
+        } else {
+            setInput('');
+            recognitionRef.current?.start();
+            setIsListening(true);
+        }
+    };
 
-        const userMessage = input.trim();
+    const speak = (text: string) => {
+        if (isMuted) return;
+        
+        // Clean markdown for better speech
+        const cleanText = text.replace(/[#*`_]/g, '').replace(/\[.*?\]/g, '');
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        
+        // Find a nice French voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const frenchVoice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google')) || voices.find(v => v.lang.startsWith('fr'));
+        if (frenchVoice) utterance.voice = frenchVoice;
+
+        window.speechSynthesis.cancel(); // Stop any current speech
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const handleSend = async (overrideInput?: string) => {
+        const messageToSend = overrideInput || input;
+        if (!messageToSend.trim() || isLoading) return;
+
+        const userMessage = messageToSend.trim();
         setInput('');
         setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
         setIsLoading(true);
+        window.speechSynthesis.cancel(); // Stop speaking when user sends new message
 
         try {
-            // Format history for Gemini
             const history = messages.map(m => ({
                 role: m.role,
                 parts: [{ text: m.text }]
@@ -40,9 +100,14 @@ const ChatBot: React.FC = () => {
 
             const response = await chatWithChef(userMessage, history);
             setMessages(prev => [...prev, { role: 'model', text: response }]);
+            
+            // Speak the response
+            speak(response);
         } catch (error) {
             console.error("Chat error:", error);
-            setMessages(prev => [...prev, { role: 'model', text: "Désolé, je rencontre une petite difficulté technique. Pouvez-vous répéter ?" }]);
+            const errorMsg = "Désolé, je rencontre une petite difficulté technique. Pouvez-vous répéter ?";
+            setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
+            speak(errorMsg);
         } finally {
             setIsLoading(false);
         }
@@ -69,13 +134,28 @@ const ChatBot: React.FC = () => {
                                     <span className="text-[10px] text-chef-green font-medium uppercase tracking-wider">VOTRE ASSISTANT CULINAIRE</span>
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => setMessages([])}
-                                className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-400 hover:text-red-400"
-                                title="Effacer la conversation"
-                            >
-                                <Trash2 size={20} />
-                            </button>
+                            <div className="flex items-center gap-1">
+                                <button 
+                                    onClick={() => {
+                                        setIsMuted(!isMuted);
+                                        if (!isMuted) window.speechSynthesis.cancel();
+                                    }}
+                                    className={`p-2 rounded-full transition-colors ${isMuted ? 'text-zinc-500 hover:bg-zinc-800' : 'text-chef-green hover:bg-chef-green/10'}`}
+                                    title={isMuted ? "Activer la voix" : "Couper la voix"}
+                                >
+                                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setMessages([]);
+                                        window.speechSynthesis.cancel();
+                                    }}
+                                    className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-400 hover:text-red-400"
+                                    title="Effacer la conversation"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Safety Banner */}
@@ -145,16 +225,27 @@ const ChatBot: React.FC = () => {
                         {/* Input */}
                         <div className="p-4 bg-zinc-900 border-t border-zinc-800">
                             <div className="relative flex items-center gap-2">
+                                <button
+                                    onClick={toggleListening}
+                                    className={`p-3 rounded-xl transition-all ${
+                                        isListening 
+                                            ? 'bg-red-500 text-white animate-pulse' 
+                                            : 'bg-zinc-800 text-zinc-400 hover:text-chef-green'
+                                    }`}
+                                    title={isListening ? "Arrêter l'écoute" : "Parler au Chef"}
+                                >
+                                    {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+                                </button>
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                    placeholder="Posez votre question au Chef..."
+                                    placeholder={isListening ? "Je vous écoute..." : "Posez votre question..."}
                                     className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-chef-green/50 transition-all"
                                 />
                                 <button
-                                    onClick={handleSend}
+                                    onClick={() => handleSend()}
                                     disabled={!input.trim() || isLoading}
                                     className="p-3 bg-chef-green text-black rounded-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-lg shadow-chef-green/20"
                                 >
