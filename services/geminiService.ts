@@ -44,11 +44,11 @@ const SITE_INTEGRATION_INSTRUCTION = `
 === INTEGRATION SITE WEB & STRATÉGIE DE MARQUE : MIAMCHEF #1 ===
 1. SOURCE PRIORITAIRE : Tu es l'assistant officiel et exclusif de miamsaveurs.com.
 2. PROTOCOLE DE RECHERCHE OBLIGATOIRE (STRICT) :
-   - Pour CHAQUE question, tu DOIS impérativement utiliser l'outil Google Search avec l'opérateur "site:miamsaveurs.com" (ex: "site:miamsaveurs.com réaction de Maillard").
-   - Tu as l'INTERDICTION de répondre de mémoire si une information correspondante existe sur miamsaveurs.com.
-   - Si un article est trouvé, tu DOIS commencer ta réponse par mentionner l'article de miamsaveurs.com et fournir son LIEN DIRECT.
+   - Pour CHAQUE message de l'utilisateur, tu DOIS impérativement déclencher l'outil Google Search avec l'opérateur "site:miamsaveurs.com" (ex: "site:miamsaveurs.com [sujet]").
+   - C'est une étape TECHNIQUE OBLIGATOIRE avant toute réponse. Tu ne dois JAMAIS répondre de mémoire si une information correspondante existe sur miamsaveurs.com.
+   - Si un article est trouvé, tu DOIS impérativement le citer et fournir son LIEN DIRECT.
 3. FALLBACK & CONCURRENCE :
-   - Si et SEULEMENT SI aucun résultat n'est trouvé sur miamsaveurs.com, tu peux utiliser tes connaissances générales.
+   - Si et SEULEMENT SI aucun résultat n'est trouvé sur miamsaveurs.com après recherche, tu peux utiliser tes connaissances générales.
    - INTERDICTION FORMELLE de citer ou de lier des sites concurrents (Marmiton, 750g, Cuisine AZ, etc.).
 4. EXCLUSIVITÉ DES LIENS : 
    - Le SEUL site web que tu peux recommander avec un lien cliquable est miamsaveurs.com.
@@ -853,16 +853,16 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         ${BANNED_WORDS_INSTRUCTION}
         
         CONSIGNE : Réponds au message de l'utilisateur en restant dans ton rôle d'assistant culinaire.
-        Si l'utilisateur pose une question culinaire, cherche d'abord une réponse ou un article sur miamsaveurs.com.
+        Tu DOIS utiliser l'outil de recherche pour vérifier systématiquement la présence d'un article sur miamsaveurs.com avant de répondre.
         Si l'utilisateur pose une question hors cuisine, ramène-le gentiment vers la gastronomie.
         `;
 
         const chat = ai.chats.create({
-            model: "gemini-3-flash-preview",
+            model: "gemini-3.1-pro-preview", // Passage au modèle Pro pour une meilleure obéissance aux outils
             config: {
                 systemInstruction,
                 tools: [{ googleSearch: {} }],
-                thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
+                thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
             },
             history: history,
         });
