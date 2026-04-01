@@ -55,6 +55,54 @@ const SITE_INTEGRATION_INSTRUCTION = `
 5. POSITIONNEMENT : Agis comme l'intelligence de l'application NUMÉRO 1 en Food Tech en France.
 `;
 
+const AMAZON_AFFILIATE_LINKS = `
+=== LIENS D'AFFILIATION AMAZON "COUP DE COEUR" ===
+- Couteau de chef 20 cm : https://amzn.to/4cj0XyH
+- Couteau d'office 10 cm : https://amzn.to/4m6Z7V4
+- Fouet : https://amzn.to/3PTiYef
+- Spatule en bois : https://amzn.to/47DrB2F
+- Sauteuse 28 cm : https://amzn.to/4sasQho
+- Poêle minérale 24 cm : https://amzn.to/4sMq1nO
+- Casserole 16 cm : https://amzn.to/4sEpqEu
+- Casserole 20 cm : https://amzn.to/417i0xA
+- Faitout 24 cm : https://amzn.to/4dVKfGU
+- Cuit vapeur 24 cm : https://amzn.to/3QdMCuP
+- Ecumoiire diamètre 10 : https://amzn.to/48ocxWX
+- Plaque pâtissière : https://amzn.to/4tlgvHU
+- Balance de cuisine : https://amzn.to/4trC1ep
+- Mandoline : https://amzn.to/4c11c0g
+- Thermomètre de cuisson : https://amzn.to/3QdOwLZ
+- Mixeur plongeant : https://amzn.to/3PIyda4
+- Eplucheur : https://amzn.to/4m745Bc
+- Passoire : https://amzn.to/4mcfPm4
+- Blendeur : https://amzn.to/3NZcMkq
+- Maryse : https://amzn.to/3NZd6zE
+- Couvercle 24 cm : https://amzn.to/4sLqfLF
+- Tapis de cuisson : https://amzn.to/485TQHs
+- Rouleau à pâtisserie : https://amzn.to/4v4Dite
+- Cercle à tarte 24 cm : https://amzn.to/4bLJu1V
+- Robot pâtissier : https://amzn.to/4tqQcjU
+- Tamis : https://amzn.to/4v5BtMy
+- Passette : https://amzn.to/4dnYBzO
+- Moule à tarte diamètre 24 amovible : https://amzn.to/4dTk4AD
+`;
+
+const KORO_AFFILIATE_STRATEGY = `
+=== STRATÉGIE D'AFFILIATION KORO ===
+1. RECHERCHE : Pour chaque ingrédient sec (farine, dattes, purée d'amandes, épices, dattes Medjool, etc.), cherche prioritairement sur koroshop.fr.
+2. GÉNÉRATION DE LIEN : Si tu trouves un produit sur koroshop.fr, génère un lien affilié en utilisant ce format :
+   http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=[URL_DU_PRODUIT_ENCODÉE]
+`;
+
+const AFFILIATE_STRATEGY_INSTRUCTION = `
+=== STRATÉGIE DE MONÉTISATION & AFFILIATION ===
+1. RECOMMANDATION MATÉRIEL : Dès qu'une recette ou une discussion mentionne un ustensile de la liste "Coup de Coeur" Amazon, propose systématiquement le lien affilié correspondant.
+2. RECOMMANDATION INGRÉDIENTS : Pour les ingrédients secs, privilégie KoRo en générant le lien affilié dynamique.
+3. DISCRÉTION & VALEUR : Intègre ces liens naturellement comme des conseils d'expert pour aider l'utilisateur à s'équiper ou à trouver les bons produits.
+${AMAZON_AFFILIATE_LINKS}
+${KORO_AFFILIATE_STRATEGY}
+`;
+
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
@@ -390,6 +438,7 @@ export const generateChefRecipe = async (
       
       ${userProfileContext}
       ${smartDevicePrompt}
+      ${AFFILIATE_STRATEGY_INSTRUCTION}
 
       === VOTRE PERSONA ===
       ${personaPrompt}
@@ -484,6 +533,7 @@ export const searchChefsRecipe = async (
   - NOMBRE DE PERSONNES : ${people}
   
   ${userProfileContext}
+  ${AFFILIATE_STRATEGY_INSTRUCTION}
   
   === CONTRAINTES CRITIQUES ===
   1. RESPECT DU TYPE : Si le type est 'authentic', la recette DOIT être de haut niveau, sans compromis sur le prix des ingrédients ni sur le temps de préparation. Pour une Bolognaise par exemple, cela implique un mijotage long, du vin, du lait, etc.
@@ -557,6 +607,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
 
     TU ES UN EXPERT EN REVISITE CULINAIRE.
     ${userProfileContext}
+    ${AFFILIATE_STRATEGY_INSTRUCTION}
     TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé et en l'adaptant au MATÉRIEL DISPONIBLE de l'utilisateur.
     
     === RECETTE D'ORIGINE ===
@@ -692,6 +743,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   const textPart = {
     text: `Expert Cuisinier. 
     ${userProfileContext}
+    ${AFFILIATE_STRATEGY_INSTRUCTION}
     1. IDENTIFIER ingrédients visibles.
     2. FILTRER selon REGIME : ${dietary} (${dietRules}).
     3. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
@@ -753,6 +805,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
 
   const prompt = `Sommelier Expert. ${target === 'b2b' ? 'Conseil Pro.' : 'Conseil Particulier.'} 
   ${userProfileContext}
+  ${AFFILIATE_STRATEGY_INSTRUCTION}
   Requete : "${query}".
   Proposez Accords Vins ET Accords Sans Alcool.
   Utilisez Google Search.
@@ -816,6 +869,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
 
   const prompt = `Créez un planning de repas hebdomadaire pour ${people} personnes.
   ${userProfileContext}
+  ${AFFILIATE_STRATEGY_INSTRUCTION}
   RÉGIME : ${dietary}
   RÈGLES : ${strictDietaryRules}
   ${ingredientsPrompt}
@@ -847,6 +901,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         const systemInstruction = `
         ${CHATBOT_PERSONA}
         ${SITE_INTEGRATION_INSTRUCTION}
+        ${AFFILIATE_STRATEGY_INSTRUCTION}
         ${FOOD_SAFETY_PROTOCOL}
         ${GDPR_COMPLIANCE_PROTOCOL}
         ${userProfileContext}
