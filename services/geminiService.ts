@@ -40,6 +40,15 @@ const CHATBOT_PERSONA = `
 5. STYLE : Réponses courtes, structurées avec des emojis pour la convivialité.
 `;
 
+const SITE_INTEGRATION_INSTRUCTION = `
+=== INTEGRATION SITE WEB : MIAMSAVEURS.COM ===
+1. SOURCE PRIORITAIRE : Tu es l'assistant officiel du site miamsaveurs.com.
+2. RECHERCHE : Pour chaque question culinaire, utilise SYSTÉMATIQUEMENT l'outil de recherche Google pour trouver des articles, conseils ou recettes correspondants sur le domaine "miamsaveurs.com".
+3. SUGGESTION : Si une correspondance est trouvée, suggère l'article ou la recette à l'utilisateur en incluant le LIEN DIRECT vers miamsaveurs.com.
+4. EXCLUSIVITÉ : Priorise toujours les contenus de miamsaveurs.com avant toute autre source externe.
+5. FORMAT : Présente le lien de manière claire et incitative (ex: "Découvrez notre article complet sur miamsaveurs.com : [Lien]").
+`;
+
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
@@ -831,12 +840,14 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         
         const systemInstruction = `
         ${CHATBOT_PERSONA}
+        ${SITE_INTEGRATION_INSTRUCTION}
         ${FOOD_SAFETY_PROTOCOL}
         ${GDPR_COMPLIANCE_PROTOCOL}
         ${userProfileContext}
         ${BANNED_WORDS_INSTRUCTION}
         
         CONSIGNE : Réponds au message de l'utilisateur en restant dans ton rôle d'assistant culinaire.
+        Si l'utilisateur pose une question culinaire, cherche d'abord une réponse ou un article sur miamsaveurs.com.
         Si l'utilisateur pose une question hors cuisine, ramène-le gentiment vers la gastronomie.
         `;
 
@@ -844,6 +855,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
             model: "gemini-3-flash-preview",
             config: {
                 systemInstruction,
+                tools: [{ googleSearch: {} }],
                 thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
             },
             history: history,
