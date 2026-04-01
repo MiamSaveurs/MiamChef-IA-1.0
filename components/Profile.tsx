@@ -4,8 +4,8 @@ import { UserProfile } from '../types';
 import { getUserProfile, saveUserProfile } from '../services/storageService';
 import { 
     Save, User, Leaf, AlertTriangle, ThumbsDown, PenTool, Users, ChefHat, 
-    Check, Settings, Share2, Mail, Send, Loader2, CheckCircle, XCircle, 
-    Wifi, Zap, Globe, Moon, Heart, Wheat, Activity, Flame 
+    Check, Share2, Send, Loader2, CheckCircle, 
+    Wifi, Zap, Globe, Moon, Heart, Wheat, Activity 
 } from 'lucide-react';
 import { PremiumFingerprint, PremiumCrown, PremiumChefHat } from './Icons';
 
@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
         setIsSending(true);
         setServerError('');
         try {
-            const response = await fetch('http://localhost:3001/api/send-referral', {
+            const response = await fetch('/api/send-referral', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, code: profile.referralCode, name: profile.name }),
@@ -71,7 +71,7 @@ const Profile: React.FC = () => {
                     text: `Salut ! Je t'invite à découvrir MiamChef, l'assistant culinaire ultime.`,
                     url: 'https://miamchef.vercel.app' 
                 });
-            } catch (err) { console.log('Partage annulé'); }
+            } catch { console.log('Partage annulé'); }
         } else {
             alert("Partage natif non disponible.");
         }
@@ -79,7 +79,16 @@ const Profile: React.FC = () => {
 
     // --- COMPOSANTS DE CARTES VISUELLES ---
 
-    const SelectionCard = ({ label, icon: Icon, value, activeColor, onClick, selected }: any) => {
+    interface SelectionCardProps {
+        label: string;
+        icon: React.ElementType;
+        value?: string;
+        activeColor: string;
+        onClick: () => void;
+        selected: boolean;
+    }
+
+    const SelectionCard = ({ label, icon: Icon, activeColor, onClick, selected }: SelectionCardProps) => {
         return (
             <button
                 onClick={onClick}
@@ -360,21 +369,28 @@ const Profile: React.FC = () => {
 
                             {!isEmailSent ? (
                                 <div className="bg-black/30 rounded-xl p-4 border border-white/10 mb-4 backdrop-blur-sm">
-                                    <div className="flex gap-2">
-                                        <input 
-                                            type="email" 
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="votre@email.com"
-                                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-[#509f2a] outline-none"
-                                        />
-                                        <button 
-                                            onClick={handleSendCodeByEmail}
-                                            disabled={isSending || !email}
-                                            className="px-4 py-2 bg-[#509f2a] hover:bg-[#408020] text-white rounded-lg transition-colors flex items-center justify-center disabled:opacity-50"
-                                        >
-                                            {isSending ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
-                                        </button>
+                                    <div className="flex flex-col gap-2 w-full">
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="email" 
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                placeholder="votre@email.com"
+                                                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-[#509f2a] outline-none"
+                                            />
+                                            <button 
+                                                onClick={handleSendCodeByEmail}
+                                                disabled={isSending || !email}
+                                                className="px-4 py-2 bg-[#509f2a] hover:bg-[#408020] text-white rounded-lg transition-colors flex items-center justify-center disabled:opacity-50"
+                                            >
+                                                {isSending ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+                                            </button>
+                                        </div>
+                                        {serverError && (
+                                            <p className="text-[10px] text-red-400 mt-1 font-medium italic">
+                                                {serverError}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             ) : (

@@ -35,7 +35,8 @@ const DishEditor: React.FC = () => {
       const result = await editDishPhoto(originalBase64, prompt);
       setEditedImage(result);
       setStatus('success');
-    } catch (e) {
+    } catch (err) {
+      console.error(err);
       setStatus('error');
     }
   };

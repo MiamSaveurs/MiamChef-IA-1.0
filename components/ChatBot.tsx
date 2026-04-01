@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, ChefHat, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, ChefHat, ShieldCheck, Trash2 } from 'lucide-react';
 import { chatWithChef } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';

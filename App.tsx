@@ -149,6 +149,7 @@ const App: React.FC = () => {
         clearInterval(interval);
         document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView]);
 
   // Sécurité supplémentaire : Si on change de vue et qu'on est expiré
@@ -160,7 +161,7 @@ const App: React.FC = () => {
 
   // Initialize or Resume AudioContext on User Interaction
   const initAudio = () => {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext = window.AudioContext || (window as { webkitAudioContext?: typeof window.AudioContext }).webkitAudioContext;
       if (!AudioContext) return;
 
       if (!audioCtxRef.current) {
@@ -176,7 +177,7 @@ const App: React.FC = () => {
   const playAlarmSound = () => {
     try {
         if (!audioCtxRef.current) {
-             const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+             const AudioContext = window.AudioContext || (window as { webkitAudioContext?: typeof window.AudioContext }).webkitAudioContext;
              if (AudioContext) audioCtxRef.current = new AudioContext();
         }
 

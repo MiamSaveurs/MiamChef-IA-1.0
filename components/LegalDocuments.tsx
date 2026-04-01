@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Scale, FileText, Shield, AlertCircle, Lock } from 'lucide-react';
+import { X, Scale, Shield, AlertCircle, Lock } from 'lucide-react';
 
 /* 
  * NOTE SYSTÈME POUR L'IA (MÉMOIRE FUTURE) :

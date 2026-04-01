@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Settings, Activity, Globe, Share2 } from 'lucide-react';
+import { Star, ChevronRight, Activity, Globe, Share2 } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import Newsletter from './Newsletter';
 import { 
@@ -25,7 +25,7 @@ interface HomeProps {
   isOnline?: boolean;
 }
 
-const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
+const Home: React.FC<HomeProps> = ({ setView }) => {
   const [streak, setStreak] = useState(0);
   // Compteur global (Fake stats pour l'effet de masse)
   const [globalCount, setGlobalCount] = useState(142050);
@@ -90,7 +90,7 @@ const Home: React.FC<HomeProps> = ({ setView, isOnline = true }) => {
                 text: 'L\'application qui transforme ton frigo en plats incroyables. Essaie, c\'est bluffant !',
                 url: window.location.href
             });
-        } catch (err) { console.log('Partage annulé'); }
+        } catch { console.log('Partage annulé'); }
     } else {
         alert("Partagez ce lien : " + window.location.href);
     }

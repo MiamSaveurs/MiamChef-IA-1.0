@@ -1,16 +1,14 @@
 
 import React from 'react';
-import { X, ArrowRight, Star, Clock } from 'lucide-react';
+import { X, Star, Clock } from 'lucide-react';
 import { 
   PremiumChefHat, 
   PremiumFingerprint, 
   PremiumGlobe, 
-  PremiumWine, 
   PremiumLayers, 
   PremiumEuro, 
   WickerBasket, 
   PremiumHeart, 
-  PremiumBriefcase, 
   PremiumShield,
   PremiumPaperPlane
 } from './Icons';

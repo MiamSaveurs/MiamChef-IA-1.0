@@ -1,17 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Share, MoreVertical, Download, Phone } from 'lucide-react';
+import { X, Share, Download, Phone } from 'lucide-react';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 const InstallPWA: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     // Détection si l'app est déjà installée (Mode Standalone)
-    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    setTimeout(() => setIsStandalone(isInStandaloneMode), 0);
+    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as Navigator & { standalone?: boolean }).standalone;
+    setTimeout(() => setIsStandalone(!!isInStandaloneMode), 0);
 
     if (isInStandaloneMode) return;
 
@@ -23,7 +28,7 @@ const InstallPWA: React.FC = () => {
     // Détection Android (Chrome) pour le prompt natif
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowInstallBanner(true);
     };
 

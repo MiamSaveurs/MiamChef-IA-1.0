@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, ExternalLink, Loader2, CreditCard, Book, Timer, Gift } from 'lucide-react';
-import { startSubscription } from '../services/storageService';
+import { Check, X, ShieldCheck, Lock, Eye, Circle, Star, Loader2, Book, Timer, Gift } from 'lucide-react';
 import { AppView } from '../types';
 
 // ============================================================================

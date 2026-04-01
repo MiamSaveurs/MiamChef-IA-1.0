@@ -11,8 +11,7 @@ import {
     PremiumUtensils, 
     PremiumCoffee, 
     PremiumSoup, 
-    PremiumSparkles,
-    PremiumCheck
+    PremiumSparkles
 } from './Icons';
 
 const MealPlanner: React.FC = () => {
@@ -50,9 +49,9 @@ const MealPlanner: React.FC = () => {
             setPlan(newPlan);
             await saveWeeklyPlan(newPlan);
             setStatus('success');
-        } catch (e: any) {
+        } catch (e) {
             setStatus('error');
-            setErrorMessage(e.message || "Le service ne répond pas (Connexion).");
+            setErrorMessage(e instanceof Error ? e.message : "Le service ne répond pas (Connexion).");
         }
     };
 
@@ -94,10 +93,11 @@ const MealPlanner: React.FC = () => {
         elementToPrint.style.backgroundColor = 'white';
         elementToPrint.style.padding = '20px';
         const cards = elementToPrint.querySelectorAll('.meal-card');
-        cards.forEach((card: any) => {
-            card.style.backgroundColor = '#f3f4f6';
-            card.style.border = '1px solid #ddd';
-            card.style.color = 'black';
+        cards.forEach((card) => {
+            const htmlCard = card as HTMLElement;
+            htmlCard.style.backgroundColor = '#f3f4f6';
+            htmlCard.style.border = '1px solid #ddd';
+            htmlCard.style.color = 'black';
         });
 
         document.body.appendChild(elementToPrint);
@@ -108,9 +108,9 @@ const MealPlanner: React.FC = () => {
           html2canvas: { scale: 2, useCORS: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
-        // @ts-ignore
+        // @ts-expect-error - html2pdf is loaded via script tag
         if (window.html2pdf) {
-          // @ts-ignore
+          // @ts-expect-error - html2pdf is loaded via script tag
           window.html2pdf().set(opt).from(elementToPrint).save().then(() => {
               document.body.removeChild(elementToPrint);
           });

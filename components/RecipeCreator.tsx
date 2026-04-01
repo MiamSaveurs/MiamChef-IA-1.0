@@ -1,36 +1,28 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe, generateRecipeVideo } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
 import { LoadingState, RecipeMetrics } from '../types';
 import { 
   ChevronLeft, 
-  Target,
   Zap,
-  RotateCcw,
   Minus,
   Plus,
   User,
   Leaf,
   Globe,
-  Clock,
   Layers,
   Search,
   Check,
-  ChevronDown,
-  Sparkles,
   Book,
   GraduationCap,
   Award,
   Crown,
   ShoppingCart,
-  Square,
-  CheckSquare,
   ArrowRight,
   XCircle,
   Snowflake,
   Play,
-  ArrowLeft,
   Share2,
   Wifi,
   Radio,
@@ -49,20 +41,22 @@ import {
   Coffee,
   Utensils,
   Star,
-  Video
+  Video,
+  ExternalLink
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
-  GourmetBook, 
+    AMAZON_AFFILIATE_LINKS, 
+    getKoRoAffiliateLink, 
+    KORO_DRY_INGREDIENTS_KEYWORDS 
+} from '../constants/affiliateLinks';
+import { 
   PremiumChefHat, 
   PremiumCake, 
   PremiumSearch, 
-  PremiumCheck, 
-  PremiumTimer, 
   PremiumSparkles, 
   PremiumEuro, 
   PremiumMedal, 
-  PremiumUtensils,
   WickerBasket
 } from './Icons';
 
@@ -78,19 +72,19 @@ interface RecipeCreatorProps {
         storageAdvice?: string;
         servings?: number;
     } | null;
-    setPersistentState: (data: any) => void;
+    setPersistentState: (data: RecipeCreatorProps['persistentState']) => void;
 }
 
 const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersistentState }) => {
   const [mode, setMode] = useState<'create' | 'search'>('create');
   const [chefMode, setChefMode] = useState<'cuisine' | 'patisserie'>('cuisine');
   
-  const [recipeCost, setRecipeCost] = useState<'authentic' | 'budget'>('authentic');
+  const [recipeCost, setRecipeCost] = useState<'authentic' | 'economical'>('authentic');
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'expert'>('intermediate'); 
   
   const [ingredients, setIngredients] = useState('');
   const [dietary, setDietary] = useState('Classique (Aucun)');
-  const [mealTime, setMealTime] = useState('Déjeuner / Dîner');
+  const [mealTime] = useState('Déjeuner / Dîner');
   const [cuisineStyle, setCuisineStyle] = useState('Tradition Française'); 
   const [isBatchCooking, setIsBatchCooking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -102,7 +96,34 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [loadingStep, setLoadingStep] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
-  
+
+  // --- LOGIQUE D'AFFILIATION ---
+  const getSuggestedProducts = useMemo(() => {
+    if (!persistentState?.text) return [];
+    const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
+    const recipeLower = persistentState.text.toLowerCase();
+
+    // Suggestions Amazon (Ustensiles)
+    AMAZON_AFFILIATE_LINKS.forEach(item => {
+        if (item.keywords.some(kw => recipeLower.includes(kw))) {
+            suggestions.push({ name: item.name, url: item.url, type: 'amazon' });
+        }
+    });
+
+    // Suggestions KoRo (Ingrédients secs)
+    KORO_DRY_INGREDIENTS_KEYWORDS.forEach(kw => {
+        if (recipeLower.includes(kw)) {
+            suggestions.push({ 
+                name: `Ingrédients KoRo : ${kw.charAt(0).toUpperCase() + kw.slice(1)}`, 
+                url: getKoRoAffiliateLink(kw), 
+                type: 'koro' 
+            });
+        }
+    });
+
+    return suggestions.slice(0, 5); // Limiter à 5 suggestions max
+  }, [persistentState?.text]);
+
   // Smart Adjust State
   const [adjusting, setAdjusting] = useState<string | null>(null);
 
@@ -137,7 +158,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const utensilsList = persistentState?.utensils || [];
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
-  const persistentSteps = persistentState?.steps || []; 
+  const persistentSteps = useMemo(() => persistentState?.steps || [], [persistentState?.steps]); 
 
   // Chargement initial des devices du profil
   useEffect(() => {
@@ -253,12 +274,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     
     try {
       // Check for API key for high quality images (Gemini 3.1 Flash Image)
-      // @ts-ignore
+      // @ts-expect-error - window.aistudio is not defined in standard types
       if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-          // @ts-ignore
+          // @ts-expect-error - window.aistudio is not defined in standard types
           const hasKey = await window.aistudio.hasSelectedApiKey();
           if (!hasKey) {
-               // @ts-ignore
+               // @ts-expect-error - window.aistudio is not defined in standard types
                await window.aistudio.openSelectKey();
           }
       }
@@ -316,10 +337,10 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
       setStatus('success');
       
-    } catch (e: any) {
+    } catch (e) {
       console.error("Erreur lors de la génération:", e);
       setStatus('error');
-      const errorMsg = e.message || "";
+      const errorMsg = e instanceof Error ? e.message : "";
       if (errorMsg.includes("Clé API manquante")) {
           alert("La clé API Gemini est manquante. Veuillez la configurer dans les paramètres de l'application (bouton Settings en haut à droite).");
       } else {
@@ -333,12 +354,12 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       const title = titleMatch ? titleMatch[1] : 'Recette Gourmande';
       
       try {
-          // @ts-ignore
+          // @ts-expect-error - aistudio is injected by the platform
           if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-              // @ts-ignore
+              // @ts-expect-error - aistudio is injected by the platform
               const hasKey = await window.aistudio.hasSelectedApiKey();
               if (!hasKey) {
-                   // @ts-ignore
+                   // @ts-expect-error - aistudio is injected by the platform
                    await window.aistudio.openSelectKey();
               }
           }
@@ -371,6 +392,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               ingredientsWithQuantities: result.ingredientsWithQuantities || ingredientsWithQuantities,
               steps: result.steps || persistentSteps,
               storageAdvice: result.storageAdvice || storageAdvice,
+              utensils: result.utensils || utensilsList,
+              image: result.image || generatedImage,
           });
       } catch (e) {
           console.error("Adjustment failed", e);
@@ -458,7 +481,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           try {
               await navigator.share(shareData);
           } catch (err) {
-              console.log('Partage annulé');
+              console.log('Partage annulé', err);
           }
       } else {
           alert("Fonction de partage native non disponible sur ce navigateur.");
@@ -474,11 +497,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     getIcon
   }: { 
     label: string, 
-    icon: any, 
+    icon: React.ElementType, 
     value: string, 
     onChange: (val: string) => void, 
     options: string[],
-    getIcon?: (opt: string) => any
+    getIcon?: (opt: string) => React.ElementType
   }) => {
     return (
         <div className="mb-6">
@@ -496,10 +519,13 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             onClick={() => onChange(option)}
                             className={`flex-shrink-0 snap-center min-w-[100px] p-3 rounded-xl border flex flex-col items-center gap-2 transition-all duration-300 ${
                                 isSelected 
-                                ? `bg-${isPatissier ? 'pink' : 'green'}-900/40 border-${isPatissier ? 'pink' : 'green'}-500 shadow-lg scale-105` 
+                                ? 'shadow-lg scale-105' 
                                 : 'bg-[#151515] border-white/5 hover:border-white/20'
                             }`}
-                            style={{ borderColor: isSelected ? themeColor : '' }}
+                            style={{ 
+                                borderColor: isSelected ? themeColor : '',
+                                backgroundColor: isSelected ? `${themeColor}22` : ''
+                            }}
                         >
                             <div className={`p-2 rounded-full ${isSelected ? 'text-white' : 'text-gray-500'}`} style={{ backgroundColor: isSelected ? themeColor : 'rgba(255,255,255,0.05)' }}>
                                 {OptionIcon && <OptionIcon size={18} />}
@@ -766,8 +792,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                                 <div className="grid grid-cols-2 gap-3 mb-2">
                                     <button
-                                        onClick={() => setRecipeCost('budget')}
-                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'budget' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
+                                        onClick={() => setRecipeCost('economical')}
+                                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${recipeCost === 'economical' ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-[#151515] border-white/5 text-gray-400 hover:bg-[#1a1a1a]'}`}
                                     >
                                         <PremiumEuro size={20} className="mb-1" />
                                         <span className="text-[10px] font-bold uppercase">Économique</span>
@@ -787,21 +813,24 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     <div className="flex bg-[#151515] rounded-xl p-1 border border-white/5">
                                         <button
                                             onClick={() => setDifficulty('beginner')}
-                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'beginner' ? 'bg-gray-800 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'beginner' ? 'text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            style={{ backgroundColor: difficulty === 'beginner' ? themeColor : 'transparent' }}
                                         >
                                             <GraduationCap size={16} />
                                             <span className="text-[9px] font-bold uppercase">Facile</span>
                                         </button>
                                         <button
                                             onClick={() => setDifficulty('intermediate')}
-                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'intermediate' ? 'bg-gray-800 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'intermediate' ? 'text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            style={{ backgroundColor: difficulty === 'intermediate' ? themeColor : 'transparent' }}
                                         >
                                             <Award size={16} />
                                             <span className="text-[9px] font-bold uppercase">Moyen</span>
                                         </button>
                                         <button
                                             onClick={() => setDifficulty('expert')}
-                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'expert' ? 'bg-gray-800 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 rounded-lg flex flex-col items-center gap-1 transition-all ${difficulty === 'expert' ? 'text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                            style={{ backgroundColor: difficulty === 'expert' ? themeColor : 'transparent' }}
                                         >
                                             <Crown size={16} />
                                             <span className="text-[9px] font-bold uppercase">Avancé</span>
@@ -967,11 +996,11 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 <div className="bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
                     
                     <div className="flex justify-center gap-3 mb-6">
-                        <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 flex items-center gap-2" style={{ backgroundColor: themeColor }}>
-                            {isPatissier ? <PremiumCake size={12}/> : <PremiumChefHat size={12}/>}
-                            {isPatissier ? 'Sucré' : 'Salé'}
-                        </div>
-                        {recipeCost === 'budget' && (
+                                    <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 flex items-center gap-2" style={{ backgroundColor: themeColor }}>
+                                        {isPatissier ? <PremiumCake size={12}/> : <PremiumChefHat size={12}/>}
+                                        {isPatissier ? 'Sucré' : 'Salé'}
+                                    </div>
+                        {recipeCost === 'economical' && (
                             <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-blue-600">
                                 <PremiumEuro size={12}/> Eco
                             </div>
@@ -1158,6 +1187,37 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     </div>
                                 </div>
                             )}
+
+                            {getSuggestedProducts.length > 0 && (
+                                <div className="bg-[#1a1a1a] rounded-2xl border-l-4 overflow-hidden shadow-lg mt-6" style={{ borderLeftColor: '#f27d26' }}>
+                                    <div className="p-5 border-b border-white/5 bg-white/5">
+                                        <h3 className="font-display text-lg text-white flex items-center gap-2">
+                                            <Heart size={18} className="text-orange-400" />
+                                            Coup de Coeur MiamChef
+                                        </h3>
+                                        <p className="text-[10px] text-gray-500 mt-1">Ustensiles & Ingrédients recommandés.</p>
+                                    </div>
+                                    <div className="p-4 space-y-3">
+                                        {getSuggestedProducts.map((prod, idx) => (
+                                            <a 
+                                                key={idx}
+                                                href={prod.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-orange-500/30 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`p-2 rounded-lg ${prod.type === 'amazon' ? 'bg-orange-500/20 text-orange-400' : 'bg-green-500/20 text-green-400'}`}>
+                                                        {prod.type === 'amazon' ? <ShoppingCart size={14} /> : <Leaf size={14} />}
+                                                    </div>
+                                                    <span className="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">{prod.name}</span>
+                                                </div>
+                                                <ExternalLink size={14} className="text-gray-600 group-hover:text-orange-400 transition-colors" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="order-1 md:order-2">
@@ -1165,23 +1225,23 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                                 <ReactMarkdown 
                                 components={{
-                                    h1: ({node, ...props}) => <h1 className="hidden" {...props} />,
-                                    h2: ({node, ...props}) => (
+                                    h1: ({ ...props }) => <h1 className="hidden" {...props} />,
+                                    h2: ({ ...props }) => (
                                         <div className="flex items-center gap-3 mt-8 mb-4">
                                             <div className="h-[1px] flex-1 bg-white/10"></div>
                                             <h2 className="text-lg font-bold text-white uppercase tracking-widest" {...props} />
                                             <div className="h-[1px] flex-1 bg-white/10"></div>
                                         </div>
                                     ),
-                                    strong: ({node, ...props}) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
-                                    ul: ({node, ...props}) => <ul className="space-y-4 my-6" {...props} />,
-                                    li: ({node, ...props}) => (
+                                    strong: ({ ...props }) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
+                                    ul: ({ ...props }) => <ul className="space-y-4 my-6" {...props} />,
+                                    li: ({ ...props }) => (
                                         <li className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
                                             <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
                                             <span className="flex-1 text-gray-300">{props.children}</span>
                                         </li>
                                     ),
-                                    p: ({node, ...props}) => <p className="mb-4 text-gray-400 font-light" {...props} />
+                                    p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />
                                 }}
                                 >
                                 {recipe}

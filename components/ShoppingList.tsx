@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList, addToShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft, Plus } from 'lucide-react';
+import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft, ExternalLink } from 'lucide-react';
 import { WickerBasket } from './Icons';
+import { getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS } from '../constants/affiliateLinks';
 
 // ... CATEGORIES and getCategory helper (unchanged) ...
 const CATEGORIES = {
@@ -29,8 +30,7 @@ const getCategory = (itemText: string) => {
     if (clean.includes('thon')) return 'GROCERY_SAVORY';
     if (clean.includes('sirop')) return 'GROCERY_SWEET';
     for (const key in CATEGORIES) {
-        // @ts-ignore
-        const cat = CATEGORIES[key];
+        const cat = CATEGORIES[key as keyof typeof CATEGORIES];
         if (cat.id === 'other') continue;
         if (cat.keywords.some((k: string) => clean.includes(k))) return key;
     }
@@ -42,7 +42,6 @@ const ShoppingList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showDriveModal, setShowDriveModal] = useState(false);
   const [driveStep, setDriveStep] = useState<'retailers' | 'ingredients'>('retailers');
-  const [userCity, setUserCity] = useState(localStorage.getItem('miamchef_city') || '');
   const [selectedRetailer, setSelectedRetailer] = useState<{name: string, urlPattern: string} | null>(() => {
       const saved = localStorage.getItem('miamchef_retailer');
       return saved ? JSON.parse(saved) : null;
@@ -52,7 +51,6 @@ const ShoppingList: React.FC = () => {
   const [newItemText, setNewItemText] = useState('');
 
   // Thème Teal (Sarcelle)
-  const themeColor = '#14b8a6'; // teal-500
   const themeGradient = 'from-teal-600 to-teal-900';
   const themeShadow = 'shadow-teal-900/40';
 
@@ -100,7 +98,7 @@ const ShoppingList: React.FC = () => {
   const cleanSearchTerm = (text: string) => {
       let clean = text.replace(/^[-*•]\s*/, '').trim(); 
       clean = clean.replace(/\s*\(.*?\)/g, '');
-      clean = clean.replace(/^[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
+      clean = clean.replace(/\s*[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
       clean = clean.replace(/^\d+\s+/, '');
       return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
   };
@@ -116,7 +114,7 @@ const ShoppingList: React.FC = () => {
   const handleShare = async () => {
     const text = `📝 Ma liste de courses MiamChef :\n\n${items.filter(i => !i.checked).map(i => `- ${cleanSearchTerm(i.text)}`).join('\n')}`;
     if (navigator.share) {
-        try { await navigator.share({ title: 'Ma liste', text: text }); } catch (err) {}
+        try { await navigator.share({ title: 'Ma liste', text: text }); } catch (err) { console.error(err); }
     } else {
         copyToClipboard(text);
         alert("Copié !");
@@ -132,12 +130,9 @@ const ShoppingList: React.FC = () => {
       document.body.removeChild(ta);
   };
 
-  const handleRetailerSelect = (retailer: any) => {
+  const handleRetailerSelect = (retailer: { name: string; color: string; urlPattern: string }) => {
       setSelectedRetailer(retailer);
       localStorage.setItem('miamchef_retailer', JSON.stringify(retailer));
-      if (userCity.trim()) {
-          window.open(`https://www.google.com/maps/search/${encodeURIComponent(`Drive ${retailer.name} ${userCity}`)}`, '_blank');
-      }
       setDriveStep('ingredients');
   };
 
@@ -255,8 +250,7 @@ const ShoppingList: React.FC = () => {
             ) : (
                 <div className="space-y-6 pb-12 animate-fade-in">
                     {Object.keys(CATEGORIES).map(catKey => {
-                        // @ts-ignore
-                        const categoryInfo = CATEGORIES[catKey];
+                        const categoryInfo = CATEGORIES[catKey as keyof typeof CATEGORIES];
                         const catItems = groupedItems[catKey];
                         if (!catItems || catItems.length === 0) return null;
                         const Icon = categoryInfo.icon;
@@ -284,6 +278,21 @@ const ShoppingList: React.FC = () => {
                                             <span className={`flex-1 text-sm font-medium transition-all ${item.checked ? 'text-gray-600 line-through decoration-gray-700' : 'text-gray-200'}`}>
                                                 {cleanSearchTerm(item.text)}
                                             </span>
+                                            
+                                            {!item.checked && KORO_DRY_INGREDIENTS_KEYWORDS.some(kw => cleanSearchTerm(item.text).toLowerCase().includes(kw)) && (
+                                                <a 
+                                                    href={getKoRoAffiliateLink(cleanSearchTerm(item.text))}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="p-2 bg-green-500/10 hover:bg-green-500/20 rounded-lg text-green-400 transition-colors flex items-center gap-1.5 group/koro"
+                                                    title="Acheter sur KoRo"
+                                                >
+                                                    <span className="text-[10px] font-bold uppercase tracking-tighter hidden group-hover/koro:inline">KoRo</span>
+                                                    <ExternalLink size={14} />
+                                                </a>
+                                            )}
+
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} 
                                                 className="text-gray-600 hover:text-red-400 p-2 opacity-0 group-hover:opacity-100 transition-opacity"

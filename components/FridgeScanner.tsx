@@ -76,11 +76,12 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
           const img = await generateRecipeImage(title, `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
           setGeneratedImage(img);
           setResult({ ...response, dietary, image: img });
-      } catch(_e) {
-          console.error("Failed to generate scan image");
+      } catch(err) {
+          console.error("Failed to generate scan image", err);
       }
 
-    } catch (_e) {
+    } catch (err) {
+      console.error(err);
       setStatus('error');
     }
   };

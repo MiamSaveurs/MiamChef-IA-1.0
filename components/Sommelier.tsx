@@ -26,6 +26,7 @@ const Sommelier: React.FC = () => {
       setSources(result.groundingChunks || []);
       setStatus('success');
     } catch (e) {
+      console.error(e);
       setStatus('error');
     }
   };
@@ -112,11 +113,11 @@ const Sommelier: React.FC = () => {
                          <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
                             <ReactMarkdown
                                 components={{
-                                    h1: ({node, ...props}) => <h3 className="text-xl font-display text-rose-200 mb-4 mt-2" {...props} />,
-                                    h2: ({node, ...props}) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-rose-900/30 pb-2" {...props} />,
-                                    strong: ({node, ...props}) => <strong className="text-rose-400 font-bold" {...props} />,
-                                    ul: ({node, ...props}) => <ul className="space-y-2 my-4" {...props} />,
-                                    li: ({node, ...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-rose-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
+                                    h1: ({ ...props }) => <h3 className="text-xl font-display text-rose-200 mb-4 mt-2" {...props} />,
+                                    h2: ({ ...props }) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-rose-900/30 pb-2" {...props} />,
+                                    strong: ({ ...props }) => <strong className="text-rose-400 font-bold" {...props} />,
+                                    ul: ({ ...props }) => <ul className="space-y-2 my-4" {...props} />,
+                                    li: ({ ...props }) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-rose-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
                                 }}
                             >
                                 {advice}

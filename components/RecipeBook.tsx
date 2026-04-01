@@ -54,8 +54,8 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
           await deleteRecipeFromBook(id);
           setRecipes(prev => prev.filter(r => r.id !== id));
           if (selectedRecipe?.id === id) setSelectedRecipe(null);
-        } catch (_err) {
-          console.error("Erreur lors de la suppression:", _err);
+        } catch {
+          console.error("Erreur lors de la suppression:");
           setModalConfig({
             isOpen: true,
             title: "Erreur",
@@ -80,7 +80,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
           text: `Découvrez cette recette sur MiamChef : ${recipe.title}`,
           url: window.location.href,
         });
-      } catch (_err) {
+      } catch {
         // Si l'utilisateur annule ou si ça échoue, on tente le presse-papier
         copyToClipboard(shareText);
       }
@@ -97,7 +97,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
         title: "Recette Partagée !",
         message: "La recette complète a été copiée dans votre presse-papier. Vous pouvez maintenant la coller où vous le souhaitez !"
       });
-    } catch (_err) {
+    } catch {
       setModalConfig({
         isOpen: true,
         title: "Oups",

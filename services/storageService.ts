@@ -23,7 +23,7 @@ export const getTrialStatus = (): { startDate: number, isSubscribed: boolean, su
     const storedDate = localStorage.getItem('miamchef_trial_start');
     const storedSub = localStorage.getItem('miamchef_subscription');
     
-    let startDate = storedDate ? parseInt(storedDate) : Date.now();
+    const startDate = storedDate ? parseInt(storedDate) : Date.now();
     
     // Initialize if not present
     if (!storedDate) {
@@ -33,7 +33,7 @@ export const getTrialStatus = (): { startDate: number, isSubscribed: boolean, su
     return {
         startDate,
         isSubscribed: !!storedSub,
-        subscriptionTier: (storedSub as any) || 'free'
+        subscriptionTier: (storedSub as 'free' | 'monthly' | 'annual' | 'lifetime') || 'free'
     };
 };
 
@@ -288,7 +288,10 @@ export const getShoppingList = async (): Promise<ShoppingItem[]> => {
       request.onsuccess = () => resolve(request.result as ShoppingItem[]);
       request.onerror = () => reject(request.error);
     });
-  } catch (e) { return []; }
+  } catch (e) { 
+    console.error(e);
+    return []; 
+  }
 };
 
 export const addToShoppingList = async (items: string[]): Promise<void> => {
@@ -356,7 +359,10 @@ export const getWeeklyPlan = async (): Promise<WeeklyPlan | null> => {
             request.onsuccess = () => resolve(request.result || null);
             request.onerror = () => reject(request.error);
         });
-    } catch (e) { return null; }
+    } catch (e) { 
+        console.error(e);
+        return null; 
+    }
 };
 
 export const deleteWeeklyPlan = async (): Promise<void> => {

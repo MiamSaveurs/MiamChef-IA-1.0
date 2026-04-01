@@ -319,7 +319,7 @@ export const generateChefRecipe = async (
   cuisineStyle: string,
   isBatchCooking: boolean,
   chefMode: 'cuisine' | 'patisserie', 
-  recipeCost: 'authentic' | 'budget' = 'authentic',
+  recipeCost: 'authentic' | 'economical' = 'authentic',
   difficultyLevel: 'beginner' | 'intermediate' | 'expert' = 'intermediate',
   smartDevices: string[] = []
 ): Promise<GeneratedContent> => {
@@ -412,7 +412,7 @@ export const generateChefRecipe = async (
     }
 
     // 3. BUDGET
-    const costPrompt = recipeCost === 'budget' 
+    const costPrompt = recipeCost === 'economical' 
         ? "BUDGET : ÉCONOMIQUE. INSTRUCTION : Priorité absolue aux ingrédients à bas prix, astuces anti-gaspi, et produits de saison accessibles. Évitez les produits de luxe." 
         : "BUDGET : QUALITÉ / GASTRONOMIQUE. INSTRUCTION : Priorité aux produits d'exception, à la fraîcheur et à l'authenticité des saveurs. Ne cherchez pas à faire des économies au détriment du goût.";
 
@@ -676,7 +676,16 @@ export const generateRecipeImage = async (title: string, context: string): Promi
     },
   });
 
-  for (const part of response.candidates[0].content.parts) {
+  if (!response.candidates || response.candidates.length === 0) {
+    throw new Error("No candidates returned from AI");
+  }
+
+  const candidate = response.candidates[0];
+  if (!candidate.content || !candidate.content.parts) {
+    throw new Error("Invalid response structure");
+  }
+
+  for (const part of candidate.content.parts) {
     if (part.inlineData) {
       return `data:image/png;base64,${part.inlineData.data}`;
     }
@@ -823,11 +832,9 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   });
 
   const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-  const groundingChunks: GroundingChunk[] = chunks ? chunks.map((c) => ({
+  const groundingChunks: GroundingChunk[] = chunks ? chunks.map((c: { web?: { uri?: string; title?: string } }) => ({
     web: {
-      // @ts-expect-error - grounding chunk structure
       uri: c.web?.uri || "",
-      // @ts-expect-error - grounding chunk structure
       title: c.web?.title || ""
     }
   })).filter((c) => c.web && c.web.uri) : [];
@@ -851,7 +858,16 @@ export const editDishPhoto = async (base64Image: string, prompt: string): Promis
     },
   });
 
-  for (const part of response.candidates[0].content.parts) {
+  if (!response.candidates || response.candidates.length === 0) {
+    throw new Error("No candidates returned from AI");
+  }
+
+  const candidate = response.candidates[0];
+  if (!candidate.content || !candidate.content.parts) {
+    throw new Error("Invalid response structure");
+  }
+
+  for (const part of candidate.content.parts) {
     if (part.inlineData) {
       return `data:image/png;base64,${part.inlineData.data}`;
     }
