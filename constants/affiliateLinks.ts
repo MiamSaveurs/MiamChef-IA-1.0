@@ -25,7 +25,7 @@ export const AMAZON_AFFILIATE_LINKS = [
     { name: "Poche à douille", url: "https://amzn.to/4sLqfLF", keywords: ["poche", "douille", "décorer", "pâtisserie"] }
 ];
 
-export const KORO_AFFILIATE_BASE_URL = "http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&p=";
+export const KORO_AFFILIATE_BASE_URL = "https://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=";
 export const KORO_SHOP_URL = "https://www.koroshop.fr/search?sSearch=";
 
 export const getKoRoAffiliateLink = (searchTerm: string) => {
@@ -48,7 +48,10 @@ export const processAffiliateLink = (href?: string) => {
     if (!href) return href;
     try {
         if (href.includes('koroshop.fr')) {
-            if (href.includes('awin1.com')) return href;
+            if (href.includes('awin1.com')) {
+                // Fix old links that used &p= instead of &ued=
+                return href.replace('&p=', '&ued=').replace('http://', 'https://');
+            }
             const urlObj = new URL(href);
             const searchTerm = urlObj.searchParams.get('sSearch');
             if (searchTerm) {
