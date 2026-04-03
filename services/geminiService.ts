@@ -92,10 +92,11 @@ const KORO_AFFILIATE_STRATEGY = `
 === STRATÉGIE D'AFFILIATION KORO ===
 1. RECHERCHE SYSTÉMATIQUE : Pour CHAQUE ingrédient sec ou de longue conservation (farine, dattes, purée d'amandes, épices, légumineuses comme les pois chiches, dattes Medjool, graines, noix, etc.), tu DOIS impérativement utiliser l'outil Google Search pour vérifier leur disponibilité sur le site koroshop.fr.
 2. SUGGESTION D'EXPERT : Si un ingrédient est disponible sur KoRo, mentionne-le dans la recette comme une recommandation de qualité (ex: "Pour un résultat optimal, utilisez les pois chiches bio de chez KoRo").
-3. GÉNÉRATION DE LIEN DYNAMIQUE : Ne donne JAMAIS le lien de la page d'accueil de KoRo. Tu DOIS générer un lien de RECHERCHE précis pour l'ingrédient, en utilisant ce format exact :
-   http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&p=https%3A%2F%2Fwww.koroshop.fr%2Fsearch%3FsSearch%3D[NOM_DE_L_INGREDIENT]
-   (Remplace les espaces par des %20 dans le nom de l'ingrédient).
-4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre les liens cliquables. Exemple pour des pois chiches : [Pois chiches (KoRo)](http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&p=https%3A%2F%2Fwww.koroshop.fr%2Fsearch%3FsSearch%3Dpois%20chiches)
+3. GÉNÉRATION DE LIEN DYNAMIQUE : Ne génère JAMAIS de lien awin1.com toi-même. Tu DOIS générer un lien de RECHERCHE simple vers KoRo, en utilisant ce format exact :
+   https://www.koroshop.fr/search?sSearch=[NOM_DE_L_INGREDIENT]
+   (Remplace les espaces par des + dans le nom de l'ingrédient).
+4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre les liens cliquables. Exemple pour des pois chiches : [Pois chiches (KoRo)](https://www.koroshop.fr/search?sSearch=pois+chiches)
+L'application se chargera automatiquement de transformer ce lien en lien d'affiliation sécurisé. Ne mets JAMAIS les URLs brutes entre parenthèses sans le texte du lien entre crochets.
 `;
 
 const AFFILIATE_STRATEGY_INSTRUCTION = `

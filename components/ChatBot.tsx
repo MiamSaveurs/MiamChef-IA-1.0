@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Loader2, ChefHat, ShieldCheck, Trash2 } from 'lucide-react';
 import { chatWithChef } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
+import { processAffiliateLink } from '../constants/affiliateLinks';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface Message {
@@ -131,7 +132,7 @@ const ChatBot: React.FC = () => {
                                         <div className="prose prose-invert prose-xs max-w-none">
                                             <ReactMarkdown
                                                 components={{
-                                                    a: ({ ...props }) => <a className="text-chef-green hover:text-green-400 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
+                                                    a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="text-chef-green hover:text-green-400 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                                                 }}
                                             >
                                                 {msg.text}

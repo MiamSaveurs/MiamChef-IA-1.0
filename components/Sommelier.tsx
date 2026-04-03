@@ -5,6 +5,7 @@ import { LoadingState, GroundingChunk } from '../types';
 import { Search, Loader2, ExternalLink, Sparkles, Quote, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { PremiumWine, PremiumChefHat } from './Icons';
+import { processAffiliateLink } from '../constants/affiliateLinks';
 
 const Sommelier: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -124,7 +125,7 @@ const Sommelier: React.FC = () => {
                                     strong: ({ ...props }) => <strong className="text-rose-400 font-bold" {...props} />,
                                     ul: ({ ...props }) => <ul className="space-y-2 my-4" {...props} />,
                                     li: ({ ...props }) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-rose-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>,
-                                    a: ({ ...props }) => <a className="text-rose-400 hover:text-rose-300 underline underline-offset-2 decoration-rose-500/30 hover:decoration-rose-400 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
+                                    a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="text-rose-400 hover:text-rose-300 underline underline-offset-2 decoration-rose-500/30 hover:decoration-rose-400 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                             >
                                 {advice}

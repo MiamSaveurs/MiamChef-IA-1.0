@@ -392,7 +392,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     h2: ({ ...props }) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
                                     strong: ({ ...props }) => <strong className="text-amber-400" {...props} />,
                                     li: ({ ...props }) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>,
-                                    a: ({ ...props }) => <a className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
+                                    a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                                 >
                                 {selectedRecipe.markdownContent}

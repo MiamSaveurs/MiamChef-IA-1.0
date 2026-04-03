@@ -43,3 +43,21 @@ export const KORO_DRY_INGREDIENTS_KEYWORDS = [
     "couscous", "boulgour", "lentilles corail", "haricots", "pois cassés", "sucre de coco",
     "pépites de chocolat", "levure nutritionnelle", "bouillon", "sauce soja"
 ];
+
+export const processAffiliateLink = (href?: string) => {
+    if (!href) return href;
+    try {
+        if (href.includes('koroshop.fr')) {
+            if (href.includes('awin1.com')) return href;
+            const urlObj = new URL(href);
+            const searchTerm = urlObj.searchParams.get('sSearch');
+            if (searchTerm) {
+                return getKoRoAffiliateLink(searchTerm);
+            }
+            return `${KORO_AFFILIATE_BASE_URL}${encodeURIComponent(href)}`;
+        }
+    } catch {
+        return href;
+    }
+    return href;
+};

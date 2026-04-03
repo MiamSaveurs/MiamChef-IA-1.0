@@ -48,7 +48,8 @@ import ReactMarkdown from 'react-markdown';
 import { 
     AMAZON_AFFILIATE_LINKS, 
     getKoRoAffiliateLink, 
-    KORO_DRY_INGREDIENTS_KEYWORDS 
+    KORO_DRY_INGREDIENTS_KEYWORDS,
+    processAffiliateLink
 } from '../constants/affiliateLinks';
 import { 
   PremiumChefHat, 
@@ -1253,7 +1254,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         </li>
                                     ),
                                     p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />,
-                                    a: ({ ...props }) => <a className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />
+                                    a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                                 >
                                 {recipe}
