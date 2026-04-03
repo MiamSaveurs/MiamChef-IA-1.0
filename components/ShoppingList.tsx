@@ -221,7 +221,7 @@ const ShoppingList: React.FC = () => {
                             <Share2 size={16} className="text-teal-400" /> Partager
                         </button>
                         <button 
-                            onClick={() => { setDriveStep('retailers'); setShowDriveModal(true); }} 
+                            onClick={() => { setDriveStep(selectedRetailer ? 'ingredients' : 'retailers'); setShowDriveModal(true); }} 
                             disabled={items.length === 0} 
                             className={`flex-1 bg-gradient-to-r ${themeGradient} text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg ${themeShadow} hover:brightness-110 transition-all disabled:opacity-50`}
                         >

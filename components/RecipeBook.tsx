@@ -6,7 +6,7 @@ import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Se
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
-import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS } from '../constants/affiliateLinks';
+import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS, processAffiliateLink } from '../constants/affiliateLinks';
 
 const NutriBadge = ({ score }: { score: string }) => {
   const colors = { 
