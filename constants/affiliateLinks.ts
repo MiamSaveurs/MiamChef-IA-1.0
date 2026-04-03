@@ -37,5 +37,9 @@ export const KORO_DRY_INGREDIENTS_KEYWORDS = [
     "farine", "sucre", "noix", "amandes", "noisettes", "pâte", "riz", "lentilles", 
     "pois chiches", "quinoa", "avoine", "muesli", "fruits secs", "baies", "graines", 
     "épices", "chocolat", "cacao", "beurre de cacahuète", "purée d'amande", "sirop d'érable",
-    "huile de coco", "lait de coco", "protéine", "spiruline", "chia"
+    "huile de coco", "lait de coco", "protéine", "spiruline", "chia", "noix de cajou",
+    "noix de pécan", "pistaches", "pignons de pin", "dattes", "figues", "abricots secs",
+    "cranberries", "baies de goji", "chips de banane", "purée de noisette", "tahin",
+    "couscous", "boulgour", "lentilles corail", "haricots", "pois cassés", "sucre de coco",
+    "pépites de chocolat", "levure nutritionnelle", "bouillon", "sauce soja"
 ];

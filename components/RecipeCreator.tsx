@@ -97,32 +97,15 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [isSaved, setIsSaved] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
-  // --- LOGIQUE D'AFFILIATION ---
-  const getSuggestedProducts = useMemo(() => {
-    if (!persistentState?.text) return [];
-    const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
-    const recipeLower = persistentState.text.toLowerCase();
-
-    // Suggestions Amazon (Ustensiles)
-    AMAZON_AFFILIATE_LINKS.forEach(item => {
-        if (item.keywords.some(kw => recipeLower.includes(kw))) {
-            suggestions.push({ name: item.name, url: item.url, type: 'amazon' });
-        }
-    });
-
-    // Suggestions KoRo (Ingrédients secs)
-    KORO_DRY_INGREDIENTS_KEYWORDS.forEach(kw => {
-        if (recipeLower.includes(kw)) {
-            suggestions.push({ 
-                name: `Ingrédients KoRo : ${kw.charAt(0).toUpperCase() + kw.slice(1)}`, 
-                url: getKoRoAffiliateLink(kw), 
-                type: 'koro' 
-            });
-        }
-    });
-
-    return suggestions.slice(0, 5); // Limiter à 5 suggestions max
-  }, [persistentState?.text]);
+  // Derived state from persistent prop
+  const recipe = persistentState?.text || '';
+  const metrics = persistentState?.metrics || null;
+  const ingredientsList = useMemo(() => persistentState?.ingredients || [], [persistentState?.ingredients]);
+  const ingredientsWithQuantities = persistentState?.ingredientsWithQuantities || [];
+  const utensilsList = persistentState?.utensils || [];
+  const generatedImage = persistentState?.image || null;
+  const storageAdvice = persistentState?.storageAdvice || '';
+  const persistentSteps = useMemo(() => persistentState?.steps || [], [persistentState?.steps]); 
 
   // Smart Adjust State
   const [adjusting, setAdjusting] = useState<string | null>(null);
@@ -150,16 +133,37 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const themeGradient = isPatissier ? 'from-pink-600 to-pink-900' : 'from-[#509f2a] to-[#1a4a2a]';
   const themeShadow = isPatissier ? 'shadow-pink-900/40' : 'shadow-green-900/40';
 
-  // Derived state from persistent prop
-  const recipe = persistentState?.text || '';
-  const metrics = persistentState?.metrics || null;
-  const ingredientsList = persistentState?.ingredients || [];
-  const ingredientsWithQuantities = persistentState?.ingredientsWithQuantities || [];
-  const utensilsList = persistentState?.utensils || [];
-  const generatedImage = persistentState?.image || null;
-  const storageAdvice = persistentState?.storageAdvice || '';
-  const persistentSteps = useMemo(() => persistentState?.steps || [], [persistentState?.steps]); 
+  // --- LOGIQUE D'AFFILIATION ---
+  const getSuggestedProducts = useMemo(() => {
+    if (!persistentState?.text) return [];
+    const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
+    const recipeLower = persistentState.text.toLowerCase();
 
+    // 1. Suggestions Amazon (Ustensiles)
+    AMAZON_AFFILIATE_LINKS.forEach(item => {
+        if (item.keywords.some(kw => recipeLower.includes(kw))) {
+            suggestions.push({ name: item.name, url: item.url, type: 'amazon' });
+        }
+    });
+
+    // 2. Suggestions KoRo (Ingrédients secs)
+    // On vérifie à la fois dans le texte complet et dans la liste structurée des ingrédients
+    const allIngredientsText = (ingredientsList || []).join(' ').toLowerCase() + ' ' + recipeLower;
+    
+    KORO_DRY_INGREDIENTS_KEYWORDS.forEach(kw => {
+        if (allIngredientsText.includes(kw)) {
+            if (!suggestions.some(s => s.name.toLowerCase().includes(kw))) {
+                suggestions.push({ 
+                    name: `Ingrédients KoRo : ${kw.charAt(0).toUpperCase() + kw.slice(1)}`, 
+                    url: getKoRoAffiliateLink(kw), 
+                    type: 'koro' 
+                });
+            }
+        }
+    });
+
+    return suggestions.slice(0, 5); // Limiter à 5 suggestions max
+  }, [persistentState?.text, ingredientsList]);
   // Chargement initial des devices du profil
   useEffect(() => {
       const profile = getUserProfile();

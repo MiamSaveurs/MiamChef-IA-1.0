@@ -45,8 +45,9 @@ const SITE_INTEGRATION_INSTRUCTION = `
 1. SOURCE PRIORITAIRE : Tu es l'assistant officiel et exclusif de miamsaveurs.com.
 2. PROTOCOLE DE RECHERCHE OBLIGATOIRE (STRICT) :
    - Pour CHAQUE message de l'utilisateur, tu DOIS impérativement déclencher l'outil Google Search avec l'opérateur "site:miamsaveurs.com" (ex: "site:miamsaveurs.com [sujet]").
-   - C'est une étape TECHNIQUE OBLIGATOIRE avant toute réponse. Tu ne dois JAMAIS répondre de mémoire si une information correspondante existe sur miamsaveurs.com.
-   - Si un article est trouvé, tu DOIS impérativement le citer et fournir son LIEN DIRECT.
+   - Pour chaque ingrédient sec ou matériel de cuisine, tu DOIS également vérifier sur "site:koroshop.fr" ou "site:amazon.fr" pour proposer les meilleurs produits.
+   - C'est une étape TECHNIQUE OBLIGATOIRE avant toute réponse. Tu ne dois JAMAIS répondre de mémoire si une information correspondante existe sur miamsaveurs.com ou si un produit peut être trouvé sur KoRo/Amazon.
+   - Si un article est trouvé sur miamsaveurs.com, tu DOIS impérativement le citer et fournir son LIEN DIRECT.
 3. FALLBACK & CONCURRENCE :
    - Si et SEULEMENT SI aucun résultat n'est trouvé sur miamsaveurs.com après recherche, tu peux utiliser tes connaissances générales.
    - INTERDICTION FORMELLE de citer ou de lier des sites concurrents (Marmiton, 750g, Cuisine AZ, etc.).
@@ -89,8 +90,9 @@ const AMAZON_AFFILIATE_LINKS = `
 
 const KORO_AFFILIATE_STRATEGY = `
 === STRATÉGIE D'AFFILIATION KORO ===
-1. RECHERCHE : Pour chaque ingrédient sec (farine, dattes, purée d'amandes, épices, dattes Medjool, etc.), cherche prioritairement sur koroshop.fr.
-2. GÉNÉRATION DE LIEN : Si tu trouves un produit sur koroshop.fr, génère un lien affilié en utilisant ce format :
+1. RECHERCHE SYSTÉMATIQUE : Pour CHAQUE ingrédient sec ou de longue conservation (farine, dattes, purée d'amandes, épices, légumineuses comme les pois chiches, dattes Medjool, graines, noix, etc.), tu DOIS impérativement utiliser l'outil Google Search pour vérifier leur disponibilité sur le site koroshop.fr.
+2. SUGGESTION D'EXPERT : Si un ingrédient est disponible sur KoRo, mentionne-le dans la recette comme une recommandation de qualité (ex: "Pour un résultat optimal, utilisez les pois chiches bio de chez KoRo").
+3. GÉNÉRATION DE LIEN DYNAMIQUE : Pour chaque produit identifié sur koroshop.fr, génère un lien affilié en utilisant ce format :
    http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=[URL_DU_PRODUIT_ENCODÉE]
 `;
 
@@ -483,6 +485,7 @@ export const generateChefRecipe = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
+        tools: [{ googleSearch: {} }],
         thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
       },
     });
@@ -560,6 +563,7 @@ export const searchChefsRecipe = async (
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
+      tools: [{ googleSearch: {} }],
       thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
     },
   });
@@ -636,6 +640,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
         config: {
             responseMimeType: "application/json",
             responseSchema: recipeSchema,
+            tools: [{ googleSearch: {} }],
             thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
         },
     });
@@ -775,6 +780,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
+      tools: [{ googleSearch: {} }],
       thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
     }
   });
@@ -900,6 +906,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
     config: {
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
+      tools: [{ googleSearch: {} }],
       thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     },
   });
