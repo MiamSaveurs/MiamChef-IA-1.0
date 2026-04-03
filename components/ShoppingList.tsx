@@ -279,7 +279,11 @@ const ShoppingList: React.FC = () => {
                                                 {cleanSearchTerm(item.text)}
                                             </span>
                                             
-                                            {!item.checked && KORO_DRY_INGREDIENTS_KEYWORDS.some(kw => cleanSearchTerm(item.text).toLowerCase().includes(kw)) && (
+                                            {!item.checked && KORO_DRY_INGREDIENTS_KEYWORDS.some(kw => {
+                                                const cleanText = cleanSearchTerm(item.text).toLowerCase();
+                                                const singularKw = kw.endsWith('s') ? kw.slice(0, -1) : kw;
+                                                return cleanText.includes(kw) || cleanText.includes(singularKw);
+                                            }) && (
                                                 <a 
                                                     href={getKoRoAffiliateLink(cleanSearchTerm(item.text))}
                                                     target="_blank"

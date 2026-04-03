@@ -139,20 +139,15 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
     const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
     const recipeLower = persistentState.text.toLowerCase();
 
-    // 1. Suggestions Amazon (Ustensiles)
-    AMAZON_AFFILIATE_LINKS.forEach(item => {
-        if (item.keywords.some(kw => recipeLower.includes(kw))) {
-            suggestions.push({ name: item.name, url: item.url, type: 'amazon' });
-        }
-    });
-
-    // 2. Suggestions KoRo (Ingrédients secs)
+    // 1. Suggestions KoRo (Ingrédients secs) - PRIORITAIRES
     // On vérifie à la fois dans le texte complet et dans la liste structurée des ingrédients
     const allIngredientsText = (ingredientsList || []).join(' ').toLowerCase() + ' ' + recipeLower;
     
     KORO_DRY_INGREDIENTS_KEYWORDS.forEach(kw => {
-        if (allIngredientsText.includes(kw)) {
-            if (!suggestions.some(s => s.name.toLowerCase().includes(kw))) {
+        // Détection plus souple (singulier/pluriel)
+        const singularKw = kw.endsWith('s') ? kw.slice(0, -1) : kw;
+        if (allIngredientsText.includes(kw) || allIngredientsText.includes(singularKw)) {
+            if (!suggestions.some(s => s.name.toLowerCase().includes(singularKw))) {
                 suggestions.push({ 
                     name: `Ingrédients KoRo : ${kw.charAt(0).toUpperCase() + kw.slice(1)}`, 
                     url: getKoRoAffiliateLink(kw), 
@@ -162,7 +157,16 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         }
     });
 
-    return suggestions.slice(0, 5); // Limiter à 5 suggestions max
+    // 2. Suggestions Amazon (Ustensiles) - SECONDAIRES
+    AMAZON_AFFILIATE_LINKS.forEach(item => {
+        if (item.keywords.some(kw => recipeLower.includes(kw))) {
+            if (!suggestions.some(s => s.name === item.name)) {
+                suggestions.push({ name: item.name, url: item.url, type: 'amazon' });
+            }
+        }
+    });
+
+    return suggestions.slice(0, 6); // Augmenté à 6 pour laisser de la place aux deux types
   }, [persistentState?.text, ingredientsList]);
   // Chargement initial des devices du profil
   useEffect(() => {

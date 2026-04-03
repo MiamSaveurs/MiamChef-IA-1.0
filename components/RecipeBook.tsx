@@ -38,7 +38,29 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
     if (!selectedRecipe) return [];
     const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
     
-    // 1. Amazon Utensils
+    // 1. KoRo Ingredients - PRIORITAIRES
+    if (selectedRecipe.ingredients) {
+        selectedRecipe.ingredients.forEach(ingredient => {
+            const ingredientLower = ingredient.toLowerCase();
+            const match = KORO_DRY_INGREDIENTS_KEYWORDS.find(kw => {
+                const singularKw = kw.endsWith('s') ? kw.slice(0, -1) : kw;
+                return ingredientLower.includes(kw) || ingredientLower.includes(singularKw);
+            });
+            
+            if (match) {
+                const singularMatch = match.endsWith('s') ? match.slice(0, -1) : match;
+                if (!suggestions.some(s => s.name.toLowerCase().includes(singularMatch))) {
+                     suggestions.push({ 
+                         name: `Ingrédient KoRo : ${match.charAt(0).toUpperCase() + match.slice(1)}`, 
+                         url: getKoRoAffiliateLink(match), 
+                         type: 'koro' 
+                     });
+                }
+            }
+        });
+    }
+
+    // 2. Amazon Utensils - SECONDAIRES
     if (selectedRecipe.utensils) {
         selectedRecipe.utensils.forEach(utensil => {
             const utensilLower = utensil.toLowerCase();
@@ -51,24 +73,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
         });
     }
 
-    // 2. KoRo Ingredients
-    if (selectedRecipe.ingredients) {
-        selectedRecipe.ingredients.forEach(ingredient => {
-            const ingredientLower = ingredient.toLowerCase();
-            const match = KORO_DRY_INGREDIENTS_KEYWORDS.find(kw => ingredientLower.includes(kw));
-            if (match) {
-                if (!suggestions.some(s => s.name.toLowerCase().includes(match))) {
-                     suggestions.push({ 
-                         name: `Ingrédient KoRo : ${match.charAt(0).toUpperCase() + match.slice(1)}`, 
-                         url: getKoRoAffiliateLink(match), 
-                         type: 'koro' 
-                     });
-                }
-            }
-        });
-    }
-
-    return suggestions.slice(0, 4);
+    return suggestions.slice(0, 6); // Augmenté à 6
   }, [selectedRecipe]);
 
   useEffect(() => {
