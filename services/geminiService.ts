@@ -94,6 +94,7 @@ const KORO_AFFILIATE_STRATEGY = `
 2. SUGGESTION D'EXPERT : Si un ingrédient est disponible sur KoRo, mentionne-le dans la recette comme une recommandation de qualité (ex: "Pour un résultat optimal, utilisez les pois chiches bio de chez KoRo").
 3. GÉNÉRATION DE LIEN DYNAMIQUE : Pour chaque produit identifié sur koroshop.fr, génère un lien affilié en utilisant ce format :
    http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=[URL_DU_PRODUIT_ENCODÉE]
+4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre les liens cliquables. Exemple : [Pois chiches bio (KoRo)](http://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=https%3A%2F%2Fwww.koroshop.fr%2Fpois-chiches-bio-2-kg)
 `;
 
 const AFFILIATE_STRATEGY_INSTRUCTION = `
@@ -101,6 +102,7 @@ const AFFILIATE_STRATEGY_INSTRUCTION = `
 1. RECOMMANDATION MATÉRIEL : Dès qu'une recette ou une discussion mentionne un ustensile de la liste "Coup de Coeur" Amazon, propose systématiquement le lien affilié correspondant.
 2. RECOMMANDATION INGRÉDIENTS : Pour les ingrédients secs, privilégie KoRo en générant le lien affilié dynamique.
 3. DISCRÉTION & VALEUR : Intègre ces liens naturellement comme des conseils d'expert pour aider l'utilisateur à s'équiper ou à trouver les bons produits.
+4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre TOUS les liens cliquables. Exemple : [Nom du produit](URL_AFFILIÉE). Ne mets JAMAIS les URLs brutes entre parenthèses sans le texte du lien entre crochets.
 ${AMAZON_AFFILIATE_LINKS}
 ${KORO_AFFILIATE_STRATEGY}
 `;

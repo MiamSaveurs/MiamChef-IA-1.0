@@ -1252,7 +1252,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                             <span className="flex-1 text-gray-300">{props.children}</span>
                                         </li>
                                     ),
-                                    p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />
+                                    p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />,
+                                    a: ({ ...props }) => <a className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                                 >
                                 {recipe}

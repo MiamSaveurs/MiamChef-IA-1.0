@@ -129,7 +129,13 @@ const ChatBot: React.FC = () => {
                                             : 'bg-zinc-800 text-zinc-200 rounded-tl-none border border-zinc-700/50'
                                     }`}>
                                         <div className="prose prose-invert prose-xs max-w-none">
-                                            <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                            <ReactMarkdown
+                                                components={{
+                                                    a: ({ ...props }) => <a className="text-chef-green hover:text-green-400 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
+                                                }}
+                                            >
+                                                {msg.text}
+                                            </ReactMarkdown>
                                         </div>
                                     </div>
                                 </div>

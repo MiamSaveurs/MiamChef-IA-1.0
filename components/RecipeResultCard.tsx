@@ -116,7 +116,8 @@ const RecipeResultCard: React.FC<RecipeResultCardProps> = ({
                             h2: ({...props}) => <h4 className="text-lg font-bold text-white mb-3 mt-6 border-b border-blue-900/30 pb-2" {...props} />,
                             strong: ({...props}) => <strong className="text-blue-400 font-bold" {...props} />,
                             ul: ({...props}) => <ul className="space-y-2 my-4" {...props} />,
-                            li: ({...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>
+                            li: ({...props}) => <li className="flex items-start gap-2" {...props}><span className="mt-2 w-1 h-1 bg-blue-500 rounded-full shrink-0"></span><span className="flex-1">{props.children}</span></li>,
+                            a: ({ ...props }) => <a className="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                         }}
                     >
                         {result.text}
