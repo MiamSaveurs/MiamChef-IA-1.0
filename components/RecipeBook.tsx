@@ -51,7 +51,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                 const singularMatch = match.endsWith('s') ? match.slice(0, -1) : match;
                 if (!suggestions.some(s => s.name.toLowerCase().includes(singularMatch))) {
                      suggestions.push({ 
-                         name: `Ingrédient KoRo : ${match.charAt(0).toUpperCase() + match.slice(1)}`, 
+                         name: `${match.charAt(0).toUpperCase() + match.slice(1)} (KoRo)`, 
                          url: getKoRoAffiliateLink(match), 
                          type: 'koro' 
                      });

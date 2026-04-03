@@ -149,7 +149,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
         if (allIngredientsText.includes(kw) || allIngredientsText.includes(singularKw)) {
             if (!suggestions.some(s => s.name.toLowerCase().includes(singularKw))) {
                 suggestions.push({ 
-                    name: `Ingrédients KoRo : ${kw.charAt(0).toUpperCase() + kw.slice(1)}`, 
+                    name: `${kw.charAt(0).toUpperCase() + kw.slice(1)} (KoRo)`, 
                     url: getKoRoAffiliateLink(kw), 
                     type: 'koro' 
                 });
