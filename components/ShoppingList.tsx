@@ -96,10 +96,12 @@ const ShoppingList: React.FC = () => {
 
   const cleanSearchTerm = (text: string) => {
       let clean = text.replace(/^[-*•]\s*/, '').trim(); 
-      clean = clean.replace(/\s*\(.*?\)/g, '');
-      clean = clean.replace(/\s*[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, '');
-      clean = clean.replace(/^\d+\s+/, '');
-      return clean.charAt(0).toUpperCase() + clean.slice(1).trim();
+      clean = clean.replace(/\s*\(.*?\)/g, ' ');
+      clean = clean.replace(/\s*[\d\s.,/]+(g|kg|ml|cl|l|mg|c\.à\.s|c\.à\.c|cuillères?|tranches?|morceaux?|bottes?|sachets?|boites?|pots?|verres?|tasses?|pincées?|têtes?|gousses?|feuilles?|brins?|filets?|pavés?|escalopes?|poignées?)?(\s+(d'|de|du|des)\s+)?/i, ' ');
+      clean = clean.replace(/^\d+\s+/, ' ');
+      clean = clean.replace(/\s+/g, ' ').trim();
+      if (!clean) return '';
+      return clean.charAt(0).toUpperCase() + clean.slice(1);
   };
 
   // Function to add item (used by both Enter key and Button click)
