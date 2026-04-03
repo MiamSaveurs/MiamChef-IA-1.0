@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, Leaf, X, Lock, Share2 } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, Leaf, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
+import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS } from '../constants/affiliateLinks';
 
 const NutriBadge = ({ score }: { score: string }) => {
   const colors = { 
@@ -32,6 +33,43 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
 
   // Thème Orange/Ambre
   const themeGradient = 'from-amber-700 to-amber-900';
+
+  const suggestedProducts = useMemo(() => {
+    if (!selectedRecipe) return [];
+    const suggestions: { name: string; url: string; type: 'amazon' | 'koro' }[] = [];
+    
+    // 1. Amazon Utensils
+    if (selectedRecipe.utensils) {
+        selectedRecipe.utensils.forEach(utensil => {
+            const utensilLower = utensil.toLowerCase();
+            const match = AMAZON_AFFILIATE_LINKS.find(link => 
+                link.keywords.some(kw => utensilLower.includes(kw))
+            );
+            if (match && !suggestions.some(s => s.name === match.name)) {
+                suggestions.push({ name: match.name, url: match.url, type: 'amazon' });
+            }
+        });
+    }
+
+    // 2. KoRo Ingredients
+    if (selectedRecipe.ingredients) {
+        selectedRecipe.ingredients.forEach(ingredient => {
+            const ingredientLower = ingredient.toLowerCase();
+            const match = KORO_DRY_INGREDIENTS_KEYWORDS.find(kw => ingredientLower.includes(kw));
+            if (match) {
+                if (!suggestions.some(s => s.name.toLowerCase().includes(match))) {
+                     suggestions.push({ 
+                         name: `Ingrédient KoRo : ${match.charAt(0).toUpperCase() + match.slice(1)}`, 
+                         url: getKoRoAffiliateLink(match), 
+                         type: 'koro' 
+                     });
+                }
+            }
+        });
+    }
+
+    return suggestions.slice(0, 4);
+  }, [selectedRecipe]);
 
   useEffect(() => {
     const load = async () => {
@@ -304,6 +342,42 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     </div>
                                 </div>
                             )}
+
+                             {/* Coup de Coeur MiamChef (Affiliation) */}
+                             {suggestedProducts.length > 0 && (
+                                <div className="mb-8 p-5 rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-950/40 to-black relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl"></div>
+                                    <h3 className="font-display text-lg text-rose-400 mb-4 flex items-center gap-2">
+                                        <ShoppingCart size={18} /> Coup de ❤️ MiamChef
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
+                                        {suggestedProducts.map((product, idx) => (
+                                            <a 
+                                                key={idx}
+                                                href={product.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-rose-500/50 hover:bg-rose-500/10 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center border border-white/5 group-hover:border-rose-500/30">
+                                                        <span className="text-xs font-bold text-gray-400 group-hover:text-rose-400">
+                                                            {product.type === 'amazon' ? 'A' : 'K'}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-sm text-gray-300 group-hover:text-white font-medium line-clamp-1">
+                                                        {product.name}
+                                                    </span>
+                                                </div>
+                                                <ExternalLink size={14} className="text-gray-500 group-hover:text-rose-400" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-4 text-center">
+                                        En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
+                                    </p>
+                                </div>
+                             )}
 
                             {/* Markdown Content */}
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
