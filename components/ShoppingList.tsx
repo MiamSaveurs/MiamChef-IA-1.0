@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList, addToShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft, ExternalLink } from 'lucide-react';
+import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft } from 'lucide-react';
 import { WickerBasket } from './Icons';
-import { getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS } from '../constants/affiliateLinks';
 
 // ... CATEGORIES and getCategory helper (unchanged) ...
 const CATEGORIES = {
@@ -278,24 +277,6 @@ const ShoppingList: React.FC = () => {
                                             <span className={`flex-1 text-sm font-medium transition-all ${item.checked ? 'text-gray-600 line-through decoration-gray-700' : 'text-gray-200'}`}>
                                                 {cleanSearchTerm(item.text)}
                                             </span>
-                                            
-                                            {!item.checked && KORO_DRY_INGREDIENTS_KEYWORDS.some(kw => {
-                                                const cleanText = cleanSearchTerm(item.text).toLowerCase();
-                                                const singularKw = kw.endsWith('s') ? kw.slice(0, -1) : kw;
-                                                return cleanText.includes(kw) || cleanText.includes(singularKw);
-                                            }) && (
-                                                <a 
-                                                    href={getKoRoAffiliateLink(cleanSearchTerm(item.text))}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="p-2 bg-green-500/10 hover:bg-green-500/20 rounded-lg text-green-400 transition-colors flex items-center gap-1.5 group/koro"
-                                                    title="Acheter sur KoRo"
-                                                >
-                                                    <span className="text-[10px] font-bold uppercase tracking-tighter hidden group-hover/koro:inline">KoRo</span>
-                                                    <ExternalLink size={14} />
-                                                </a>
-                                            )}
 
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} 
