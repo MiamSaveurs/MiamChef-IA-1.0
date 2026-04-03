@@ -26,7 +26,7 @@ export const AMAZON_AFFILIATE_LINKS = [
 ];
 
 export const KORO_AFFILIATE_BASE_URL = "https://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=";
-export const KORO_SHOP_URL = "https://www.koroshop.fr/search?sSearch=";
+export const KORO_SHOP_URL = "https://www.koro.fr/search?sSearch=";
 
 export const getKoRoAffiliateLink = (searchTerm: string) => {
     const searchUrl = `${KORO_SHOP_URL}${encodeURIComponent(searchTerm)}`;
@@ -47,17 +47,18 @@ export const KORO_DRY_INGREDIENTS_KEYWORDS = [
 export const processAffiliateLink = (href?: string) => {
     if (!href) return href;
     try {
-        if (href.includes('koroshop.fr')) {
+        if (href.includes('koro.fr') || href.includes('koroshop.fr')) {
             if (href.includes('awin1.com')) {
-                // Fix old links that used &p= instead of &ued=
-                return href.replace('&p=', '&ued=').replace('http://', 'https://');
+                // Fix old links that used &p= instead of &ued= and koroshop.fr
+                return href.replace('&p=', '&ued=').replace('http://', 'https://').replace('koroshop.fr', 'koro.fr');
             }
             const urlObj = new URL(href);
             const searchTerm = urlObj.searchParams.get('sSearch');
             if (searchTerm) {
                 return getKoRoAffiliateLink(searchTerm);
             }
-            return `${KORO_AFFILIATE_BASE_URL}${encodeURIComponent(href)}`;
+            const cleanHref = href.replace('koroshop.fr', 'koro.fr');
+            return `${KORO_AFFILIATE_BASE_URL}${encodeURIComponent(cleanHref)}`;
         }
     } catch {
         return href;
