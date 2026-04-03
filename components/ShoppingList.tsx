@@ -28,6 +28,8 @@ const getCategory = (itemText: string) => {
     if (clean.includes('thon') && (clean.includes('frais') || clean.includes('pave') || clean.includes('steak'))) return 'FRESH_MARKET';
     if (clean.includes('thon')) return 'GROCERY_SAVORY';
     if (clean.includes('sirop')) return 'GROCERY_SWEET';
+    if (clean.includes('lentille') || clean.includes('corail')) return 'GROCERY_SAVORY';
+    if (clean.includes('volaille')) return 'FRESH_MARKET';
     for (const key in CATEGORIES) {
         const cat = CATEGORIES[key as keyof typeof CATEGORIES];
         if (cat.id === 'other') continue;
