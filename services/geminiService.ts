@@ -705,7 +705,7 @@ export const generateRecipeVideo = async (title: string, style: string): Promise
   `;
 
   let operation = await ai.models.generateVideos({
-    model: 'veo-3.1-fast-generate-preview',
+    model: 'veo-3.1-lite-generate-preview',
     prompt: videoPrompt,
     config: {
       numberOfVideos: 1,
@@ -824,7 +824,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   ${BANNED_WORDS_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3.1-flash-preview",
+    model: "gemini-3-flash-preview",
     contents: { parts: [{ text: prompt }] },
     config: {
       tools: [{ googleSearch: {} }],

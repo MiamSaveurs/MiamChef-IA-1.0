@@ -83,11 +83,17 @@ const Sommelier: React.FC = () => {
 
                  <button 
                     onClick={() => handleAsk()}
-                    disabled={status === 'loading' || !query}
+                    disabled={status === 'loading' || !query.trim()}
                     className="w-full py-4 rounded-xl bg-gradient-to-r from-rose-700 to-[#4a0404] text-white font-bold text-sm tracking-widest uppercase shadow-lg shadow-rose-900/40 hover:shadow-rose-700/60 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:transform-none"
                  >
                     {status === 'loading' ? <Loader2 className="animate-spin" /> : <>Trouver l'Accord Parfait <ChevronRight size={16}/></>}
                  </button>
+
+                 {status === 'error' && (
+                     <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center">
+                         Une erreur est survenue lors de la recherche. Veuillez réessayer.
+                     </div>
+                 )}
             </div>
         </div>
 
