@@ -374,7 +374,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         ))}
                                     </div>
                                     <p className="text-[10px] text-gray-500 mt-4 text-center">
-                                        En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
+                                        Ces liens sont des liens affiliés (Amazon, KoRo). En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
                                     </p>
                                 </div>
                              )}

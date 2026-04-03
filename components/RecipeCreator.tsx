@@ -1215,6 +1215,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                                 <ExternalLink size={14} className="text-gray-600 group-hover:text-orange-400 transition-colors" />
                                             </a>
                                         ))}
+                                        <p className="text-[10px] text-gray-500 mt-3 text-center">
+                                            Ces liens sont des liens affiliés (Amazon, KoRo). En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
+                                        </p>
                                     </div>
                                 </div>
                             )}
