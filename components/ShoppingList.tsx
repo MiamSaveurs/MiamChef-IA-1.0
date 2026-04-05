@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getShoppingList, toggleShoppingItem, deleteShoppingItem, clearShoppingList, addToShoppingList } from '../services/storageService';
 import { ShoppingItem } from '../types';
-import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft } from 'lucide-react';
+import { Trash2, Check, Leaf, Share2, Store, X, Search, ClipboardList, Beef, Milk, Wheat, Coffee, Droplet, Package, Snowflake, Candy, ChevronLeft, ShoppingCart } from 'lucide-react';
 import { WickerBasket } from './Icons';
 
 // ... CATEGORIES and getCategory helper (unchanged) ...
@@ -252,6 +252,10 @@ const ShoppingList: React.FC = () => {
                 </div>
             ) : (
                 <div className="space-y-6 pb-12 animate-fade-in">
+                    <div className="flex items-center gap-2 mb-2 px-2">
+                        <ShoppingCart size={18} className="text-teal-400"/>
+                        <h2 className="text-sm font-bold text-gray-300 uppercase tracking-widest">Liste au magasin</h2>
+                    </div>
                     {Object.keys(CATEGORIES).map(catKey => {
                         const categoryInfo = CATEGORIES[catKey as keyof typeof CATEGORIES];
                         const catItems = groupedItems[catKey];
