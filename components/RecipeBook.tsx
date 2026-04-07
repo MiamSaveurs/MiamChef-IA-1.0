@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
-import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, Leaf, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
@@ -305,23 +305,6 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 </div>
                              )}
 
-                             {/* INGREDIENTS WITH QUANTITIES BLOCK */}
-                             {selectedRecipe.ingredientsWithQuantities && selectedRecipe.ingredientsWithQuantities.length > 0 && (
-                                <div className="mb-6 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 relative overflow-hidden">
-                                     <h3 className="font-display text-lg text-amber-500 mb-4 flex items-center gap-2">
-                                        <Leaf size={18} /> Ingrédients & Dosages
-                                    </h3>
-                                    <ul className="space-y-2">
-                                        {selectedRecipe.ingredientsWithQuantities.map((ing, idx) => (
-                                            <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
-                                                <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span>
-                                                <span>{ing}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
                              {/* Ustensiles */}
                              {selectedRecipe.utensils && selectedRecipe.utensils.length > 0 && (
                                 <div className="mb-8 p-5 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm relative overflow-hidden">
@@ -338,42 +321,6 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     </div>
                                 </div>
                             )}
-
-                             {/* Coup de Coeur MiamChef (Affiliation) */}
-                             {suggestedProducts.length > 0 && (
-                                <div className="mb-8 p-5 rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-950/40 to-black relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl"></div>
-                                    <h3 className="font-display text-lg text-rose-400 mb-4 flex items-center gap-2">
-                                        <ShoppingCart size={18} /> Coup de ❤️ MiamChef
-                                    </h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
-                                        {suggestedProducts.map((product, idx) => (
-                                            <a 
-                                                key={idx}
-                                                href={product.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-rose-500/50 hover:bg-rose-500/10 transition-all group"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center border border-white/5 group-hover:border-rose-500/30">
-                                                        <span className="text-xs font-bold text-gray-400 group-hover:text-rose-400">
-                                                            {product.type === 'amazon' ? 'A' : 'K'}
-                                                        </span>
-                                                    </div>
-                                                    <span className="text-sm text-gray-300 group-hover:text-white font-medium line-clamp-1">
-                                                        {product.name}
-                                                    </span>
-                                                </div>
-                                                <ExternalLink size={14} className="text-gray-500 group-hover:text-rose-400" />
-                                            </a>
-                                        ))}
-                                    </div>
-                                    <p className="text-[10px] text-gray-500 mt-4 text-center">
-                                        Ces liens sont des liens affiliés (Amazon, KoRo). En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
-                                    </p>
-                                </div>
-                             )}
 
                             {/* Markdown Content */}
                             <div className="markdown-prose prose-invert text-gray-300 leading-relaxed space-y-4">
@@ -412,6 +359,42 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 {selectedRecipe.markdownContent}
                                 </ReactMarkdown>
                             </div>
+
+                             {/* Coup de Coeur MiamChef (Affiliation) */}
+                             {suggestedProducts.length > 0 && (
+                                <div className="mt-8 mb-8 p-5 rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-950/40 to-black relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl"></div>
+                                    <h3 className="font-display text-lg text-rose-400 mb-4 flex items-center gap-2">
+                                        <ShoppingCart size={18} /> Coup de ❤️ MiamChef
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
+                                        {suggestedProducts.map((product, idx) => (
+                                            <a 
+                                                key={idx}
+                                                href={product.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-rose-500/50 hover:bg-rose-500/10 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center border border-white/5 group-hover:border-rose-500/30">
+                                                        <span className="text-xs font-bold text-gray-400 group-hover:text-rose-400">
+                                                            {product.type === 'amazon' ? 'A' : 'K'}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-sm text-gray-300 group-hover:text-white font-medium line-clamp-1">
+                                                        {product.name}
+                                                    </span>
+                                                </div>
+                                                <ExternalLink size={14} className="text-gray-500 group-hover:text-rose-400" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-4 text-center">
+                                        Ces liens sont des liens affiliés (Amazon, KoRo). En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
+                                    </p>
+                                </div>
+                             )}
                         </div>
                     </div>
                 </div>
