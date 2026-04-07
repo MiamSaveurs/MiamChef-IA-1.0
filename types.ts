@@ -57,14 +57,6 @@ export interface PantryItem {
   dateAdded: string;
 }
 
-export interface PantryItem {
-  id: string;
-  name: string;
-  category: string;
-  quantity: string;
-  dateAdded: string;
-}
-
 export interface SavedRecipe {
   id: string;
   title: string;

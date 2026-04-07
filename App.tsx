@@ -14,6 +14,7 @@ import LegalDocuments from './components/LegalDocuments';
 import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
+import Pantry from './components/Pantry';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import InAppMessageModal from './components/InAppMessageModal';
 import ChatBot from './components/ChatBot';
@@ -310,6 +311,7 @@ const App: React.FC = () => {
       case AppView.LEGAL: return <LegalDocuments onClose={() => setCurrentView(AppView.HOME)} />;
       case AppView.PLANNING: return <MealPlanner />;
       case AppView.PROFILE: return <Profile />;
+      case AppView.PANTRY: return <Pantry onBack={() => setCurrentView(AppView.HOME)} />;
       case AppView.TIMER: return (
         <SmartTimer 
             timeLeft={timerTimeLeft} 

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Activity, Globe, Share2 } from 'lucide-react';
+import { Star, ChevronRight, Activity, Globe, Share2, Archive } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import Newsletter from './Newsletter';
 import { 
@@ -136,6 +136,16 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
       accent: "text-blue-400",
       border: "border-blue-800/30",
       bgImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1974&auto=format&fit=crop"
+    },
+    {
+      view: AppView.PANTRY,
+      title: "Garde-Manger",
+      subtitle: "Inventaire Virtuel",
+      icon: <Archive size={28} />, // Reusing WickerBasket or maybe another icon. Let's use WickerBasket for now, or maybe import a new one if needed.
+      color: "from-[#4a3a1a] to-[#2e240f]", // Ocre/Jaune
+      accent: "text-amber-400",
+      border: "border-amber-800/30",
+      bgImage: "https://images.unsplash.com/photo-1584473457406-6240486418e9?q=80&w=2070&auto=format&fit=crop" // Pantry/ingredients image
     },
     {
       view: AppView.SOMMELIER,

@@ -971,3 +971,54 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         return "Une erreur est survenue lors de la discussion avec le Chef.";
     }
 };
+
+export const parseVoiceToPantryItems = async (voiceText: string): Promise<Partial<import('../types').PantryItem>[]> => {
+    try {
+        const ai = getAIClient();
+        if (!ai) return [];
+
+        const prompt = `
+        Tu es l'assistant "Magasinier" de l'application MiamChef.
+        Ton rôle est de lire le texte dicté par l'utilisateur et d'en extraire les ingrédients pour les ranger dans son garde-manger.
+        
+        Texte dicté : "${voiceText}"
+        
+        Extrais chaque ingrédient et retourne un tableau JSON strict.
+        Chaque objet doit avoir :
+        - "name": le nom de l'ingrédient (au singulier, ex: "Tomate", "Lait", "Poulet")
+        - "quantity": la quantité (ex: "3", "1L", "500g", ou "1" si non précisé)
+        - "category": choisis parmi ["Légumes", "Fruits", "Viandes & Poissons", "Produits Laitiers", "Épicerie", "Boissons", "Autre"]
+        
+        Réponds UNIQUEMENT avec le tableau JSON, sans aucun autre texte.
+        Exemple : [{"name": "Tomate", "quantity": "3", "category": "Légumes"}, {"name": "Lait", "quantity": "1L", "category": "Produits Laitiers"}]
+        `;
+
+        const response = await ai.models.generateContent({
+            model: "gemini-3.1-pro-preview",
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            name: { type: Type.STRING },
+                            quantity: { type: Type.STRING },
+                            category: { type: Type.STRING }
+                        },
+                        required: ["name", "quantity", "category"]
+                    }
+                }
+            }
+        });
+
+        if (response.text) {
+            return JSON.parse(response.text);
+        }
+        return [];
+    } catch (error) {
+        console.error("Error parsing voice to pantry items:", error);
+        return [];
+    }
+};
