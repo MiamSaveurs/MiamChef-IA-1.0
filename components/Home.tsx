@@ -240,8 +240,8 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   {/* Image container */}
                   <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl shadow-[#509f2a]/10 aspect-[4/3]">
                       <img 
-                          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80" 
-                          alt="Frigo rempli d'ingrédients frais" 
+                          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80" 
+                          alt="Frigo ouvert rempli d'ingrédients frais" 
                           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                           referrerPolicy="no-referrer"
                       />
