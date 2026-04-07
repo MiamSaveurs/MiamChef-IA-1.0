@@ -227,15 +227,32 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
 
       <div className="px-6 relative z-10">
           
-          {/* TITRE HERO + SLOGAN (CENTRÉ) */}
-          <div className="mt-10 mb-10 text-center">
-              <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
-                  Une cuisine unique,
+          {/* HERO VISUAL (REPLACES OLD TEXT) */}
+          <div className="mt-6 mb-12 text-center flex flex-col items-center">
+              <h2 className="text-2xl font-display text-white mb-6 tracking-wide">
+                  Cuisinez avec ce que vous avez.
               </h2>
-              <div className="relative inline-block mt-1">
-                  <h2 className="text-[3.5rem] leading-[0.9] font-display text-[#509f2a] relative z-10">
-                      qui vous ressemble.
-                  </h2>
+              
+              <div className="relative w-full max-w-sm mx-auto">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-[#509f2a]/20 blur-3xl rounded-full transform scale-90"></div>
+                  
+                  {/* Image container */}
+                  <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl shadow-[#509f2a]/10 aspect-[4/3]">
+                      <img 
+                          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80" 
+                          alt="Frigo rempli d'ingrédients frais" 
+                          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                      />
+                      {/* Overlay gradient for better integration */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80"></div>
+                  </div>
+                  
+                  {/* Floating badge */}
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-[#15151a] border border-[#509f2a]/30 px-5 py-2.5 rounded-full flex items-center gap-2 shadow-xl whitespace-nowrap">
+                      <Sparkles size={16} className="text-[#509f2a]" />
+                      <span className="text-sm font-bold text-white">Scan Anti-Gaspi</span>
+                  </div>
               </div>
           </div>
 
