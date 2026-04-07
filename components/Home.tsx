@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Activity, Globe, Share2 } from 'lucide-react';
+import { Star, ChevronRight, Activity, Globe, Share2, Sparkles } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import Newsletter from './Newsletter';
 import { 
@@ -243,6 +243,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                           src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80" 
                           alt="Frigo rempli d'ingrédients frais" 
                           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                          referrerPolicy="no-referrer"
                       />
                       {/* Overlay gradient for better integration */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-80"></div>
