@@ -473,11 +473,11 @@ export const generateChefRecipe = async (
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette créée.
       2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-         POUR CHAQUE INGRÉDIENT, tu DOIS inclure une icône au format markdown au tout début de la ligne, en utilisant l'API Icons8 (style fluency).
-         Format exact attendu : \`- ![nom_ingredient](https://img.icons8.com/fluency/96/nom_ingredient_en_anglais.png) Quantité et Nom\`
-         Exemple : \`- ![tomato](https://img.icons8.com/fluency/96/tomato.png) 3 belles tomates\`
-         Exemple : \`- ![chicken](https://img.icons8.com/fluency/96/chicken.png) 500g de poulet\`
-         Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS et au singulier.
+         POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
+         Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
+         Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
+         Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
+         Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
       3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
@@ -559,11 +559,11 @@ export const searchChefsRecipe = async (
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette trouvée.
   2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-     POUR CHAQUE INGRÉDIENT, tu DOIS inclure une icône au format markdown au tout début de la ligne, en utilisant l'API Icons8 (style fluency).
-     Format exact attendu : \`- ![nom_ingredient](https://img.icons8.com/fluency/96/nom_ingredient_en_anglais.png) Quantité et Nom\`
-     Exemple : \`- ![tomato](https://img.icons8.com/fluency/96/tomato.png) 3 belles tomates\`
-     Exemple : \`- ![chicken](https://img.icons8.com/fluency/96/chicken.png) 500g de poulet\`
-     Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS et au singulier.
+     POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
+     Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
+     Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
+     Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
+     Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -641,11 +641,11 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     === FORMAT DE TEXTE (CRITIQUE) ===
     1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat Revisité). C'est obligatoire et crucial pour le système. Le titre doit refléter l'ajustement effectué.
     2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-       POUR CHAQUE INGRÉDIENT, tu DOIS inclure une icône au format markdown au tout début de la ligne, en utilisant l'API Icons8 (style fluency).
-       Format exact attendu : \`- ![nom_ingredient](https://img.icons8.com/fluency/96/nom_ingredient_en_anglais.png) Quantité et Nom\`
-       Exemple : \`- ![tomato](https://img.icons8.com/fluency/96/tomato.png) 3 belles tomates\`
-       Exemple : \`- ![chicken](https://img.icons8.com/fluency/96/chicken.png) 500g de poulet\`
-       Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS et au singulier.
+       POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
+       Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
+       Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
+       Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
+       Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
     ${GDPR_COMPLIANCE_PROTOCOL}

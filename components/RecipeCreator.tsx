@@ -1259,14 +1259,25 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     li: ({ node, ...props }) => {
                                         const hasImage = JSON.stringify(node).includes('"tagName":"img"');
                                         return (
-                                            <li className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
-                                                {!hasImage && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>}
-                                                <span className="flex-1 flex items-center text-gray-300">{props.children}</span>
+                                            <li className="flex items-center gap-4 p-2 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors mb-2" {...props}>
+                                                {!hasImage && <span className="w-2 h-2 rounded-full shrink-0 ml-4" style={{backgroundColor: themeColor}}></span>}
+                                                <span className="flex-1 flex items-center text-gray-200 font-medium">{props.children}</span>
                                             </li>
                                         );
                                     },
                                     img: ({ src, alt, ...props }) => (
-                                        <img src={src} alt={alt} className="w-10 h-10 object-contain mr-4 drop-shadow-md" referrerPolicy="no-referrer" {...props} />
+                                        <div className="w-16 h-16 shrink-0 bg-[#1a1a1a] rounded-xl flex items-center justify-center p-2 mr-3 shadow-inner border border-white/5">
+                                            <img 
+                                                src={src} 
+                                                alt={alt} 
+                                                className="w-full h-full object-contain drop-shadow-xl" 
+                                                referrerPolicy="no-referrer" 
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                                                }}
+                                                {...props} 
+                                            />
+                                        </div>
                                     ),
                                     p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />,
                                     a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />
