@@ -1,11 +1,12 @@
 
-import { SavedRecipe, ShoppingItem, WeeklyPlan, UserProfile } from '../types';
+import { SavedRecipe, ShoppingItem, WeeklyPlan, UserProfile, PantryItem } from '../types';
 
 const DB_NAME = 'MiamChefDB';
-const DB_VERSION = 3; // Version stable. NE PAS CHANGER sans stratégie de migration.
+const DB_VERSION = 4; // Version stable. NE PAS CHANGER sans stratégie de migration.
 const RECIPE_STORE = 'recipes';
 const SHOPPING_STORE = 'shoppingList';
 const PLANNING_STORE = 'planning';
+const PANTRY_STORE = 'pantry';
 const PROFILE_KEY = 'miamchef_user_profile';
 
 /*
@@ -171,6 +172,11 @@ const openDB = (): Promise<IDBDatabase> => {
       // Create Planning Store if not exists
       if (!db.objectStoreNames.contains(PLANNING_STORE)) {
         db.createObjectStore(PLANNING_STORE, { keyPath: 'id' });
+      }
+
+      // Create Pantry Store if not exists
+      if (!db.objectStoreNames.contains(PANTRY_STORE)) {
+        db.createObjectStore(PANTRY_STORE, { keyPath: 'id' });
       }
     };
 
@@ -371,5 +377,46 @@ export const deleteWeeklyPlan = async (): Promise<void> => {
         const transaction = db.transaction(PLANNING_STORE, 'readwrite');
         const store = transaction.objectStore(PLANNING_STORE);
         store.delete('current');
+    } catch (e) { console.error(e); }
+};
+
+// --- PANTRY ---
+export const getPantryItems = async (): Promise<PantryItem[]> => {
+    try {
+        const db = await openDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(PANTRY_STORE, 'readonly');
+            const store = transaction.objectStore(PANTRY_STORE);
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => reject(request.error);
+        });
+    } catch (e) { console.error(e); return []; }
+};
+
+export const savePantryItem = async (item: PantryItem): Promise<void> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(PANTRY_STORE, 'readwrite');
+        const store = transaction.objectStore(PANTRY_STORE);
+        store.put(item);
+    } catch (e) { console.error(e); }
+};
+
+export const deletePantryItem = async (id: string): Promise<void> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(PANTRY_STORE, 'readwrite');
+        const store = transaction.objectStore(PANTRY_STORE);
+        store.delete(id);
+    } catch (e) { console.error(e); }
+};
+
+export const clearPantry = async (): Promise<void> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(PANTRY_STORE, 'readwrite');
+        const store = transaction.objectStore(PANTRY_STORE);
+        store.clear();
     } catch (e) { console.error(e); }
 };

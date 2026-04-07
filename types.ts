@@ -12,7 +12,8 @@ export enum AppView {
   LEGAL = 'LEGAL',
   PLANNING = 'PLANNING',
   TIMER = 'TIMER',
-  PROFILE = 'PROFILE'
+  PROFILE = 'PROFILE',
+  PANTRY = 'PANTRY'
 }
 
 export interface GroundingChunk {
@@ -46,6 +47,22 @@ export interface GeneratedContent {
   seoTitle?: string;
   seoDescription?: string;
   servings?: number;
+}
+
+export interface PantryItem {
+  id: string;
+  name: string;
+  category: string;
+  quantity: string;
+  dateAdded: string;
+}
+
+export interface PantryItem {
+  id: string;
+  name: string;
+  category: string;
+  quantity: string;
+  dateAdded: string;
 }
 
 export interface SavedRecipe {
