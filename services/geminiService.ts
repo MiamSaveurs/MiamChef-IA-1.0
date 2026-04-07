@@ -208,7 +208,7 @@ const recipeSchema = {
         fats: { type: Type.NUMBER },
         difficulty: { type: Type.STRING },
       },
-      required: ['nutriScore', 'caloriesPerPerson', 'difficulty'],
+      required: ['nutriScore', 'caloriesPerPerson', 'difficulty', 'proteins', 'carbohydrates', 'fats'],
     },
     utensils: { type: Type.ARRAY, items: { type: Type.STRING } },
     ingredients: { 
@@ -767,7 +767,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     3. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
     4. CONSERVATION : Durée/mode (champ 'storageAdvice').
     5. PORTIONS : Nombre de personnes (champ 'servings').
-    6. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g) et la difficulté (champ 'metrics').
+    6. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g), les glucides (g), les lipides (g) et la difficulté (champ 'metrics').
     
     FORMAT :
     - Titre H1 (# Titre) obligatoire.

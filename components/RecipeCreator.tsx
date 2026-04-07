@@ -1024,22 +1024,30 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     </h1>
 
                     {metrics && (
-                        <div className="grid grid-cols-4 gap-4 mb-8 py-6 border-y border-white/5">
-                             <div className="text-center border-r border-white/10 last:border-0">
+                        <div className="grid grid-cols-3 gap-y-6 gap-x-4 mb-8 py-6 border-y border-white/5">
+                             <div className="text-center border-r border-white/10">
                                 <div className="text-2xl font-display text-white">{metrics.nutriScore}</div>
                                 <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Nutri</div>
                              </div>
-                             <div className="text-center border-r border-white/10 last:border-0">
+                             <div className="text-center border-r border-white/10">
                                 <div className="text-2xl font-display text-white">{metrics.caloriesPerPerson}</div>
                                 <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Kcal</div>
-                             </div>
-                             <div className="text-center border-r border-white/10 last:border-0">
-                                <div className="text-2xl font-display text-white">{metrics.proteins}g</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Prot.</div>
                              </div>
                              <div className="text-center">
                                 <div className="text-2xl font-display text-white">{people}</div>
                                 <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Pers.</div>
+                             </div>
+                             <div className="text-center border-r border-white/10">
+                                <div className="text-2xl font-display text-white">{metrics.proteins || 0}g</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Prot.</div>
+                             </div>
+                             <div className="text-center border-r border-white/10">
+                                <div className="text-2xl font-display text-white">{metrics.carbohydrates || 0}g</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Gluc.</div>
+                             </div>
+                             <div className="text-center">
+                                <div className="text-2xl font-display text-white">{metrics.fats || 0}g</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Lip.</div>
                              </div>
                         </div>
                     )}

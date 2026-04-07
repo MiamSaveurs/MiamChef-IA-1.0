@@ -288,6 +288,12 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                             <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
                                                 <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.proteins || 0}g Prot.
                                             </span>
+                                            <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.carbohydrates || 0}g Gluc.
+                                            </span>
+                                            <span className="flex items-center gap-2 font-bold bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                                <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.fats || 0}g Lip.
+                                            </span>
                                             <div className="scale-110 flex items-center gap-2">
                                                 <NutriBadge score={selectedRecipe.metrics.nutriScore} />
                                                 {selectedRecipe.servings && (
