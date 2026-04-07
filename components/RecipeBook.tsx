@@ -382,7 +382,19 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     h1: ({ ...props }) => <h1 className="hidden" {...props} />, // On cache le titre H1 car déjà affiché en haut
                                     h2: ({ ...props }) => <h2 className="text-lg font-bold text-white mb-3 mt-8 border-b border-white/10 pb-2 flex items-center gap-2 text-amber-500" {...props} />,
                                     strong: ({ ...props }) => <strong className="text-amber-400" {...props} />,
-                                    li: ({ ...props }) => <li className="flex items-start gap-2 mb-2" {...props}><span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span><span className="flex-1">{props.children}</span></li>,
+                                    ul: ({ ...props }) => <ul className="space-y-3 my-6" {...props} />,
+                                    li: ({ node, ...props }) => {
+                                        const hasImage = JSON.stringify(node).includes('"tagName":"img"');
+                                        return (
+                                            <li className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors mb-2" {...props}>
+                                                {!hasImage && <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span>}
+                                                <span className="flex-1 flex items-center text-gray-300">{props.children}</span>
+                                            </li>
+                                        );
+                                    },
+                                    img: ({ src, alt, ...props }) => (
+                                        <img src={src} alt={alt} className="w-10 h-10 object-contain mr-4 drop-shadow-md" referrerPolicy="no-referrer" {...props} />
+                                    ),
                                     a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                                 >

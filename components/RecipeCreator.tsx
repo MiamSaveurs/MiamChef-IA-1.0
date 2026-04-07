@@ -1255,12 +1255,18 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         </div>
                                     ),
                                     strong: ({ ...props }) => <strong className="font-bold text-white" style={{color: themeColor}} {...props} />,
-                                    ul: ({ ...props }) => <ul className="space-y-4 my-6" {...props} />,
-                                    li: ({ ...props }) => (
-                                        <li className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
-                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>
-                                            <span className="flex-1 text-gray-300">{props.children}</span>
-                                        </li>
+                                    ul: ({ ...props }) => <ul className="space-y-3 my-6" {...props} />,
+                                    li: ({ node, ...props }) => {
+                                        const hasImage = JSON.stringify(node).includes('"tagName":"img"');
+                                        return (
+                                            <li className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors" {...props}>
+                                                {!hasImage && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: themeColor}}></span>}
+                                                <span className="flex-1 flex items-center text-gray-300">{props.children}</span>
+                                            </li>
+                                        );
+                                    },
+                                    img: ({ src, alt, ...props }) => (
+                                        <img src={src} alt={alt} className="w-10 h-10 object-contain mr-4 drop-shadow-md" referrerPolicy="no-referrer" {...props} />
                                     ),
                                     p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />,
                                     a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />
