@@ -8,6 +8,7 @@ import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
 import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS, processAffiliateLink } from '../constants/affiliateLinks';
 import { NutriScoreLogo } from './NutriScoreLogo';
+import { ingredientTranslations } from '../utils/ingredientTranslations';
 
 const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
@@ -137,6 +138,53 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
   // Fonction pour ignorer les accents et la casse (Ex: "bœuf" == "boeuf")
   const normalizeText = (text: string) => 
     text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const processedMarkdown = useMemo(() => {
+      if (!selectedRecipe) return '';
+      const md = selectedRecipe.markdownContent;
+      
+      // Si la recette contient déjà des images d'ingrédients (nouvelle version), on ne touche à rien
+      if (md.includes('themealdb.com/images/ingredients')) {
+          return md;
+      }
+
+      // Sinon, on essaie d'injecter les images dans les listes
+      if (selectedRecipe.ingredients) {
+          const lines = md.split('\n');
+          const newLines = lines.map(line => {
+              // Cherche les éléments de liste (ex: "- 2 tomates" ou "* 2 tomates")
+              const listMatch = line.match(/^(\s*[-*]\s+)(.+)$/);
+              if (listMatch) {
+                  const prefix = listMatch[1];
+                  const content = listMatch[2];
+                  
+                  // Vérifie si le contenu correspond à un de nos ingrédients
+                  const matchedIngredient = selectedRecipe.ingredients?.find(ing => {
+                      const normalizedContent = normalizeText(content);
+                      const normalizedIng = normalizeText(ing);
+                      const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
+                      return normalizedContent.includes(normalizedIng) || normalizedContent.includes(singularIng);
+                  });
+
+                  if (matchedIngredient) {
+                      const normalizedIng = normalizeText(matchedIngredient);
+                      const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
+                      
+                      const englishName = ingredientTranslations[normalizedIng] || ingredientTranslations[singularIng];
+                      
+                      const formattedName = englishName ? englishName.replace(/ /g, '%20') : matchedIngredient.replace(/ /g, '%20');
+                      const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
+                      
+                      return `${prefix}![${matchedIngredient}](${imageUrl}) ${content}`;
+                  }
+              }
+              return line;
+          });
+          return newLines.join('\n');
+      }
+      
+      return md;
+  }, [selectedRecipe]);
 
   const filteredRecipes = recipes.filter(r => {
       if (!searchTerm.trim()) return true;
@@ -356,7 +404,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />
                                 }}
                                 >
-                                {selectedRecipe.markdownContent}
+                                {processedMarkdown}
                                 </ReactMarkdown>
                             </div>
 
