@@ -7,22 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
 import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS, processAffiliateLink } from '../constants/affiliateLinks';
-
-const NutriBadge = ({ score }: { score: string }) => {
-  const colors = { 
-      'A': '#008148', // Vert foncé
-      'B': '#8ac53e', // Vert clair
-      'C': '#fecb02', // Jaune
-      'D': '#ee8100', // Orange
-      'E': '#e63e11'  // Rouge
-  };
-  const color = colors[score as keyof typeof colors] || '#ccc';
-  return (
-    <span className="font-bold text-white text-[10px] px-2 py-0.5 rounded shadow-sm border border-white/20" style={{ backgroundColor: color }}>
-      {score}
-    </span>
-  );
-};
+import { NutriScoreLogo } from './NutriScoreLogo';
 
 const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
@@ -295,7 +280,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                                 <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.fats || 0}g Lip.
                                             </span>
                                             <div className="scale-110 flex items-center gap-2">
-                                                <NutriBadge score={selectedRecipe.metrics.nutriScore} />
+                                                <NutriScoreLogo score={selectedRecipe.metrics.nutriScore} className="h-6" />
                                                 {selectedRecipe.servings && (
                                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded border border-white/10">
                                                         {selectedRecipe.servings} Pers.
@@ -509,7 +494,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                                 <div className="flex items-center gap-3">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
                                                     <div className="flex items-center gap-1.5">
-                                                        <NutriBadge score={recipe.metrics.nutriScore} />
+                                                        <NutriScoreLogo score={recipe.metrics.nutriScore} className="h-4" />
                                                         {recipe.servings && (
                                                             <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
                                                                 {recipe.servings}P

@@ -60,6 +60,7 @@ import {
   PremiumMedal, 
   WickerBasket
 } from './Icons';
+import { NutriScoreLogo } from './NutriScoreLogo';
 
 interface RecipeCreatorProps {
     persistentState: {
@@ -1025,9 +1026,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
 
                     {metrics && (
                         <div className="grid grid-cols-3 gap-y-6 gap-x-4 mb-8 py-6 border-y border-white/5">
-                             <div className="text-center border-r border-white/10">
-                                <div className="text-2xl font-display text-white">{metrics.nutriScore}</div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-1">Nutri</div>
+                             <div className="text-center border-r border-white/10 flex flex-col items-center justify-center">
+                                <NutriScoreLogo score={metrics.nutriScore} className="h-8" />
+                                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-2">Nutri</div>
                              </div>
                              <div className="text-center border-r border-white/10">
                                 <div className="text-2xl font-display text-white">{metrics.caloriesPerPerson}</div>
