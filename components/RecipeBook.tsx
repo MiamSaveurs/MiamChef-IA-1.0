@@ -280,7 +280,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                                 <BarChart size={14} className="text-amber-500"/> {selectedRecipe.metrics.fats || 0}g Lip.
                                             </span>
                                             <div className="scale-110 flex items-center gap-2">
-                                                <NutriScoreLogo score={selectedRecipe.metrics.nutriScore} className="h-6" />
+                                                <NutriScoreLogo score={selectedRecipe.metrics.nutriScore} className="h-10" />
                                                 {selectedRecipe.servings && (
                                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded border border-white/10">
                                                         {selectedRecipe.servings} Pers.
@@ -494,7 +494,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                                 <div className="flex items-center gap-3">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
                                                     <div className="flex items-center gap-1.5">
-                                                        <NutriScoreLogo score={recipe.metrics.nutriScore} className="h-4" />
+                                                        <NutriScoreLogo score={recipe.metrics.nutriScore} className="h-8" />
                                                         {recipe.servings && (
                                                             <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
                                                                 {recipe.servings}P

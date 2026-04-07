@@ -1027,7 +1027,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                     {metrics && (
                         <div className="grid grid-cols-3 gap-y-6 gap-x-4 mb-8 py-6 border-y border-white/5">
                              <div className="text-center border-r border-white/10 flex flex-col items-center justify-center">
-                                <NutriScoreLogo score={metrics.nutriScore} className="h-8" />
+                                <NutriScoreLogo score={metrics.nutriScore} className="h-14" />
                                 <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mt-2">Nutri</div>
                              </div>
                              <div className="text-center border-r border-white/10">
