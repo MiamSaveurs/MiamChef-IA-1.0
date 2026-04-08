@@ -313,7 +313,12 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             className="w-full h-full object-contain drop-shadow-lg"
                             referrerPolicy="no-referrer"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
+                              const target = e.target as HTMLImageElement;
+                              if (!target.src.includes('Tomato-Small.png')) {
+                                target.src = 'https://www.themealdb.com/images/ingredients/Tomato-Small.png';
+                              } else {
+                                target.style.opacity = '0.3';
+                              }
                             }}
                           />
                         </div>

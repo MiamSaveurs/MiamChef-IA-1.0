@@ -390,14 +390,21 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         );
                                     },
                                     img: ({ src, alt, ...props }) => (
-                                        <span className="w-16 h-16 shrink-0 bg-[#1a1a1a] rounded-xl inline-flex items-center justify-center p-2 mr-4 shadow-inner border border-white/5 align-middle">
+                                        <span className="w-16 h-16 shrink-0 bg-[#1a1a1a] rounded-xl inline-flex items-center justify-center p-2 mr-4 shadow-inner border border-white/5 align-middle overflow-hidden">
                                             <img 
                                                 src={src} 
                                                 alt={alt} 
                                                 className="w-full h-full object-contain drop-shadow-xl" 
                                                 referrerPolicy="no-referrer" 
                                                 onError={(e) => {
-                                                    (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                                                    const target = e.target as HTMLImageElement;
+                                                    // Fallback vers une image de tomate générique si l'ingrédient n'est pas trouvé
+                                                    // ou une icône si même ça échoue
+                                                    if (!target.src.includes('Tomato-Small.png')) {
+                                                        target.src = 'https://www.themealdb.com/images/ingredients/Tomato-Small.png';
+                                                    } else {
+                                                        target.style.opacity = '0.3';
+                                                    }
                                                 }}
                                                 {...props} 
                                             />
