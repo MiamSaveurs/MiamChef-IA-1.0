@@ -14,6 +14,7 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState('');
   const [newItemCategory, setNewItemCategory] = useState(CATEGORIES[0]);
@@ -44,6 +45,13 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         recognitionRef.current.onerror = (event: any) => {
           console.error("Speech recognition error", event.error);
           setIsRecording(false);
+          if (event.error === 'not-allowed') {
+            setMicError("L'accès au micro a été refusé. Veuillez autoriser le micro dans les réglages de votre navigateur.");
+          } else if (event.error === 'network') {
+            setMicError("Erreur réseau. Vérifiez votre connexion internet.");
+          } else {
+            setMicError("Une erreur est survenue avec le micro.");
+          }
         };
         
         recognitionRef.current.onend = () => {
@@ -85,15 +93,25 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   const toggleRecording = () => {
+    setMicError(null);
     if (isRecording) {
       recognitionRef.current?.stop();
       setIsRecording(false);
     } else {
+      if (!recognitionRef.current) {
+        const SpeechRecognitionAPI = (window as unknown as { SpeechRecognition: unknown }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition: unknown }).webkitSpeechRecognition;
+        if (!SpeechRecognitionAPI) {
+          setMicError("Désolé, votre navigateur ne supporte pas la reconnaissance vocale.");
+          return;
+        }
+      }
+      
       try {
         recognitionRef.current?.start();
         setIsRecording(true);
       } catch (e) {
         console.error(e);
+        setMicError("Impossible de démarrer le micro. Vérifiez les autorisations.");
       }
     }
   };
@@ -193,6 +211,28 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </button>
           {isRecording && <p className="text-red-400 text-xs font-bold mt-4 animate-pulse">Écoute en cours...</p>}
           {isProcessingVoice && <p className="text-amber-400 text-xs font-bold mt-4 animate-pulse">MiamChef range vos courses...</p>}
+          
+          {micError && (
+            <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-xs animate-fade-in">
+              <p className="font-bold mb-1">Problème avec le micro :</p>
+              <p>{micError}</p>
+              <button 
+                onClick={() => {
+                  setMicError(null);
+                  toggleRecording();
+                }}
+                className="mt-2 text-white underline font-bold"
+              >
+                Réessayer
+              </button>
+            </div>
+          )}
+          
+          {!micError && !isRecording && !isProcessingVoice && (
+            <p className="text-gray-500 text-[10px] mt-4 uppercase tracking-widest opacity-50">
+              Cliquez pour parler
+            </p>
+          )}
         </div>
 
         {/* Manual Input Form */}
