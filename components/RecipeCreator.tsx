@@ -1259,14 +1259,16 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     li: ({ node, ...props }) => {
                                         const hasImage = JSON.stringify(node).includes('"tagName":"img"');
                                         return (
-                                            <li className="flex items-center gap-4 p-2 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors mb-2" {...props}>
-                                                {!hasImage && <span className="w-2 h-2 rounded-full shrink-0 ml-4" style={{backgroundColor: themeColor}}></span>}
-                                                <span className="flex-1 flex items-center text-gray-200 font-medium">{props.children}</span>
+                                            <li className="p-2 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors mb-2" {...props}>
+                                                <div className="flex items-center text-gray-200 font-medium">
+                                                    {!hasImage && <span className="w-2 h-2 rounded-full shrink-0 mx-4" style={{backgroundColor: themeColor}}></span>}
+                                                    <span className="flex-1 leading-relaxed">{props.children}</span>
+                                                </div>
                                             </li>
                                         );
                                     },
                                     img: ({ src, alt, ...props }) => (
-                                        <div className="w-16 h-16 shrink-0 bg-[#1a1a1a] rounded-xl flex items-center justify-center p-2 mr-3 shadow-inner border border-white/5">
+                                        <span className="w-16 h-16 shrink-0 bg-[#1a1a1a] rounded-xl inline-flex items-center justify-center p-2 mr-4 shadow-inner border border-white/5 align-middle">
                                             <img 
                                                 src={src} 
                                                 alt={alt} 
@@ -1277,7 +1279,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                                 }}
                                                 {...props} 
                                             />
-                                        </div>
+                                        </span>
                                     ),
                                     p: ({ ...props }) => <p className="mb-4 text-gray-400 font-light" {...props} />,
                                     a: ({ href, ...props }) => <a href={processAffiliateLink(href)} className="underline underline-offset-2 transition-colors" style={{color: themeColor, textDecorationColor: themeColor}} target="_blank" rel="noopener noreferrer" {...props} />

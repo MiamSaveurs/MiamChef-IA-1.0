@@ -90,21 +90,16 @@ const AMAZON_AFFILIATE_LINKS = `
 
 const KORO_AFFILIATE_STRATEGY = `
 === STRATÉGIE D'AFFILIATION KORO ===
-1. RECHERCHE SYSTÉMATIQUE : Pour CHAQUE ingrédient sec ou de longue conservation (farine, dattes, purée d'amandes, épices, légumineuses comme les pois chiches, dattes Medjool, graines, noix, etc.), tu DOIS impérativement utiliser l'outil Google Search pour vérifier leur disponibilité sur le site koro.fr.
-2. SUGGESTION D'EXPERT : Si un ingrédient est disponible sur KoRo, mentionne-le dans la recette comme une recommandation de qualité (ex: "Pour un résultat optimal, utilisez les pois chiches bio de chez KoRo").
-3. GÉNÉRATION DE LIEN DYNAMIQUE : Ne génère JAMAIS de lien awin1.com toi-même. Tu DOIS générer un lien de RECHERCHE simple vers KoRo, en utilisant ce format exact :
-   https://www.koro.fr/search?sSearch=[NOM_DE_L_INGREDIENT]
-   (Remplace les espaces par des + dans le nom de l'ingrédient).
-4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre les liens cliquables. Exemple pour des pois chiches : [Pois chiches (KoRo)](https://www.koro.fr/search?sSearch=pois+chiches)
-L'application se chargera automatiquement de transformer ce lien en lien d'affiliation sécurisé. Ne mets JAMAIS les URLs brutes entre parenthèses sans le texte du lien entre crochets.
+1. SUGGESTION D'EXPERT : Si un ingrédient sec ou de longue conservation (farine, dattes, purée d'amandes, épices, légumineuses, graines, noix, etc.) est utilisé, tu peux le mentionner dans les étapes de la recette comme une recommandation de qualité (ex: "Pour un résultat optimal, utilisez les pois chiches bio de chez KoRo").
+2. INTERDICTION DANS LA LISTE D'INGRÉDIENTS : Ne mets JAMAIS de liens (ni KoRo, ni Amazon) directement dans la liste à puces des ingrédients. La liste des ingrédients doit rester propre et sur une seule ligne par ingrédient (ex: "- ![Image](url) 1 cuillère à café de cumin").
+3. L'application se chargera automatiquement de générer un bloc "Coup de coeur" avec les liens d'affiliation à la fin de la recette. Tu n'as donc pas besoin de générer des liens cliquables dans le texte, sauf si c'est absolument nécessaire dans une étape de préparation.
 `;
 
 const AFFILIATE_STRATEGY_INSTRUCTION = `
 === STRATÉGIE DE MONÉTISATION & AFFILIATION ===
-1. RECOMMANDATION MATÉRIEL : Dès qu'une recette ou une discussion mentionne un ustensile de la liste "Coup de Coeur" Amazon, propose systématiquement le lien affilié correspondant.
-2. RECOMMANDATION INGRÉDIENTS : Pour les ingrédients secs, privilégie KoRo en générant le lien affilié dynamique.
-3. DISCRÉTION & VALEUR : Intègre ces liens naturellement comme des conseils d'expert pour aider l'utilisateur à s'équiper ou à trouver les bons produits.
-4. FORMATAGE DES LIENS : Tu DOIS TOUJOURS utiliser la syntaxe Markdown pour rendre TOUS les liens cliquables. Exemple : [Nom du produit](URL_AFFILIÉE). Ne mets JAMAIS les URLs brutes entre parenthèses sans le texte du lien entre crochets.
+1. L'application génère automatiquement un bloc "Coup de Coeur" avec les liens affiliés (Amazon, KoRo) en analysant les ingrédients et ustensiles de ta recette.
+2. INTERDICTION DE LIENS DANS LA LISTE D'INGRÉDIENTS : Ne mets JAMAIS de liens cliquables (Markdown) dans la liste des ingrédients. Garde la liste propre pour l'affichage.
+3. Tu peux mentionner les marques (KoRo) dans les étapes de préparation comme conseil d'expert, mais sans faire de lien cliquable.
 ${AMAZON_AFFILIATE_LINKS}
 ${KORO_AFFILIATE_STRATEGY}
 `;
