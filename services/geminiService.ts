@@ -473,6 +473,7 @@ export const generateChefRecipe = async (
          Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
          Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
          Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
+         ASTUCE IMAGES : La base de données TheMealDB n'a pas toutes les variantes spécifiques. Tu DOIS improviser et utiliser le nom générique de la famille de l'ingrédient en anglais pour l'URL de l'image. Par exemple : pour "tomate cerise" ou "tomate jaune", utilise 'Tomato'. Pour "poivron jaune" ou "vert", utilise 'Red Pepper'. Pour "oignon rouge", utilise 'Onion'. Pour "pomme de terre grenaille", utilise 'Potato'. L'objectif est d'avoir TOUJOURS une image valide, quitte à utiliser l'image de l'ingrédient parent.
       3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
@@ -558,6 +559,7 @@ export const searchChefsRecipe = async (
      Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
      Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
      Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
+     ASTUCE IMAGES : La base de données TheMealDB n'a pas toutes les variantes spécifiques. Tu DOIS improviser et utiliser le nom générique de la famille de l'ingrédient en anglais pour l'URL de l'image. Par exemple : pour "tomate cerise" ou "tomate jaune", utilise 'Tomato'. Pour "poivron jaune" ou "vert", utilise 'Red Pepper'. Pour "oignon rouge", utilise 'Onion'. Pour "pomme de terre grenaille", utilise 'Potato'. L'objectif est d'avoir TOUJOURS une image valide, quitte à utiliser l'image de l'ingrédient parent.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -639,6 +641,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
        Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
        Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
+       ASTUCE IMAGES : La base de données TheMealDB n'a pas toutes les variantes spécifiques. Tu DOIS improviser et utiliser le nom générique de la famille de l'ingrédient en anglais pour l'URL de l'image. Par exemple : pour "tomate cerise" ou "tomate jaune", utilise 'Tomato'. Pour "poivron jaune" ou "vert", utilise 'Red Pepper'. Pour "oignon rouge", utilise 'Onion'. Pour "pomme de terre grenaille", utilise 'Potato'. L'objectif est d'avoir TOUJOURS une image valide, quitte à utiliser l'image de l'ingrédient parent.
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
