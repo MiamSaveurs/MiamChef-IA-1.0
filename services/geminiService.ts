@@ -112,7 +112,7 @@ ${KORO_AFFILIATE_STRATEGY}
 // Helper to retrieve and format User Profile for Prompts
 const getUserProfileContext = (): string => {
     const profile = getUserProfile();
-    // On garde la structure pour l'IA, mais le nom est juste "Contexte Utilisateur"
+    // On garde la structure pour MiamChef, mais le nom est juste "Contexte Utilisateur"
     let context = `=== CONTEXTE / PRÉFÉRENCES DE L'UTILISATEUR ===\n`;
     context += `NOM : ${profile.name}\n`;
     context += `NIVEAU CUISINE : ${profile.cookingLevel}\n`;
@@ -486,7 +486,7 @@ export const generateChefRecipe = async (
       ${BANNED_WORDS_INSTRUCTION}
     `;
 
-    const modelName = (recipeCost === 'authentic' || difficultyLevel === 'expert') ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
+    const modelName = "gemini-3-flash-preview";
 
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: modelName, 
@@ -494,8 +494,7 @@ export const generateChefRecipe = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
-        tools: [{ googleSearch: {} }],
-        thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
       },
     });
 
@@ -568,8 +567,8 @@ export const searchChefsRecipe = async (
 
   ${BANNED_WORDS_INSTRUCTION}`;
 
-  // Utilisation de Pro pour les requêtes de qualité ou expertes pour garantir le respect des consignes complexes
-  const modelName = (type === 'authentic' || difficulty === 'expert') ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
+  // Utilisation de Flash pour la rapidité (moins de 30 secondes)
+  const modelName = "gemini-3-flash-preview";
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: modelName,
@@ -577,8 +576,7 @@ export const searchChefsRecipe = async (
     config: {
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
-      tools: [{ googleSearch: {} }],
-      thinkingConfig: { thinkingLevel: modelName.includes('pro') ? ThinkingLevel.LOW : ThinkingLevel.MINIMAL }
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
     },
   });
 
@@ -994,7 +992,7 @@ export const parseVoiceToPantryItems = async (voiceText: string): Promise<Partia
         `;
 
         const response = await ai.models.generateContent({
-            model: "gemini-3.1-pro-preview",
+            model: "gemini-3-flash-preview",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",

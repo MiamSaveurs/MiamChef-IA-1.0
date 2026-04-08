@@ -168,7 +168,7 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           
           <h2 className="text-xl font-display text-white mb-4">Ajout Vocal Rapide</h2>
           <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
-            Appuyez sur le micro et dictez vos ingrédients. L'IA s'occupe de les ranger !<br/>
+            Appuyez sur le micro et dictez vos ingrédients. MiamChef s'occupe de les ranger !<br/>
             <span className="italic opacity-70">Ex: "J'ai acheté 3 tomates, 500g de poulet et du lait."</span>
           </p>
           
@@ -192,7 +192,7 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             )}
           </button>
           {isRecording && <p className="text-red-400 text-xs font-bold mt-4 animate-pulse">Écoute en cours...</p>}
-          {isProcessingVoice && <p className="text-amber-400 text-xs font-bold mt-4 animate-pulse">L'IA range vos courses...</p>}
+          {isProcessingVoice && <p className="text-amber-400 text-xs font-bold mt-4 animate-pulse">MiamChef range vos courses...</p>}
         </div>
 
         {/* Manual Input Form */}

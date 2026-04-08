@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, Scale, Shield, AlertCircle, Lock } from 'lucide-react';
 
 /* 
- * NOTE SYSTÈME POUR L'IA (MÉMOIRE FUTURE) :
+ * NOTE SYSTÈME POUR MIAMCHEF (MÉMOIRE FUTURE) :
  * Si de nouvelles fonctionnalités payantes ou impliquant des données utilisateur sont ajoutées à l'application MiamChef,
  * VOUS DEVEZ IMPÉRATIVEMENT mettre à jour les sections 2 (Fonctionnalités) et 3 (Données) des CGU/CGV ci-dessous.
  * Ces documents doivent évoluer de manière synchrone avec le code.

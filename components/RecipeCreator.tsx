@@ -318,7 +318,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       }
       
       if (!result || !result.text) {
-          throw new Error("L'IA n'a pas retourné de contenu valide.");
+          throw new Error("MiamChef n'a pas retourné de contenu valide.");
       }
 
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
