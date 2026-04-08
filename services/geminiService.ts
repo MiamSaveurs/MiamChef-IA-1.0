@@ -466,7 +466,7 @@ export const generateChefRecipe = async (
       5. ${FOOD_SAFETY_PROTOCOL}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
-      1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette créée.
+      1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE à la recette, en rapport direct avec les ingrédients demandés (ex: "Velouté de Potiron aux Éclats de Noisettes" au lieu de "Soupe au potiron").
       2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
          POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
          Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
@@ -559,7 +559,7 @@ export const searchChefsRecipe = async (
   7. ${FOOD_SAFETY_PROTOCOL}
  
   === FORMAT DE TEXTE (CRITIQUE) ===
-  1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Le titre doit refléter la recette trouvée.
+  1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE à la recette, en rapport direct avec les ingrédients trouvés (ex: "Risotto Crémeux aux Champignons Sauvages" au lieu de "Riz aux champignons").
   2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
      POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
      Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
@@ -648,7 +648,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
     
     === FORMAT DE TEXTE (CRITIQUE) ===
-    1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat Revisité). C'est obligatoire et crucial pour le système. Le titre doit refléter l'ajustement effectué.
+    1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat Revisité). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE qui reflète l'ajustement effectué tout en restant appétissant.
     2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
        POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
        Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
