@@ -97,9 +97,9 @@ const KORO_AFFILIATE_STRATEGY = `
 
 const AFFILIATE_STRATEGY_INSTRUCTION = `
 === STRATÉGIE DE MONÉTISATION & AFFILIATION ===
-1. L'application génère automatiquement un bloc "Coup de Coeur" avec les liens affiliés (Amazon, KoRo) en analysant les ingrédients et ustensiles de ta recette.
-2. INTERDICTION DE LIENS DANS LA LISTE D'INGRÉDIENTS : Ne mets JAMAIS de liens cliquables (Markdown) dans la liste des ingrédients. Garde la liste propre pour l'affichage.
-3. Tu peux mentionner les marques (KoRo) dans les étapes de préparation comme conseil d'expert, mais sans faire de lien cliquable.
+1. RECOMMANDATION MATÉRIEL (AMAZON) : Dès qu'une recette mentionne un ustensile de la liste "Coup de Coeur" Amazon dans les ÉTAPES DE PRÉPARATION, propose systématiquement le lien affilié correspondant en Markdown (ex: [Fouet](https://amzn.to/3PTiYef)).
+2. INTERDICTION DE LIENS DANS LA LISTE D'INGRÉDIENTS : Ne mets JAMAIS de liens cliquables (ni KoRo, ni Amazon) dans la liste à puces des ingrédients. Garde la liste propre pour l'affichage.
+3. INGRÉDIENTS KORO : Tu peux mentionner les marques (KoRo) dans les étapes de préparation comme conseil d'expert, mais sans faire de lien cliquable pour KoRo (l'application s'en charge dans le bloc Coup de Coeur).
 ${AMAZON_AFFILIATE_LINKS}
 ${KORO_AFFILIATE_STRATEGY}
 `;

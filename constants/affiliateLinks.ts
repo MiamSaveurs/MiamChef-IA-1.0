@@ -21,8 +21,14 @@ export const AMAZON_AFFILIATE_LINKS = [
     { name: "Blendeur", url: "https://amzn.to/3NZcMkq", keywords: ["blendeur", "smoothie", "mixer"] },
     { name: "Maryse", url: "https://amzn.to/3NZd6zE", keywords: ["maryse", "racler", "pâtisserie"] },
     { name: "Couvercle 24 cm", url: "https://amzn.to/4sLqfLF", keywords: ["couvercle", "mijoter"] },
-    { name: "Tapis de cuisson", url: "https://amzn.to/3NZfN54", keywords: ["tapis", "silicone", "four", "pâtisserie"] },
-    { name: "Poche à douille", url: "https://amzn.to/4sLqfLF", keywords: ["poche", "douille", "décorer", "pâtisserie"] }
+    { name: "Tapis de cuisson", url: "https://amzn.to/485TQHs", keywords: ["tapis", "silicone", "four", "pâtisserie"] },
+    { name: "Poche à douille", url: "https://amzn.to/4sLqfLF", keywords: ["poche", "douille", "décorer", "pâtisserie"] },
+    { name: "Rouleau à pâtisserie", url: "https://amzn.to/4v4Dite", keywords: ["rouleau", "pâtisserie", "étaler", "pâte"] },
+    { name: "Cercle à tarte 24 cm", url: "https://amzn.to/4bLJu1V", keywords: ["cercle", "tarte", "foncer"] },
+    { name: "Robot pâtissier", url: "https://amzn.to/4tqQcjU", keywords: ["robot", "pâtissier", "pétrir", "monter"] },
+    { name: "Tamis", url: "https://amzn.to/4v5BtMy", keywords: ["tamis", "tamiser", "farine"] },
+    { name: "Passette", url: "https://amzn.to/4dnYBzO", keywords: ["passette", "filtrer", "sauce"] },
+    { name: "Moule à tarte diamètre 24 amovible", url: "https://amzn.to/4dTk4AD", keywords: ["moule", "tarte", "amovible"] }
 ];
 
 export const KORO_AFFILIATE_BASE_URL = "https://www.awin1.com/cread.php?awinmid=112476&awinaffid=2616370&ued=";
