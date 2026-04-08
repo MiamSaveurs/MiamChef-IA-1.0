@@ -143,39 +143,62 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
       if (!selectedRecipe) return '';
       const md = selectedRecipe.markdownContent;
       
-      // Si la recette contient déjà des images d'ingrédients (nouvelle version), on ne touche à rien
-      if (md.includes('themealdb.com/images/ingredients')) {
-          return md;
-      }
-
-      // Sinon, on essaie d'injecter les images dans les listes
       if (selectedRecipe.ingredients) {
           const lines = md.split('\n');
+          let inIngredientsSection = false;
+
           const newLines = lines.map(line => {
+              const lowerLine = line.toLowerCase();
+              if (lowerLine.includes('ingrédient') || lowerLine.includes('ingredient')) {
+                  inIngredientsSection = true;
+              } else if (line.match(/^#+\s+(préparation|preparation|étape|etape|instruction)/i)) {
+                  inIngredientsSection = false;
+              }
+
               // Cherche les éléments de liste (ex: "- 2 tomates" ou "* 2 tomates")
               const listMatch = line.match(/^(\s*[-*]\s+)(.+)$/);
               if (listMatch) {
                   const prefix = listMatch[1];
                   const content = listMatch[2];
                   
-                  // Vérifie si le contenu correspond à un de nos ingrédients
-                  const matchedIngredient = selectedRecipe.ingredients?.find(ing => {
+                  // Si la ligne contient DÉJÀ une image, on la garde telle quelle
+                  if (content.includes('![') && content.includes('](')) {
+                      return line;
+                  }
+                  
+                  // On cherche une correspondance dans les ingrédients de la recette
+                  let finalIngredientName = selectedRecipe.ingredients?.find(ing => {
                       const normalizedContent = normalizeText(content);
                       const normalizedIng = normalizeText(ing);
                       const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
                       return normalizedContent.includes(normalizedIng) || normalizedContent.includes(singularIng);
                   });
 
-                  if (matchedIngredient) {
-                      const normalizedIng = normalizeText(matchedIngredient);
+                  // Si non trouvé, on cherche dans notre dictionnaire de traduction
+                  if (!finalIngredientName) {
+                      const normalizedContent = normalizeText(content);
+                      for (const [fr, en] of Object.entries(ingredientTranslations)) {
+                          // Recherche de mot entier pour éviter les faux positifs
+                          const regex = new RegExp(`\\b${fr}\\b`, 'i');
+                          if (regex.test(normalizedContent)) {
+                              finalIngredientName = fr;
+                              break;
+                          }
+                      }
+                  }
+
+                  if (finalIngredientName) {
+                      const normalizedIng = normalizeText(finalIngredientName);
                       const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
-                      
                       const englishName = ingredientTranslations[normalizedIng] || ingredientTranslations[singularIng];
                       
-                      const formattedName = englishName ? englishName.replace(/ /g, '%20') : matchedIngredient.replace(/ /g, '%20');
+                      const formattedName = englishName ? englishName.replace(/ /g, '%20') : finalIngredientName.replace(/ /g, '%20');
                       const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
                       
-                      return `${prefix}![${matchedIngredient}](${imageUrl}) ${content}`;
+                      return `${prefix}![${finalIngredientName}](${imageUrl}) ${content}`;
+                  } else if (inIngredientsSection) {
+                      // Fallback ultime: on met une image générique pour forcer l'affichage du design
+                      return `${prefix}![Ingredient](https://www.themealdb.com/images/ingredients/Tomato-Small.png) ${content}`;
                   }
               }
               return line;
