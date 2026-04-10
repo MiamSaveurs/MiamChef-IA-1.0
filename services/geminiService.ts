@@ -489,6 +489,9 @@ export const generateChefRecipe = async (
          - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
          - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
          - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
+         - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
+         - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
+         - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
          - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
          - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
          L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
@@ -592,6 +595,9 @@ export const searchChefsRecipe = async (
      - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
      - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
      - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
+     - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
+     - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
+     - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
      - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
      - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
      L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
@@ -691,6 +697,9 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
        - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
        - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
+       - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
+       - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
+       - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
        - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
        - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
        L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
