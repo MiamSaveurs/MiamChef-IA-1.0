@@ -429,6 +429,22 @@ export const generateChefRecipe = async (
     // Récupération des contraintes strictes
     const strictDietaryRules = getDietaryConstraints(dietary);
 
+    // 5. STYLE SPECIFIC INSTRUCTIONS
+    let styleSpecificPrompt = "";
+    if (cuisineStyle === "Plat du Jour (Bistrot)") {
+        styleSpecificPrompt = `
+        INSTRUCTION SPÉCIFIQUE "PLAT DU JOUR (BISTROT)" :
+        Tu dois générer une assiette équilibrée et gourmande.
+        L'assiette DOIT impérativement contenir :
+        1. UNE PROTÉINE DE QUALITÉ (viande, poisson ou alternative végétale noble).
+        2. UN FÉCULENT NOURRISSANT (riz, pâtes, pommes de terre, céréales).
+        3. DES LÉGUMES PLEIN DE FRAÎCHEUR (riches en fibres et vitamines, cuits ou crus).
+        4. UNE SAUCE OU UN LIANT GOURMAND MAIS SAIN (jus réduit, émulsion légère, sauce yaourt, etc.).
+        5. UN TOPPING PLAISIR OU CROQUANT (graines, noisettes, herbes fraîches, oignons frits, etc.).
+        L'objectif est un dressage élégant type bistronomie française.
+        `;
+    }
+
     // CONSTRUCTION DU PROMPT FINAL
     const randomSeed = Math.random().toString(36).substring(7) + Date.now();
     const prompt = `
@@ -448,6 +464,7 @@ export const generateChefRecipe = async (
       ${userProfileContext}
       ${smartDevicePrompt}
       ${AFFILIATE_STRATEGY_INSTRUCTION}
+      ${styleSpecificPrompt}
 
       === VOTRE PERSONA ===
       ${personaPrompt}
