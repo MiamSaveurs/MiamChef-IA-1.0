@@ -2,6 +2,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse, ThinkingLevel } from "@google/genai";
 import { GeneratedContent, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
+import { ingredientTranslations } from "../utils/ingredientTranslations";
 
 // Instructions for the AI to avoid certain words
 // AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie"
@@ -516,8 +517,10 @@ export const generateChefRecipe = async (
     });
 
     const data = cleanAndParseJSON(response.text || "{}");
+    const repairedText = repairRecipeImages(sanitizeText(data.markdownContent) || "Erreur de contenu recette.");
+    
     return {
-      text: sanitizeText(data.markdownContent) || "Erreur de contenu recette.", 
+      text: repairedText, 
       metrics: data.metrics,
       utensils: data.utensils,
       ingredients: data.ingredients,
@@ -619,8 +622,10 @@ export const searchChefsRecipe = async (
   });
 
   const data = cleanAndParseJSON(response.text || "{}");
+  const repairedText = repairRecipeImages(sanitizeText(data.markdownContent) || "Erreur de recherche.");
+
   return {
-    text: sanitizeText(data.markdownContent) || "Erreur de recherche.",
+    text: repairedText,
     metrics: data.metrics,
     utensils: data.utensils,
     ingredients: data.ingredients, 
@@ -722,8 +727,10 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     });
 
     const data = cleanAndParseJSON(response.text || "{}");
+    const repairedText = repairRecipeImages(sanitizeText(data.markdownContent) || "Erreur d'ajustement.");
+
     return {
-        text: sanitizeText(data.markdownContent) || "Erreur d'ajustement.",
+        text: repairedText,
         metrics: data.metrics,
         utensils: data.utensils,
         ingredients: data.ingredients, 
@@ -875,8 +882,10 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
   });
 
   const data = cleanAndParseJSON(response.text || "{}");
+  const repairedText = repairRecipeImages(sanitizeText(data.markdownContent) || "Je n'ai pas pu analyser l'image.");
+
   return {
-    text: sanitizeText(data.markdownContent) || "Je n'ai pas pu analyser l'image.",
+    text: repairedText,
     metrics: data.metrics,
     utensils: data.utensils,
     ingredients: data.ingredients, 
@@ -1091,4 +1100,75 @@ export const parseVoiceToPantryItems = async (voiceText: string): Promise<Partia
         console.error("Error parsing voice to pantry items:", error);
         return [];
     }
+};
+
+/**
+ * Fonction de secours pour garantir que CHAQUE ingrédient a une image.
+ * Scanne le markdown et injecte les images manquantes.
+ */
+export const repairRecipeImages = (text: string): string => {
+    if (!text) return text;
+    
+    const lines = text.split('\n');
+    let inIngredientsSection = false;
+    
+    const repairedLines = lines.map(line => {
+        const lowerLine = line.toLowerCase();
+        
+        // Détection de la section ingrédients (plus souple)
+        if (line.match(/^#+\s*(ingrédient|ingredient|panier|votre panier|liste des ingrédients)/i)) {
+            inIngredientsSection = true;
+            return line;
+        }
+        
+        // Détection de la fin de la section ingrédients (titre suivant)
+        if (inIngredientsSection && line.startsWith('##') && 
+           (lowerLine.includes('préparation') || lowerLine.includes('preparation') || lowerLine.includes('étape') || lowerLine.includes('instruction') || lowerLine.includes('cuisine'))) {
+            inIngredientsSection = false;
+            return line;
+        }
+        
+        // Si on est dans les ingrédients et que c'est une puce
+        if (inIngredientsSection && line.trim().match(/^[-*]\s+/)) {
+            const prefixMatch = line.match(/^(\s*[-*]\s+)/);
+            const prefix = prefixMatch ? prefixMatch[1] : '- ';
+            
+            // On extrait le contenu sans l'image existante s'il y en a une
+            let content = line.replace(/^(\s*[-*]\s+)/, '').trim();
+            const hasImage = content.includes('![') && content.includes('](');
+            
+            if (hasImage) {
+                // On nettoie la ligne de toute image existante pour la reconstruire proprement
+                content = content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
+            }
+
+            // Recherche d'une image dans le dictionnaire
+            let englishName = '';
+            const normalizedContent = content.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Enlever accents
+                .replace(/[^a-z\s]/g, ''); // Garder que lettres et espaces
+            
+            // On cherche le terme le plus long d'abord pour plus de précision
+            const sortedKeys = Object.keys(ingredientTranslations).sort((a, b) => b.length - a.length);
+            
+            for (const fr of sortedKeys) {
+                if (normalizedContent.includes(fr)) {
+                    englishName = ingredientTranslations[fr];
+                    break;
+                }
+            }
+            
+            // Fallback si rien trouvé
+            const finalEnglishName = englishName || 'Tomato';
+            const formattedName = finalEnglishName.replace(/ /g, '%20');
+            const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
+            
+            // On retourne la ligne reconstruite avec l'image au tout début
+            return `${prefix}![${content.split(' ')[0]}](${imageUrl}) ${content}`;
+        }
+        
+        return line;
+    });
+    
+    return repairedLines.join('\n');
 };

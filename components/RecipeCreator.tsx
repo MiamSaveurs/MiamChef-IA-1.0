@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe, generateRecipeVideo } from '../services/geminiService';
+import { generateChefRecipe, searchChefsRecipe, generateRecipeImage, adjustRecipe, generateRecipeVideo, repairRecipeImages } from '../services/geminiService';
 import { saveRecipeToBook, addToShoppingList, getUserProfile } from '../services/storageService';
 import { LoadingState, RecipeMetrics } from '../types';
 import { 
@@ -100,7 +100,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Derived state from persistent prop
-  const recipe = persistentState?.text || '';
+  const rawRecipe = persistentState?.text || '';
+  const recipe = useMemo(() => repairRecipeImages(rawRecipe), [rawRecipe]);
   const metrics = persistentState?.metrics || null;
   const ingredientsList = useMemo(() => persistentState?.ingredients || [], [persistentState?.ingredients]);
   const ingredientsWithQuantities = persistentState?.ingredientsWithQuantities || [];

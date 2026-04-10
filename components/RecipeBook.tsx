@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
+import { repairRecipeImages } from '../services/geminiService';
 import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
 import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS, processAffiliateLink } from '../constants/affiliateLinks';
 import { NutriScoreLogo } from './NutriScoreLogo';
-import { ingredientTranslations } from '../utils/ingredientTranslations';
 
 const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = ({ onBack, isTrialExpired }) => {
   const [recipes, setRecipes] = useState<SavedRecipe[]>([]);
@@ -141,84 +141,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
 
   const processedMarkdown = useMemo(() => {
       if (!selectedRecipe) return '';
-      const md = selectedRecipe.markdownContent;
-      
-      if (selectedRecipe.ingredients) {
-          const lines = md.split('\n');
-          let inIngredientsSection = false;
-
-          const newLines = lines.map(line => {
-              const lowerLine = line.toLowerCase();
-              // Détection plus souple de la section ingrédients
-              if (lowerLine.includes('ingrédient') || lowerLine.includes('ingredient') || lowerLine.includes('panier')) {
-                  inIngredientsSection = true;
-              } else if (line.match(/^#+\s+(préparation|preparation|étape|etape|instruction|cuisine)/i)) {
-                  inIngredientsSection = false;
-              }
-
-              // Cherche les éléments de liste (ex: "- 2 tomates" ou "* 2 tomates")
-              const listMatch = line.match(/^(\s*[-*]\s+)(.+)$/);
-              if (listMatch) {
-                  const prefix = listMatch[1];
-                  const content = listMatch[2];
-                  
-                  // Si la ligne contient DÉJÀ une image, on vérifie si elle est valide
-                  // Si elle semble mal formée ou vide, on la régénère
-                  const hasExistingImage = content.includes('![') && content.includes('](');
-                  
-                  // On cherche une correspondance dans notre dictionnaire de traduction ou les ingrédients
-                  let finalIngredientName = '';
-                  const normalizedContent = normalizeText(content);
-
-                  // On cherche d'abord dans le dictionnaire (plus précis pour les images)
-                  for (const fr of Object.keys(ingredientTranslations)) {
-                      const normalizedFr = normalizeText(fr);
-                      // On cherche le terme exact ou contenu dans la ligne
-                      if (normalizedContent.includes(normalizedFr)) {
-                          finalIngredientName = fr;
-                          break;
-                      }
-                  }
-
-                  // Si non trouvé dans le dictionnaire, on cherche dans les ingrédients de la recette
-                  if (!finalIngredientName) {
-                      finalIngredientName = selectedRecipe.ingredients?.find(ing => {
-                          const normalizedIng = normalizeText(ing);
-                          const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
-                          return normalizedContent.includes(normalizedIng) || normalizedContent.includes(singularIng);
-                      }) || '';
-                  }
-
-                  if (finalIngredientName) {
-                      const normalizedIng = normalizeText(finalIngredientName);
-                      const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
-                      const englishName = ingredientTranslations[normalizedIng] || ingredientTranslations[singularIng];
-                      
-                      const formattedName = englishName ? englishName.replace(/ /g, '%20') : finalIngredientName.replace(/ /g, '%20');
-                      const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
-                      
-                      // Si l'image existante est différente de celle qu'on veut mettre, on remplace
-                      // Sinon on garde l'existante si elle est là
-                      if (!hasExistingImage) {
-                          return `${prefix}![${finalIngredientName}](${imageUrl}) ${content}`;
-                      } else {
-                          // On s'assure que l'image est bien au début
-                          if (!content.startsWith('![')) {
-                              const cleanContent = content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
-                              return `${prefix}![${finalIngredientName}](${imageUrl}) ${cleanContent}`;
-                          }
-                      }
-                  } else if (inIngredientsSection && !hasExistingImage) {
-                      // Fallback ultime pour garder la cohérence du design
-                      return `${prefix}![Ingredient](https://www.themealdb.com/images/ingredients/Tomato-Small.png) ${content}`;
-                  }
-              }
-              return line;
-          });
-          return newLines.join('\n');
-      }
-      
-      return md;
+      return repairRecipeImages(selectedRecipe.markdownContent);
   }, [selectedRecipe]);
 
   const filteredRecipes = recipes.filter(r => {
