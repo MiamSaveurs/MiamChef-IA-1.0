@@ -429,7 +429,12 @@ export const generateChefRecipe = async (
     const strictDietaryRules = getDietaryConstraints(dietary);
 
     // CONSTRUCTION DU PROMPT FINAL
+    const randomSeed = Math.random().toString(36).substring(7);
     const prompt = `
+      🚨 CONSIGNE D'UNICITÉ CRITIQUE : TU DOIS CRÉER UNE RECETTE UNIQUE. 🚨
+      Ne propose JAMAIS deux fois la même recette. Varie les plaisirs, les textures et les techniques.
+      Identifiant de créativité : ${randomSeed}
+
       🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
       IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" SI LE BUDGET EST "QUALITÉ".
       IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "DÉBUTANT" SI LE NIVEAU EST "AVANCÉ".
@@ -537,7 +542,12 @@ export const searchChefsRecipe = async (
       ? "NIVEAU : EXPERT. Techniques avancées, aucune simplification." 
       : "NIVEAU : INTERMÉDIAIRE. Équilibre technique.";
 
-  const prompt = `🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
+  const randomSeed = Math.random().toString(36).substring(7);
+  const prompt = `🚨 CONSIGNE D'UNICITÉ CRITIQUE : TU DOIS PROPOSER UNE RECETTE UNIQUE. 🚨
+  Ne propose JAMAIS deux fois la même recette. Varie les associations de saveurs.
+  Identifiant de créativité : ${randomSeed}
+
+  🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
   IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" OU "SIMPLIFIÉE" SI LE TYPE EST "AUTHENTIQUE".
   IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "DÉBUTANT" SI LE NIVEAU EST "INTERMÉDIAIRE" OU "EXPERT".
   NE PAS UTILISER DE VALEURS PAR DÉFAUT. 🚨
@@ -633,7 +643,11 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
             specificInstruction = `OBJECTIF : ${adjustmentType}`;
     }
 
+    const randomSeed = Math.random().toString(36).substring(7);
     const prompt = `
+    🚨 CONSIGNE D'UNICITÉ CRITIQUE : TU DOIS PROPOSER UNE RÉINTERPRÉTATION UNIQUE. 🚨
+    Identifiant de créativité : ${randomSeed}
+
     🚨 CONSIGNE CRITIQUE : TU DOIS RESPECTER SCRUPULEUSEMENT L'AJUSTEMENT DEMANDÉ. NE PAS IGNORER L'OBJECTIF. 🚨
 
     TU ES UN EXPERT EN REVISITE CULINAIRE.
