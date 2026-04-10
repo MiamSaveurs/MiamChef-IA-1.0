@@ -481,6 +481,7 @@ export const generateChefRecipe = async (
          - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
          - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
          - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
+         - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
          L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
       3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
@@ -575,6 +576,7 @@ export const searchChefsRecipe = async (
      - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
      - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
      - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
+     - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
      L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
@@ -665,6 +667,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
        - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
        - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
+       - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
        L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
