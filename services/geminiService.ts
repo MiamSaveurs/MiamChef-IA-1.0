@@ -1132,15 +1132,14 @@ export const repairRecipeImages = (text: string): string => {
     const repairedLines = lines.map(line => {
         const lowerLine = line.toLowerCase();
         
-        // Détection de la section ingrédients (plus souple)
-        if (line.match(/^#+\s*(ingrédient|ingredient|panier|votre panier|liste des ingrédients)/i)) {
+        // Détection de la section ingrédients (plus souple, gère les emojis)
+        if (lowerLine.match(/^(#|\*\*).*(ingrédient|ingredient|panier)/)) {
             inIngredientsSection = true;
             return line;
         }
         
         // Détection de la fin de la section ingrédients (titre suivant)
-        if (inIngredientsSection && line.startsWith('##') && 
-           (lowerLine.includes('préparation') || lowerLine.includes('preparation') || lowerLine.includes('étape') || lowerLine.includes('instruction') || lowerLine.includes('cuisine'))) {
+        if (inIngredientsSection && lowerLine.match(/^(#|\*\*).*(préparation|preparation|étape|instruction|cuisine)/)) {
             inIngredientsSection = false;
             return line;
         }
@@ -1169,7 +1168,14 @@ export const repairRecipeImages = (text: string): string => {
             const sortedKeys = Object.keys(ingredientTranslations).sort((a, b) => b.length - a.length);
             
             for (const fr of sortedKeys) {
-                if (normalizedContent.includes(fr)) {
+                const normalizedFr = fr.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z\s]/g, '');
+                
+                // Utiliser une expression régulière avec \b pour s'assurer qu'on matche le mot entier
+                // Cela évite que "eau" matche dans "épeautre" ou "sel" dans "ciselée"
+                const regex = new RegExp(`\\b${normalizedFr}\\b`, 'i');
+                if (regex.test(normalizedContent)) {
                     englishName = ingredientTranslations[fr];
                     break;
                 }
