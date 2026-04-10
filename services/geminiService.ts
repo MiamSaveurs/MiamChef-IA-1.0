@@ -486,7 +486,7 @@ export const generateChefRecipe = async (
          - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
          - Pour TOUTES les graines, utilise 'Sesame Seeds'.
          - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-         - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+         - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
          - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
          - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
          - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
@@ -589,7 +589,7 @@ export const searchChefsRecipe = async (
      - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
      - Pour TOUTES les graines, utilise 'Sesame Seeds'.
      - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-     - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+     - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
      - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
      - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
      - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
@@ -688,7 +688,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
        - Pour TOUTES les graines, utilise 'Sesame Seeds'.
        - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-       - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+       - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
        - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
        - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
        - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
