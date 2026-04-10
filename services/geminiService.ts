@@ -1181,13 +1181,16 @@ export const repairRecipeImages = (text: string): string => {
                 }
             }
             
-            // Fallback si rien trouvé
-            const finalEnglishName = englishName || 'Tomato';
-            const formattedName = finalEnglishName.replace(/ /g, '%20');
-            const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
-            
-            // On retourne la ligne reconstruite avec l'image au tout début
-            return `${prefix}![${content.split(' ')[0]}](${imageUrl}) ${content}`;
+            // Si on a trouvé une traduction, on met l'image
+            if (englishName) {
+                const formattedName = englishName.replace(/ /g, '%20');
+                const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
+                return `${prefix}![${content.split(' ')[0]}](${imageUrl}) ${content}`;
+            } else {
+                // Si aucune traduction n'est trouvée, on ne met AUCUNE image (on fait "rien")
+                // Le texte s'affichera normalement sans carré vide
+                return `${prefix}${content}`;
+            }
         }
         
         return line;
