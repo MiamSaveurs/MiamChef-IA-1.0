@@ -149,9 +149,10 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
 
           const newLines = lines.map(line => {
               const lowerLine = line.toLowerCase();
-              if (lowerLine.includes('ingrédient') || lowerLine.includes('ingredient')) {
+              // Détection plus souple de la section ingrédients
+              if (lowerLine.includes('ingrédient') || lowerLine.includes('ingredient') || lowerLine.includes('panier')) {
                   inIngredientsSection = true;
-              } else if (line.match(/^#+\s+(préparation|preparation|étape|etape|instruction)/i)) {
+              } else if (line.match(/^#+\s+(préparation|preparation|étape|etape|instruction|cuisine)/i)) {
                   inIngredientsSection = false;
               }
 
@@ -161,30 +162,31 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                   const prefix = listMatch[1];
                   const content = listMatch[2];
                   
-                  // Si la ligne contient DÉJÀ une image, on la garde telle quelle
-                  if (content.includes('![') && content.includes('](')) {
-                      return line;
-                  }
+                  // Si la ligne contient DÉJÀ une image, on vérifie si elle est valide
+                  // Si elle semble mal formée ou vide, on la régénère
+                  const hasExistingImage = content.includes('![') && content.includes('](');
                   
-                  // On cherche une correspondance dans les ingrédients de la recette
-                  let finalIngredientName = selectedRecipe.ingredients?.find(ing => {
-                      const normalizedContent = normalizeText(content);
-                      const normalizedIng = normalizeText(ing);
-                      const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
-                      return normalizedContent.includes(normalizedIng) || normalizedContent.includes(singularIng);
-                  });
+                  // On cherche une correspondance dans notre dictionnaire de traduction ou les ingrédients
+                  let finalIngredientName = '';
+                  const normalizedContent = normalizeText(content);
 
-                  // Si non trouvé, on cherche dans notre dictionnaire de traduction
-                  if (!finalIngredientName) {
-                      const normalizedContent = normalizeText(content);
-                      for (const [fr, en] of Object.entries(ingredientTranslations)) {
-                          // Recherche de mot entier pour éviter les faux positifs
-                          const regex = new RegExp(`\\b${fr}\\b`, 'i');
-                          if (regex.test(normalizedContent)) {
-                              finalIngredientName = fr;
-                              break;
-                          }
+                  // On cherche d'abord dans le dictionnaire (plus précis pour les images)
+                  for (const [fr, en] of Object.entries(ingredientTranslations)) {
+                      const normalizedFr = normalizeText(fr);
+                      // On cherche le terme exact ou contenu dans la ligne
+                      if (normalizedContent.includes(normalizedFr)) {
+                          finalIngredientName = fr;
+                          break;
                       }
+                  }
+
+                  // Si non trouvé dans le dictionnaire, on cherche dans les ingrédients de la recette
+                  if (!finalIngredientName) {
+                      finalIngredientName = selectedRecipe.ingredients?.find(ing => {
+                          const normalizedIng = normalizeText(ing);
+                          const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
+                          return normalizedContent.includes(normalizedIng) || normalizedContent.includes(singularIng);
+                      }) || '';
                   }
 
                   if (finalIngredientName) {
@@ -195,9 +197,19 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                       const formattedName = englishName ? englishName.replace(/ /g, '%20') : finalIngredientName.replace(/ /g, '%20');
                       const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
                       
-                      return `${prefix}![${finalIngredientName}](${imageUrl}) ${content}`;
-                  } else if (inIngredientsSection) {
-                      // Fallback ultime: on met une image générique pour forcer l'affichage du design
+                      // Si l'image existante est différente de celle qu'on veut mettre, on remplace
+                      // Sinon on garde l'existante si elle est là
+                      if (!hasExistingImage) {
+                          return `${prefix}![${finalIngredientName}](${imageUrl}) ${content}`;
+                      } else {
+                          // On s'assure que l'image est bien au début
+                          if (!content.startsWith('![')) {
+                              const cleanContent = content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
+                              return `${prefix}![${finalIngredientName}](${imageUrl}) ${cleanContent}`;
+                          }
+                      }
+                  } else if (inIngredientsSection && !hasExistingImage) {
+                      // Fallback ultime pour garder la cohérence du design
                       return `${prefix}![Ingredient](https://www.themealdb.com/images/ingredients/Tomato-Small.png) ${content}`;
                   }
               }
@@ -402,7 +414,23 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     strong: ({ ...props }) => <strong className="text-amber-400" {...props} />,
                                     ul: ({ ...props }) => <ul className="space-y-3 my-6" {...props} />,
                                     li: ({ node, ...props }) => {
-                                        const hasImage = JSON.stringify(node).includes('"tagName":"img"');
+                                        // Détection ultra-robuste de l'image dans les enfants
+                                        // On vérifie le node (hast) et les props (React)
+                                        const hasImageInNode = JSON.stringify(node).includes('"tagName":"img"') || 
+                                                             JSON.stringify(node).includes('"type":"image"');
+                                        
+                                        // On vérifie aussi si un des enfants est un élément d'image
+                                        const childrenArray = React.Children.toArray(props.children);
+                                        const hasImageInChildren = childrenArray.some(child => {
+                                            if (React.isValidElement(child)) {
+                                                // @ts-ignore - On cherche si c'est une image ou si le alt/src existe
+                                                return child.type === 'img' || child.props?.src || child.props?.alt;
+                                            }
+                                            return false;
+                                        });
+
+                                        const hasImage = hasImageInNode || hasImageInChildren;
+                                        
                                         return (
                                             <li className="p-2 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors mb-3" {...props}>
                                                 <div className="flex items-center text-gray-200 font-medium">
