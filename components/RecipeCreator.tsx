@@ -324,11 +324,13 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       const titleMatch = result.text.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : 'Création Miam';
       
-      const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}. Ingredients: ${mode === 'create' ? ingredients : searchQuery}`;
+      const contextString = `Style: ${cuisineStyle}. Type: ${chefMode}. Diet: ${dietary}.`;
       
       let img = null;
       try {
-          img = await generateRecipeImage(title, contextString);
+          // Utilisation des ingrédients réels de la recette pour l'image
+          const imageIngredients = result.ingredients || [];
+          img = await generateRecipeImage(title, contextString, imageIngredients);
       } catch (imgError) {
           console.warn("Image generation failed, continuing without image", imgError);
       }
@@ -394,6 +396,19 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       setAdjusting(type);
       try {
           const result = await adjustRecipe(recipe, type);
+          
+          // Régénérer l'image pour refléter l'ajustement (ex: végétalisation)
+          let newImg = generatedImage;
+          try {
+              const titleMatch = result.text.match(/^#\s+(.+)$/m);
+              const title = titleMatch ? titleMatch[1] : 'Réinterprétation Miam';
+              const contextString = `Ajustement: ${type}.`;
+              const imageIngredients = result.ingredients || [];
+              newImg = await generateRecipeImage(title, contextString, imageIngredients);
+          } catch (imgErr) {
+              console.warn("Failed to regenerate image after adjustment", imgErr);
+          }
+
           setPersistentState({
               ...persistentState,
               text: result.text,
@@ -403,7 +418,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               steps: result.steps || persistentSteps,
               storageAdvice: result.storageAdvice || storageAdvice,
               utensils: result.utensils || utensilsList,
-              image: result.image || generatedImage,
+              image: newImg,
           });
       } catch (e) {
           console.error("Adjustment failed", e);

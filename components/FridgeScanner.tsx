@@ -73,7 +73,8 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
       // Attempt to generate image automatically based on title if possible
       const title = response.seoTitle || "Recette Anti-Gaspi";
       try {
-          const img = await generateRecipeImage(title, `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`);
+          const imageIngredients = response.ingredients || [];
+          const img = await generateRecipeImage(title, `Recette anti-gaspillage gourmet ${dietary !== 'Classique (Aucun)' ? dietary : ''}`, imageIngredients);
           setGeneratedImage(img);
           setResult({ ...response, dietary, image: img });
       } catch(err) {

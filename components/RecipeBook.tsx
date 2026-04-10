@@ -171,7 +171,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                   const normalizedContent = normalizeText(content);
 
                   // On cherche d'abord dans le dictionnaire (plus précis pour les images)
-                  for (const [fr, en] of Object.entries(ingredientTranslations)) {
+                  for (const fr of Object.keys(ingredientTranslations)) {
                       const normalizedFr = normalizeText(fr);
                       // On cherche le terme exact ou contenu dans la ligne
                       if (normalizedContent.includes(normalizedFr)) {
@@ -423,7 +423,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         const childrenArray = React.Children.toArray(props.children);
                                         const hasImageInChildren = childrenArray.some(child => {
                                             if (React.isValidElement(child)) {
-                                                // @ts-ignore - On cherche si c'est une image ou si le alt/src existe
+                                                // @ts-expect-error - On cherche si c'est une image ou si le alt/src existe
                                                 return child.type === 'img' || child.props?.src || child.props?.alt;
                                             }
                                             return false;

@@ -727,14 +727,26 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
 };
 
 // Generates a high-quality food image
-export const generateRecipeImage = async (title: string, context: string): Promise<string> => {
+export const generateRecipeImage = async (title: string, context: string, ingredients?: string[]): Promise<string> => {
   const ai = getAI();
   
+  const ingredientsContext = ingredients && ingredients.length > 0 
+    ? `Les ingrédients principaux à mettre en valeur sont : ${ingredients.join(', ')}.` 
+    : '';
+
   const gdprSafePrompt = `
-  Ultra-realistic 1K professional food photography of: ${title}.
-  Context/Style: ${context}.
-  High resolution, professional studio lighting, macro shot, appetizing, 1K quality.
-  No text. No faces.
+  PHOTOGRAPHIE CULINAIRE PROFESSIONNELLE ULTRA-RÉALISTE du plat : "${title}".
+  ${ingredientsContext}
+  Contexte et Style : ${context}.
+  
+  DIRECTIVES CRITIQUES :
+  - L'image doit être indiscernable d'une véritable photo prise par un photographe culinaire professionnel.
+  - Le plat doit être visuellement cohérent avec les ingrédients mentionnés.
+  - INTERDICTION d'inventer ou d'halluciner des ingrédients, des garnitures ou des décors qui ne correspondent pas à la recette.
+  - Haute résolution, éclairage studio professionnel, prise de vue macro, appétissant, qualité 1K.
+  - Accent sur les textures (croquant, crémeux, frais, juteux).
+  - Présentation élégante et épurée sur une assiette ou dans un bol approprié.
+  - AUCUN texte, AUCUN visage, AUCUNE main, AUCUN humain.
   `;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -770,10 +782,11 @@ export const generateRecipeVideo = async (title: string, style: string): Promise
   const ai = getAI();
 
   const videoPrompt = `
-  Cinematic professional food b-roll video of: ${title}.
+  ULTRA-REALISTIC cinematic professional food b-roll video of the dish: "${title}".
   Style: ${style}.
-  Slow motion, steam rising, highly detailed texture, professional studio lighting, 4k.
-  No text, no faces.
+  Slow motion, steam rising, highly detailed texture, professional studio lighting, 4K quality.
+  The video must be perfectly consistent with the recipe and its main ingredients.
+  No text, no faces, no hands, no humans.
   `;
 
   let operation = await ai.models.generateVideos({
