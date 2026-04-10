@@ -486,7 +486,9 @@ export const generateChefRecipe = async (
          - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
          - Pour TOUTES les graines, utilise 'Sesame Seeds'.
          - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-         - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+         - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+         - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
+         - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
          - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
          - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
          L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
@@ -587,7 +589,9 @@ export const searchChefsRecipe = async (
      - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
      - Pour TOUTES les graines, utilise 'Sesame Seeds'.
      - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-     - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+     - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+     - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
+     - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
      - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
      - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
      L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
@@ -684,7 +688,9 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
        - Pour TOUTES les graines, utilise 'Sesame Seeds'.
        - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-       - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+       - Pour TOUTES les noix/noisettes/fruits à coque, utilise 'Walnut' ou 'Almond'.
+       - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
+       - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
        - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
        - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
        L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
