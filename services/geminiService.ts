@@ -480,6 +480,7 @@ export const generateChefRecipe = async (
          - Pour TOUTES les graines, utilise 'Sesame Seeds'.
          - Pour TOUTES les purées/beurres d'oléagineux, utilise 'Peanut Butter'.
          - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+         - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous' ou 'Rice' si l'un ne marche pas.
          L'objectif est d'avoir une image qui s'affiche, même si elle n'est pas 100% exacte. Une image de tomate pour une tomate cerise est PARFAITE.
       3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
@@ -573,6 +574,7 @@ export const searchChefsRecipe = async (
      - Pour TOUTES les graines, utilise 'Sesame Seeds'.
      - Pour TOUTES les purées/beurres d'oléagineux, utilise 'Peanut Butter'.
      - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+     - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous' ou 'Rice' si l'un ne marche pas.
      L'objectif est d'avoir une image qui s'affiche, même si elle n'est pas 100% exacte. Une image de tomate pour une tomate cerise est PARFAITE.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
@@ -662,6 +664,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
        - Pour TOUTES les graines, utilise 'Sesame Seeds'.
        - Pour TOUTES les purées/beurres d'oléagineux, utilise 'Peanut Butter'.
        - Pour TOUTES les noix/noisettes, utilise 'Walnut'.
+       - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous' ou 'Rice' si l'un ne marche pas.
        L'objectif est d'avoir une image qui s'affiche, même si elle n'est pas 100% exacte. Une image de tomate pour une tomate cerise est PARFAITE.
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
