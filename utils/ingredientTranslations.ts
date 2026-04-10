@@ -241,7 +241,6 @@ export const ingredientTranslations: Record<string, string> = {
   "noix du périgord": "Walnut",
   "pignon de pin": "Pine Nuts",
   "pignons de pin": "Pine Nuts",
-  "pignon": "Pine Nuts",
   "châtaigne": "Chestnut",
   "châtaignes": "Chestnut",
   "marron": "Chestnut",
