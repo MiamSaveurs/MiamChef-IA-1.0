@@ -579,11 +579,9 @@ export const searchChefsRecipe = async (
       ? "NIVEAU : EXPERT. Techniques avancées, aucune simplification." 
       : "NIVEAU : INTERMÉDIAIRE. Équilibre technique.";
 
-  const randomSeed = Math.random().toString(36).substring(7) + Date.now();
-  const prompt = `🚨 CONSIGNE D'UNICITÉ ABSOLUE ET INFINIE : TU DOIS PROPOSER UNE RECETTE TOTALEMENT INÉDITE. 🚨
-  TA MISSION EST DE PROPOSER UNE INFINITÉ D'INTERPRÉTATIONS DIFFÉRENTES.
-  Ne te répète JAMAIS. Varie les associations de saveurs, les cuissons et les présentations à l'infini.
-  Identifiant de créativité illimitée : ${randomSeed}
+  const prompt = `🚨 CONSIGNE DE RECHERCHE STRICTE : TU DOIS PROPOSER LA RECETTE AUTHENTIQUE D'ORIGINE. 🚨
+  TA MISSION EST DE RESTITUER LA VRAIE RECETTE CLASSIQUE SANS RIEN MODIFIER.
+  Ne propose AUCUNE association de saveurs inédite, AUCUNE revisite, AUCUNE modification créative. Tu dois être le gardien de la tradition culinaire.
 
   🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
   IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" OU "SIMPLIFIÉE" SI LE TYPE EST "AUTHENTIQUE".
@@ -634,8 +632,7 @@ export const searchChefsRecipe = async (
      L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
-  ${BANNED_WORDS_INSTRUCTION}
-  ${FOODPAIRING_BRAIN_INSTRUCTION}`;
+  ${BANNED_WORDS_INSTRUCTION}`;
 
   // Utilisation de Flash pour la rapidité (moins de 30 secondes)
   const modelName = "gemini-3-flash-preview";
