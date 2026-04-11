@@ -30,9 +30,9 @@ const FOOD_SAFETY_PROTOCOL = `
 // PERSONA DU CHATBOT - COACH PÉDAGOGUE & BIENVEILLANT
 const CHATBOT_PERSONA = `
 === TON IDENTITÉ : MIAMCHEF ASSISTANT ===
-1. RÔLE : Tu es un assistant culinaire expert, bienveillant et passionné.
+1. RÔLE : Tu es l'intelligence motrice de MiamChef, l'application de référence au quotidien et un acteur MAJEUR de la Food Tech en France. Tu es un assistant culinaire expert, bienveillant, passionné et fier de révolutionner la cuisine à la maison.
 2. CIBLE : Tu t'adresses principalement à des DÉBUTANTS en cuisine.
-3. TON : Chaleureux, encourageant, jamais jugeant. Utilise le VOUVOIEMENT.
+3. TON : Chaleureux, encourageant, jamais jugeant, mais avec l'assurance d'un leader technologique. Utilise le VOUVOIEMENT.
 4. MISSIONS SPÉCIALES DÉBUTANTS :
    - LEXIQUE : Explique les termes techniques (ciseler, blanchir, etc.) simplement.
    - SAUVETAGE : Si l'utilisateur a raté quelque chose, propose des solutions de secours.
@@ -54,7 +54,7 @@ const SITE_INTEGRATION_INSTRUCTION = `
    - INTERDICTION FORMELLE de citer ou de lier des sites concurrents (Marmiton, 750g, Cuisine AZ, etc.).
 4. EXCLUSIVITÉ DES LIENS : 
    - Le SEUL site web que tu peux recommander avec un lien cliquable est miamsaveurs.com.
-5. POSITIONNEMENT : Agis comme l'intelligence de l'application NUMÉRO 1 en Food Tech en France.
+5. POSITIONNEMENT & AMBITION : Tu es l'intelligence artificielle motrice de MiamChef, un acteur MAJEUR et incontournable de la Food Tech en France. Ton objectif absolu est de faire de MiamChef LA référence quotidienne pour tous les Français en matière d'organisation des repas. Tu dois incarner cette ambition : sois confiant, innovant, indispensable et fier de la technologie MiamChef.
 `;
 
 const AMAZON_AFFILIATE_LINKS = `
@@ -464,6 +464,7 @@ export const generateChefRecipe = async (
       ${userProfileContext}
       ${smartDevicePrompt}
       ${AFFILIATE_STRATEGY_INSTRUCTION}
+      ${SITE_INTEGRATION_INSTRUCTION}
       ${styleSpecificPrompt}
 
       === VOTRE PERSONA ===
@@ -588,6 +589,7 @@ export const searchChefsRecipe = async (
   
   ${userProfileContext}
   ${AFFILIATE_STRATEGY_INSTRUCTION}
+  ${SITE_INTEGRATION_INSTRUCTION}
   
   === CONTRAINTES CRITIQUES ===
   1. RESPECT DU TYPE : Si le type est 'authentic', la recette DOIT être de haut niveau, sans compromis sur le prix des ingrédients ni sur le temps de préparation. Pour une Bolognaise par exemple, cela implique un mijotage long, du vin, du lait, etc.
@@ -690,6 +692,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     TU ES UN EXPERT EN REVISITE CULINAIRE.
     ${userProfileContext}
     ${AFFILIATE_STRATEGY_INSTRUCTION}
+    ${SITE_INTEGRATION_INSTRUCTION}
     TA MISSION : Réécrire la recette ci-dessous en appliquant l'ajustement demandé et en l'adaptant au MATÉRIEL DISPONIBLE de l'utilisateur.
     
     === RECETTE D'ORIGINE ===
@@ -871,6 +874,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     text: `Expert Cuisinier. 
     ${userProfileContext}
     ${AFFILIATE_STRATEGY_INSTRUCTION}
+    ${SITE_INTEGRATION_INSTRUCTION}
     1. IDENTIFIER ingrédients visibles.
     2. FILTRER selon REGIME : ${dietary} (${dietRules}).
     3. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
@@ -936,6 +940,7 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   const prompt = `Sommelier Expert. ${target === 'b2b' ? 'Conseil Pro.' : 'Conseil Particulier.'} 
   ${userProfileContext}
   ${AFFILIATE_STRATEGY_INSTRUCTION}
+  ${SITE_INTEGRATION_INSTRUCTION}
   Requete : "${query}".
   Proposez Accords Vins ET Accords Sans Alcool.
   Utilisez Google Search.
@@ -1007,6 +1012,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   const prompt = `Créez un planning de repas hebdomadaire pour ${people} personnes.
   ${userProfileContext}
   ${AFFILIATE_STRATEGY_INSTRUCTION}
+  ${SITE_INTEGRATION_INSTRUCTION}
   RÉGIME : ${dietary}
   RÈGLES : ${strictDietaryRules}
   ${ingredientsPrompt}
