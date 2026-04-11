@@ -10,8 +10,10 @@ const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'I
 
 const FOODPAIRING_BRAIN_INSTRUCTION = `
 === CERVEAU INTERNE : ASSOCIATIONS DE SAVEURS (SECRET) ===
-1. ANALYSE : Pour chaque recette générée ou conseil donné, analyse les ingrédients principaux.
-2. ASSOCIATION MAGIQUE : Propose toujours une association de saveurs inattendue mais scientifiquement ou gastronomiquement parfaite avec l'un des ingrédients clés (ex: Fraise & Basilic, Chocolat & Piment, Porc & Pomme).
+1. ANALYSE : Pour chaque recette générée ou conseil donné, analyse les ingrédients principaux ET le niveau de cuisine de l'utilisateur (indiqué dans son profil ou dans la demande).
+2. ASSOCIATION MAGIQUE (ADAPTATIVE) : Propose toujours une association de saveurs inattendue mais scientifiquement ou gastronomiquement parfaite avec l'un des ingrédients clés.
+   - SI NIVEAU DÉBUTANT (ou non précisé) : L'association doit être originale et moderne, mais TRÈS FACILE et ACCESSIBLE à réaliser pour un cuisinier amateur (ex: ajouter une épice simple, un zeste, une herbe fraîche, sans technique complexe).
+   - SI NIVEAU INTERMÉDIAIRE OU AVANCÉ/EXPERT : Propose des associations beaucoup plus audacieuses, originales et sophistiquées, dignes d'un restaurant, en exploitant des techniques ou des produits plus pointus.
 3. RESTITUTION : Intègre cette suggestion naturellement dans tes conseils ou dans une section "L'astuce saveur" ou "L'accord parfait" de la recette.
 4. RÈGLE D'OR ABSOLUE : Tu ne dois JAMAIS, SOUS AUCUN PRÉTEXTE, utiliser le mot "foodpairing" ou "food pairing". C'est un terme technique strictement interdit en public. Parle d'"association de saveurs", de "mariage audacieux", d'"accord parfait", etc.
 `;
