@@ -2,7 +2,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse, ThinkingLevel } from "@google/genai";
 import { GeneratedContent, WeeklyPlan, GroundingChunk } from "../types";
 import { getUserProfile } from "./storageService";
-import { ingredientTranslations } from "../utils/ingredientTranslations";
 
 // Instructions for the AI to avoid certain words
 // AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie", "Foodpairing"
@@ -504,26 +503,6 @@ export const generateChefRecipe = async (
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE à la recette, en rapport direct avec les ingrédients demandés (ex: "Velouté de Potiron aux Éclats de Noisettes" au lieu de "Soupe au potiron").
       2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-         POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
-         Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
-         Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
-         Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
-         Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
-         ASTUCE IMAGES : La base de données TheMealDB est LIMITÉE. Tu DOIS utiliser des noms d'ingrédients TRÈS SIMPLES et GÉNÉRIQUES en anglais pour l'URL. 
-         - JAMAIS d'adjectifs (pas de 'Yellow', 'Red', 'Small', 'Organic').
-         - JAMAIS de pluriels (utilise 'Tomato', pas 'Tomatoes').
-         - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
-         - Pour TOUTES les graines, utilise 'Sesame Seeds'.
-         - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-         - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
-         - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
-         - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
-         - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
-         - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
-         - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
-         - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
-         - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
-         L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
       3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
       
       === FORMAT DE SORTIE ATTENDU (JSON) ===
@@ -612,26 +591,6 @@ export const searchChefsRecipe = async (
   === FORMAT DE TEXTE (CRITIQUE) ===
   1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE à la recette, en rapport direct avec les ingrédients trouvés (ex: "Risotto Crémeux aux Champignons Sauvages" au lieu de "Riz aux champignons").
   2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-     POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
-     Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
-     Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
-     Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
-     Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
-     ASTUCE IMAGES : La base de données TheMealDB est LIMITÉE. Tu DOIS utiliser des noms d'ingrédients TRÈS SIMPLES et GÉNÉRIQUES en anglais pour l'URL. 
-     - JAMAIS d'adjectifs (pas de 'Yellow', 'Red', 'Small', 'Organic').
-     - JAMAIS de pluriels (utilise 'Tomato', pas 'Tomatoes').
-     - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
-     - Pour TOUTES les graines, utilise 'Sesame Seeds'.
-     - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-     - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
-     - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
-     - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
-     - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
-     - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
-     - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
-     - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
-     - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
-     L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
   ${BANNED_WORDS_INSTRUCTION}`;
@@ -717,26 +676,6 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     === FORMAT DE TEXTE (CRITIQUE) ===
     1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat Revisité). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE qui reflète l'ajustement effectué tout en restant appétissant.
     2. Pour le champ 'markdownContent', utilisez des listes à puces (avec des tirets '-') pour les ingrédients.
-       POUR CHAQUE INGRÉDIENT, tu DOIS inclure une image au format markdown au tout début de la ligne, en utilisant l'API TheMealDB pour avoir des photos réalistes détourées.
-       Format exact attendu : \`- ![nom_ingredient](https://www.themealdb.com/images/ingredients/Nom%20Ingredient-Small.png) Quantité et Nom\`
-       Exemple : \`- ![Tomato](https://www.themealdb.com/images/ingredients/Tomato-Small.png) 3 belles tomates\`
-       Exemple : \`- ![Chicken Breast](https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png) 500g de poulet\`
-       Il est CRUCIAL que le nom dans l'URL soit en ANGLAIS, avec la Première Lettre en Majuscule pour chaque mot, et les espaces remplacés par %20.
-       ASTUCE IMAGES : La base de données TheMealDB est LIMITÉE. Tu DOIS utiliser des noms d'ingrédients TRÈS SIMPLES et GÉNÉRIQUES en anglais pour l'URL. 
-       - JAMAIS d'adjectifs (pas de 'Yellow', 'Red', 'Small', 'Organic').
-       - JAMAIS de pluriels (utilise 'Tomato', pas 'Tomatoes').
-       - SI l'ingrédient est complexe, utilise uniquement le mot principal (ex: 'Olive Oil' -> 'Oil', 'Cherry Tomato' -> 'Tomato', 'Ground Beef' -> 'Beef').
-       - Pour TOUTES les graines, utilise 'Sesame Seeds'.
-       - Pour TOUTES les purées/beurres d'oléagineux (amande, noisette, sésame/tahini), utilise 'Peanut Butter'. C'est le meilleur visuel disponible.
-       - Pour TOUTES les noix/noisettes/oléagineux/fruits à coque, utilise 'Walnut' ou 'Almond'.
-       - Pour les FRUITS SECS (raisins, dattes, etc.), utilise 'Raisins'.
-       - Pour les PÂTES, utilise 'Penne Rigate' ou 'Spaghetti' comme visuel générique.
-       - Pour TOUS les poissons blancs (cabillaud, colin, sole, etc.), utilise 'Cod'.
-       - Pour TOUS les coquillages (moules, coques, palourdes), utilise 'Mussels'.
-       - Pour les CRUSTACÉS complexes (homard, langouste), utilise 'Lobster'.
-       - Pour les CÉRÉALES/GRAINES (quinoa, boulgour, couscous), utilise 'Couscous'.
-       - Pour TOUTES les ÉPICES non listées, utilise 'Cinnamon' ou 'Pepper' (pour l'aspect poudre).
-       L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
     3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
     
     ${GDPR_COMPLIANCE_PROTOCOL}
@@ -1140,81 +1079,10 @@ export const parseVoiceToPantryItems = async (voiceText: string): Promise<Partia
 };
 
 /**
- * Fonction de secours pour garantir que CHAQUE ingrédient a une image.
- * Scanne le markdown et injecte les images manquantes.
+ * Nettoie le markdown de toute image d'ingrédient générée précédemment.
  */
 export const repairRecipeImages = (text: string): string => {
     if (!text) return text;
-    
-    const lines = text.split('\n');
-    let inIngredientsSection = false;
-    
-    const repairedLines = lines.map(line => {
-        const lowerLine = line.toLowerCase();
-        
-        // Détection de la section ingrédients (plus souple, gère les emojis)
-        if (lowerLine.match(/^(#|\*\*).*(ingrédient|ingredient|panier)/)) {
-            inIngredientsSection = true;
-            return line;
-        }
-        
-        // Détection de la fin de la section ingrédients (titre suivant)
-        if (inIngredientsSection && lowerLine.match(/^(#|\*\*).*(préparation|preparation|étape|instruction|cuisine)/)) {
-            inIngredientsSection = false;
-            return line;
-        }
-        
-        // Si on est dans les ingrédients et que c'est une puce
-        if (inIngredientsSection && line.trim().match(/^[-*]\s+/)) {
-            const prefixMatch = line.match(/^(\s*[-*]\s+)/);
-            const prefix = prefixMatch ? prefixMatch[1] : '- ';
-            
-            // On extrait le contenu sans l'image existante s'il y en a une
-            let content = line.replace(/^(\s*[-*]\s+)/, '').trim();
-            const hasImage = content.includes('![') && content.includes('](');
-            
-            if (hasImage) {
-                // On nettoie la ligne de toute image existante pour la reconstruire proprement
-                content = content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
-            }
-
-            // Recherche d'une image dans le dictionnaire
-            let englishName = '';
-            const normalizedContent = content.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Enlever accents
-                .replace(/[^a-z\s]/g, ''); // Garder que lettres et espaces
-            
-            // On cherche le terme le plus long d'abord pour plus de précision
-            const sortedKeys = Object.keys(ingredientTranslations).sort((a, b) => b.length - a.length);
-            
-            for (const fr of sortedKeys) {
-                const normalizedFr = fr.toLowerCase()
-                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                    .replace(/[^a-z\s]/g, '');
-                
-                // Utiliser une expression régulière avec \b pour s'assurer qu'on matche le mot entier
-                // Cela évite que "eau" matche dans "épeautre" ou "sel" dans "ciselée"
-                const regex = new RegExp(`\\b${normalizedFr}\\b`, 'i');
-                if (regex.test(normalizedContent)) {
-                    englishName = ingredientTranslations[fr];
-                    break;
-                }
-            }
-            
-            // Si on a trouvé une traduction, on met l'image
-            if (englishName) {
-                const formattedName = englishName.replace(/ /g, '%20');
-                const imageUrl = `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
-                return `${prefix}![${content.split(' ')[0]}](${imageUrl}) ${content}`;
-            } else {
-                // Si aucune traduction n'est trouvée, on ne met AUCUNE image (on fait "rien")
-                // Le texte s'affichera normalement sans carré vide
-                return `${prefix}${content}`;
-            }
-        }
-        
-        return line;
-    });
-    
-    return repairedLines.join('\n');
+    // Supprime toutes les images markdown du texte pour un affichage propre
+    return text.replace(/!\[.*?\]\(.*?\)/g, '').trim();
 };

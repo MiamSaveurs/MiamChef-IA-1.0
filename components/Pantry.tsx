@@ -3,7 +3,6 @@ import { PantryItem } from '../types';
 import { getPantryItems, savePantryItem, deletePantryItem } from '../services/storageService';
 import { parseVoiceToPantryItems } from '../services/geminiService';
 import { ChevronLeft, Mic, Plus, Trash2, MicOff, Loader2 } from 'lucide-react';
-import { ingredientTranslations } from '../utils/ingredientTranslations';
 
 const CATEGORIES = [
   "Légumes", "Fruits", "Viandes & Poissons", "Produits Laitiers", "Épicerie", "Boissons", "Autre"
@@ -137,17 +136,6 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const handleDelete = async (id: string) => {
     await deletePantryItem(id);
     await loadItems();
-  };
-
-  const normalizeText = (text: string) => 
-    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-  const getImageUrl = (ingredientName: string) => {
-    const normalizedIng = normalizeText(ingredientName);
-    const singularIng = normalizedIng.endsWith('s') ? normalizedIng.slice(0, -1) : normalizedIng;
-    const englishName = ingredientTranslations[normalizedIng] || ingredientTranslations[singularIng];
-    const formattedName = englishName ? englishName.replace(/ /g, '%20') : ingredientName.replace(/ /g, '%20');
-    return `https://www.themealdb.com/images/ingredients/${formattedName}-Small.png`;
   };
 
   // Group items by category
@@ -306,24 +294,8 @@ const Pantry: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                           <Trash2 size={14} />
                         </button>
                         
-                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-3 p-2">
-                          <img 
-                            src={getImageUrl(item.name)} 
-                            alt={item.name}
-                            className="w-full h-full object-contain drop-shadow-lg"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              if (!target.src.includes('Tomato-Small.png')) {
-                                target.src = 'https://www.themealdb.com/images/ingredients/Tomato-Small.png';
-                              } else {
-                                target.style.opacity = '0.3';
-                              }
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm font-bold text-white text-center line-clamp-1 w-full">{item.name}</span>
-                        <span className="text-xs text-gray-500 mt-1 bg-white/5 px-2 py-0.5 rounded-full">{item.quantity}</span>
+                        <span className="text-sm font-bold text-white text-center line-clamp-1 w-full mt-2">{item.name}</span>
+                        <span className="text-xs text-[#509f2a] font-bold mt-2 bg-[#509f2a]/10 px-3 py-1 rounded-full">{item.quantity}</span>
                       </div>
                     ))}
                   </div>
