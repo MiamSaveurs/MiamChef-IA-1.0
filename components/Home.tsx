@@ -4,6 +4,7 @@ import { AppView } from '../types';
 import { Star, ChevronRight, Activity, Globe, Share2, Archive } from 'lucide-react';
 import { updateDailyStreak } from '../services/storageService'; // Importer la fonction de mise à jour
 import Newsletter from './Newsletter';
+import Testimonials from './Testimonials';
 import { 
   PremiumChefHat, 
   WickerBasket, 
@@ -363,6 +364,9 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   </div>
               </div>
           </div>
+
+          {/* AVIS CLIENTS */}
+          <Testimonials />
 
           {/* SECTION NEWSLETTER (NEW) */}
           <Newsletter />
