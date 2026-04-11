@@ -5,8 +5,16 @@ import { getUserProfile } from "./storageService";
 import { ingredientTranslations } from "../utils/ingredientTranslations";
 
 // Instructions for the AI to avoid certain words
-// AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie"
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite' ou 'Chef' (sauf pour dire 'MiamChef'). Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur. Utilisez IMPÉRATIVEMENT le vouvoiement (VOUVOYEZ l'utilisateur) dans toutes vos réponses.";
+// AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie", "Foodpairing"
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite', 'Chef' (sauf pour dire 'MiamChef'), 'Foodpairing', ou 'Food pairing'. Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur. Utilisez IMPÉRATIVEMENT le vouvoiement (VOUVOYEZ l'utilisateur) dans toutes vos réponses.";
+
+const FOODPAIRING_BRAIN_INSTRUCTION = `
+=== CERVEAU INTERNE : ASSOCIATIONS DE SAVEURS (SECRET) ===
+1. ANALYSE : Pour chaque recette générée ou conseil donné, analyse les ingrédients principaux.
+2. ASSOCIATION MAGIQUE : Propose toujours une association de saveurs inattendue mais scientifiquement ou gastronomiquement parfaite avec l'un des ingrédients clés (ex: Fraise & Basilic, Chocolat & Piment, Porc & Pomme).
+3. RESTITUTION : Intègre cette suggestion naturellement dans tes conseils ou dans une section "L'astuce saveur" ou "L'accord parfait" de la recette.
+4. RÈGLE D'OR ABSOLUE : Tu ne dois JAMAIS, SOUS AUCUN PRÉTEXTE, utiliser le mot "foodpairing" ou "food pairing". C'est un terme technique strictement interdit en public. Parle d'"association de saveurs", de "mariage audacieux", d'"accord parfait", etc.
+`;
 
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
@@ -520,6 +528,7 @@ export const generateChefRecipe = async (
       Répondre UNIQUEMENT en JSON valide respectant le schéma fourni.
       
       ${BANNED_WORDS_INSTRUCTION}
+      ${FOODPAIRING_BRAIN_INSTRUCTION}
     `;
 
     const modelName = "gemini-3-flash-preview";
@@ -625,7 +634,8 @@ export const searchChefsRecipe = async (
      L'objectif est d'avoir une image qui s'affiche TOUJOURS. Une image de beurre de cacahuète pour une purée d'amande est acceptable, une image vide est INTERDITE.
   3. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne d'instruction. Utilisez des paragraphes normaux pour les étapes. Seuls les grands titres de section (Ingrédients, Préparation) peuvent avoir des ##.
 
-  ${BANNED_WORDS_INSTRUCTION}`;
+  ${BANNED_WORDS_INSTRUCTION}
+  ${FOODPAIRING_BRAIN_INSTRUCTION}`;
 
   // Utilisation de Flash pour la rapidité (moins de 30 secondes)
   const modelName = "gemini-3-flash-preview";
@@ -733,6 +743,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${FOOD_SAFETY_PROTOCOL}
     ${BANNED_WORDS_INSTRUCTION}
+    ${FOODPAIRING_BRAIN_INSTRUCTION}
     `;
 
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -888,7 +899,8 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     - Paragraphes pour étapes (PAS de # ou ## par ligne).
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${FOOD_SAFETY_PROTOCOL}
-    ${BANNED_WORDS_INSTRUCTION}`,
+    ${BANNED_WORDS_INSTRUCTION}
+    ${FOODPAIRING_BRAIN_INSTRUCTION}`,
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -947,7 +959,8 @@ export const getSommelierAdvice = async (query: string, target: 'b2b' | 'b2c'): 
   Format Markdown. N'utilisez JAMAIS de titres (comme # ou ##) pour chaque ligne. Utilisez des paragraphes normaux. Seuls les grands titres de section peuvent avoir des ##.
   ${GDPR_COMPLIANCE_PROTOCOL}
   ${FOOD_SAFETY_PROTOCOL}
-  ${BANNED_WORDS_INSTRUCTION}`;
+  ${BANNED_WORDS_INSTRUCTION}
+  ${FOODPAIRING_BRAIN_INSTRUCTION}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -1019,6 +1032,7 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   ${GDPR_COMPLIANCE_PROTOCOL}
   ${FOOD_SAFETY_PROTOCOL}
   ${BANNED_WORDS_INSTRUCTION}
+  ${FOODPAIRING_BRAIN_INSTRUCTION}
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -1050,6 +1064,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         ${GDPR_COMPLIANCE_PROTOCOL}
         ${userProfileContext}
         ${BANNED_WORDS_INSTRUCTION}
+        ${FOODPAIRING_BRAIN_INSTRUCTION}
         
         CONSIGNE : Réponds au message de l'utilisateur en restant dans ton rôle d'assistant culinaire.
         Tu DOIS utiliser l'outil de recherche pour vérifier systématiquement la présence d'un article sur miamsaveurs.com avant de répondre.
