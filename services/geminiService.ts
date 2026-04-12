@@ -17,6 +17,14 @@ const FOODPAIRING_BRAIN_INSTRUCTION = `
 4. RÈGLE D'OR ABSOLUE : Tu ne dois JAMAIS, SOUS AUCUN PRÉTEXTE, utiliser le mot "foodpairing" ou "food pairing". C'est un terme technique strictement interdit en public. Parle d'"association de saveurs", de "mariage audacieux", d'"accord parfait", etc.
 `;
 
+const INFINITE_CREATIVITY_INSTRUCTION = `
+=== DIVERSITÉ ET CRÉATIVITÉ INFINIE (CARTE BLANCHE INGRÉDIENTS) ===
+1. CARTE BLANCHE ABSOLUE : Tu as l'autorisation et le devoir d'utiliser une infinité d'ingrédients complémentaires pour sublimer tes recettes. Ne te limite jamais aux mêmes associations classiques.
+2. RICHESSE GASTRONOMIQUE : Puise dans la richesse infinie de la gastronomie mondiale (herbes fraîches variées, épices du monde, légumes oubliés, condiments originaux, textures surprenantes).
+3. L'UNIQUE LIMITE : Tu DOIS t'adapter et inclure les ingrédients que l'utilisateur a explicitement choisis ou demandés (ex: son garde-manger), et tu DOIS respecter scrupuleusement ses régimes alimentaires, allergies, ou contraintes de matériel/budget.
+4. ANTI-RÉPÉTITION : Ne propose JAMAIS deux fois la même recette ou la même structure de plat. Chaque génération doit être une création unique, originale et surprenante.
+`;
+
 // RGPD & SAFETY PROTOCOL - INJECTED IN ALL PROMPTS
 const GDPR_COMPLIANCE_PROTOCOL = `
 === PROTOCOLE CONFIDENTIALITÉ ===
@@ -510,6 +518,7 @@ export const generateChefRecipe = async (
       
       ${BANNED_WORDS_INSTRUCTION}
       ${FOODPAIRING_BRAIN_INSTRUCTION}
+      ${INFINITE_CREATIVITY_INSTRUCTION}
     `;
 
     const modelName = "gemini-3-flash-preview";
@@ -518,6 +527,7 @@ export const generateChefRecipe = async (
       model: modelName, 
       contents: { parts: [{ text: prompt }] },
       config: {
+        temperature: 0.9,
         responseMimeType: "application/json",
         responseSchema: recipeSchema,
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL }
@@ -838,13 +848,15 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${FOOD_SAFETY_PROTOCOL}
     ${BANNED_WORDS_INSTRUCTION}
-    ${FOODPAIRING_BRAIN_INSTRUCTION}`,
+    ${FOODPAIRING_BRAIN_INSTRUCTION}
+    ${INFINITE_CREATIVITY_INSTRUCTION}`,
   };
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: { parts: [imagePart, textPart] },
     config: {
+      temperature: 0.9,
       responseMimeType: "application/json",
       responseSchema: recipeSchema,
       tools: [{ googleSearch: {} }],
@@ -971,12 +983,14 @@ export const generateWeeklyMenu = async (dietary: string, people: number, ingred
   ${FOOD_SAFETY_PROTOCOL}
   ${BANNED_WORDS_INSTRUCTION}
   ${FOODPAIRING_BRAIN_INSTRUCTION}
+  ${INFINITE_CREATIVITY_INSTRUCTION}
   Répondez au format JSON strict selon le schéma.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: "gemini-3.1-pro-preview", 
     contents: { parts: [{ text: prompt }] },
     config: {
+      temperature: 0.9,
       responseMimeType: "application/json",
       responseSchema: weeklyPlanSchema,
       tools: [{ googleSearch: {} }],
@@ -1003,6 +1017,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         ${userProfileContext}
         ${BANNED_WORDS_INSTRUCTION}
         ${FOODPAIRING_BRAIN_INSTRUCTION}
+        ${INFINITE_CREATIVITY_INSTRUCTION}
         
         CONSIGNE : Réponds au message de l'utilisateur en restant dans ton rôle d'assistant culinaire.
         Tu DOIS utiliser l'outil de recherche pour vérifier systématiquement la présence d'un article sur miamsaveurs.com avant de répondre.
@@ -1012,6 +1027,7 @@ export const chatWithChef = async (message: string, history: { role: 'user' | 'm
         const chat = ai.chats.create({
             model: "gemini-3.1-pro-preview", // Passage au modèle Pro pour une meilleure obéissance aux outils
             config: {
+                temperature: 0.9,
                 systemInstruction,
                 tools: [{ googleSearch: {} }],
                 thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
