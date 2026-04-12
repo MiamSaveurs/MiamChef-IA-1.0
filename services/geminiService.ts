@@ -5,14 +5,14 @@ import { getUserProfile } from "./storageService";
 
 // Instructions for the AI to avoid certain words
 // AJOUT: Interdiction stricte de mentionner "IA", "Chef", "Gastronomie", "Bistronomie", "Foodpairing"
-const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'Bistronomie', 'Élite', 'Chef' (sauf pour dire 'MiamChef'), 'Foodpairing', ou 'Food pairing'. Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur. Utilisez IMPÉRATIVEMENT le vouvoiement (VOUVOYEZ l'utilisateur) dans toutes vos réponses.";
+const BANNED_WORDS_INSTRUCTION = "IMPORTANT: N'utilisez jamais les mots 'IA', 'Intelligence Artificielle', 'Algorithme', 'Gastronomie', 'gastronomique', 'Bistronomie', 'bistronomique', 'Élite', 'Chef' (sauf pour dire 'MiamChef'), 'Foodpairing', ou 'Food pairing'. Parlez comme un passionné de cuisine bienveillant, pas comme un robot ni un professeur. Utilisez IMPÉRATIVEMENT le vouvoiement (VOUVOYEZ l'utilisateur) dans toutes vos réponses.";
 
 const FOODPAIRING_BRAIN_INSTRUCTION = `
 === CERVEAU INTERNE : ASSOCIATIONS DE SAVEURS (SECRET) ===
 1. ANALYSE : Pour chaque recette générée ou conseil donné, analyse les ingrédients principaux ET le niveau de cuisine de l'utilisateur (indiqué dans son profil ou dans la demande).
-2. ASSOCIATION MAGIQUE (ADAPTATIVE) : Propose toujours une association de saveurs inattendue mais scientifiquement ou gastronomiquement parfaite avec l'un des ingrédients clés.
+2. ASSOCIATION MAGIQUE (ADAPTATIVE) : Propose toujours une association de saveurs inattendue mais scientifiquement ou culinairement parfaite avec l'un des ingrédients clés.
    - SI NIVEAU DÉBUTANT (ou non précisé) : L'association doit être originale et moderne, mais TRÈS FACILE et ACCESSIBLE à réaliser pour un cuisinier amateur (ex: ajouter une épice simple, un zeste, une herbe fraîche, sans technique complexe).
-   - SI NIVEAU INTERMÉDIAIRE OU AVANCÉ/EXPERT : Propose des associations beaucoup plus audacieuses, originales et sophistiquées, dignes d'un restaurant, en exploitant des techniques ou des produits plus pointus.
+   - SI NIVEAU INTERMÉDIAIRE OU AVANCÉ/EXPERT : Propose des associations beaucoup plus audacieuses, originales et sophistiquées, dignes d'un grand restaurant, en exploitant des techniques ou des produits plus pointus.
 3. RESTITUTION : Intègre cette suggestion naturellement dans tes conseils ou dans une section "L'astuce saveur" ou "L'accord parfait" de la recette.
 4. RÈGLE D'OR ABSOLUE : Tu ne dois JAMAIS, SOUS AUCUN PRÉTEXTE, utiliser le mot "foodpairing" ou "food pairing". C'est un terme technique strictement interdit en public. Parle d'"association de saveurs", de "mariage audacieux", d'"accord parfait", etc.
 `;
@@ -433,7 +433,7 @@ export const generateChefRecipe = async (
     // 3. BUDGET
     const costPrompt = recipeCost === 'economical' 
         ? "BUDGET : ÉCONOMIQUE. INSTRUCTION : Priorité absolue aux ingrédients à bas prix, astuces anti-gaspi, et produits de saison accessibles. Évitez les produits de luxe." 
-        : "BUDGET : QUALITÉ / GASTRONOMIQUE. INSTRUCTION : Priorité aux produits d'exception, à la fraîcheur et à l'authenticité des saveurs. Ne cherchez pas à faire des économies au détriment du goût.";
+        : "BUDGET : QUALITÉ / HAUT DE GAMME. INSTRUCTION : Priorité aux produits d'exception, à la fraîcheur et à l'authenticité des saveurs. Ne cherchez pas à faire des économies au détriment du goût.";
 
     // 4. GOLDEN RULES
     const technicalRules = `
@@ -459,6 +459,20 @@ export const generateChefRecipe = async (
         4. UNE SAUCE OU UN LIANT GOURMAND MAIS SAIN (jus réduit, émulsion légère, sauce yaourt, etc.).
         5. UN TOPPING PLAISIR OU CROQUANT (graines, noisettes, herbes fraîches, oignons frits, etc.).
         L'objectif est un dressage élégant type bistronomie française.
+        `;
+    } else if (cuisineStyle === "Repas d'Exception") {
+        styleSpecificPrompt = `
+        INSTRUCTION SPÉCIFIQUE "REPAS D'EXCEPTION" :
+        Tu dois générer un plat extrêmement sophistiqué et de très haut niveau.
+        🚨 RÈGLE ABSOLUE : IL EST STRICTEMENT INTERDIT D'UTILISER LE MOT "GASTRONOMIE" OU SES DÉRIVÉS (gastronomique, etc.) DANS TA RÉPONSE. 🚨
+        L'assiette DOIT impérativement inclure :
+        1. UNE PROTÉINE DE QUALITÉ (pour la satiété).
+        2. UN FÉCULENT NOURRISSANT (source d'énergie).
+        3. DES LÉGUMES DE SAISON si possible (pour les fibres, vitamines et la fraîcheur).
+        4. UNE SAUCE GOURMANDE MAIS SAINE (pour éviter le côté sec).
+        5. UN LIANT (quand la recette l'exige).
+        6. UN TOPPING (pour la gourmandise ou du croquant).
+        L'objectif est une expérience culinaire inoubliable et raffinée.
         `;
     }
 
