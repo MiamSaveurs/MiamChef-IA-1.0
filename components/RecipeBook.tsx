@@ -261,7 +261,11 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 </div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
-                            <div className="absolute bottom-4 left-8 flex items-center gap-2">
+                        </div>
+
+                        <div className="p-8 relative">
+                             {/* Badges Régime et Style */}
+                             <div className="flex flex-wrap items-center gap-2 mb-4">
                                 {selectedRecipe.dietary && (
                                     <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1.5 rounded-lg text-[10px] text-green-100 uppercase font-bold tracking-wider shadow-lg">
                                         {selectedRecipe.dietary}
@@ -272,10 +276,7 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         {selectedRecipe.cuisineStyle}
                                     </div>
                                 )}
-                            </div>
-                        </div>
-
-                        <div className="p-8 relative">
+                             </div>
                              
                              {/* Informations Recette (Sous la photo) */}
                              <div className="mb-8 border-b border-white/10 pb-6">
