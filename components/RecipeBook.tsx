@@ -534,13 +534,13 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         </div>
                                     </div>
 
-                                    <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10">
-                                        <h3 className="font-display text-xl text-gray-100 mb-2 group-hover:text-amber-500 transition-colors line-clamp-2 leading-tight drop-shadow-sm">
+                                    <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10 items-center text-center">
+                                        <h3 className="font-display text-xl text-gray-100 mb-4 group-hover:text-amber-500 transition-colors line-clamp-2 leading-tight drop-shadow-sm w-full">
                                             {recipe.title}
                                         </h3>
                                         
-                                        <div className="mt-auto pt-4 border-t border-white/5 flex flex-wrap justify-between items-center text-xs text-gray-500 gap-y-2">
-                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                        <div className="mt-auto pt-4 border-t border-white/5 flex flex-col items-center w-full gap-4">
+                                            <div className="flex justify-center items-center gap-2 flex-wrap w-full">
                                                 {recipe.dietary && recipe.dietary !== 'Classique (Aucun)' && (
                                                     <span className="text-[9px] font-bold uppercase tracking-wider text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
                                                         {recipe.dietary}
@@ -552,20 +552,18 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                                     </span>
                                                 )}
                                                 {(!recipe.dietary || recipe.dietary === 'Classique (Aucun)') && !recipe.cuisineStyle && (
-                                                    <span className="flex items-center gap-1.5"><Calendar size={12} /> {recipe.date}</span>
+                                                    <span className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar size={12} /> {recipe.date}</span>
                                                 )}
                                             </div>
                                             {recipe.metrics && (
-                                                <div className="flex items-center gap-3">
-                                                    <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <NutriScoreLogo score={recipe.metrics.nutriScore} className="h-8" />
-                                                        {recipe.servings && (
-                                                            <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
-                                                                {recipe.servings}P
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                                <div className="flex justify-center items-center gap-3 w-full">
+                                                    <span className="flex items-center gap-1 font-bold text-amber-500 text-xs"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
+                                                    <NutriScoreLogo score={recipe.metrics.nutriScore} className="h-8" />
+                                                    {recipe.servings && (
+                                                        <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+                                                            {recipe.servings}P
+                                                        </span>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
