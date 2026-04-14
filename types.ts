@@ -47,6 +47,8 @@ export interface GeneratedContent {
   seoTitle?: string;
   seoDescription?: string;
   servings?: number;
+  dietary?: string;
+  cuisineStyle?: string;
 }
 
 export interface PantryItem {
@@ -72,6 +74,8 @@ export interface SavedRecipe {
   seoTitle?: string;
   seoDescription?: string;
   servings?: number;
+  dietary?: string;
+  cuisineStyle?: string;
 }
 
 export interface ShoppingItem {

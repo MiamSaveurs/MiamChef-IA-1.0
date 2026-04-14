@@ -260,6 +260,19 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     <PremiumChefHat size={48} className="opacity-20 text-white" />
                                 </div>
                             )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                            <div className="absolute bottom-4 left-8 flex items-center gap-2">
+                                {selectedRecipe.dietary && selectedRecipe.dietary !== 'Classique (Aucun)' && (
+                                    <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1.5 rounded-lg text-[10px] text-green-100 uppercase font-bold tracking-wider shadow-lg">
+                                        {selectedRecipe.dietary}
+                                    </div>
+                                )}
+                                {selectedRecipe.cuisineStyle && (
+                                    <div className="bg-amber-500/20 backdrop-blur-md border border-amber-500/30 px-3 py-1.5 rounded-lg text-[10px] text-amber-100 uppercase font-bold tracking-wider shadow-lg">
+                                        {selectedRecipe.cuisineStyle}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="p-8 relative">

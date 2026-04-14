@@ -345,7 +345,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           steps: result.steps || [], 
           storageAdvice: result.storageAdvice || '',
           image: img,
-          servings: people
+          servings: people,
+          dietary: dietary,
+          cuisineStyle: cuisineStyle
       });
 
       setStatus('success');
@@ -451,7 +453,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       ingredientsWithQuantities: ingredientsWithQuantities,
       steps: persistentSteps,
       storageAdvice: storageAdvice,
-      servings: persistentState?.servings || people
+      servings: persistentState?.servings || people,
+      dietary: persistentState?.dietary || dietary,
+      cuisineStyle: persistentState?.cuisineStyle || cuisineStyle
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);

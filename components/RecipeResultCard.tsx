@@ -81,9 +81,14 @@ const RecipeResultCard: React.FC<RecipeResultCardProps> = ({
                             <div className="bg-blue-500/20 backdrop-blur-md border border-blue-500/30 px-2 py-1 rounded text-[9px] text-blue-100 uppercase font-bold">
                                 Suggestion Miam
                             </div>
-                            {dietary !== 'Classique (Aucun)' && (
+                            {(dietary !== 'Classique (Aucun)' || result.dietary) && (
                                 <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-1 rounded text-[9px] text-green-100 uppercase font-bold">
-                                    {dietary}
+                                    {result.dietary || dietary}
+                                </div>
+                            )}
+                            {result.cuisineStyle && (
+                                <div className="bg-amber-500/20 backdrop-blur-md border border-amber-500/30 px-2 py-1 rounded text-[9px] text-amber-100 uppercase font-bold">
+                                    {result.cuisineStyle}
                                 </div>
                             )}
                         </div>
