@@ -205,6 +205,13 @@ const Profile: React.FC = () => {
                                 onClick={() => setProfile({...profile, diet: "Casher"})}
                             />
                             <SelectionCard 
+                                label="Méditerranéen" 
+                                icon={Globe} 
+                                activeColor="blue"
+                                selected={profile.diet === "Méditerranéen"}
+                                onClick={() => setProfile({...profile, diet: "Méditerranéen"})}
+                            />
+                            <SelectionCard 
                                 label="Sans Gluten" 
                                 icon={Wheat} 
                                 activeColor="yellow"

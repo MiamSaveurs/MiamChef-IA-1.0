@@ -897,7 +897,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     icon={Leaf}
                                     value={dietary}
                                     onChange={setDietary}
-                                    options={["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"]}
+                                    options={["Classique (Aucun)", "Végétarien", "Vegan", "Halal", "Casher", "Méditerranéen", "Sans Gluten", "Sans Lactose", "Régime Crétois", "Sportif (Protéiné)"]}
                                     getIcon={getDietIcon}
                                 />
 
