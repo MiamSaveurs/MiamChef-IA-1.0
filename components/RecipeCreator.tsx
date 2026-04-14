@@ -73,6 +73,8 @@ interface RecipeCreatorProps {
         image: string | null;
         storageAdvice?: string;
         servings?: number;
+        dietary?: string;
+        cuisineStyle?: string;
     } | null;
     setPersistentState: (data: RecipeCreatorProps['persistentState']) => void;
 }
@@ -346,8 +348,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           storageAdvice: result.storageAdvice || '',
           image: img,
           servings: people,
-          dietary: dietary,
-          cuisineStyle: cuisineStyle
+          dietary: mode === 'create' ? dietary : undefined,
+          cuisineStyle: mode === 'create' ? cuisineStyle : undefined
       });
 
       setStatus('success');
@@ -454,8 +456,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       steps: persistentSteps,
       storageAdvice: storageAdvice,
       servings: persistentState?.servings || people,
-      dietary: persistentState?.dietary || dietary,
-      cuisineStyle: persistentState?.cuisineStyle || cuisineStyle
+      dietary: persistentState?.dietary,
+      cuisineStyle: persistentState?.cuisineStyle
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
@@ -1038,7 +1040,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                         <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-[#222]">
                             {metrics?.difficulty || "Moyen"}
                         </div>
-                        {persistentState?.dietary && persistentState.dietary !== 'Classique (Aucun)' && (
+                        {persistentState?.dietary && (
                             <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-green-100 shadow-lg border border-green-500/30 bg-green-500/20 backdrop-blur-md">
                                 {persistentState.dietary}
                             </div>

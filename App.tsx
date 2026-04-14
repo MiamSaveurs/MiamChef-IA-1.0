@@ -47,6 +47,9 @@ const App: React.FC = () => {
     storageAdvice?: string;
     image: string | null;
     videoUrl?: string | null;
+    servings?: number;
+    dietary?: string;
+    cuisineStyle?: string;
   } | null>(null);
 
   const [persistentScanResult, setPersistentScanResult] = useState<(GeneratedContent & { dietary?: string }) | null>(null);
