@@ -261,21 +261,23 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                 </div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/40 to-transparent"></div>
-                            <div className="absolute bottom-6 left-8 flex flex-wrap items-center gap-3">
+                        </div>
+
+                        <div className="p-8 relative">
+                             {/* Badges entre la photo et le titre */}
+                             <div className="flex flex-wrap justify-center gap-3 mb-6">
                                 {selectedRecipe.dietary && (
-                                    <div className="bg-green-900/60 backdrop-blur-md border border-green-500/30 px-4 py-2 rounded-xl text-xs text-green-50 uppercase font-bold tracking-wider shadow-lg">
+                                    <div className="bg-green-900/60 backdrop-blur-md border border-green-500/30 px-4 py-3 rounded-xl text-xs text-green-50 uppercase font-bold tracking-wider shadow-lg">
                                         {selectedRecipe.dietary}
                                     </div>
                                 )}
                                 {selectedRecipe.cuisineStyle && (
-                                    <div className="bg-amber-900/60 backdrop-blur-md border border-amber-500/30 px-4 py-2 rounded-xl text-xs text-amber-50 uppercase font-bold tracking-wider shadow-lg">
+                                    <div className="bg-amber-900/60 backdrop-blur-md border border-amber-500/30 px-4 py-3 rounded-xl text-xs text-amber-50 uppercase font-bold tracking-wider shadow-lg">
                                         {selectedRecipe.cuisineStyle}
                                     </div>
                                 )}
-                            </div>
-                        </div>
+                             </div>
 
-                        <div className="p-8 relative">
                              {/* Informations Recette (Sous la photo) */}
                              <div className="mb-8 border-b border-white/10 pb-6 flex flex-col items-center">
                                 <h2 className="text-3xl md:text-4xl font-display text-white mb-6 leading-tight text-center">{selectedRecipe.title}</h2>
