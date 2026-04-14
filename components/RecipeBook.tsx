@@ -540,7 +540,21 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                         </h3>
                                         
                                         <div className="mt-auto pt-4 border-t border-white/5 flex flex-wrap justify-between items-center text-xs text-gray-500 gap-y-2">
-                                            <span className="flex items-center gap-1.5"><Calendar size={12} /> {recipe.date}</span>
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                {recipe.dietary && recipe.dietary !== 'Classique (Aucun)' && (
+                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
+                                                        {recipe.dietary}
+                                                    </span>
+                                                )}
+                                                {recipe.cuisineStyle && (
+                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-900/30 px-2 py-1 rounded border border-amber-500/20">
+                                                        {recipe.cuisineStyle}
+                                                    </span>
+                                                )}
+                                                {(!recipe.dietary || recipe.dietary === 'Classique (Aucun)') && !recipe.cuisineStyle && (
+                                                    <span className="flex items-center gap-1.5"><Calendar size={12} /> {recipe.date}</span>
+                                                )}
+                                            </div>
                                             {recipe.metrics && (
                                                 <div className="flex items-center gap-3">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>
