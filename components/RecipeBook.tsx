@@ -535,26 +535,27 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     </div>
 
                                     <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10 items-center text-center">
-                                        <h3 className="font-display text-xl text-gray-100 mb-4 group-hover:text-amber-500 transition-colors line-clamp-2 leading-tight drop-shadow-sm w-full">
+                                        <div className="flex justify-center items-center gap-2 flex-wrap w-full mb-3">
+                                            {recipe.dietary && (
+                                                <span className="text-[9px] font-bold uppercase tracking-wider text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
+                                                    {recipe.dietary}
+                                                </span>
+                                            )}
+                                            {recipe.cuisineStyle && (
+                                                <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-900/30 px-2 py-1 rounded border border-amber-500/20">
+                                                    {recipe.cuisineStyle}
+                                                </span>
+                                            )}
+                                            {!recipe.dietary && !recipe.cuisineStyle && (
+                                                <span className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar size={12} /> {recipe.date}</span>
+                                            )}
+                                        </div>
+
+                                        <h3 className="font-display text-xl text-gray-100 mb-4 group-hover:text-amber-500 transition-colors line-clamp-2 leading-tight drop-shadow-sm w-full text-center">
                                             {recipe.title}
                                         </h3>
                                         
                                         <div className="mt-auto pt-4 border-t border-white/5 flex flex-col items-center w-full gap-4">
-                                            <div className="flex justify-center items-center gap-2 flex-wrap w-full">
-                                                {recipe.dietary && recipe.dietary !== 'Classique (Aucun)' && (
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
-                                                        {recipe.dietary}
-                                                    </span>
-                                                )}
-                                                {recipe.cuisineStyle && (
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-900/30 px-2 py-1 rounded border border-amber-500/20">
-                                                        {recipe.cuisineStyle}
-                                                    </span>
-                                                )}
-                                                {(!recipe.dietary || recipe.dietary === 'Classique (Aucun)') && !recipe.cuisineStyle && (
-                                                    <span className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar size={12} /> {recipe.date}</span>
-                                                )}
-                                            </div>
                                             {recipe.metrics && (
                                                 <div className="flex justify-center items-center gap-3 w-full">
                                                     <span className="flex items-center gap-1 font-bold text-amber-500 text-xs"><Activity size={12}/> {recipe.metrics.caloriesPerPerson}</span>

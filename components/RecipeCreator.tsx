@@ -348,8 +348,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           storageAdvice: result.storageAdvice || '',
           image: img,
           servings: people,
-          dietary: mode === 'create' ? dietary : undefined,
-          cuisineStyle: mode === 'create' ? cuisineStyle : undefined
+          dietary: dietary,
+          cuisineStyle: cuisineStyle
       });
 
       setStatus('success');
