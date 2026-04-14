@@ -260,28 +260,26 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     <PremiumChefHat size={48} className="opacity-20 text-white" />
                                 </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
-                        </div>
-
-                        <div className="p-8 relative">
-                             {/* Badges Régime et Style */}
-                             <div className="flex flex-wrap items-center gap-2 mb-4">
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/40 to-transparent"></div>
+                            <div className="absolute bottom-6 left-8 flex flex-wrap items-center gap-3">
                                 {selectedRecipe.dietary && (
-                                    <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-3 py-1.5 rounded-lg text-[10px] text-green-100 uppercase font-bold tracking-wider shadow-lg">
+                                    <div className="bg-green-900/60 backdrop-blur-md border border-green-500/30 px-4 py-2 rounded-xl text-xs text-green-50 uppercase font-bold tracking-wider shadow-lg">
                                         {selectedRecipe.dietary}
                                     </div>
                                 )}
                                 {selectedRecipe.cuisineStyle && (
-                                    <div className="bg-amber-500/20 backdrop-blur-md border border-amber-500/30 px-3 py-1.5 rounded-lg text-[10px] text-amber-100 uppercase font-bold tracking-wider shadow-lg">
+                                    <div className="bg-amber-900/60 backdrop-blur-md border border-amber-500/30 px-4 py-2 rounded-xl text-xs text-amber-50 uppercase font-bold tracking-wider shadow-lg">
                                         {selectedRecipe.cuisineStyle}
                                     </div>
                                 )}
-                             </div>
-                             
+                            </div>
+                        </div>
+
+                        <div className="p-8 relative">
                              {/* Informations Recette (Sous la photo) */}
-                             <div className="mb-8 border-b border-white/10 pb-6">
-                                <h2 className="text-3xl md:text-4xl font-display text-white mb-4 leading-tight">{selectedRecipe.title}</h2>
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+                             <div className="mb-8 border-b border-white/10 pb-6 flex flex-col items-center">
+                                <h2 className="text-3xl md:text-4xl font-display text-white mb-6 leading-tight text-center">{selectedRecipe.title}</h2>
+                                <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-300">
                                     <span className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
                                         <Calendar size={14} className="text-amber-500"/> {selectedRecipe.date}
                                     </span>
