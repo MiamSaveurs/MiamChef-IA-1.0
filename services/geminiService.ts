@@ -560,7 +560,10 @@ export const generateChefRecipe = async (
       steps: data.steps, 
       storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
-      seoDescription: sanitizeText(data.seoDescription) 
+      seoDescription: sanitizeText(data.seoDescription),
+      chefMode,
+      dietary,
+      cuisineStyle
     };
   } catch (error) {
     console.error("Error generating recipe:", error);
@@ -573,6 +576,8 @@ export const searchChefsRecipe = async (
   query: string, 
   people: number, 
   type: 'economical' | 'authentic',
+  dietary: string = 'Classique (Aucun)',
+  cuisineStyle: string = 'Tradition Française',
   difficulty: 'beginner' | 'intermediate' | 'expert' = 'intermediate'
 ): Promise<GeneratedContent> => {
   const ai = getAI();
@@ -583,6 +588,8 @@ export const searchChefsRecipe = async (
     : difficulty === 'expert' 
       ? "NIVEAU : EXPERT. Techniques avancées, aucune simplification." 
       : "NIVEAU : INTERMÉDIAIRE. Équilibre technique.";
+
+  const strictDietaryRules = getDietaryConstraints(dietary);
 
   const prompt = `🚨 CONSIGNE DE RECHERCHE STRICTE : TU DOIS PROPOSER LA RECETTE AUTHENTIQUE D'ORIGINE. 🚨
   TA MISSION EST DE RESTITUER LA VRAIE RECETTE CLASSIQUE SANS RIEN MODIFIER.
@@ -598,6 +605,8 @@ export const searchChefsRecipe = async (
   - DIFFICULTÉ : ${difficultyPrompt}
   - PLAT : "${query}"
   - NOMBRE DE PERSONNES : ${people}
+  - RÉGIME : ${strictDietaryRules}
+  - STYLE DE CUISINE : ${cuisineStyle}
   
   ${userProfileContext}
   ${AFFILIATE_STRATEGY_INSTRUCTION}
@@ -644,7 +653,10 @@ export const searchChefsRecipe = async (
     steps: data.steps, 
     storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
-    seoDescription: sanitizeText(data.seoDescription)
+    seoDescription: sanitizeText(data.seoDescription),
+    chefMode: 'cuisine',
+    dietary,
+    cuisineStyle
   };
 };
 
@@ -891,7 +903,10 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     storageAdvice: sanitizeText(data.storageAdvice),
     servings: data.servings || 2,
     seoTitle: sanitizeText(data.seoTitle),
-    seoDescription: sanitizeText(data.seoDescription)
+    seoDescription: sanitizeText(data.seoDescription),
+    chefMode: 'cuisine',
+    dietary,
+    cuisineStyle: 'Anti-Gaspi'
   };
 };
 

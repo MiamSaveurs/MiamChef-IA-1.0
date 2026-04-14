@@ -2,14 +2,13 @@
 import React from 'react';
 import { Book, Check, Utensils, Snowflake, XCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { PremiumChefHat } from './Icons';
+import { PremiumChefHat, PremiumCake } from './Icons';
 import { GeneratedContent } from '../types';
 import { processAffiliateLink } from '../constants/affiliateLinks';
 
 interface RecipeResultCardProps {
   result: GeneratedContent;
   generatedImage: string | null;
-  dietary: string;
   isSaved: boolean;
   onSave: () => void;
   onClose: () => void;
@@ -18,7 +17,6 @@ interface RecipeResultCardProps {
 const RecipeResultCard: React.FC<RecipeResultCardProps> = ({ 
   result, 
   generatedImage, 
-  dietary, 
   isSaved, 
   onSave, 
   onClose 
@@ -87,6 +85,12 @@ const RecipeResultCard: React.FC<RecipeResultCardProps> = ({
 
                  {/* Badges Régime et Style */}
                  <div className="flex flex-wrap items-center gap-2 mb-6">
+                    {result.chefMode && (
+                        <div className={`px-2 py-1 rounded text-[9px] text-white uppercase font-bold flex items-center gap-1 ${result.chefMode === 'patisserie' ? 'bg-pink-600' : 'bg-amber-600'}`}>
+                            {result.chefMode === 'patisserie' ? <PremiumCake size={10}/> : <PremiumChefHat size={10}/>}
+                            {result.chefMode === 'patisserie' ? 'Sucré' : 'Salé'}
+                        </div>
+                    )}
                     {result.dietary && (
                         <div className="bg-green-500/20 backdrop-blur-md border border-green-500/30 px-2 py-1 rounded text-[9px] text-green-100 uppercase font-bold">
                             {result.dietary}

@@ -106,7 +106,10 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
         storageAdvice: result.storageAdvice || undefined,
         seoTitle: result.seoTitle || undefined,
         seoDescription: result.seoDescription || undefined,
-        servings: result.servings || 2
+        servings: result.servings || 2,
+        dietary: dietary,
+        cuisineStyle: result.cuisineStyle || 'Anti-Gaspi',
+        chefMode: 'cuisine'
       });
       
       setIsSaved(true);
@@ -235,7 +238,6 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
             <RecipeResultCard 
                 result={result}
                 generatedImage={generatedImage}
-                dietary={dietary}
                 isSaved={isSaved}
                 onSave={handleSaveToBook}
                 onClose={handleClearResult}

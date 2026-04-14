@@ -317,7 +317,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
             localSmartDevices 
         );
       } else {
-        result = await searchChefsRecipe(searchQuery, people, recipeCost, difficulty);
+        result = await searchChefsRecipe(searchQuery, people, recipeCost, dietary, cuisineStyle, difficulty);
       }
       
       if (!result || !result.text) {
@@ -348,8 +348,9 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           storageAdvice: result.storageAdvice || '',
           image: img,
           servings: people,
-          dietary: dietary,
-          cuisineStyle: cuisineStyle
+          dietary: result.dietary || dietary,
+          cuisineStyle: result.cuisineStyle || cuisineStyle,
+          chefMode: result.chefMode || chefMode
       });
 
       setStatus('success');
@@ -457,7 +458,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       storageAdvice: storageAdvice,
       servings: persistentState?.servings || people,
       dietary: persistentState?.dietary,
-      cuisineStyle: persistentState?.cuisineStyle
+      cuisineStyle: persistentState?.cuisineStyle,
+      chefMode: persistentState?.chefMode || chefMode
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);

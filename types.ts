@@ -49,6 +49,7 @@ export interface GeneratedContent {
   servings?: number;
   dietary?: string;
   cuisineStyle?: string;
+  chefMode?: 'cuisine' | 'patisserie';
 }
 
 export interface PantryItem {
@@ -76,6 +77,7 @@ export interface SavedRecipe {
   servings?: number;
   dietary?: string;
   cuisineStyle?: string;
+  chefMode?: 'cuisine' | 'patisserie';
 }
 
 export interface ShoppingItem {

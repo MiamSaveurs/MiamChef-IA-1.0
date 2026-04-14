@@ -5,7 +5,7 @@ import { SavedRecipe } from '../types';
 import { repairRecipeImages } from '../services/geminiService';
 import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { GourmetBook, PremiumChefHat, PremiumUtensils } from './Icons';
+import { GourmetBook, PremiumChefHat, PremiumUtensils, PremiumCake } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
 import { AMAZON_AFFILIATE_LINKS, getKoRoAffiliateLink, KORO_DRY_INGREDIENTS_KEYWORDS, processAffiliateLink } from '../constants/affiliateLinks';
 import { NutriScoreLogo } from './NutriScoreLogo';
@@ -536,6 +536,12 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
 
                                     <div className="p-5 flex-1 flex flex-col -mt-10 relative z-10 items-center text-center">
                                         <div className="flex justify-center items-center gap-2 flex-wrap w-full mb-3">
+                                            {recipe.chefMode && (
+                                                <span className={`text-[9px] font-bold uppercase tracking-wider text-white px-2 py-1 rounded border border-white/10 flex items-center gap-1 shadow-sm ${recipe.chefMode === 'patisserie' ? 'bg-pink-600' : 'bg-amber-600'}`}>
+                                                    {recipe.chefMode === 'patisserie' ? <PremiumCake size={10}/> : <PremiumChefHat size={10}/>}
+                                                    {recipe.chefMode === 'patisserie' ? 'Sucré' : 'Salé'}
+                                                </span>
+                                            )}
                                             {recipe.dietary && (
                                                 <span className="text-[9px] font-bold uppercase tracking-wider text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
                                                     {recipe.dietary}
