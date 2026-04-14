@@ -1025,19 +1025,29 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                 
                 <div className="bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden">
                     
-                    <div className="flex justify-center gap-3 mb-6">
+                    <div className="flex flex-wrap justify-center gap-3 mb-6">
                                     <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 flex items-center gap-2" style={{ backgroundColor: themeColor }}>
                                         {isPatissier ? <PremiumCake size={12}/> : <PremiumChefHat size={12}/>}
                                         {isPatissier ? 'Sucré' : 'Salé'}
                                     </div>
                         {recipeCost === 'economical' && (
-                            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-blue-600">
+                            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-blue-600 flex items-center gap-2">
                                 <PremiumEuro size={12}/> Eco
                             </div>
                         )}
                         <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-white shadow-lg border border-white/10 bg-[#222]">
                             {metrics?.difficulty || "Moyen"}
                         </div>
+                        {persistentState?.dietary && persistentState.dietary !== 'Classique (Aucun)' && (
+                            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-green-100 shadow-lg border border-green-500/30 bg-green-500/20 backdrop-blur-md">
+                                {persistentState.dietary}
+                            </div>
+                        )}
+                        {persistentState?.cuisineStyle && (
+                            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-amber-100 shadow-lg border border-amber-500/30 bg-amber-500/20 backdrop-blur-md">
+                                {persistentState.cuisineStyle}
+                            </div>
+                        )}
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-display text-white text-center leading-tight mb-8 drop-shadow-lg">
