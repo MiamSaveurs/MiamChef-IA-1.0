@@ -33,6 +33,7 @@ import {
   Wand2,
   ChevronRight,
   Heart,
+  HelpCircle,
   Moon,
   Wheat,
   Milk,
@@ -75,6 +76,8 @@ interface RecipeCreatorProps {
         servings?: number;
         dietary?: string;
         cuisineStyle?: string;
+        chefMode?: 'cuisine' | 'patisserie';
+        faq?: { question: string, answer: string }[];
     } | null;
     setPersistentState: (data: RecipeCreatorProps['persistentState']) => void;
 }
@@ -350,7 +353,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
           servings: people,
           dietary: result.dietary || dietary,
           cuisineStyle: result.cuisineStyle || cuisineStyle,
-          chefMode: result.chefMode || chefMode
+          chefMode: result.chefMode || chefMode,
+          faq: result.faq
       });
 
       setStatus('success');
@@ -425,6 +429,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
               storageAdvice: result.storageAdvice || storageAdvice,
               utensils: result.utensils || utensilsList,
               image: newImg,
+              faq: result.faq || persistentState?.faq
           });
       } catch (e) {
           console.error("Adjustment failed", e);
@@ -459,7 +464,8 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
       servings: persistentState?.servings || people,
       dietary: persistentState?.dietary,
       cuisineStyle: persistentState?.cuisineStyle,
-      chefMode: persistentState?.chefMode || chefMode
+      chefMode: persistentState?.chefMode || chefMode,
+      faq: persistentState?.faq
     });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
@@ -1331,6 +1337,30 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                     <p className="text-sm text-gray-300 font-light leading-relaxed italic">
                                         {storageAdvice}
                                     </p>
+                                </div>
+                            )}
+
+                            {persistentState?.faq && persistentState.faq.length > 0 && (
+                                <div className="mt-8 p-6 rounded-3xl bg-purple-500/5 border border-purple-500/10 shadow-xl overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                                        <HelpCircle size={64} className="text-purple-400" />
+                                    </div>
+                                    <h3 className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-6 relative z-10">
+                                        <HelpCircle size={14} /> Foire Aux Questions (FAQ)
+                                    </h3>
+                                    <div className="space-y-6 relative z-10">
+                                        {persistentState.faq.map((item, idx) => (
+                                            <div key={idx} className="group">
+                                                <h4 className="text-sm font-bold text-white mb-2 flex items-start gap-2">
+                                                    <span className="text-purple-500 mt-0.5">•</span>
+                                                    {item.question}
+                                                </h4>
+                                                <p className="text-xs text-gray-400 leading-relaxed pl-4 border-l border-purple-500/20 group-hover:border-purple-500/40 transition-colors">
+                                                    {item.answer}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 

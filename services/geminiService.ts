@@ -44,6 +44,19 @@ const FOOD_SAFETY_PROTOCOL = `
 5. ALLERGIES : Respectez scrupuleusement les exclusions du profil utilisateur.
 `;
 
+const FAQ_INSTRUCTION = `
+=== FOIRE AUX QUESTIONS (FAQ) ===
+Gagnez la confiance de l'utilisateur en anticipant ses questions. 
+Générez obligatoirement une section FAQ (champ 'faq' dans le JSON) avec 5 à 6 questions/réponses pertinentes et spécifiques à cette recette précise.
+Exemples de thématiques : 
+- Substitutions d'ingrédients (que faire si je n'ai pas X ?).
+- Conservation et réchauffage (comment garder le goût ?).
+- Astuces de chef pour la texture ou le dressage.
+- Accords mets et vins ou boissons.
+- Variantes (végétarienne, express, etc.).
+Chaque réponse doit être concise, experte et bienveillante.
+`;
+
 // PERSONA DU CHATBOT - COACH PÉDAGOGUE & BIENVEILLANT
 const CHATBOT_PERSONA = `
 === TON IDENTITÉ : MIAMCHEF ASSISTANT ===
@@ -244,8 +257,20 @@ const recipeSchema = {
     servings: { type: Type.NUMBER, description: "Nombre de personnes pour la recette." },
     seoTitle: { type: Type.STRING },
     seoDescription: { type: Type.STRING },
+    faq: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          question: { type: Type.STRING },
+          answer: { type: Type.STRING }
+        },
+        required: ['question', 'answer']
+      },
+      description: "FOIRE AUX QUESTIONS : 5 à 6 questions/réponses pertinentes sur la recette."
+    },
   },
-  required: ['markdownContent', 'metrics', 'ingredients', 'ingredientsWithQuantities', 'steps', 'storageAdvice'],
+  required: ['markdownContent', 'metrics', 'ingredients', 'ingredientsWithQuantities', 'steps', 'storageAdvice', 'faq'],
 };
 
 // Schema for weekly plan generation
@@ -522,6 +547,7 @@ export const generateChefRecipe = async (
       3. CONSERVATION : Déterminez précisément la durée et le mode de conservation (frigo/congélo) et renseignez-le dans le champ 'storageAdvice'.
       4. ${GDPR_COMPLIANCE_PROTOCOL}
       5. ${FOOD_SAFETY_PROTOCOL}
+      6. ${FAQ_INSTRUCTION}
       
       === FORMAT DE TEXTE (CRITIQUE) ===
       1. COMMENCEZ IMPÉRATIVEMENT par un titre de niveau 1 (ex: # Mon Super Plat). C'est obligatoire et crucial pour le système. Donnez un titre ÉLÉGANT et MODERNE à la recette, en rapport direct avec les ingrédients demandés (ex: "Velouté de Potiron aux Éclats de Noisettes" au lieu de "Soupe au potiron").
@@ -562,6 +588,7 @@ export const generateChefRecipe = async (
       storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
       seoDescription: sanitizeText(data.seoDescription),
+      faq: data.faq,
       chefMode,
       dietary,
       cuisineStyle
@@ -595,6 +622,8 @@ export const searchChefsRecipe = async (
   const prompt = `🚨 CONSIGNE DE RECHERCHE STRICTE : TU DOIS PROPOSER LA RECETTE AUTHENTIQUE D'ORIGINE. 🚨
   TA MISSION EST DE RESTITUER LA VRAIE RECETTE CLASSIQUE SANS RIEN MODIFIER.
   Ne propose AUCUNE association de saveurs inédite, AUCUNE revisite, AUCUNE modification créative. Tu dois être le gardien de la tradition culinaire.
+
+  ${FAQ_INSTRUCTION}
 
   🚨 CONSIGNE CRITIQUE ABSOLUE : TU DOIS RESPECTER SCRUPULEUSEMENT LES PARAMÈTRES CI-DESSOUS. 
   IL EST FORMELLEMENT INTERDIT DE PROPOSER UNE RECETTE "ÉCONOMIQUE" OU "SIMPLIFIÉE" SI LE TYPE EST "AUTHENTIQUE".
@@ -655,6 +684,7 @@ export const searchChefsRecipe = async (
     storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription),
+    faq: data.faq,
     chefMode: 'cuisine',
     dietary,
     cuisineStyle
@@ -867,6 +897,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     4. CONSERVATION : Durée/mode (champ 'storageAdvice').
     5. PORTIONS : Nombre de personnes (champ 'servings').
     6. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g), les glucides (g), les lipides (g) et la difficulté (champ 'metrics').
+    7. ${FAQ_INSTRUCTION}
     
     FORMAT :
     - Titre H1 (# Titre) obligatoire.
@@ -905,6 +936,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     servings: data.servings || 2,
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription),
+    faq: data.faq,
     chefMode: 'cuisine',
     dietary,
     cuisineStyle: 'Anti-Gaspi'

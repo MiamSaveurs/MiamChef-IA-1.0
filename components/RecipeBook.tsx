@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { getSavedRecipes, deleteRecipeFromBook } from '../services/storageService';
 import { SavedRecipe } from '../types';
 import { repairRecipeImages } from '../services/geminiService';
-import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, Hammer, BarChart, Search, Snowflake, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
+import { Trash2, ChevronLeft, Calendar, Activity, Sparkles, HelpCircle, Hammer, BarChart, Search, Snowflake, X, Lock, Share2, ShoppingCart, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { GourmetBook, PremiumChefHat, PremiumUtensils, PremiumCake } from './Icons';
 import InAppMessageModal from './InAppMessageModal';
@@ -438,6 +438,30 @@ const RecipeBook: React.FC<{ onBack: () => void, isTrialExpired?: boolean }> = (
                                     <p className="text-[10px] text-gray-500 mt-4 text-center">
                                         Ces liens sont des liens affiliés (Amazon, KoRo). En achetant via ces liens, vous soutenez MiamChef sans frais supplémentaires.
                                     </p>
+                                </div>
+                             )}
+
+                             {selectedRecipe.faq && selectedRecipe.faq.length > 0 && (
+                                <div className="mt-8 mb-8 p-6 rounded-3xl bg-purple-500/5 border border-purple-500/10 shadow-xl overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                                        <HelpCircle size={64} className="text-purple-400" />
+                                    </div>
+                                    <h3 className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-widest mb-6 relative z-10">
+                                        <HelpCircle size={14} /> Foire Aux Questions (FAQ)
+                                    </h3>
+                                    <div className="space-y-6 relative z-10">
+                                        {selectedRecipe.faq.map((item, idx) => (
+                                            <div key={idx} className="group">
+                                                <h4 className="text-sm font-bold text-white mb-2 flex items-start gap-2">
+                                                    <span className="text-purple-500 mt-0.5">•</span>
+                                                    {item.question}
+                                                </h4>
+                                                <p className="text-xs text-gray-400 leading-relaxed pl-4 border-l border-purple-500/20 group-hover:border-purple-500/40 transition-colors">
+                                                    {item.answer}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                              )}
                         </div>

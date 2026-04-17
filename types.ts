@@ -34,6 +34,11 @@ export interface RecipeMetrics {
   difficulty: 'Facile' | 'Moyen' | 'Expert';
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface GeneratedContent {
   text: string;
   groundingChunks?: GroundingChunk[];
@@ -50,6 +55,7 @@ export interface GeneratedContent {
   dietary?: string;
   cuisineStyle?: string;
   chefMode?: 'cuisine' | 'patisserie';
+  faq?: FAQItem[];
 }
 
 export interface PantryItem {
@@ -78,6 +84,7 @@ export interface SavedRecipe {
   dietary?: string;
   cuisineStyle?: string;
   chefMode?: 'cuisine' | 'patisserie';
+  faq?: FAQItem[];
 }
 
 export interface ShoppingItem {
