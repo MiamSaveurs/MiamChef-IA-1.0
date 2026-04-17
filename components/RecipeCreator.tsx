@@ -114,6 +114,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
   const generatedImage = persistentState?.image || null;
   const storageAdvice = persistentState?.storageAdvice || '';
   const persistentSteps = useMemo(() => persistentState?.steps || [], [persistentState?.steps]); 
+  const faqItems = persistentState?.faq || [];
 
   // Smart Adjust State
   const [adjusting, setAdjusting] = useState<string | null>(null);
@@ -1340,7 +1341,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                 </div>
                             )}
 
-                            {persistentState?.faq && persistentState.faq.length > 0 && (
+                            {faqItems.length > 0 && (
                                 <div className="mt-8 p-6 rounded-3xl bg-purple-500/5 border border-purple-500/10 shadow-xl overflow-hidden relative">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <HelpCircle size={64} className="text-purple-400" />
@@ -1349,7 +1350,7 @@ const RecipeCreator: React.FC<RecipeCreatorProps> = ({ persistentState, setPersi
                                         <HelpCircle size={14} /> Foire Aux Questions (FAQ)
                                     </h3>
                                     <div className="space-y-6 relative z-10">
-                                        {persistentState.faq.map((item, idx) => (
+                                        {faqItems.map((item, idx) => (
                                             <div key={idx} className="group">
                                                 <h4 className="text-sm font-bold text-white mb-2 flex items-start gap-2">
                                                     <span className="text-purple-500 mt-0.5">•</span>

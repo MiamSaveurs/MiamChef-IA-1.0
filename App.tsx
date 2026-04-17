@@ -50,6 +50,8 @@ const App: React.FC = () => {
     servings?: number;
     dietary?: string;
     cuisineStyle?: string;
+    chefMode?: 'cuisine' | 'patisserie';
+    faq?: { question: string; answer: string }[];
   } | null>(null);
 
   const [persistentScanResult, setPersistentScanResult] = useState<(GeneratedContent & { dietary?: string }) | null>(null);

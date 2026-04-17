@@ -109,7 +109,8 @@ const FridgeScanner: React.FC<FridgeScannerProps> = ({ persistentState, setPersi
         servings: result.servings || 2,
         dietary: dietary,
         cuisineStyle: result.cuisineStyle || 'Anti-Gaspi',
-        chefMode: 'cuisine'
+        chefMode: 'cuisine',
+        faq: result.faq
       });
       
       setIsSaved(true);

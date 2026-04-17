@@ -588,7 +588,7 @@ export const generateChefRecipe = async (
       storageAdvice: sanitizeText(data.storageAdvice),
       seoTitle: sanitizeText(data.seoTitle),
       seoDescription: sanitizeText(data.seoDescription),
-      faq: data.faq,
+      faq: data.faq || [],
       chefMode,
       dietary,
       cuisineStyle
@@ -684,7 +684,7 @@ export const searchChefsRecipe = async (
     storageAdvice: sanitizeText(data.storageAdvice),
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription),
-    faq: data.faq,
+    faq: data.faq || [],
     chefMode: 'cuisine',
     dietary,
     cuisineStyle
@@ -747,6 +747,7 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
     
     ${GDPR_COMPLIANCE_PROTOCOL}
     ${FOOD_SAFETY_PROTOCOL}
+    ${FAQ_INSTRUCTION}
     ${BANNED_WORDS_INSTRUCTION}
     ${FOODPAIRING_BRAIN_INSTRUCTION}
     `;
@@ -774,7 +775,8 @@ export const adjustRecipe = async (originalRecipeText: string, adjustmentType: s
         steps: data.steps, 
         storageAdvice: sanitizeText(data.storageAdvice),
         seoTitle: sanitizeText(data.seoTitle),
-        seoDescription: sanitizeText(data.seoDescription)
+        seoDescription: sanitizeText(data.seoDescription),
+        faq: data.faq || []
     };
 };
 
@@ -936,7 +938,7 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     servings: data.servings || 2,
     seoTitle: sanitizeText(data.seoTitle),
     seoDescription: sanitizeText(data.seoDescription),
-    faq: data.faq,
+    faq: data.faq || [],
     chefMode: 'cuisine',
     dietary,
     cuisineStyle: 'Anti-Gaspi'
