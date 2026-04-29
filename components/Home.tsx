@@ -129,16 +129,6 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
       bgImage: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=2068&auto=format&fit=crop"
     },
     {
-      view: AppView.SCAN_FRIDGE,
-      title: "Scan Frigo",
-      subtitle: "Zéro Gaspillage",
-      icon: <PremiumCamera size={28} />,
-      color: "from-[#1a3a5a] to-[#0f1e2e]", // Bleu
-      accent: "text-blue-400",
-      border: "border-blue-800/30",
-      bgImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1974&auto=format&fit=crop"
-    },
-    {
       view: AppView.PANTRY,
       title: "Garde-Manger",
       subtitle: "Inventaire Virtuel",
@@ -317,6 +307,31 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
               {/* Right: Button */}
               <div className="bg-[#509f2a] text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#408020] transition-colors shadow-lg shadow-green-900/20 mr-1 shrink-0">
                   VOIR
+              </div>
+          </button>
+
+          {/* BLOC SCAN FRIGO (DÉPLACÉ ICI EN FORMAT HORIZONTAL) */}
+          <button
+            onClick={() => setView(AppView.SCAN_FRIDGE)}
+            className="w-full bg-[#15151a] border border-blue-500/30 rounded-[2rem] p-5 flex items-center justify-between mb-8 shadow-xl shadow-blue-900/10 active:scale-[0.98] transition-all group relative overflow-hidden"
+          >
+              {/* Background accent */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/20 transition-all"></div>
+
+              <div className="flex items-center gap-5 relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all shadow-lg">
+                      <PremiumCamera size={28} />
+                  </div>
+                  <div className="text-left">
+                      <h3 className="text-xl font-display text-white mb-1 group-hover:text-blue-300 transition-colors">Scan Frigo</h3>
+                      <p className="text-xs text-gray-400 font-medium max-w-[200px] leading-relaxed">
+                          Prenez en photo vos ingrédients pour des recettes zéro gaspillage.
+                      </p>
+                  </div>
+              </div>
+
+              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 group-hover:bg-blue-500 group-hover:border-blue-500 group-hover:text-white transition-all">
+                  <ChevronRight size={20} />
               </div>
           </button>
 
