@@ -56,9 +56,9 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
       </button>
 
       <div className="relative z-10 w-full max-w-md bg-[#121212]/90 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl p-8 animate-fade-in text-center">
-        <h2 className="font-display text-3xl mb-4 text-[#509f2a]">Créez votre compte</h2>
+        <h2 className="font-display text-2xl mb-4 text-[#509f2a] leading-tight">Pour profiter de vos 7 jours offerts, renseignez votre email</h2>
         <p className="text-gray-400 text-sm mb-8 leading-relaxed">
-          Pour profiter de vos 7 jours gratuits et retrouver toutes vos recettes, renseignez votre email.
+          Aucune carte bancaire ne vous sera demandée pour commencer votre essai gratuit.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
