@@ -33,14 +33,14 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
       // Valider la création de compte locale
       setHasAccount();
       
-      // On continue vers l'étape Stripe
-      setView(AppView.SUBSCRIPTION);
+      // On continue vers l'accueil
+      setView(AppView.HOME);
       
     } catch (err) {
       console.error('Erreur lors de la capture email:', err);
       // Fallback: on continue le tunnel pour ne pas bloquer l'utilisateur
       setHasAccount();
-      setView(AppView.SUBSCRIPTION);
+      setView(AppView.HOME);
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
           >
             {loading ? <Loader2 className="animate-spin" size={20} /> : (
               <>
-                Passer à la suite <ArrowRight size={20} />
+                Enregistrer <ArrowRight size={20} />
               </>
             )}
           </button>
