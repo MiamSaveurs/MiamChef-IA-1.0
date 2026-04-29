@@ -183,6 +183,7 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
     email_address: email,
     status: 'subscribed', // Inscription directe sans email de confirmation (Single Opt-in).
     language: 'fr',
+    tags: ['TRIAL_STARTED']
   });
 
   const options = {
