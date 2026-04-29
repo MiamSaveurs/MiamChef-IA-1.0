@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, ArrowRight, Loader2, X } from 'lucide-react';
 import { AppView } from '../types';
+import { setHasAccount } from '../services/storageService';
 
 interface AccountCreationProps {
   setView: (view: AppView) => void;
@@ -29,13 +30,16 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
         body: JSON.stringify({ email })
       });
       
-      // On continue vers l'étape Stripe même si Mailchimp échoue (ex: déjà inscrit ou erreur API) 
-      // pour ne pas bloquer l'expérience utilisateur, mais idéalement on loggerait l'erreur
+      // Valider la création de compte locale
+      setHasAccount();
+      
+      // On continue vers l'étape Stripe
       setView(AppView.SUBSCRIPTION);
       
     } catch (err) {
       console.error('Erreur lors de la capture email:', err);
       // Fallback: on continue le tunnel pour ne pas bloquer l'utilisateur
+      setHasAccount();
       setView(AppView.SUBSCRIPTION);
     } finally {
       setLoading(false);

@@ -159,9 +159,19 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView]);
 
-  // Sécurité supplémentaire : Si on change de vue et qu'on est expiré
+  // Sécurité supplémentaire : Blocage si pas de compte ou expiré
   useEffect(() => {
-      if (isTrialExpired && currentView !== AppView.SUBSCRIPTION && currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
+      const status = getTrialStatus();
+      
+      // 1. L'utilisateur n'a pas encore créé son compte via son adresse email
+      if (!status.hasAccount) {
+          const allowedViews = [AppView.HOME, AppView.ACCOUNT_CREATION, AppView.LEGAL, AppView.VALUE_PROPOSITION, AppView.SUBSCRIPTION];
+          if (!allowedViews.includes(currentView)) {
+              setTimeout(() => setCurrentView(AppView.ACCOUNT_CREATION), 0);
+          }
+      } 
+      // 2. L'utilisateur a un compte mais sa période d'essai est expirée (blocage sauf Carnet)
+      else if (isTrialExpired && currentView !== AppView.SUBSCRIPTION && currentView !== AppView.RECIPE_BOOK && currentView !== AppView.LEGAL) {
           setTimeout(() => setCurrentView(AppView.SUBSCRIPTION), 0);
       }
   }, [currentView, isTrialExpired]);

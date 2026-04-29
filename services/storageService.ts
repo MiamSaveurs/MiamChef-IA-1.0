@@ -20,22 +20,36 @@ const PROFILE_KEY = 'miamchef_user_profile';
  */
 
 // Subscription / Trial Logic Storage (using LocalStorage for simplicity as per requirements)
-export const getTrialStatus = (): { startDate: number, isSubscribed: boolean, subscriptionTier: 'free' | 'monthly' | 'annual' | 'lifetime' } => {
+export const getTrialStatus = (): { hasAccount: boolean, startDate: number, isSubscribed: boolean, subscriptionTier: 'free' | 'monthly' | 'annual' | 'lifetime' } => {
+    const hasAccount = localStorage.getItem('miamchef_has_account') === 'true';
     const storedDate = localStorage.getItem('miamchef_trial_start');
     const storedSub = localStorage.getItem('miamchef_subscription');
     
-    const startDate = storedDate ? parseInt(storedDate) : Date.now();
-    
-    // Initialize if not present
-    if (!storedDate) {
-        localStorage.setItem('miamchef_trial_start', startDate.toString());
+    // Si l'utilisateur n'a pas encore de compte, le trial ne commence pas formellement, 
+    // mais pour ne pas casser la logique existante, on initialise startDate uniquement quand hasAccount devient true
+    let startDate = Date.now();
+    if (hasAccount) {
+        if (!storedDate) {
+            localStorage.setItem('miamchef_trial_start', startDate.toString());
+        } else {
+            startDate = parseInt(storedDate);
+        }
     }
 
     return {
+        hasAccount,
         startDate,
         isSubscribed: !!storedSub,
         subscriptionTier: (storedSub as 'free' | 'monthly' | 'annual' | 'lifetime') || 'free'
     };
+};
+
+export const setHasAccount = () => {
+    localStorage.setItem('miamchef_has_account', 'true');
+    // On démarre l'essai de 7 jours au moment de la création du compte
+    if (!localStorage.getItem('miamchef_trial_start')) {
+        localStorage.setItem('miamchef_trial_start', Date.now().toString());
+    }
 };
 
 export const startSubscription = (tier: 'monthly' | 'annual' | 'lifetime') => {
