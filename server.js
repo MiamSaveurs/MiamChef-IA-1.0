@@ -191,7 +191,7 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
     headers: {
       'Authorization': `Basic ${Buffer.from(`anyuser:${API_KEY}`).toString('base64')}`,
       'Content-Type': 'application/json',
-      'Content-Length': data.length,
+      'Content-Length': Buffer.byteLength(data),
     },
   };
 
