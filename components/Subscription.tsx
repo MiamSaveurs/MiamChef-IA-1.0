@@ -127,7 +127,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           <div className="flex justify-between items-start mb-2 mt-1">
                               <div>
                                   <div className="text-2xl font-display mb-1 text-white">0,00 € <span className="text-sm font-sans font-normal opacity-70">aujourd'hui</span></div>
-                                  <div className="text-xs font-medium text-[#509f2a] mb-1">Puis 5,00 € / mois dans 7 jours.</div>
+                                  <div className="text-xs font-medium text-[#509f2a] mb-1">Puis 4,99 € / mois dans 7 jours.</div>
                                   <div className="text-[10px] font-medium opacity-80 text-gray-400">Annulable en un clic.</div>
                               </div>
                               <div className="text-white">
