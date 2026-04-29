@@ -23,7 +23,7 @@ interface SubscriptionProps {
 }
 
 const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = false, setView, largeText = false, toggleLargeText, onAccessBook }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly' | 'lifetime'>('monthly');
   const [processing, setProcessing] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   
@@ -114,18 +114,24 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                   
                   <div className="space-y-4">
                       
-                      {/* MONTHLY PLAN */}
+                      {/* MONTHLY PLAN (ESSAI GRATUIT) */}
                       <div 
                         onClick={() => setSelectedPlan('monthly')}
-                        className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'monthly' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#143d22] border-[#509f2a] shadow-lg shadow-green-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                        className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer group ${selectedPlan === 'monthly' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#0f2e1b] border-[#509f2a] shadow-[0_0_40px_rgba(80,159,42,0.15)] scale-[1.02]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                       >
-                          <div className="flex justify-between items-start mb-2">
+                          {/* BEST VALUE BADGE - MOVED TO MONTHLY FOR THE FUNNEL */}
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-yellow-200 flex items-center gap-2 z-10 whitespace-nowrap">
+                                <Star size={10} fill="black" /> 7 Jours Gratuits
+                          </div>
+                          
+                          <div className="flex justify-between items-start mb-2 mt-1">
                               <div>
-                                  <div className="text-2xl font-display mb-1 text-white">4,99 € <span className="text-sm font-sans font-normal opacity-70">/ mois</span></div>
-                                  <div className="text-xs font-medium opacity-80 text-gray-300">Sans engagement. Liberté totale.</div>
+                                  <div className="text-2xl font-display mb-1 text-white">0,00 € <span className="text-sm font-sans font-normal opacity-70">aujourd'hui</span></div>
+                                  <div className="text-xs font-medium text-[#509f2a] mb-1">Puis 5,00 € / mois dans 7 jours.</div>
+                                  <div className="text-[10px] font-medium opacity-80 text-gray-400">Annulable en un clic.</div>
                               </div>
                               <div className="text-white">
-                                  {selectedPlan === 'monthly' ? <div className="bg-white text-[#1a4a2a] rounded-full p-1"><Check size={16} strokeWidth={4} /></div> : <Circle size={24} className="opacity-20" />}
+                                  {selectedPlan === 'monthly' ? <div className="bg-white text-[#1a4a2a] rounded-full p-1"><Check size={18} strokeWidth={4} /></div> : <Circle size={24} className="opacity-20" />}
                               </div>
                           </div>
                           {/* Features List for Monthly */}
@@ -136,19 +142,14 @@ const Subscription: React.FC<SubscriptionProps> = ({ onClose, isTrialExpired = f
                           </div>
                       </div>
 
-                      {/* ANNUAL PLAN (RECOMMENDED & FOMO) */}
+                      {/* ANNUAL PLAN */}
                       <div 
                         onClick={() => setSelectedPlan('annual')}
-                        className={`relative p-6 rounded-2xl border-2 transition-all cursor-pointer group ${selectedPlan === 'annual' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#0f2e1b] border-[#509f2a] shadow-[0_0_40px_rgba(80,159,42,0.15)] scale-[1.02]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                        className={`relative p-5 rounded-2xl border transition-all cursor-pointer ${selectedPlan === 'annual' ? 'bg-gradient-to-r from-[#1a4a2a] to-[#143d22] border-[#509f2a] shadow-lg shadow-green-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                       >
-                          {/* BEST VALUE BADGE - UPDATED FOR CONVERSION */}
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-bold px-4 py-1 rounded-full shadow-lg uppercase tracking-widest border border-yellow-200 flex items-center gap-2 z-10">
-                                <Star size={10} fill="black" /> La Formule Préférée
-                          </div>
-                          
                           <div className="flex justify-between items-start mb-3 mt-1">
                               <div>
-                                  <div className="text-3xl font-display mb-1 text-white">49,99 € <span className="text-sm font-sans font-normal opacity-70">/ an</span></div>
+                                  <div className="text-2xl font-display mb-1 text-white">49,99 € <span className="text-sm font-sans font-normal opacity-70">/ an</span></div>
                                   <div className="flex gap-2 mt-1">
                                       <span className="text-xs font-bold text-[#509f2a] bg-white/10 px-2 py-0.5 rounded">2 mois offerts</span>
                                       <span className="text-xs text-gray-400 line-through decoration-red-500 decoration-2">59,88 €</span>

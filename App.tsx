@@ -15,6 +15,7 @@ import MealPlanner from './components/MealPlanner';
 import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
 import Pantry from './components/Pantry';
+import AccountCreation from './components/AccountCreation';
 import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
 import InAppMessageModal from './components/InAppMessageModal';
 import ChatBot from './components/ChatBot';
@@ -312,11 +313,12 @@ const App: React.FC = () => {
       );
       
       case AppView.SHOPPING_LIST: return <ShoppingList />;
-      case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} onSubscribe={() => setCurrentView(AppView.SUBSCRIPTION)} />;
+      case AppView.VALUE_PROPOSITION: return <ValueProposition onClose={() => setCurrentView(AppView.HOME)} onSubscribe={() => setCurrentView(AppView.ACCOUNT_CREATION)} />;
       case AppView.LEGAL: return <LegalDocuments onClose={() => setCurrentView(AppView.HOME)} />;
       case AppView.PLANNING: return <MealPlanner />;
       case AppView.PROFILE: return <Profile />;
       case AppView.PANTRY: return <Pantry onBack={() => setCurrentView(AppView.HOME)} />;
+      case AppView.ACCOUNT_CREATION: return <AccountCreation setView={setCurrentView} />;
       case AppView.TIMER: return (
         <SmartTimer 
             timeLeft={timerTimeLeft} 
@@ -346,7 +348,7 @@ const App: React.FC = () => {
       <InstallPWA />
 
       {/* Navigation masquée si bloqué (Trial Expired), sauf pour les vues légales ou l'abonnement */}
-      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && !isTrialExpired && (
+      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && currentView !== AppView.ACCOUNT_CREATION && !isTrialExpired && (
         <Navigation 
             currentView={currentView} 
             setView={setCurrentView} 

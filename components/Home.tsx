@@ -227,11 +227,11 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
               </button>
 
               <button 
-                onClick={() => setView(AppView.SUBSCRIPTION)} 
+                onClick={() => setView(AppView.ACCOUNT_CREATION)} 
                 className="flex items-center gap-2 bg-[#151515] border border-[#509f2a]/30 hover:bg-[#509f2a] hover:border-[#509f2a] px-4 py-2 rounded-full transition-all group"
               >
                   <PremiumCrown size={14} className="text-[#509f2a] group-hover:text-white transition-colors" />
-                  <span className="text-[10px] font-black text-[#509f2a] group-hover:text-white tracking-widest uppercase transition-colors">Premium</span>
+                  <span className="text-[10px] font-black text-[#509f2a] group-hover:text-white tracking-widest uppercase transition-colors">7J Offerts</span>
               </button>
           </div>
       </header>
@@ -239,7 +239,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
       <div className="px-6 relative z-10">
           
           {/* TITRE HERO + SLOGAN (CENTRÉ) */}
-          <div className="mt-10 mb-10 text-center">
+          <div className="mt-10 mb-8 text-center">
               <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
                   Une cuisine unique,
               </h2>
@@ -248,6 +248,21 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                       qui vous ressemble.
                   </h2>
               </div>
+          </div>
+
+          {/* GROS BOUTON 7 JOURS GRATUITS (ÉTAPE 1 DU TUNNEL) */}
+          <div className="mb-10 flex justify-center px-4">
+              <button 
+                  onClick={() => setView(AppView.ACCOUNT_CREATION)}
+                  className="w-full max-w-sm bg-gradient-to-r from-[#509f2a] to-[#408020] hover:scale-[1.02] active:scale-[0.98] text-white font-bold py-5 rounded-2xl shadow-[0_0_40px_rgba(80,159,42,0.4)] flex flex-col items-center justify-center gap-1 transition-all border border-green-400/30 group"
+              >
+                  <span className="text-xl uppercase tracking-widest drop-shadow-md flex items-center gap-2">
+                       Je profite <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <span className="text-sm font-medium opacity-90 tracking-wide inline-block bg-white/20 px-3 py-0.5 rounded-full mt-1">
+                      de mes 7 jours gratuits
+                  </span>
+              </button>
           </div>
 
           {/* BLOC PREFERENCES (DÉPLACÉ ICI SOUS LE SLOGAN) */}
@@ -352,14 +367,14 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                       </h3>
                       
                       <p className="text-gray-400 text-xs leading-relaxed max-w-sm mx-auto mb-5">
-                          Débloquez la création illimitée et toutes les fonctionnalités exclusives pour une expérience culinaire sans limites.
+                          Débloquez la création illimitée et toutes les fonctionnalités exclusives avec 7 jours d'essai gratuits.
                       </p>
                       
                       <button 
-                        onClick={() => setView(AppView.SUBSCRIPTION)}
+                        onClick={() => setView(AppView.ACCOUNT_CREATION)}
                         className="group flex items-center gap-2 text-[#509f2a] font-bold uppercase text-[10px] tracking-widest border border-[#509f2a]/30 px-6 py-3 rounded-full hover:bg-[#509f2a] hover:text-white transition-all shadow-lg shadow-green-900/10"
                       >
-                          Voir les offres Premium <PremiumPaperPlane size={14} className="group-hover:translate-x-1 transition-transform" />
+                          Essayer gratuitement <PremiumPaperPlane size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                   </div>
               </div>
