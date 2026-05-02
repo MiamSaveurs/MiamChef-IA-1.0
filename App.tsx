@@ -16,12 +16,17 @@ import SmartTimer from './components/SmartTimer';
 import Profile from './components/Profile';
 import Pantry from './components/Pantry';
 import AccountCreation from './components/AccountCreation';
-import InstallPWA from './components/InstallPWA'; // Import Nouveau Composant
+import InstallScreen from './components/InstallScreen';
 import InAppMessageModal from './components/InAppMessageModal';
 import ChatBot from './components/ChatBot';
 import { getTrialStatus, startSubscription, getInAppMessageSeen, setInAppMessageSeen } from './services/storageService';
 import { AppView, RecipeMetrics, GeneratedContent } from './types';
 import { WifiOff } from 'lucide-react';
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  (window as any).deferredPromptEvent = e;
+});
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -165,7 +170,7 @@ const App: React.FC = () => {
       
       // 1. L'utilisateur n'a pas encore créé son compte via son adresse email
       if (!status.hasAccount) {
-          const allowedViews = [AppView.HOME, AppView.ACCOUNT_CREATION, AppView.LEGAL, AppView.VALUE_PROPOSITION, AppView.SUBSCRIPTION];
+          const allowedViews = [AppView.HOME, AppView.ACCOUNT_CREATION, AppView.LEGAL, AppView.VALUE_PROPOSITION, AppView.SUBSCRIPTION, AppView.INSTALL_APP];
           if (!allowedViews.includes(currentView)) {
               setTimeout(() => setCurrentView(AppView.ACCOUNT_CREATION), 0);
           }
@@ -329,6 +334,7 @@ const App: React.FC = () => {
       case AppView.PROFILE: return <Profile />;
       case AppView.PANTRY: return <Pantry onBack={() => setCurrentView(AppView.HOME)} />;
       case AppView.ACCOUNT_CREATION: return <AccountCreation setView={setCurrentView} />;
+      case AppView.INSTALL_APP: return <InstallScreen setView={setCurrentView} />;
       case AppView.TIMER: return (
         <SmartTimer 
             timeLeft={timerTimeLeft} 
@@ -354,12 +360,9 @@ const App: React.FC = () => {
       
       <main className="w-full">{renderView()}</main>
 
-      {/* BANNIÈRE D'INSTALLATION INTELLIGENTE */}
-      <InstallPWA />
-
       {/* Navigation masquée si bloqué (Trial Expired), sauf pour les vues légales ou l'abonnement */}
-      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && currentView !== AppView.ACCOUNT_CREATION && !isTrialExpired && (
-        <Navigation 
+      {currentView !== AppView.SUBSCRIPTION && currentView !== AppView.VALUE_PROPOSITION && currentView !== AppView.LEGAL && currentView !== AppView.ACCOUNT_CREATION && currentView !== AppView.INSTALL_APP && !isTrialExpired && (
+        <Navigation  
             currentView={currentView} 
             setView={setCurrentView} 
             isOnline={isOnline}

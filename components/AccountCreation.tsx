@@ -39,8 +39,8 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
       // Valider la création de compte locale uniquement si Mailchimp a réussi
       setHasAccount();
       
-      // On continue vers l'accueil
-      setView(AppView.HOME);
+      // On continue vers l'install
+      setView(AppView.INSTALL_APP);
       
     } catch (err: any) {
       console.error('Erreur lors de la capture email:', err);

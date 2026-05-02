@@ -14,7 +14,8 @@ export enum AppView {
   TIMER = 'TIMER',
   PROFILE = 'PROFILE',
   PANTRY = 'PANTRY',
-  ACCOUNT_CREATION = 'ACCOUNT_CREATION'
+  ACCOUNT_CREATION = 'ACCOUNT_CREATION',
+  INSTALL_APP = 'INSTALL_APP'
 }
 
 export interface GroundingChunk {
