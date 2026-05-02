@@ -218,15 +218,6 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   <span className="text-xs font-black text-orange-400">{streak}</span>
               </div>
 
-              {/* BOUTON INSTALLER L'APP (MANUEL) */}
-              <button 
-                onClick={() => setView(AppView.INSTALL_APP)}
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-[#151515] border border-white/10 hover:bg-white/10 transition-colors"
-                title="Installer l'application"
-              >
-                  <Download size={14} className="text-[#509f2a]" />
-              </button>
-
               {/* BOUTON PARTAGE VIRAL (NEW) */}
               <button 
                 onClick={handleShareApp}
@@ -259,8 +250,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
               </div>
           </div>
 
-          {/* GROS BOUTON 7 JOURS GRATUITS (ÉTAPE 1 DU TUNNEL) */}
-          <div className="mb-10 flex justify-center px-4">
+          <div className="mb-8 flex flex-col items-center px-4 space-y-4">
               <button 
                   onClick={handleSubscriptionClick}
                   className="w-full max-w-sm bg-gradient-to-r from-[#509f2a] to-[#408020] hover:scale-[1.02] active:scale-[0.98] text-white font-bold py-5 rounded-2xl shadow-[0_0_40px_rgba(80,159,42,0.4)] flex flex-col items-center justify-center gap-1 transition-all border border-green-400/30 group"
@@ -271,6 +261,18 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   <span className="text-sm font-medium opacity-90 tracking-wide inline-block bg-white/20 px-3 py-0.5 rounded-full mt-1">
                       {hasAccount ? "Accès illimité" : "de mes 7 jours gratuits"}
                   </span>
+              </button>
+
+              {/* BOUTON D'INSTALLATION CLAIR ET VISIBLE */}
+              <button
+                 onClick={() => setView(AppView.INSTALL_APP)}
+                 className="w-full max-w-sm bg-[#1a1a1a] border border-[#509f2a]/30 hover:bg-white/5 active:scale-[0.98] text-gray-200 font-medium py-3.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-all"
+              >
+                 <span className="flex items-center gap-2 text-[15px]">
+                     <Download size={18} className="text-[#509f2a]" /> 
+                     Installer l'App sur mon téléphone
+                 </span>
+                 <span className="text-[11px] text-gray-400">Pour un accès rapide et sans navigateur</span>
               </button>
           </div>
 
