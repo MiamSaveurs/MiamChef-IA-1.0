@@ -23,30 +23,24 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
     setError('');
     
     try {
-      // Souscription à Mailchimp
+      // Souscription à Mailchimp (test non bloquant)
       const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-          throw new Error(data.error || 'Erreur lors de l\'enregistrement.');
+          console.warn('Mailchimp non configuré ou erreur - Mode test : on continue quand même.');
       }
-      
-      // Valider la création de compte locale uniquement si Mailchimp a réussi
+    } catch (err: any) {
+      console.warn('Erreur réseau Mailchimp - Mode test : on continue quand même.');
+    } finally {
+      // Valider la création de compte locale dans tous les cas pour ne pas bloquer l'essai 
       setHasAccount();
       
       // On continue vers l'install
       setView(AppView.INSTALL_APP);
-      
-    } catch (err: any) {
-      console.error('Erreur lors de la capture email:', err);
-      // On affiche l'erreur à l'utilisateur pour qu'il la corrige (ou que l'admin comprenne le problème)
-      setError(err.message || 'Impossible de vous enregistrer pour le moment.');
-    } finally {
       setLoading(false);
     }
   };
