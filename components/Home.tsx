@@ -238,8 +238,22 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
 
       <div className="px-6 relative z-10">
           
+          {/* BOUTON D'INSTALLATION CLAIR ET VISIBLE - DÉPLACÉ EN HAUT */}
+          <div className="mt-6 mb-4 flex justify-center px-4">
+              <button
+                 onClick={() => setView(AppView.INSTALL_APP)}
+                 className="w-full max-w-sm bg-gradient-to-r from-[#4a1a2a] to-[#2e0f15] border border-rose-800/50 hover:opacity-90 active:scale-[0.98] text-white font-medium py-3.5 rounded-xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-900/20 transition-all"
+              >
+                 <span className="flex items-center gap-2 text-[15px]">
+                     <Download size={18} className="text-rose-400" /> 
+                     Installer l'App sur mon téléphone
+                 </span>
+                 <span className="text-[11px] text-rose-200/60">Pour un accès rapide et sans navigateur</span>
+              </button>
+          </div>
+
           {/* TITRE HERO + SLOGAN (CENTRÉ) */}
-          <div className="mt-10 mb-8 text-center">
+          <div className="mt-6 mb-8 text-center">
               <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
                   Une cuisine unique,
               </h2>
@@ -250,7 +264,7 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
               </div>
           </div>
 
-          <div className="mb-8 flex flex-col items-center px-4 space-y-4">
+          <div className="mb-10 flex justify-center px-4">
               <button 
                   onClick={handleSubscriptionClick}
                   className="w-full max-w-sm bg-gradient-to-r from-[#509f2a] to-[#408020] hover:scale-[1.02] active:scale-[0.98] text-white font-bold py-5 rounded-2xl shadow-[0_0_40px_rgba(80,159,42,0.4)] flex flex-col items-center justify-center gap-1 transition-all border border-green-400/30 group"
@@ -261,18 +275,6 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   <span className="text-sm font-medium opacity-90 tracking-wide inline-block bg-white/20 px-3 py-0.5 rounded-full mt-1">
                       {hasAccount ? "Accès illimité" : "de mes 7 jours gratuits"}
                   </span>
-              </button>
-
-              {/* BOUTON D'INSTALLATION CLAIR ET VISIBLE */}
-              <button
-                 onClick={() => setView(AppView.INSTALL_APP)}
-                 className="w-full max-w-sm bg-[#1a1a1a] border border-[#509f2a]/30 hover:bg-white/5 active:scale-[0.98] text-gray-200 font-medium py-3.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-all"
-              >
-                 <span className="flex items-center gap-2 text-[15px]">
-                     <Download size={18} className="text-[#509f2a]" /> 
-                     Installer l'App sur mon téléphone
-                 </span>
-                 <span className="text-[11px] text-gray-400">Pour un accès rapide et sans navigateur</span>
               </button>
           </div>
 
