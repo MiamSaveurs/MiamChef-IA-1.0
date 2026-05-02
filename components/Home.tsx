@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppView } from '../types';
-import { Star, ChevronRight, Activity, Globe, Share2, Archive } from 'lucide-react';
+import { Star, ChevronRight, Activity, Globe, Share2, Archive, Download } from 'lucide-react';
 import { updateDailyStreak, getTrialStatus } from '../services/storageService'; // Importer la fonction de mise à jour
 import Newsletter from './Newsletter';
 import Testimonials from './Testimonials';
@@ -217,6 +217,15 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
                   <PremiumFlame size={14} className="text-orange-500 animate-pulse" />
                   <span className="text-xs font-black text-orange-400">{streak}</span>
               </div>
+
+              {/* BOUTON INSTALLER L'APP (MANUEL) */}
+              <button 
+                onClick={() => setView(AppView.INSTALL_APP)}
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-[#151515] border border-white/10 hover:bg-white/10 transition-colors"
+                title="Installer l'application"
+              >
+                  <Download size={14} className="text-[#509f2a]" />
+              </button>
 
               {/* BOUTON PARTAGE VIRAL (NEW) */}
               <button 
