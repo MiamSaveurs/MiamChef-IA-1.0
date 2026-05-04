@@ -893,14 +893,15 @@ export const scanFridgeAndSuggest = async (base64Image: string, dietary: string 
     ${userProfileContext}
     ${AFFILIATE_STRATEGY_INSTRUCTION}
     ${SITE_INTEGRATION_INSTRUCTION}
-    1. VISION EXPERTE ANTI-GASPI & PRÉCISION MAXIMALE : Vous DEVEZ analyser l'image avec une attention extrême pour repérer les ingrédients, placards, ou le contenu d'un frigo. Identifiez TOUS les ingrédients visibles (même +10 ingrédients rapidement et sans bug).
-    2. RECONNAISSANCE POUSSÉE (Ne PAS Halluciner) : Analysez correctement les ingrédients bruts (fruits, légumes, etc.). Scrutez attentivement les emballages pour identifier les ingrédients à l'intérieur (fromage entamé, boîte de thon, boîte hermétique transparente avec des restes, etc.). Si vous n'êtes pas absolument sûr à 100% qu'un aliment est présent, NE l'inventez PAS. Aucune hallucination tolérée.
-    3. FILTRER selon REGIME : ${dietary} (${dietRules}).
-    4. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
-    5. CONSERVATION : Durée/mode (champ 'storageAdvice').
-    6. PORTIONS : Nombre de personnes (champ 'servings').
-    7. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g), les glucides (g), les lipides (g) et la difficulté (champ 'metrics').
-    8. ${FAQ_INSTRUCTION}
+    1. VISION EXPERTE ANTI-GASPI & PRÉCISION MAXIMALE : Vous DEVEZ analyser l'image avec une attention extrême. Même si la photo est mal éclairée, sombre ou légèrement floue, faites de votre mieux pour discerner les formes, les couleurs et les étiquettes pour identifier le contenu du frigo, des placards ou du plan de travail. Identifiez un maximum d'ingrédients réels (+10 si présents).
+    2. RECONNAISSANCE POUSSÉE (Ne PAS Halluciner) : Analysez correctement les ingrédients bruts (fruits, légumes, etc.). Scrutez attentivement les emballages pour déduire ou voir les ingrédients à l'intérieur (fromage entamé, boîte de thon, boîte hermétique transparente avec des restes, boîtes opaques courantes, etc.). Si vous avez un gros doute, omettez l'ingrédient plutôt que d'inventer, mais soyez perspicace.
+    3. LISTER LES INGRÉDIENTS TROUVÉS : Basez STRICTEMENT votre recette sur les ingrédients que vous venez d'identifier visuellement dans l'image (vous pouvez proposer d'ajouter des condiments ou aliments de base communs comme sel, poivre, huile, farine, eau, etc., si nécessaire).
+    4. FILTRER selon REGIME : ${dietary} (${dietRules}).
+    5. CRÉER recette anti-gaspi simple/savoureuse adaptée au MATÉRIEL.
+    6. CONSERVATION : Durée/mode (champ 'storageAdvice').
+    7. PORTIONS : Nombre de personnes (champ 'servings').
+    8. NUTRITION : Estimez le Nutri-Score (A à E), les calories par personne, les protéines (g), les glucides (g), les lipides (g) et la difficulté (champ 'metrics').
+    9. ${FAQ_INSTRUCTION}
     
     FORMAT :
     - Titre H1 (# Titre) obligatoire.
