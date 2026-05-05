@@ -254,12 +254,12 @@ const Home: React.FC<HomeProps> = ({ setView }) => {
 
           {/* TITRE HERO + SLOGAN (CENTRÉ) */}
           <div className="mt-6 mb-8 text-center">
-              <h2 className="text-[3.5rem] leading-[0.9] font-display text-white">
-                  Une cuisine unique,
+              <h2 className="text-[2.5rem] leading-[1.1] font-display text-white">
+                  L'app qui vide le frigo
               </h2>
               <div className="relative inline-block mt-1">
-                  <h2 className="text-[3.5rem] leading-[0.9] font-display text-[#509f2a] relative z-10">
-                      qui vous ressemble.
+                  <h2 className="text-[2.5rem] leading-[1.1] font-display text-white relative z-10">
+                      au lieu de remplir le caddie
                   </h2>
               </div>
           </div>
