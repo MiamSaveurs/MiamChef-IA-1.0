@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, Loader2, X } from 'lucide-react';
+import { Mail, ArrowRight, Loader2, X, User } from 'lucide-react';
 import { AppView } from '../types';
-import { setHasAccount } from '../services/storageService';
+import { setHasAccount, getUserProfile, saveUserProfile } from '../services/storageService';
 
 interface AccountCreationProps {
   setView: (view: AppView) => void;
 }
 
 const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!firstName.trim()) {
+      setError('Veuillez entrer votre prénom.');
+      return;
+    }
     if (!email || !email.includes('@')) {
       setError('Veuillez entrer un email valide.');
       return;
@@ -23,11 +28,16 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
     setError('');
     
     try {
-      // Souscription à Mailchimp (test non bloquant)
+      // Save name in local storage profile
+      const profile = getUserProfile();
+      profile.name = firstName;
+      saveUserProfile(profile);
+
+      // Souscription à Mailchimp (test non bloquant) //
       const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, firstName })
       });
       
       if (!response.ok) {
@@ -61,6 +71,20 @@ const AccountCreation: React.FC<AccountCreationProps> = ({ setView }) => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <User size={18} className="text-[#509f2a]" />
+            </div>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Votre Prénom"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:border-[#509f2a] outline-none transition-colors"
+              required
+            />
+          </div>
+
           <div className="relative">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
               <Mail size={18} className="text-[#509f2a]" />

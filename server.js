@@ -149,7 +149,7 @@ app.post('/api/send-referral', async (req, res) => {
 
 // Route API : Inscription Newsletter Mailchimp
 app.post('/api/newsletter/subscribe', async (req, res) => {
-  const { email } = req.body;
+  const { email, firstName } = req.body;
   console.log(`[Newsletter] Tentative d'inscription pour : ${email}`);
 
   if (!email) {
@@ -183,7 +183,10 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
     email_address: email,
     status: 'subscribed', // Inscription directe sans email de confirmation (Single Opt-in).
     language: 'fr',
-    tags: ['TRIAL_STARTED']
+    tags: ['TRIAL_STARTED'],
+    merge_fields: {
+      FNAME: firstName || ''
+    }
   });
 
   const options = {
